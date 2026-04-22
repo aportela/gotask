@@ -7,8 +7,8 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func InitDB(path string) *sql.DB {
-	db, err := sql.Open("sqlite", "file:tasks.db")
+func InitDB() *sql.DB {
+	db, err := sql.Open("sqlite", "file:data/gotask.sqlite3")
 	if err != nil {
 		log.Fatal(err)
 	}
