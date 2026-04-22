@@ -13,6 +13,7 @@ func main() {
 	log.Println("starting GOTask v0.1alpha...")
 
 	db := database.InitDB()
+	db.Close()
 
 	r := router.NewRouter()
 
