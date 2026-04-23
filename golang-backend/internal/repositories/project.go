@@ -22,7 +22,7 @@ func (projectRepository *ProjectRepository) Add(ctx context.Context, project mod
 	_, err := projectRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO PROJECT (id, key, summary, description, cuser, ctime, lmtime, stime, ftime, dtime, type)
+            INSERT INTO PROJECT (id, key, summary, description, cuser, ctime, mtime, stime, ftime, dtime, type)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `,
 		project.ID,
@@ -48,7 +48,7 @@ func (projectRepository *ProjectRepository) Update(ctx context.Context, project 
 				key = ?,
 				summary = ?,
 				description = ?,
-				lmtime = ?,
+				mtime = ?,
 				stime = ?,
 				ftime = ?,
 				dtime = ?,
@@ -82,20 +82,20 @@ func (projectRepository *ProjectRepository) Delete(ctx context.Context, id strin
 
 func (projectRepository *ProjectRepository) Get(ctx context.Context, id string) (models.Project, error) {
 	var project models.Project
-	var lmtime, stime, ftime, dtime sql.NullInt64
+	var mtime, stime, ftime, dtime sql.NullInt64
 	var description sql.NullString
 	err := projectRepository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
-                P.id, P.key, P.summary, P.description, P.ctime, P.lmtime, P.stime, P.ftime, P.dtime, P.type, PT.name
+                P.id, P.key, P.summary, P.description, P.ctime, P.mtime, P.stime, P.ftime, P.dtime, P.type, PT.name
             FROM PROJECT P
 			LEFT JOIN PROJECT_TYPE PT ON PT.id = P.type
             WHERE P.id = ?
         `,
-		id).Scan(&project.ID, &project.Key, &project.Summary, &description, &project.CreatedAt, &lmtime, &stime, &ftime, &dtime, &project.Type.ID, &project.Type.Name)
+		id).Scan(&project.ID, &project.Key, &project.Summary, &description, &project.CreatedAt, &mtime, &stime, &ftime, &dtime, &project.Type.ID, &project.Type.Name)
 	project.Description = utils.StrPtr(description)
-	project.LastModifiedAt = utils.Int64Ptr(lmtime)
+	project.LastModifiedAt = utils.Int64Ptr(mtime)
 	project.StartedAt = utils.Int64Ptr(stime)
 	project.FinishedAt = utils.Int64Ptr(ftime)
 	project.DueAt = utils.Int64Ptr(dtime)
@@ -108,7 +108,7 @@ func (projectRepository *ProjectRepository) Search(ctx context.Context) ([]model
 		ctx,
 		`
         SELECT
-                P.id, P.key, P.summary, P.description, P.ctime, P.lmtime, P.stime, P.ftime, P.dtime, P.type, PT.name
+                P.id, P.key, P.summary, P.description, P.ctime, P.mtime, P.stime, P.ftime, P.dtime, P.type, PT.name
 		FROM PROJECT P
 		LEFT JOIN PROJECT_TYPE PT ON PT.id = P.type
         `,
@@ -123,19 +123,19 @@ func (projectRepository *ProjectRepository) Search(ctx context.Context) ([]model
 
 	for rows.Next() {
 		var project models.Project
-		var lmtime, stime, ftime, dtime sql.NullInt64
+		var mtime, stime, ftime, dtime sql.NullInt64
 		var description sql.NullString
 
 		if err := rows.Scan(
 			&project.ID, &project.Key, &project.Summary, &description,
-			&project.CreatedAt, &lmtime, &stime, &ftime, &dtime,
+			&project.CreatedAt, &mtime, &stime, &ftime, &dtime,
 			&project.Type.ID, &project.Type.Name,
 		); err != nil {
 			return nil, err
 		}
 
 		project.Description = utils.StrPtr(description)
-		project.LastModifiedAt = utils.Int64Ptr(lmtime)
+		project.LastModifiedAt = utils.Int64Ptr(mtime)
 		project.StartedAt = utils.Int64Ptr(stime)
 		project.FinishedAt = utils.Int64Ptr(ftime)
 		project.DueAt = utils.Int64Ptr(dtime)

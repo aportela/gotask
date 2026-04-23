@@ -60,7 +60,7 @@ func InitSchema(db *sql.DB) error {
 				description TEXT,
 				cuser TEXT NOT NULL CHECK(length(id) == 36),
 				ctime INTEGER NOT NULL,
-				lmtime INTEGER,
+				mtime INTEGER,
 				stime INTEGER,
 				ftime INTEGER,
 				dtime INTEGER,
@@ -71,7 +71,7 @@ func InitSchema(db *sql.DB) error {
 			) STRICT;
 		`,
 		`
-		 	REPLACE INTO PROJECT (id, key, summary, description, cuser, ctime, lmtime, stime, ftime, dtime, type) VALUES("019dba70-8fe5-769d-baae-6d075c5e47ee", "NEW", "New project", "Dummy description", "019dba5d-83a4-7f97-bdf1-97a5fb3d5869", "1776949459", NULL, 1776951094, NULL, NULL, "019dba84-c5c4-7654-8400-d84b02164065");
+		 	REPLACE INTO PROJECT (id, key, summary, description, cuser, ctime, mtime, stime, ftime, dtime, type) VALUES("019dba70-8fe5-769d-baae-6d075c5e47ee", "NEW", "New project", "Dummy description", "019dba5d-83a4-7f97-bdf1-97a5fb3d5869", "1776949459", NULL, 1776951094, NULL, NULL, "019dba84-c5c4-7654-8400-d84b02164065");
 		`,
 		`
 			CREATE TABLE IF NOT EXISTS PROJECT_TASK_STATUS (
@@ -124,7 +124,7 @@ func InitSchema(db *sql.DB) error {
 				priority TEXT NOT NULL CHECK(length(id) == 36),
 				cuser TEXT NOT NULL CHECK(length(id) == 36),
 				ctime INTEGER NOT NULL,
-				lmtime INTEGER,
+				mtime INTEGER,
 				stime INTEGER,
 				ftime INTEGER,
 				dtime INTEGER,
@@ -136,7 +136,7 @@ func InitSchema(db *sql.DB) error {
 			) STRICT;
 		`,
 		`
-		 	REPLACE INTO TASK (id, project_id, project_task_index, summary, description, status, priority, cuser, ctime, lmtime, stime, ftime, dtime)
+		 	REPLACE INTO TASK (id, project_id, project_task_index, summary, description, status, priority, cuser, ctime, mtime, stime, ftime, dtime)
 			VALUES("019dbaac-207d-71d1-a2af-aea033c54931", "019dba70-8fe5-769d-baae-6d075c5e47ee", 0, "Review task insertion", "This is a test of schema insertions", "019dba9b-b690-7e90-9d10-6a220cea4dda", "019dba9e-759f-7542-a3d8-89382ca7e71e", "019dba5d-83a4-7f97-bdf1-97a5fb3d5869", 1776953444, NULL, NULL, NULL, NULL);
 		`,
 		`
