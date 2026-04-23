@@ -4,5 +4,11 @@
 
 <template>
     <Header />
-    <router-view />
+    <div class="page-wrapper">
+        <div class="page-body">
+            <div class="container-xl">
+                <router-view />
+            </div>
+        </div>
+    </div>
 </template>
