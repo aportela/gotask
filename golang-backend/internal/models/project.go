@@ -9,7 +9,7 @@ type Project struct {
 	ID             string      `json:"id"`
 	Key            string      `json:"key"`
 	Summary        string      `json:"summary"`
-	Description    string      `json:"description"`
+	Description    *string     `json:"description"`
 	CreatedBy      UserBase    `json:"createdBy"`
 	CreatedAt      int64       `json:"createdAt"`
 	LastModifiedAt *int64      `json:"lastModifiedAt"`
