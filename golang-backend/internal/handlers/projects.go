@@ -17,8 +17,8 @@ func SearchProjectsHandler(w http.ResponseWriter, r *http.Request) {
 	resp := ProjectsResponse{
 		Success: true,
 		Projects: []models.Project{
-			{ID: 1, Name: "Project 1"},
-			{ID: 2, Name: "Proyect 2"},
+			{ID: 1, Summary: "Project 1"},
+			{ID: 2, Summary: "Proyect 2"},
 		},
 	}
 
