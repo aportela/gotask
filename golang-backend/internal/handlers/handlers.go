@@ -18,3 +18,23 @@ func DefaultHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(resp)
 
 }
+
+func SearchProjectsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	resp := Response{
+		Success: true,
+	}
+
+	json.NewEncoder(w).Encode(resp)
+
+}
+
+func SearchTasksHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	resp := Response{
+		Success: true,
+	}
+
+	json.NewEncoder(w).Encode(resp)
+
+}

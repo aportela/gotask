@@ -1,6 +1,7 @@
 package router
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -19,11 +20,16 @@ func NewRouter() http.Handler {
 
 	apiRouter := chi.NewRouter()
 	apiRouter.Get("/hello", handlers.DefaultHandler)
+	apiRouter.Get("/projects", handlers.SearchProjectsHandler)
+	apiRouter.Get("/tasks", handlers.SearchTasksHandler)
 	baseRouter.Mount("/api", apiRouter)
 
-	workDir, _ := os.Getwd()
+	workDir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
 	publicWebPath := http.Dir(filepath.Join(workDir, "public"))
-	fileserver.FileServer(baseRouter, "/", publicWebPath)
+	fileserver.FileServer(baseRouter, "/static", publicWebPath)
 
 	return baseRouter
 }
