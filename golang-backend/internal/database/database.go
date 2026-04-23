@@ -113,6 +113,35 @@ func InitSchema(db *sql.DB) error {
 		`
 		 	REPLACE INTO PROJECT_TASK_PRIORITY (id, project_id, name, element_index, color) VALUES("019dba9e-759f-7542-a3d8-89382ca7e71e", "019dba70-8fe5-769d-baae-6d075c5e47ee", "High", 2, "ed1a2c");
 		`,
+		`
+			CREATE TABLE IF NOT EXISTS TASK (
+				id TEXT NOT NULL CHECK(length(id) == 36),
+				project_id TEXT NOT NULL CHECK(length(id) == 36),
+				project_task_index INTEGER NOT NULL,
+				summary TEXT NOT NULL UNIQUE CHECK(length(summary) <= 64),
+				description TEXT,
+				status TEXT NOT NULL CHECK(length(id) == 36),
+				priority TEXT NOT NULL CHECK(length(id) == 36),
+				cuser TEXT NOT NULL CHECK(length(id) == 36),
+				ctime INTEGER NOT NULL,
+				lmtime INTEGER,
+				stime INTEGER,
+				ftime INTEGER,
+				dtime INTEGER,
+				PRIMARY KEY (id),
+				FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE,
+				FOREIGN KEY(status) REFERENCES PROJECT_TASK_STATUS(id) ON DELETE CASCADE,
+				FOREIGN KEY(priority) REFERENCES PROJECT_TASK_PRIORITY(id) ON DELETE CASCADE,
+				FOREIGN KEY(cuser) REFERENCES USER(id) ON DELETE CASCADE
+			) STRICT;
+		`,
+		`
+		 	REPLACE INTO TASK (id, project_id, project_task_index, summary, description, status, priority, cuser, ctime, lmtime, stime, ftime, dtime)
+			VALUES("019dbaac-207d-71d1-a2af-aea033c54931", "019dba70-8fe5-769d-baae-6d075c5e47ee", 0, "Review task insertion", "This is a test of schema insertions", "019dba9b-b690-7e90-9d10-6a220cea4dda", "019dba9e-759f-7542-a3d8-89382ca7e71e", "019dba5d-83a4-7f97-bdf1-97a5fb3d5869", 1776953444, NULL, NULL, NULL, NULL);
+		`,
+		`
+			UPDATE TASK SET project_task_index = (SELECT COALESCE(MAX(project_task_index), 0) + 1 FROM TASK WHERE project_id = "019dba70-8fe5-769d-baae-6d075c5e47ee" AND project_task_index = 0) WHERE id = "019dbaac-207d-71d1-a2af-aea033c54931";
+		`,
 	}
 
 	for _, p := range schemaQueries {
