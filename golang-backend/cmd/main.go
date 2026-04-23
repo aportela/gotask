@@ -17,6 +17,8 @@ func main() {
 
 	r := router.NewRouter()
 
+	log.Println("Listening over http://localhost:3000/static")
+
 	http.ListenAndServe(":3000", r)
 
 }
