@@ -15,3 +15,17 @@ func StrPtr(s sql.NullString) *string {
 	}
 	return nil
 }
+
+func NullableInt64ToSQL(i *int64) interface{} {
+	if i != nil {
+		return i
+	}
+	return nil
+}
+
+func NullableStringToSQL(s *string) interface{} {
+	if s != nil {
+		return s
+	}
+	return nil
+}
