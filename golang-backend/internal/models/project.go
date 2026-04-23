@@ -16,6 +16,5 @@ type Project struct {
 	StartDate   int64       `json:"startDate"`
 	DueDate     int64       `json:"dueDate"`
 	Type        ProjectType `json:"type"`
-	Tags        []string    `json:"tags"`
 	//lead, asignee, priority, status
 }
