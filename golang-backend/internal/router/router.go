@@ -22,12 +22,19 @@ func NewRouter(db *sql.DB) http.Handler {
 	baseRouter.Use(middleware.Logger)
 
 	apiRouter := chi.NewRouter()
-	projectRepository := repositories.NewProjectRepository(db)
-	projectService := services.NewProjectService(projectRepository)
-	projectHandler := handlers.NewProjectHandler(projectService)
-	apiRouter.Get("/project/{id}", projectHandler.GetProject)
-	apiRouter.Get("/projects", projectHandler.SearchProjects)
-	apiRouter.Get("/add", projectHandler.AddProject)
+	apiRouter.Route("/projects", func(r chi.Router) {
+		projectRepository := repositories.NewProjectRepository(db)
+		projectService := services.NewProjectService(projectRepository)
+		projectHandler := handlers.NewProjectHandler(projectService)
+		r.Post("/", projectHandler.AddProject)
+		r.Get("/", projectHandler.SearchProjects)
+		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", projectHandler.GetProject)
+			r.Put("/", projectHandler.UpdateProject)
+			r.Delete("/", projectHandler.DeleteProject)
+		})
+	})
+
 	baseRouter.Mount("/api", apiRouter)
 
 	workDir, err := os.Getwd()
