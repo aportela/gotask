@@ -18,6 +18,68 @@ func NewProjectRepository(database *sql.DB) *ProjectRepository {
 	}
 }
 
+func (projectRepository *ProjectRepository) Add(ctx context.Context, project models.Project) error {
+	_, err := projectRepository.database.ExecContext(
+		ctx,
+		`
+            INSERT INTO PROJECT (id, key, summary, description, cuser, ctime, lmtime, stime, ftime, dtime, type)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `,
+		project.ID,
+		project.Key,
+		project.Summary,
+		utils.NullableStringToSQL(project.Description),
+		project.CreatedBy.ID,
+		utils.CurrentTimestamp(),
+		utils.NullableInt64ToSQL(project.LastModifiedAt),
+		utils.NullableInt64ToSQL(project.StartedAt),
+		utils.NullableInt64ToSQL(project.FinishedAt),
+		utils.NullableInt64ToSQL(project.DueAt),
+		project.Type.ID,
+	)
+	return err
+}
+
+func (projectRepository *ProjectRepository) Update(ctx context.Context, project models.Project) error {
+	_, err := projectRepository.database.ExecContext(
+		ctx,
+		`
+            UPDATE PROJECT SET
+				key = ?,
+				summary = ?,
+				description = ?,
+				lmtime = ?,
+				stime = ?,
+				ftime = ?,
+				dtime = ?,
+				type = ?
+			WHERE id = ?
+        `,
+		project.Key,
+		project.Summary,
+		utils.NullableStringToSQL(project.Description),
+		utils.CurrentTimestamp(),
+		utils.NullableInt64ToSQL(project.StartedAt),
+		utils.NullableInt64ToSQL(project.FinishedAt),
+		utils.NullableInt64ToSQL(project.DueAt),
+		project.Type.ID,
+		project.ID,
+	)
+	return err
+}
+
+func (projectRepository *ProjectRepository) Delete(ctx context.Context, id string) error {
+	_, err := projectRepository.database.ExecContext(
+		ctx,
+		`
+            DELETE FROM PROJECT
+			WHERE id = ?
+        `,
+		id,
+	)
+	return err
+}
+
 func (projectRepository *ProjectRepository) Get(ctx context.Context, id string) (models.Project, error) {
 	var project models.Project
 	var lmtime, stime, ftime, dtime sql.NullInt64

@@ -17,6 +17,18 @@ func NewProjectService(repository *repositories.ProjectRepository) *ProjectServi
 	}
 }
 
+func (s *ProjectService) AddProject(ctx context.Context, project models.Project) error {
+	return s.repository.Add(ctx, project)
+}
+
+func (s *ProjectService) UpdateProject(ctx context.Context, project models.Project) error {
+	return s.repository.Update(ctx, project)
+}
+
+func (s *ProjectService) DeleteProject(ctx context.Context, id string) error {
+	return s.repository.Delete(ctx, id)
+}
+
 func (s *ProjectService) GetProject(ctx context.Context, id string) (models.Project, error) {
 	return s.repository.Get(ctx, id)
 }

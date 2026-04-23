@@ -27,6 +27,7 @@ func NewRouter(db *sql.DB) http.Handler {
 	projectHandler := handlers.NewProjectHandler(projectService)
 	apiRouter.Get("/project/{id}", projectHandler.GetProject)
 	apiRouter.Get("/projects", projectHandler.SearchProjects)
+	apiRouter.Get("/add", projectHandler.AddProject)
 	baseRouter.Mount("/api", apiRouter)
 
 	workDir, err := os.Getwd()
