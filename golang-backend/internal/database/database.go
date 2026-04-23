@@ -39,7 +39,6 @@ func InitSchema(db *sql.DB) error {
 		`
 		 	REPLACE INTO USER (id, email, name, password_hash, ctime, mtime) VALUES("019dba5d-83a4-7f97-bdf1-97a5fb3d5869", "foo@ba.r", "John Doe", "$2y$10$vskPu8bji.zmwDI9Jvi3C.uXG8IDytaeHLakb4nOzlFyoPTlwBklW", 1776948241, NULL);
 		`,
-
 		`
 			CREATE TABLE IF NOT EXISTS PROJECT_TYPE (
 				id TEXT NOT NULL CHECK(length(id) == 36),
@@ -73,6 +72,46 @@ func InitSchema(db *sql.DB) error {
 		`,
 		`
 		 	REPLACE INTO PROJECT (id, key, summary, description, cuser, ctime, lmtime, stime, ftime, dtime, type) VALUES("019dba70-8fe5-769d-baae-6d075c5e47ee", "NEW", "New project", "Dummy description", "019dba5d-83a4-7f97-bdf1-97a5fb3d5869", "1776949459", NULL, 1776951094, NULL, NULL, "019dba84-c5c4-7654-8400-d84b02164065");
+		`,
+		`
+			CREATE TABLE IF NOT EXISTS PROJECT_TASK_STATUS (
+				id TEXT NOT NULL CHECK(length(id) == 36),
+				project_id TEXT NOT NULL CHECK(length(id) == 36),
+				name TEXT NOT NULL CHECK(length(name) <= 32),
+				color TEXT NOT NULL CHECK(length(color) == 6),
+				element_index INTEGER NOT NULL,
+				PRIMARY KEY (id),
+				FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE
+			) STRICT;
+		`,
+		`
+		 	REPLACE INTO PROJECT_TASK_STATUS (id, project_id, name, element_index, color) VALUES("019dba98-76a5-709d-9e3e-d56dfc5ff7e6", "019dba70-8fe5-769d-baae-6d075c5e47ee", "TODO", 0, "fc0390");
+		`,
+		`
+		 	REPLACE INTO PROJECT_TASK_STATUS (id, project_id, name, element_index, color) VALUES("019dba9b-b690-7e90-9d10-6a220cea4dda", "019dba70-8fe5-769d-baae-6d075c5e47ee", "In Progress", 1, "3bcded");
+		`,
+		`
+		 	REPLACE INTO PROJECT_TASK_STATUS (id, project_id, name, element_index, color) VALUES("019dba9b-ce39-7566-a849-a06b69aaaeff", "019dba70-8fe5-769d-baae-6d075c5e47ee", "Done", 2, "73f571");
+		`,
+		`
+			CREATE TABLE IF NOT EXISTS PROJECT_TASK_PRIORITY (
+				id TEXT NOT NULL CHECK(length(id) == 36),
+				project_id TEXT NOT NULL CHECK(length(id) == 36),
+				name TEXT NOT NULL CHECK(length(name) <= 32),
+				color TEXT NOT NULL CHECK(length(color) == 6),
+				element_index INTEGER NOT NULL,
+				PRIMARY KEY (id),
+				FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE
+			) STRICT;
+		`,
+		`
+		 	REPLACE INTO PROJECT_TASK_PRIORITY (id, project_id, name, element_index, color) VALUES("019dba9e-759f-7d1c-b5dc-3e3c07752d67", "019dba70-8fe5-769d-baae-6d075c5e47ee", "Low", 0, "a1c8e6");
+		`,
+		`
+		 	REPLACE INTO PROJECT_TASK_PRIORITY (id, project_id, name, element_index, color) VALUES("019dba9e-759f-75ab-8404-04a58d34e16e", "019dba70-8fe5-769d-baae-6d075c5e47ee", "Medium", 1, "d6812b");
+		`,
+		`
+		 	REPLACE INTO PROJECT_TASK_PRIORITY (id, project_id, name, element_index, color) VALUES("019dba9e-759f-7542-a3d8-89382ca7e71e", "019dba70-8fe5-769d-baae-6d075c5e47ee", "High", 2, "ed1a2c");
 		`,
 	}
 
