@@ -12,7 +12,7 @@ type Task struct {
 	Description string       `json:"description"`
 	Status      TaskStatus   `json:"status"`
 	Priority    TaskPriority `json:"priority"`
-	CreatedBy   User         `json:"createdBy"`
+	CreatedBy   UserBase     `json:"createdBy"`
 	CreatedAt   int64        `json:"createdAt"`
 	StartedAt   *int64       `json:"startedAt"`
 	FinishedAt  *int64       `json:"finishedAt"`
