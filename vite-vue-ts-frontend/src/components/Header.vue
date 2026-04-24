@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { IconUserCircle, IconBrandGithub, IconDatabaseStar, IconHome, IconSitemap, IconBug, IconFileAnalytics, IconSettings } from '@tabler/icons-vue';
+    import { IconUserCircle, IconBrandGithub, IconDatabaseStar, IconHome, IconSitemap, IconBug, IconFileAnalytics, IconSettings, IconUsers } from '@tabler/icons-vue';
 
     import { ref } from 'vue'
 
@@ -142,6 +142,24 @@
                                         </span>
                                         <span class="nav-link-title"> Settings </span>
                                     </RouterLink>
+                                </li>
+                                <li class="nav-item dropdown" :class="{ 'active': $route.name == 'settings' }">
+                                    <a class="nav-link dropdown-toggle show" href="#navbar-settings"
+                                        data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button"
+                                        aria-expanded="true">
+                                        <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                            <IconSettings />
+                                        </span>
+                                        <span class="nav-link-title"> Settings </span>
+                                    </a>
+                                    <div class="dropdown-menu show" data-bs-popper="static">
+                                        <RouterLink to="/users" class="dropdown-item" rel="noopener">
+                                            <span class="nav-link-icon d-md-none d-lg-inline-block">
+                                                <IconUsers />
+                                            </span>
+                                            Manage users
+                                        </RouterLink>
+                                    </div>
                                 </li>
                             </ul>
                             <!-- END NAVBAR MENU -->
