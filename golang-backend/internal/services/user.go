@@ -29,6 +29,10 @@ func (s *UserService) DeleteUser(ctx context.Context, id string) error {
 	return s.repository.Delete(ctx, id)
 }
 
+func (s *UserService) GetUser(ctx context.Context, id string) (models.User, error) {
+	return s.repository.Get(ctx, id)
+}
+
 func (s *UserService) SearchUsers(ctx context.Context) ([]models.User, error) {
 	return s.repository.Search(ctx)
 }
