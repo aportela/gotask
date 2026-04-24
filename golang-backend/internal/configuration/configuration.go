@@ -10,8 +10,15 @@ import (
 	"github.com/spf13/viper"
 )
 
-const configurationFilename = "configuration"
 const configurationType = "yaml"
+const configurationFilename = "configuration." + configurationType
+
+type DatabaseConfig struct {
+	Path string `mapstructure:"path"`
+}
+type Config struct {
+	Database DatabaseConfig `mapstructure:"database"`
+}
 
 func getDataPath() string {
 	pwd, err := os.Getwd()
@@ -29,11 +36,10 @@ func createDataPathIfRequired() error {
 }
 
 func initViper() {
-	viper.AddConfigPath(getDataPath())
-	viper.SetConfigName(configurationFilename)
 	viper.SetConfigType(configurationType)
-}
+	viper.SetConfigFile(filepath.Join(getDataPath(), configurationFilename))
 
+}
 func Init() {
 	// TODO: return error (replace log.Fatal)
 	err := createDataPathIfRequired()
@@ -56,8 +62,11 @@ func Init() {
 			log.Fatal("Error reading configuration file:", err)
 		}
 	}
-	dbPath := viper.GetString("database.path")
-	fmt.Println("Database path:", dbPath)
+	var cfg Config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		log.Fatal("Error decoding configuration file:", err)
+	}
+	fmt.Println("Database path:", cfg.Database.Path)
 }
 
 func writeDefaultConfig() error {
