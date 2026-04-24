@@ -32,7 +32,7 @@ func getRandomUserName() string {
 	return name + " " + surname1 + " " + surname2
 }
 
-func generateEmail(fullName string) string {
+func generateRandomEmail(fullName string) string {
 	parts := strings.Fields(fullName)
 	firstInitial := strings.ToLower(string(parts[0][0]))
 	secondAndThirdName := strings.ToLower(parts[1]) + "." + strings.ToLower(parts[2])
@@ -54,7 +54,7 @@ func createUsers(database database.Database, count int) []string {
 				ID:   userID,
 				Name: name,
 			},
-			Email:           generateEmail(name),
+			Email:           generateRandomEmail(name),
 			Password:        &password,
 			CreatedAt:       utils.CurrentMSTimestamp(),
 			LastUpdateAt:    nil,
