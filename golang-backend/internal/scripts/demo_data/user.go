@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/aportela/gotask/internal/database"
 	"github.com/aportela/gotask/internal/models"
@@ -56,7 +57,7 @@ func createUsers(database database.Database, count int) []string {
 			},
 			Email:           generateRandomEmail(name),
 			Password:        &password,
-			CreatedAt:       utils.CurrentMSTimestamp(),
+			CreatedAt:       utils.GetRandomMSTimestamp(time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC), time.Date(2025, time.December, 31, 23, 59, 59, 999999999, time.UTC)),
 			LastUpdateAt:    nil,
 			IsAdministrator: false,
 		})
