@@ -51,6 +51,7 @@ func main() {
 		}
 
 		if params.InsertBulkData {
+			log.Println("Inserting bulk/demo data...")
 			seed.CreateDemoData(databaseHandler)
 		}
 
