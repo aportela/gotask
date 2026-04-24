@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/aportela/gotask/internal/cli"
+	"github.com/aportela/gotask/internal/configuration"
 	"github.com/aportela/gotask/internal/database"
 	"github.com/aportela/gotask/internal/router"
 	"github.com/aportela/gotask/internal/seed"
@@ -26,6 +27,7 @@ func main() {
 			log.Fatal(err)
 		}
 
+		configuration.Init()
 		if params.InsertBulkData {
 			seed.CreateDemoData(db)
 		}
@@ -37,7 +39,7 @@ func main() {
 
 		go func() {
 			if err := http.ListenAndServe(":3000", r); err != nil {
-				log.Fatal("Error en el servidor HTTP:", err)
+				log.Fatal("Error opening HTTP server at port 3000:", err)
 			}
 		}()
 
