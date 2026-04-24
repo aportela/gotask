@@ -2,6 +2,6 @@ package utils
 
 import "time"
 
-func CurrentTimestamp() int64 {
+func CurrentMSTimestamp() int64 {
 	return time.Now().UnixNano() / int64(time.Millisecond)
 }

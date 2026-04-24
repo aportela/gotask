@@ -40,7 +40,7 @@ func (userRepository *UserRepository) Add(ctx context.Context, user models.User)
 		user.Email,
 		user.Name,
 		string(hashedPasswordBytes),
-		utils.CurrentTimestamp(),
+		utils.CurrentMSTimestamp(),
 		adminFlag,
 	)
 	return err
@@ -66,7 +66,7 @@ func (userRepository *UserRepository) Update(ctx context.Context, user models.Us
 			user.Email,
 			user.Name,
 			string(hashedPasswordBytes),
-			utils.CurrentTimestamp(),
+			utils.CurrentMSTimestamp(),
 			user.ID,
 		)
 
@@ -83,7 +83,7 @@ func (userRepository *UserRepository) Update(ctx context.Context, user models.Us
         `,
 			user.Email,
 			user.Name,
-			utils.CurrentTimestamp(),
+			utils.CurrentMSTimestamp(),
 			user.ID,
 		)
 

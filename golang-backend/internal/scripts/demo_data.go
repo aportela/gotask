@@ -50,7 +50,7 @@ func CreateDemoData(db database.Database) {
 			Summary:        summary,
 			Description:    description,
 			CreatedBy:      models.UserBase{ID: "019dba5d-83a4-7f97-bdf1-97a5fb3d5869"},
-			CreatedAt:      utils.CurrentTimestamp(),
+			CreatedAt:      utils.CurrentMSTimestamp(),
 			LastModifiedAt: nil,
 			StartedAt:      nil,
 			FinishedAt:     nil,
