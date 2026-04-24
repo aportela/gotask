@@ -57,7 +57,7 @@ func createUsers(database database.Database, count int) []string {
 			},
 			Email:           generateRandomEmail(name),
 			Password:        &password,
-			CreatedAt:       utils.GetRandomMSTimestamp(time.Date(2020, time.January, 1, 0, 0, 0, 0, time.UTC), time.Date(2025, time.December, 31, 23, 59, 59, 999999999, time.UTC)),
+			CreatedAt:       utils.GetRandomMSTimestamp(time.Now().AddDate(-5, 0, 0), time.Now()),
 			LastUpdateAt:    nil,
 			IsAdministrator: false,
 		})
