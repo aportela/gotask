@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"errors"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -14,10 +13,17 @@ const configurationType = "yaml"
 const configurationFilename = "configuration." + configurationType
 
 type DatabaseConfig struct {
+	Type string `mapstructure:"type"`
 	Path string `mapstructure:"path"`
 }
+
+type ServerConfig struct {
+	port int8 `mapstructure:"port"`
+}
+
 type Config struct {
 	Database DatabaseConfig `mapstructure:"database"`
+	Server   ServerConfig   `mapstructure:"server"`
 }
 
 func getDataPath() string {
@@ -66,11 +72,12 @@ func Init() {
 	if err := viper.Unmarshal(&cfg); err != nil {
 		log.Fatal("Error decoding configuration file:", err)
 	}
-	fmt.Println("Database path:", cfg.Database.Path)
 }
 
 func writeDefaultConfig() error {
+	viper.Set("database.type", "sqlite")
 	viper.Set("database.path", filepath.Join(getDataPath(), "gotask.sqlite3"))
+	viper.Set("server.port", 3000)
 
 	err := viper.SafeWriteConfig()
 	if err != nil {
