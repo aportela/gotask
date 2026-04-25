@@ -1,9 +1,4 @@
-import {
-  createMemoryHistory,
-  createRouter,
-  createWebHashHistory,
-  createWebHistory,
-} from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import routes from "./routes";
 
 export const router = createRouter({
