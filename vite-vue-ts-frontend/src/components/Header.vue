@@ -164,13 +164,13 @@
                                 <li class="nav-item dropdown" :class="{ 'active': $route.name == 'settings' }">
                                     <a class="nav-link dropdown-toggle show" href="#navbar-settings"
                                         data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button"
-                                        aria-expanded="true">
+                                        aria-expanded="false">
                                         <span class="nav-link-icon d-md-none d-lg-inline-block">
                                             <IconSettings />
                                         </span>
                                         <span class="nav-link-title"> Settings </span>
                                     </a>
-                                    <div class="dropdown-menu show" data-bs-popper="static">
+                                    <div class="dropdown-menu" data-bs-popper="static">
                                         <RouterLink to="/users" class="dropdown-item" rel="noopener">
                                             <span class="nav-link-icon d-md-none d-lg-inline-block">
                                                 <IconUsers />
