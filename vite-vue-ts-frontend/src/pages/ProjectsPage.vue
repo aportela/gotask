@@ -1,6 +1,8 @@
 <script setup lang="ts">
 
     import { ref, onMounted, shallowRef, reactive } from 'vue';
+    import { api } from '../composables/api';
+
     interface ProjectInterface {
         id: string;
         summary: string;
@@ -26,6 +28,10 @@
 
 
     const projects = shallowRef<Project[]>([new Project({})]);
+    onMounted(() => {
+
+        api.project.search()
+    });
 
 </script>
 
