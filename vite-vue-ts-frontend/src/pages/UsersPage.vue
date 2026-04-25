@@ -1,12 +1,15 @@
 <script setup lang="ts">
-
     import { ref, onMounted, shallowRef, reactive } from 'vue';
+    import { api } from '../composables/api';
+    import { IconUser, IconUserKey } from '@tabler/icons-vue';
+
     interface UserInterface {
         id: string;
         name: string;
         email: string;
         isAdministrator: boolean;
-
+        createdAt: number;
+        lastUpdateAt: number;
     };
 
     class User implements UserInterface {
@@ -14,18 +17,31 @@
         name: string;
         email: string;
         isAdministrator: boolean;
+        createdAt: number;
+        lastUpdateAt: number;
 
         constructor(item: UserInterface) {
-            this.id = "0031";
-            this.name = "john doe";
-            this.email = "jdoe@localhost";
-            this.isAdministrator = true;
+            this.id = item.id;
+            this.name = item.name;
+            this.email = item.email;
+            this.isAdministrator = item.isAdministrator;
+            this.createdAt = item.createdAt;
+            this.lastUpdateAt = item.lastUpdateAt;
         }
 
     }
 
 
-    const users = shallowRef<User[]>([new User({})]);
+    const users = shallowRef<User[]>([]);
+
+    onMounted(() => {
+
+        api.user.search().then((successResponse: any) => {
+            users.value = successResponse.data;
+        }).catch((errorResponse: any) => {
+            console.log(errorResponse);
+        });
+    });
 
 </script>
 
@@ -67,17 +83,28 @@
                                         <path d="M6 15l6 -6l6 6"></path>
                                     </svg>
                                 </th>
+                                <th class="text-center">Avatar</th>
                                 <th>Name</th>
                                 <th>Email</th>
+                                <th>Created at</th>
+                                <th>Last update</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="user in users" v-bind:key="user.id">
-                                <td><span class="text-secondary">{{ user.isAdministrator ? 'Administrator' : 'User'
-                                        }}</span></td>
+                                <td><span class="text-secondary">
+                                        {{ user.isAdministrator ? 'Administrator' : 'User'
+                                        }}
+                                    </span></td>
+                                <td class="text-center">
+                                    <span class="avatar "
+                                        :style="'background-image: url(https://i.pravatar.cc/48?id=' + user.id + ')'"></span>
+                                </td>
                                 <td><span class="text-secondary">{{ user.name }}</span></td>
                                 <td>{{ user.email }}</td>
+                                <td>{{ new Date(user.createdAt).toDateString() }}</td>
+                                <td>{{ user.lastUpdateAt ? new Date(user.lastUpdateAt).toDateString() : null }}</td>
                                 <td class="text-end">
                                     <span class="dropdown">
                                         <button class="btn dropdown-toggle align-text-top" data-bs-boundary="viewport"
@@ -144,3 +171,5 @@
         </div>
     </div>
 </template>
+
+<style lang="css"></style>
