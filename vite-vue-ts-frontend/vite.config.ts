@@ -5,6 +5,17 @@ import path from "path";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
+  server: {
+    port: 8080,
+    open: true,
+    proxy: {
+      "/api": {
+        target: "http://127.0.0.1:3000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
   build: {
     outDir: path.resolve(__dirname, "../golang-backend/public"), // 👈 muy común con Go
     emptyOutDir: true,
