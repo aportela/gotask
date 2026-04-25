@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { IconUserCircle, IconBrandGithub, IconDatabaseStar, IconHome, IconSitemap, IconBug, IconFileAnalytics, IconSettings, IconUsers } from '@tabler/icons-vue';
+    import { IconUserCircle, IconBrandGithub, IconDatabaseStar, IconHome, IconSitemap, IconBug, IconFileAnalytics, IconSettings, IconUsers, IconLayout } from '@tabler/icons-vue';
 
     import { ref } from 'vue'
 
@@ -14,6 +14,17 @@
         );
 
         localStorage.setItem("theme", isDark.value ? 'dark' : 'light');
+    };
+
+    const isFluid = ref(false)
+
+    const toggleFluidLayout = () => {
+        isFluid.value = !isFluid.value;
+
+        document.body.classList.toggle("layout-fluid", isFluid.value);
+
+
+        localStorage.setItem("fluidLayout", isFluid.value ? "true" : "false");
     };
 
 </script>
@@ -43,6 +54,13 @@
                     </div>
                 </div>
                 <div class="d-none d-md-flex">
+                    <div class="nav-item">
+                        <a href="#" class="nav-link px-0" data-bs-toggle="tooltip" data-bs-placement="bottom"
+                            aria-label="Toggle fluid layout" @click.prevent="toggleFluidLayout"
+                            data-bs-original-title="Toggle fluid layout">
+                            <IconLayout />
+                        </a>
+                    </div>
                     <div class="nav-item">
                         <a href="#" class="nav-link px-0 hide-theme-dark" data-bs-toggle="tooltip"
                             data-bs-placement="bottom" aria-label="Enable dark mode" @click.prevent="toggleTheme"
