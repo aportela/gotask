@@ -31,12 +31,17 @@ func main() {
 		log.Fatal("Error opening configuration:", err)
 	}
 
+	_, err = os.Stat(configuration.Database.Path)
+	createSchema := false
+	if err != nil {
+		createSchema = true
+	}
+
 	databaseHandler, err := database.Open(configuration.Database)
 	if err != nil {
 		log.Fatal(err)
 	} else {
 		defer databaseHandler.Close()
-		createSchema := true
 		if createSchema {
 			log.Println("Creating database schema...")
 			err = databaseHandler.CreateSchema()
