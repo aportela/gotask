@@ -1,19 +1,18 @@
 package router
 
 import (
+	"io/fs"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
 	"github.com/aportela/gotask/internal/database"
-	"github.com/aportela/gotask/internal/fileserver"
 	"github.com/aportela/gotask/internal/handlers"
 	"github.com/aportela/gotask/internal/repositories"
 	"github.com/aportela/gotask/internal/services"
+	"github.com/aportela/gotask/internal/ui"
 )
 
 func NewRouter(db database.Database) http.Handler {
@@ -63,12 +62,18 @@ func NewRouter(db database.Database) http.Handler {
 
 	baseRouter.Mount("/api", apiRouter)
 
-	workDir, err := os.Getwd()
+	subFS, err := fs.Sub(ui.Dist, "dist")
 	if err != nil {
 		log.Fatal(err)
 	}
-	publicWebPath := http.Dir(filepath.Join(workDir, "public"))
-	fileserver.FileServer(baseRouter, "/", publicWebPath)
+	fileServer := http.FileServer(http.FS(subFS))
+	baseRouter.Handle("/*", fileServer)
+
+	baseRouter.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		data, _ := fs.ReadFile(subFS, "index.html")
+		w.Header().Set("Content-Type", "text/html; charset=utf-8")
+		w.Write(data)
+	})
 
 	return baseRouter
 }
