@@ -3,7 +3,7 @@ package sqlite
 var installSchemaQueries = []string{
 	// TODO: role table ?
 	`
-		CREATE TABLE IF NOT EXISTS USER (
+		CREATE TABLE IF NOT EXISTS users (
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			email TEXT NOT NULL UNIQUE CHECK(length(email) <= 255),
 			name TEXT NOT NULL CHECK(length(name) <= 32),
@@ -15,38 +15,38 @@ var installSchemaQueries = []string{
 		) STRICT;
 	`,
 	`
-		CREATE TABLE IF NOT EXISTS WORKSPACE (
+		CREATE TABLE IF NOT EXISTS workspaces (
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			name TEXT NOT NULL CHECK(length(name) <= 16),
 			description TEXT,
 			creator_id TEXT NOT NULL CHECK(length(creator_id) == 36),
 			created_at INTEGER NOT NULL,
 			updated_at INTEGER,
-			PRIMARY KEY (id)
-			FOREIGN KEY(creator_id) REFERENCES USER(id) ON DELETE CASCADE
+			PRIMARY KEY (id),
+			FOREIGN KEY(creator_id) REFERENCES users(id) ON DELETE CASCADE
 		) STRICT;
 	`,
 	`
-		CREATE TABLE IF NOT EXISTS WORKSPACE_USER_ROLE (
+		CREATE TABLE IF NOT EXISTS workspace_user_role (
 			workspace_id TEXT NOT NULL CHECK(length(workspace_id) == 36),
 			user_id TEXT NOT NULL CHECK(length(user_id) == 36),
 			is_admin INTEGER NOT NULL DEFAULT 0 CHECK(is_admin IN (0, 1)),
 			is_member INTEGER NOT NULL DEFAULT 0 CHECK(is_admin IN (0, 1)),
 			is_guest INTEGER NOT NULL DEFAULT 0 CHECK(is_guest IN (0, 1)),
 			PRIMARY KEY (workspace_id, user_id),
-			FOREIGN KEY(workspace_id) REFERENCES WORKSPACE(id) ON DELETE CASCADE,
-			FOREIGN KEY(user_id) REFERENCES USER(id) ON DELETE CASCADE
+			FOREIGN KEY(workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,
+			FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 		) STRICT;
 	`,
 	`
-		CREATE TABLE IF NOT EXISTS PROJECT_TYPE (
+		CREATE TABLE IF NOT EXISTS project_types (
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			name TEXT NOT NULL CHECK(length(name) <= 32),
 			PRIMARY KEY (id)
 		) STRICT;
 	`,
 	`
-		CREATE TABLE IF NOT EXISTS PROJECT (
+		CREATE TABLE IF NOT EXISTS projects (
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			workspace_id TEXT NOT NULL CHECK(length(id) == 36),
 			key TEXT NOT NULL CHECK(length(key) <= 8),
@@ -60,65 +60,67 @@ var installSchemaQueries = []string{
 			due_at INTEGER,
 			type TEXT NOT NULL CHECK(length(id) == 36),
 			PRIMARY KEY (id),
-			FOREIGN KEY(workspace_id) REFERENCES WORKSPACE(id) ON DELETE CASCADE,
-			FOREIGN KEY(creator_id) REFERENCES USER(id) ON DELETE CASCADE,
-			FOREIGN KEY(type) REFERENCES PROJECT_TYPE(id) ON DELETE CASCADE
+			FOREIGN KEY(workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,
+			FOREIGN KEY(creator_id) REFERENCES users(id) ON DELETE CASCADE,
+			FOREIGN KEY(type) REFERENCES project_types(id) ON DELETE CASCADE
 		) STRICT;
 	`,
 	`
-		CREATE TABLE IF NOT EXISTS PROJECT_USER_ROLE (
+		CREATE TABLE IF NOT EXISTS project_user_roles (
 			project_id TEXT NOT NULL CHECK(length(project_id) == 36),
 			user_id TEXT NOT NULL CHECK(length(user_id) == 36),
 			is_admin INTEGER NOT NULL DEFAULT 0 CHECK(is_admin IN (0, 1)),
 			is_member INTEGER NOT NULL DEFAULT 0 CHECK(is_member IN (0, 1)),
 			is_guest INTEGER NOT NULL DEFAULT 0 CHECK(is_guest IN (0, 1)),
 			PRIMARY KEY (project_id, user_id),
-			FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE,
-			FOREIGN KEY(user_id) REFERENCES USER(id) ON DELETE CASCADE
+			FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
+			FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
 		) STRICT;
 	`,
-	`
-		CREATE TABLE IF NOT EXISTS PROJECT_TASK_STATUS (
-			id TEXT NOT NULL CHECK(length(id) == 36),
-			project_id TEXT NOT NULL CHECK(length(id) == 36),
-			name TEXT NOT NULL CHECK(length(name) <= 32),
-			color TEXT NOT NULL CHECK(length(color) == 6),
-			element_index INTEGER NOT NULL,
-			PRIMARY KEY (id),
-			FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE
-		) STRICT;
-	`,
-	`
-		CREATE TABLE IF NOT EXISTS PROJECT_TASK_PRIORITY (
-			id TEXT NOT NULL CHECK(length(id) == 36),
-			project_id TEXT NOT NULL CHECK(length(id) == 36),
-			name TEXT NOT NULL CHECK(length(name) <= 32),
-			color TEXT NOT NULL CHECK(length(color) == 6),
-			element_index INTEGER NOT NULL,
-			PRIMARY KEY (id),
-			FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE
-		) STRICT;
-	`,
-	`
-		CREATE TABLE IF NOT EXISTS TASK (
-			id TEXT NOT NULL CHECK(length(id) == 36),
-			project_id TEXT NOT NULL CHECK(length(id) == 36),
-			project_task_index INTEGER NOT NULL,
-			summary TEXT NOT NULL UNIQUE CHECK(length(summary) <= 128),
-			description TEXT,
-			status TEXT NOT NULL CHECK(length(id) == 36),
-			priority TEXT NOT NULL CHECK(length(id) == 36),
-			creator_id TEXT NOT NULL CHECK(length(id) == 36),
-			created_at INTEGER NOT NULL,
-			updated_at INTEGER,
-			started_at INTEGER,
-			finished_at INTEGER,
-			due_at INTEGER,
-			PRIMARY KEY (id),
-			FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE,
-			FOREIGN KEY(status) REFERENCES PROJECT_TASK_STATUS(id) ON DELETE CASCADE,
-			FOREIGN KEY(priority) REFERENCES PROJECT_TASK_PRIORITY(id) ON DELETE CASCADE,
-			FOREIGN KEY(creator_id) REFERENCES USER(id) ON DELETE CASCADE
-		) STRICT;
-	`,
+	/*
+		`
+			CREATE TABLE IF NOT EXISTS project_task_status (
+				id TEXT NOT NULL CHECK(length(id) == 36),
+				project_id TEXT NOT NULL CHECK(length(id) == 36),
+				name TEXT NOT NULL CHECK(length(name) <= 32),
+				color TEXT NOT NULL CHECK(length(color) == 6),
+				element_index INTEGER NOT NULL,
+				PRIMARY KEY (id),
+				FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE
+			) STRICT;
+		`,
+		`
+			CREATE TABLE IF NOT EXISTS PROJECT_TASK_PRIORITY (
+				id TEXT NOT NULL CHECK(length(id) == 36),
+				project_id TEXT NOT NULL CHECK(length(id) == 36),
+				name TEXT NOT NULL CHECK(length(name) <= 32),
+				color TEXT NOT NULL CHECK(length(color) == 6),
+				element_index INTEGER NOT NULL,
+				PRIMARY KEY (id),
+				FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE
+			) STRICT;
+		`,
+		`
+			CREATE TABLE IF NOT EXISTS TASK (
+				id TEXT NOT NULL CHECK(length(id) == 36),
+				project_id TEXT NOT NULL CHECK(length(id) == 36),
+				project_task_index INTEGER NOT NULL,
+				summary TEXT NOT NULL UNIQUE CHECK(length(summary) <= 128),
+				description TEXT,
+				status TEXT NOT NULL CHECK(length(id) == 36),
+				priority TEXT NOT NULL CHECK(length(id) == 36),
+				creator_id TEXT NOT NULL CHECK(length(id) == 36),
+				created_at INTEGER NOT NULL,
+				updated_at INTEGER,
+				started_at INTEGER,
+				finished_at INTEGER,
+				due_at INTEGER,
+				PRIMARY KEY (id),
+				FOREIGN KEY(project_id) REFERENCES PROJECT(id) ON DELETE CASCADE,
+				FOREIGN KEY(status) REFERENCES PROJECT_TASK_STATUS(id) ON DELETE CASCADE,
+				FOREIGN KEY(priority) REFERENCES PROJECT_TASK_PRIORITY(id) ON DELETE CASCADE,
+				FOREIGN KEY(creator_id) REFERENCES USER(id) ON DELETE CASCADE
+			) STRICT;
+		`,
+	*/
 }
