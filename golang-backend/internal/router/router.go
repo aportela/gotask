@@ -10,6 +10,7 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/handlers"
+	"github.com/aportela/doneo/internal/middlewares"
 	"github.com/aportela/doneo/internal/repositories"
 	"github.com/aportela/doneo/internal/services"
 	"github.com/aportela/doneo/internal/ui"
@@ -20,6 +21,8 @@ func NewRouter(db database.Database) http.Handler {
 
 	baseRouter.Use(middleware.Logger)
 
+	baseRouter.Use(middlewares.RequireAuthentication)
+	baseRouter.Use(middlewares.RequireSuperUser)
 	apiRouter := chi.NewRouter()
 
 	apiRouter.Route("/users", func(r chi.Router) {
