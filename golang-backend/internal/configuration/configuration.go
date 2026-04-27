@@ -17,6 +17,9 @@ const databaseType = "sqlite"
 const sqliteDatabaseFilename = "doneo.sqlite3"
 const httpServerPort = 8086
 
+const accessTokenExpirationDays = 1
+const refreshTokenExpirationDays = 365
+
 func initViper() {
 	configFile := filepath.Join(data.GetDataPath(), configurationFilename)
 	viper.SetConfigFile(configFile)
@@ -26,6 +29,9 @@ func createDefaultConfiguration() error {
 	viper.Set("database.type", databaseType)
 	viper.Set("database.path", filepath.Join(data.GetDataPath(), sqliteDatabaseFilename))
 	viper.Set("server.port", httpServerPort)
+
+	viper.Set("auth.access_token_expiration_days", accessTokenExpirationDays)
+	viper.Set("auth.refresh_token_expiration_days", refreshTokenExpirationDays)
 
 	return viper.WriteConfigAs(filepath.Join(data.GetDataPath(), configurationFilename))
 }
