@@ -20,8 +20,8 @@ func GenerateToken(user domain.User, expiresAt time.Time, secretKey string) (Tok
 	}
 	claims := jwt.MapClaims{
 		"sub":  user.ID,
-		"exp":  expiresAt,
-		"iat":  time.Now(),
+		"exp":  expiresAt.Unix(),
+		"iat":  time.Now().Unix(),
 		"role": role,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
