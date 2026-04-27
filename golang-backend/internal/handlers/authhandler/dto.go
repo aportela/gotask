@@ -1,6 +1,5 @@
 package authhandler
 
-
 type signInRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"passsword"`
@@ -12,12 +11,16 @@ type signUpRequest struct {
 	Password string `json:"passsword"`
 }
 
-type TokenResponse {
-	Token string `json:"token"`
-	ExpiresAt int64 `json:"expiresAt"`
+type TokenResponse struct {
+	Token     string `json:"token"`
+	ExpiresAt int64  `json:"expiresAt"`
 }
 
-type SuccessSignInResponse struct {
+type SignInResponse struct {
 	AccessToken  TokenResponse `json:"accessToken"`
 	RefreshToken TokenResponse `json:"refreshToken"`
+}
+
+type RenewAccessTokenResponse struct {
+	AccessToken TokenResponse `json:"accessToken"`
 }

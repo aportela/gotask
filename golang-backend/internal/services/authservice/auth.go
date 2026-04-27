@@ -7,33 +7,21 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/repositories/userrepository"
 	"github.com/gofrs/uuid"
-	"github.com/golang-jwt/jwt/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
-type Token struct {
-	Token     string
-	ExpiresAt int64
-}
-
 type AuthService interface {
 	SignUp(ctx context.Context, user domain.User) error
-	SignIn(ctx context.Context, user domain.User) (Token, Token, error)
+	SignIn(ctx context.Context, user domain.User) (domain.User, error)
 }
 
 type authService struct {
-	repository                 userrepository.UserRepository
-	secretKey                  string
-	accessTokenExpirationDays  int
-	refreshTokenExpirationDays int
+	repository userrepository.UserRepository
 }
 
-func NewAuthService(repository userrepository.UserRepository, secretKey string, accessTokenExpirationDays int, refreshTokenExpirationDays int) AuthService {
+func NewAuthService(repository userrepository.UserRepository) AuthService {
 	return &authService{
-		repository:                 repository,
-		secretKey:                  secretKey,
-		accessTokenExpirationDays:  accessTokenExpirationDays,
-		refreshTokenExpirationDays: refreshTokenExpirationDays,
+		repository: repository,
 	}
 }
 
@@ -43,45 +31,14 @@ func (s *authService) SignUp(ctx context.Context, user domain.User) error {
 	return s.repository.Add(ctx, userrepository.MapUserDomainToUserDTO(user))
 }
 
-func (s *authService) SignIn(ctx context.Context, user domain.User) (Token, Token, error) {
+func (s *authService) SignIn(ctx context.Context, user domain.User) (domain.User, error) {
 	credentialUser, err := s.repository.GetByEmailForVerifyCredentials(ctx, user.Email, *user.Password)
 	if err != nil {
-		return Token{}, Token{}, err
+		return userrepository.MapUserDTOToUserDomain(credentialUser), err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(*credentialUser.PasswordHash), []byte(*user.Password))
 	if err != nil {
-		return Token{}, Token{}, domain.ErrInvalidCredentials
+		return userrepository.MapUserDTOToUserDomain(credentialUser), domain.ErrInvalidCredentials
 	}
-	var accessToken, refreshToken Token
-	accessToken.ExpiresAt = time.Now().Add(1 * time.Hour).Unix()        // expires in 1 hour
-	accessToken.ExpiresAt = time.Now().Add(365 * 24 * time.Hour).Unix() // expires in 365 days
-
-	accessToken.Token, err = s.generateJWT(user, accessToken.ExpiresAt)
-	if err != nil {
-		return Token{}, Token{}, err
-	}
-	refreshToken.Token, err = s.generateJWT(user, accessToken.ExpiresAt)
-	if err != nil {
-		return Token{}, Token{}, err
-	}
-	return accessToken, refreshToken, nil
-}
-
-func (s *authService) generateJWT(user domain.User, expiration int64) (string, error) {
-	role := "user"
-	if user.IsSuperUser {
-		role = "administrator"
-	}
-	claims := jwt.MapClaims{
-		"sub":  user.ID,
-		"exp":  expiration,
-		"iat":  time.Now().Unix(),
-		"role": role,
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	signedToken, err := token.SignedString([]byte(s.secretKey))
-	if err != nil {
-		return "", err
-	}
-	return signedToken, nil
+	return userrepository.MapUserDTOToUserDomain(credentialUser), nil
 }
