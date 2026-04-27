@@ -6,12 +6,13 @@ import (
 
 func MapUserDomainToUserDTO(user domain.User) userDTO {
 	return userDTO{
-		ID:          user.ID,
-		Name:        user.Name,
-		Email:       user.Email,
-		CreatedAt:   user.CreatedAt,
-		UpdatedAt:   user.UpdatedAt,
-		IsSuperUser: user.IsSuperUser,
+		ID:           user.ID,
+		Name:         user.Name,
+		Email:        user.Email,
+		PasswordHash: user.PasswordHash,
+		CreatedAt:    user.CreatedAt,
+		UpdatedAt:    user.UpdatedAt,
+		IsSuperUser:  user.IsSuperUser,
 	}
 }
 
