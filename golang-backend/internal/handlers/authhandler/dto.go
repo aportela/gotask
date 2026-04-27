@@ -2,13 +2,13 @@ package authhandler
 
 type signInRequest struct {
 	Email    string `json:"email"`
-	Password string `json:"passsword"`
+	Password string `json:"password"`
 }
 
 type signUpRequest struct {
 	Name     string `json:"name"`
 	Email    string `json:"email"`
-	Password string `json:"passsword"`
+	Password string `json:"password"`
 }
 
 type TokenResponse struct {
