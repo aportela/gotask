@@ -42,11 +42,19 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] invalid request payload: %w", err))
 		return
 	}
-	token, err := h.service.SignIn(r.Context(), signInRequest.Email, signInRequest.Password)
+	accessToken, refreshToken, err := h.service.SignIn(r.Context(), signInRequest.Email, signInRequest.Password)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to signin with email %s: %w", signInRequest.Email, err))
 		return
 	}
-	utils.ToJSONResponse(w, http.StatusOK, SuccessSignInResponse{Token: token})
-
+	cookie := http.Cookie{
+		Name:     "refresh_token",
+		Value:    refreshToken,
+		Path:     "/api/auth/renew_access_token",
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+	}
+	http.SetCookie(w, &cookie)
+	utils.ToJSONResponse(w, http.StatusOK, SuccessSignInResponse{AccessToken: accessToken, RefreshToken: refreshToken})
 }

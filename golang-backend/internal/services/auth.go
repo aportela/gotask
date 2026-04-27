@@ -12,7 +12,7 @@ import (
 
 type AuthService interface {
 	SignUp(ctx context.Context, user domain.User) error
-	SignIn(ctx context.Context, email, password string) (string, error)
+	SignIn(ctx context.Context, email, password string) (string, string, error)
 }
 
 type authService struct {
@@ -33,30 +33,34 @@ func (s *authService) SignUp(ctx context.Context, user domain.User) error {
 	return s.repository.Add(ctx, user)
 }
 
-func (s *authService) SignIn(ctx context.Context, email, password string) (string, error) {
+func (s *authService) SignIn(ctx context.Context, email, password string) (string, string, error) {
 	user, err := s.repository.GetByEmailForVerifyCredentials(ctx, email, password)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(*user.PasswordHash), []byte(password))
 	if err != nil {
-		return "", domain.ErrInvalidCredentials
+		return "", "", domain.ErrInvalidCredentials
 	}
-	token, err := s.generateJWT(user)
+	accessToken, err := s.generateJWT(user, time.Now().Add(1*time.Hour).Unix()) // expires in 1 hour
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return token, nil
+	refreshToken, err := s.generateJWT(user, time.Now().Add(365*24*time.Hour).Unix()) // expires in 365 days
+	if err != nil {
+		return "", "", err
+	}
+	return accessToken, refreshToken, nil
 }
 
-func (s *authService) generateJWT(user domain.User) (string, error) {
+func (s *authService) generateJWT(user domain.User, expiration int64) (string, error) {
 	role := "user"
 	if user.IsSuperUser {
 		role = "administrator"
 	}
 	claims := jwt.MapClaims{
 		"sub":  user.ID,
-		"exp":  time.Now().Add(24 * time.Hour).Unix(),
+		"exp":  expiration,
 		"iat":  time.Now().Unix(),
 		"role": role,
 	}
