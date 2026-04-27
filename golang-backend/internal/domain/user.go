@@ -7,8 +7,9 @@ type UserBase struct {
 
 type User struct {
 	UserBase
-	Email        string
-	Password     *string
+	Email    string
+	Password *string
+	// TODO: remove this (also exists in repository DTO)
 	PasswordHash *string
 	CreatedAt    int64
 	UpdatedAt    *int64
