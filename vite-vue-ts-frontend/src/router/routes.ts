@@ -17,7 +17,6 @@ const routes: RouteRecordRaw[] = [
       },
     ],
   },
-
   {
     path: "/",
     name: "root",

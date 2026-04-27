@@ -29,7 +29,6 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Post("/signin", userHandler.SignIn)
 		r.Post("/signout", userHandler.SignOut)
 		r.Post("/renew_access_token", userHandler.RenewAccessToken)
-
 	})
 
 	apiRouter.Route("/users", func(r chi.Router) {

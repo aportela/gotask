@@ -1,4 +1,22 @@
 <script setup lang="ts">
+    import { api } from '../composables/api';
+    import { ref } from 'vue';
+
+    const email = ref("admin@localhost");
+    const password = ref("secret");
+    const onSubmit = () => {
+        if (email.value && password.value) {
+            api.auth.signIn(email.value, password.value).then((successResponse: any) => {
+                console.log(successResponse);
+                //sessionStore.setAccessToken(successResponse.data.accessToken.token, successResponse.data.accessToken.expiresAtTimestamp);
+                //lastUsedEmail.set(profile.email);
+                //emit("success", successResponse.data);
+            })
+                .catch((errorResponse) => {
+                    console.error(errorResponse);
+                });
+        }
+    }
 </script>
 
 <template>
@@ -18,10 +36,11 @@
                         </svg></a><!-- END NAVBAR LOGO -->
                 </div>
                 <h2 class="h3 text-center mb-3">Login to your account</h2>
-                <form action="./" method="get" autocomplete="off" novalidate>
+                <form action="/api/auth/signin" method="post" autocomplete="off" @submit.prevent="onSubmit">
                     <div class="mb-3">
                         <label class="form-label">Email address</label>
-                        <input type="email" class="form-control" placeholder="your@email.com" autocomplete="off">
+                        <input type="email" v-model.trim="email" class="form-control" placeholder="your@email.com"
+                            autocomplete="off" required>
                     </div>
                     <div class="mb-2">
                         <label class="form-label">
@@ -31,7 +50,8 @@
                             </span>
                         </label>
                         <div class="input-group input-group-flat">
-                            <input type="password" class="form-control" placeholder="Your password" autocomplete="off">
+                            <input type="password" class="form-control" placeholder="Your password" autocomplete="off"
+                                v-model="password" required>
                             <span class="input-group-text">
                                 <a href="#" class="link-secondary" data-bs-toggle="tooltip" aria-label="Show password"
                                     data-bs-original-title="Show password"><!-- Download SVG icon from http://tabler.io/icons/icon/eye -->
