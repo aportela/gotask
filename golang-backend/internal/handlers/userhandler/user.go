@@ -1,4 +1,4 @@
-package handlers
+package userhandler
 
 import (
 	"encoding/json"
@@ -8,52 +8,51 @@ import (
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/handlers"
-	"github.com/aportela/doneo/internal/repositories"
-	"github.com/aportela/doneo/internal/services"
-	"github.com/aportela/doneo/internal/utils"
+	"github.com/aportela/doneo/internal/repositories/userrepository"
+	"github.com/aportela/doneo/internal/services/userservice"
 	"github.com/go-chi/chi/v5"
 )
 
 type UserHandler struct {
-	service services.UserService
+	service userservice.UserService
 }
 
 func NewUserHandler(db database.Database) *UserHandler {
-	userRepository := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepository)
+	userRepository := userrepository.NewUserRepository(db)
+	userService := userservice.NewUserService(userRepository)
 	return &UserHandler{service: userService}
 }
 
 func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var userRequest UserRequest
-	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
+	var request addUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] invalid request payload: %w", err))
 		return
 	}
-	user := ToUser(userRequest)
+	user := mapAddUserRequestToUserDomain(request)
 	err := h.service.AddUser(r.Context(), user)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to add user with ID %s: %w", userRequest.ID, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to add user with ID %s: %w", request.ID, err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, ToUserResponse(user), nil, http.StatusCreated)
+	handlers.ToHandlerJSONResponse(w, mapUserDomainToAddUserResponse(user), nil, http.StatusCreated)
 }
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var userRequest UserRequest
-	if err := json.NewDecoder(r.Body).Decode(&userRequest); err != nil {
+	var request updateUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] invalid request payload: %w", err))
 		return
 	}
-	user := ToUser(userRequest)
+	user := mapUpdateUserRequestToUserDomain(request)
 	err := h.service.UpdateUser(r.Context(), user)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to update user with ID %s: %w", user.ID, err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, ToUserResponse(user), nil)
+	handlers.ToHandlerJSONResponse(w, mapUserDomainToUpdateUserResponse(user), nil)
 }
 
 func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -80,11 +79,11 @@ func (h *UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	utils.ToJSONResponse(w, http.StatusOK, ToUserResponse(user))
+	handlers.ToHandlerJSONResponse(w, mapUserDomainToGetUserResponse(user), nil)
 }
 
 func (h *UserHandler) SearchUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	users, err := h.service.SearchUsers(r.Context())
-	handlers.ToHandlerJSONResponse(w, ToSearchUserResponse(users), err)
+	handlers.ToHandlerJSONResponse(w, mapUserArrayDomainToSearchUsersResponse(users), err)
 }

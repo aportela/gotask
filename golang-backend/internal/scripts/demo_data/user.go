@@ -9,8 +9,8 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
-	"github.com/aportela/doneo/internal/repositories"
-	"github.com/aportela/doneo/internal/services"
+	"github.com/aportela/doneo/internal/repositories/userrepository"
+	"github.com/aportela/doneo/internal/services/userservice"
 	"github.com/aportela/doneo/internal/utils"
 	"github.com/gofrs/uuid"
 )
@@ -61,8 +61,9 @@ func getRandomUser() domain.User {
 
 func createUsers(database database.Database, count int) []string {
 	var newUserIds []string
-	userRepository := repositories.NewUserRepository(database)
-	userService := services.NewUserService(userRepository)
+
+	userRepository := userrepository.NewUserRepository(database)
+	userService := userservice.NewUserService(userRepository)
 	for i := 1; i <= count; i++ {
 		newUser := getRandomUser()
 		err := userService.AddUser(context.Background(), newUser)

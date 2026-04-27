@@ -1,4 +1,4 @@
-package handlers
+package authhandler
 
 import (
 	"encoding/json"
@@ -8,57 +8,62 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/handlers"
-	"github.com/aportela/doneo/internal/repositories"
-	"github.com/aportela/doneo/internal/services"
+	"github.com/aportela/doneo/internal/repositories/userrepository"
+	"github.com/aportela/doneo/internal/services/authservice"
 	"github.com/aportela/doneo/internal/utils"
 )
 
 type AuthHandler struct {
-	service services.AuthService
+	service authservice.AuthService
 }
 
 func NewAuthHandler(db database.Database, secretKey string, accessTokenExpirationDays int, refreshTokenExpirationDays int) *AuthHandler {
-	userRepository := repositories.NewUserRepository(db)
-	authService := services.NewAuthService(userRepository, secretKey, accessTokenExpirationDays, refreshTokenExpirationDays)
+	userRepository := userrepository.NewUserRepository(db)
+	authService := authservice.NewAuthService(userRepository, secretKey, accessTokenExpirationDays, refreshTokenExpirationDays)
 	return &AuthHandler{service: authService}
 }
 
 func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-	var signUpRequest AuthRequest
-	if err := json.NewDecoder(r.Body).Decode(&signUpRequest); err != nil {
+	var request signUpRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] invalid request payload: %w", err))
 		return
 	}
-	err := h.service.SignUp(r.Context(), ToUser(signUpRequest))
+	err := h.service.SignUp(r.Context(), mapSignUpRequestToUserDomain(request))
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to register user with email %s: %w", signUpRequest.Email, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to register user with email %s: %w", request.Email, err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil, http.StatusCreated)
 }
 
 func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
-	var signInRequest AuthRequest
-	if err := json.NewDecoder(r.Body).Decode(&signInRequest); err != nil {
+	var request signInRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] invalid request payload: %w", err))
 		return
 	}
-	accessToken, refreshToken, err := h.service.SignIn(r.Context(), signInRequest.Email, signInRequest.Password)
+	accessToken, refreshToken, err := h.service.SignIn(r.Context(), mapSigninRequestToUserDomain(request))
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to signin with email %s: %w", signInRequest.Email, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to signin with email %s: %w", request.Email, err))
 		return
 	}
 	cookie := http.Cookie{
 		Name:     "refresh_token",
-		Value:    refreshToken,
+		Value:    refreshToken.Token,
 		Path:     "/api/auth/renew_access_token",
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		Expires:  time.Now().Add(365 * 24 * time.Hour),
+		Expires:  utils.MSTimestampToTime(refreshToken.ExpiresAt),
 	}
 	http.SetCookie(w, &cookie)
-	utils.ToJSONResponse(w, http.StatusOK, SuccessSignInResponse{AccessToken: accessToken, RefreshToken: refreshToken})
+	utils.ToJSONResponse(w, http.StatusOK,
+		SuccessSignInResponse{
+			AccessToken:  TokenResponse{Token: accessToken.Token, ExpiresAt: accessToken.ExpiresAt},
+			RefreshToken: TokenResponse{Token: refreshToken.Token, ExpiresAt: refreshToken.ExpiresAt},
+		},
+	)
 }
 
 func (h *AuthHandler) SignOut(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +74,7 @@ func (h *AuthHandler) SignOut(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		Expires:  time.Now().Add(365 * 24 * time.Hour),
+		Expires:  time.Now().Add(-time.Hour),
 	}
 	http.SetCookie(w, &cookie)
 	utils.ToJSONResponse(w, http.StatusOK, handlers.ToEmptyResponse())

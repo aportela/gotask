@@ -5,6 +5,10 @@ import (
 	"time"
 )
 
+func MSTimestampToTime(msTimestamp int64) time.Time {
+	return time.Unix(msTimestamp/1000, (msTimestamp%1000)*int64(time.Millisecond))
+}
+
 func CurrentMSTimestamp() int64 {
 	return time.Now().UnixMilli()
 }

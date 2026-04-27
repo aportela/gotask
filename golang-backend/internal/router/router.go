@@ -10,8 +10,7 @@ import (
 
 	"github.com/aportela/doneo/internal/configuration"
 	"github.com/aportela/doneo/internal/database"
-	authHandlers "github.com/aportela/doneo/internal/handlers/auth"
-	userHandlers "github.com/aportela/doneo/internal/handlers/user"
+	"github.com/aportela/doneo/internal/handlers/userhandler"
 	"github.com/aportela/doneo/internal/middlewares"
 	"github.com/aportela/doneo/internal/ui"
 )
@@ -23,19 +22,21 @@ func NewRouter(db database.Database, config configuration.Configuration) http.Ha
 
 	apiRouter := chi.NewRouter()
 
-	apiRouter.Route("/auth", func(r chi.Router) {
-		userHandler := authHandlers.NewAuthHandler(db, config.Auth.SecretKey, config.Auth.AccessTokenExpirationDays, config.Auth.RefreshTokenExpirationDays)
-		r.Post("/signup", userHandler.SignUp)
-		r.Post("/signin", userHandler.SignIn)
-		r.Post("/signout", userHandler.SignOut)
-		r.Post("/renew_access_token", userHandler.RenewAccessToken)
+	/*
+		apiRouter.Route("/auth", func(r chi.Router) {
+			userHandler := authHandlers.NewAuthHandler(db, config.Auth.SecretKey, config.Auth.AccessTokenExpirationDays, config.Auth.RefreshTokenExpirationDays)
+			r.Post("/signup", userHandler.SignUp)
+			r.Post("/signin", userHandler.SignIn)
+			r.Post("/signout", userHandler.SignOut)
+			r.Post("/renew_access_token", userHandler.RenewAccessToken)
 
-	})
+		})
+	*/
 
 	apiRouter.Route("/users", func(r chi.Router) {
 		r.Use(middlewares.RequireAuthentication)
 		baseRouter.Use(middlewares.RequireSuperUser)
-		userHandler := userHandlers.NewUserHandler(db)
+		userHandler := userhandler.NewUserHandler(db)
 		r.Post("/", userHandler.AddUser)
 		r.Get("/", userHandler.SearchUsers)
 		r.Route("/{id}", func(r chi.Router) {

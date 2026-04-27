@@ -6,15 +6,15 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
-	"github.com/aportela/doneo/internal/repositories"
-	"github.com/aportela/doneo/internal/services"
+	"github.com/aportela/doneo/internal/repositories/userrepository"
+	"github.com/aportela/doneo/internal/services/userservice"
 	"github.com/aportela/doneo/internal/utils"
 	"github.com/gofrs/uuid"
 )
 
 func CreateDefaultData(db database.Database) {
-	userRepository := repositories.NewUserRepository(db)
-	userService := services.NewUserService(userRepository)
+	userRepository := userrepository.NewUserRepository(db)
+	userService := userservice.NewUserService(userRepository)
 
 	userID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 	password := "secret"

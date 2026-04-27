@@ -1,11 +1,11 @@
-package services
+package userservice
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/aportela/doneo/internal/domain"
-	"github.com/aportela/doneo/internal/repositories"
+	"github.com/aportela/doneo/internal/repositories/userrepository"
 	"github.com/aportela/doneo/internal/utils"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,10 +19,10 @@ type UserService interface {
 }
 
 type userService struct {
-	repository repositories.UserRepository
+	repository userrepository.UserRepository
 }
 
-func NewUserService(repository repositories.UserRepository) UserService {
+func NewUserService(repository userrepository.UserRepository) UserService {
 	return &userService{
 		repository: repository,
 	}
@@ -36,7 +36,7 @@ func (s *userService) AddUser(ctx context.Context, user domain.User) error {
 	hashedPassword := string(hashedPasswordBytes)
 	user.PasswordHash = &hashedPassword
 	user.CreatedAt = utils.CurrentMSTimestamp()
-	if err := s.repository.Add(ctx, user); err != nil {
+	if err := s.repository.Add(ctx, userrepository.MapUserDomainToUserDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to add user with ID %s: %w", user.ID, err)
 	}
 	return nil
@@ -52,7 +52,7 @@ func (s *userService) UpdateUser(ctx context.Context, user domain.User) error {
 		user.PasswordHash = &hashedPassword
 	}
 	user.UpdatedAt = utils.CurrentMSTimestampPtr()
-	if err := s.repository.Update(ctx, user); err != nil {
+	if err := s.repository.Update(ctx, userrepository.MapUserDomainToUserDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to update user with ID %s: %w", user.ID, err)
 	}
 	return nil
@@ -68,9 +68,9 @@ func (s *userService) DeleteUser(ctx context.Context, id string) error {
 func (s *userService) GetUser(ctx context.Context, id string) (domain.User, error) {
 	user, err := s.repository.GetById(ctx, id)
 	if err != nil {
-		return user, fmt.Errorf("[UserService] failed to get user with ID %s: %w", id, err)
+		return userrepository.MapUserDTOToUserDomain(user), fmt.Errorf("[UserService] failed to get user with ID %s: %w", id, err)
 	}
-	return user, nil
+	return userrepository.MapUserDTOToUserDomain(user), nil
 }
 
 func (s *userService) SearchUsers(ctx context.Context) ([]domain.User, error) {
@@ -78,5 +78,5 @@ func (s *userService) SearchUsers(ctx context.Context) ([]domain.User, error) {
 	if err != nil {
 		return nil, fmt.Errorf("[UserService] failed to search users: %w", err)
 	}
-	return users, nil
+	return userrepository.MapUserArrayDTOToUserArrayDomain(users), nil
 }
