@@ -8,7 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 
-	"github.com/aportela/doneo/internal/configuration"
+	"github.com/aportela/doneo/internal/config"
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/handlers/authhandler"
 	"github.com/aportela/doneo/internal/handlers/userhandler"
@@ -16,7 +16,7 @@ import (
 	"github.com/aportela/doneo/internal/ui"
 )
 
-func NewRouter(db database.Database, config configuration.Configuration) http.Handler {
+func NewRouter(db database.Database, config config.Configuration) http.Handler {
 	baseRouter := chi.NewRouter()
 
 	baseRouter.Use(middleware.Logger)

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/aportela/doneo/internal/configuration"
+	"github.com/aportela/doneo/internal/config"
 
 	_ "modernc.org/sqlite"
 )
@@ -29,7 +29,7 @@ func configure(db *sql.DB) error {
 	return nil
 }
 
-func (handler *Handler) Open(databaseConfiguration configuration.DatabaseConfiguration) error {
+func (handler *Handler) Open(databaseConfiguration config.DatabaseConfiguration) error {
 	database, err := sql.Open("sqlite", "file:"+databaseConfiguration.Path)
 	if err != nil {
 		return fmt.Errorf("sqlite open error: %w", err)

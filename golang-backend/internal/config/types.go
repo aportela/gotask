@@ -1,4 +1,4 @@
-package configuration
+package config
 
 type DatabaseConfiguration struct {
 	Type string `mapstructure:"type"`

@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/aportela/doneo/internal/cli"
-	"github.com/aportela/doneo/internal/configuration"
+	"github.com/aportela/doneo/internal/config"
 	"github.com/aportela/doneo/internal/data"
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/router"
@@ -25,7 +25,7 @@ func main() {
 		log.Fatal("Error checking/creating data path:", err)
 	}
 
-	configuration, err := configuration.Open()
+	configuration, err := config.Open()
 
 	if err != nil {
 		log.Fatal("Error opening configuration:", err)

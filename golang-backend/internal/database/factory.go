@@ -3,12 +3,12 @@ package database
 import (
 	"errors"
 
-	"github.com/aportela/doneo/internal/configuration"
+	"github.com/aportela/doneo/internal/config"
 	sqliteWrapper "github.com/aportela/doneo/internal/database/sqlite"
 )
 
 // TODO: DSN
-func Open(cfg configuration.DatabaseConfiguration) (Database, error) {
+func Open(cfg config.DatabaseConfiguration) (Database, error) {
 	switch cfg.Type {
 
 	case "sqlite":

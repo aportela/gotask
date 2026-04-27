@@ -4,11 +4,11 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/aportela/doneo/internal/configuration"
+	"github.com/aportela/doneo/internal/config"
 )
 
 type Database interface {
-	Open(cfg configuration.DatabaseConfiguration) error
+	Open(cfg config.DatabaseConfiguration) error
 	CreateSchema() error
 	Close() error
 	ExecContext(ctx context.Context, query string, args ...any) (sql.Result, error)
