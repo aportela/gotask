@@ -17,6 +17,7 @@ const api = {
       };
       return axiosInstance.post("/auth/signup", params);
     },
+    signOut: () => axiosInstance.post("/auth/signout"),
     renewAccessToken: function () {
       return axiosInstance.post("/auth/renew_access_token");
     },

@@ -24,7 +24,7 @@
                         { name: "home" }
                     ).catch((e) => {
                         console.error(e);
-                    });;
+                    });
                 })
                 .catch((errorResponse) => {
                     switch (errorResponse.status) {
@@ -79,7 +79,7 @@
                                 placeholder="Your password" autocomplete="off" v-model="password" required
                                 minlength="5">
                             <div class="invalid-feedback" v-if="invalidPasswordField">{{ invalidPasswordFeedbackMessage
-                            }}
+                                }}
                             </div>
                         </div>
                     </div>

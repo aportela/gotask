@@ -2,7 +2,10 @@
     import { IconUserCircle, IconBrandGithub, IconDatabaseStar, IconHome, IconSitemap, IconBug, IconFileAnalytics, IconSettings, IconUsers, IconLayout } from '@tabler/icons-vue';
 
     import { ref } from 'vue'
+    import { useRouter } from "vue-router";
+    import { api } from '../composables/api';
 
+    const router = useRouter();
     const isDark = ref(false)
 
     const toggleTheme = () => {
@@ -26,6 +29,23 @@
 
         localStorage.setItem("fluidLayout", isFluid.value ? "true" : "false");
     };
+
+    const onSignOut = () => {
+        api.auth.signOut().then(() => {
+            router.push(
+                { name: "login" }
+            ).catch((e) => {
+                console.error(e);
+            });
+        }).catch(() => {
+            router.push(
+                { name: "login" }
+            ).catch((e) => {
+                console.error(e);
+            });
+        });
+    };
+
 
 </script>
 
@@ -107,7 +127,7 @@
                         <a href="#" class="dropdown-item">Feedback</a>
                         <div class="dropdown-divider"></div>
                         <a href="./settings.html" class="dropdown-item">Settings</a>
-                        <a href="./sign-in.html" class="dropdown-item">Logout</a>
+                        <a href="#" class="dropdown-item" @click.prevent="onSignOut">Logout</a>
                     </div>
                 </div>
             </div>
