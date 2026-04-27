@@ -62,7 +62,7 @@ func main() {
 			demodatascripts.CreateDemoData(databaseHandler)
 		}
 
-		r := router.NewRouter(databaseHandler)
+		r := router.NewRouter(databaseHandler, *configuration)
 
 		sigChan := make(chan os.Signal, 1)
 		signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
