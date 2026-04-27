@@ -3,7 +3,7 @@
 
 <template>
     <div class="row g-0 flex-fill">
-        <div class="col-12 col-lg-6 col-xl-4 border-top-wide border-primary d-flex flex-column justify-content-center">
+        <div class="col-12 col-lg-6 col-xl-4 d-flex flex-column justify-content-center">
             <div class="container container-tight my-5 px-lg-5">
                 <div class="text-center mb-4">
                     <!-- BEGIN NAVBAR LOGO --><a href="." aria-label="Tabler"
