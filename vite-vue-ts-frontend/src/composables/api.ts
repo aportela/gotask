@@ -17,6 +17,9 @@ const api = {
       };
       return axiosInstance.post("/auth/signup", params);
     },
+    renewAccessToken: function () {
+      return axiosInstance.post("/auth/renew_access_token");
+    },
   },
   user: {
     search: () => axiosInstance.get("/users"),
