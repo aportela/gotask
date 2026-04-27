@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"encoding/json"
 	"net/http"
 )
 
@@ -14,12 +13,7 @@ func RequireAuthentication(next http.Handler) http.Handler {
 		if !isAuthenticated() {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusUnauthorized)
-			resp := errorResponse{
-				Message: "missing authenticated session",
-			}
-			if err := json.NewEncoder(w).Encode(resp); err != nil {
-				http.Error(w, "internal error", http.StatusInternalServerError)
-			}
+			w.Write([]byte(`{"error":"unauthorized","message":"missing authenticated session"}`))
 			return
 		}
 		next.ServeHTTP(w, r)

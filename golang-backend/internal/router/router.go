@@ -33,7 +33,7 @@ func NewRouter(db database.Database, config configuration.Configuration) http.Ha
 	})
 
 	apiRouter.Route("/users", func(r chi.Router) {
-		r.Use(middlewares.CheckJWT)
+		r.Use(middlewares.CheckJWT(config.Auth.SecretKey))
 		r.Use(middlewares.RequireAuthentication)
 		r.Use(middlewares.RequireSuperUser)
 		userHandler := userhandler.NewUserHandler(db)

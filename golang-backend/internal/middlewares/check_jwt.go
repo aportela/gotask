@@ -1,11 +1,45 @@
 package middlewares
 
 import (
+	"context"
 	"net/http"
+	"strings"
+
+	"github.com/aportela/doneo/internal/jwt"
 )
 
-func CheckJWT(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		next.ServeHTTP(w, r)
-	})
+type contextKey string
+
+const userIDKey contextKey = "userID"
+
+func CheckJWT(secretKey string) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			authHeader := r.Header.Get("Authorization")
+			if authHeader == "" {
+				http.Error(w, "Authorization header missing", http.StatusUnauthorized)
+				return
+			}
+
+			parts := strings.SplitN(authHeader, " ", 2)
+			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+				http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
+				return
+			}
+
+			userID, err := jwt.VerifyToken(parts[1], secretKey)
+			if err != nil {
+				http.Error(w, "Invalid token: "+err.Error(), http.StatusUnauthorized)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), userIDKey, userID)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
+
+func GetUserIDFromContext(ctx context.Context) (string, bool) {
+	userID, ok := ctx.Value(userIDKey).(string)
+	return userID, ok
 }
