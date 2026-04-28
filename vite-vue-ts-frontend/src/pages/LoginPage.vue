@@ -91,7 +91,7 @@
                                 placeholder="Your password" autocomplete="off" v-model="password"
                                 :disabled="state.ajaxRunning" required minlength="5">
                             <div class="invalid-feedback" v-if="invalidPasswordField">{{ invalidPasswordFeedbackMessage
-                            }}
+                                }}
                             </div>
                         </div>
                     </div>
@@ -100,11 +100,6 @@
                             in</button>
                     </div>
                 </form>
-                <!--
-                <div class="text-center text-secondary mt-3">Don't have account yet? <router-link
-                        to="/auth/register">Sign up</router-link>
-                </div>
-                -->
             </div>
         </div>
         <div class="col-12 col-lg-6 col-xl-8 d-none d-lg-block">
