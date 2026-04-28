@@ -36,7 +36,7 @@
         <div class="header-content" :class="{ 'header-content-xl': headerClassXL }">
             <div class="logo">
                 <IconDatabaseStar />
-                <strong>Doneo</strong>
+                <span class="title">Doneo</span>
             </div>
             <div class="actions">
                 <n-button quaternary>
@@ -45,7 +45,7 @@
                 <n-button quaternary>
                     <IconMoon :size="20" />
                 </n-button>
-                <n-button quaternary @click="headerClassXL = !headerClassXL">
+                <n-button quaternary @click="headerClassXL = !headerClassXL" @mousedown.prevent>
                     <IconLayout :size="20" />
                 </n-button>
                 <n-dropdown :options="options" placement="bottom-end" trigger="hover">
@@ -101,7 +101,9 @@
         align-items: center;
     }
 
-    .logo strong {
-        margin-left: 1em;
+    .title {
+        margin-left: 8px;
+        font-size: 18px;
+        font-weight: 600;
     }
 </style>
