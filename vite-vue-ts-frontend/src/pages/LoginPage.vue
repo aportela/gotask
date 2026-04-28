@@ -2,6 +2,7 @@
     import { ref } from 'vue';
     import { useRouter } from "vue-router";
     import { api } from '../composables/api';
+    import { useSessionStore } from "../stores/session";
 
     const invalidEmailField = ref(false);
     const invalidEmailFeedbackMessage = ref<string>("");
@@ -9,6 +10,9 @@
     const invalidPasswordFeedbackMessage = ref<string>("");
 
     const router = useRouter();
+
+    const sessionStore = useSessionStore();
+
     const email = ref("admin@localhost");
     const password = ref("secret");
 
@@ -20,6 +24,7 @@
             api.auth.signIn(email.value, password.value)
                 .then((successResponse: any) => {
                     console.log(successResponse);
+                    sessionStore.setAccessToken(successResponse.data.accessToken.token, successResponse.data.accessToken.expiresAtTimestamp);
                     router.push(
                         { name: "home" }
                     ).catch((e) => {
