@@ -19,7 +19,7 @@
     <div class="login-page">
         <div class="left">
             <n-card class="login-card" bordered>
-                <h2 class="title">Iniciar sesión</h2>
+                <h2 class="title">Login to your account</h2>
                 <LoginForm @success="onSuccessLogin" />
             </n-card>
         </div>
