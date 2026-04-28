@@ -43,7 +43,6 @@ setInterval(() => {
     .finally(() => {});
 }, accessTokenCheckInterval * 1000);
 
-/*
 router.beforeEach((to, _from) => {
   if (!to.matched.length) {
     return { name: "notFound" };
@@ -61,6 +60,6 @@ router.beforeEach((to, _from) => {
     return { name: "login" };
   }
 });
-*/
+
 app.use(router);
 app.mount("#app");
