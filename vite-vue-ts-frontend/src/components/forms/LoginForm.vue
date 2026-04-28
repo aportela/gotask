@@ -8,24 +8,24 @@
     import { useSessionStore } from "../../stores/session";
     import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "../../types/ajaxState";
 
+
     import { createStorageEntry } from '../../composables/localStorage';
 
+    const localStorageLastUsedEmail = createStorageEntry<string | null>("lastUsedEmail", null);
+
+    const lastUsedEmail = localStorageLastUsedEmail.get();
 
     const router = useRouter();
 
     const sessionStore = useSessionStore();
-
-    const lastUsedEmail = createStorageEntry<string | null>("lastUsedEmail", null);
-
-    const savedEmail = lastUsedEmail.get();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
     const signInFormRef = ref<FormInst | null>(null)
 
     const formValues = ref({
-        email: savedEmail,
-        password: null
+        email: lastUsedEmail || null,
+        password: null,
     });
 
     const serverErrors = ref<{ [key: string]: string }>({})
@@ -67,8 +67,7 @@
                 .then((successResponse: any) => {
                     if (successResponse.data.accessToken) {
                         sessionStore.setAccessToken(successResponse.data.accessToken.token, successResponse.data.accessToken.expiresAtTimestamp);
-                        lastUsedEmail.set(formValues.value.email);
-
+                        localStorageLastUsedEmail.set(formValues.value.email);
                         router.push(
                             { name: "home" }
                         ).catch((e) => {
@@ -108,7 +107,6 @@
             console.log(e);
         }
     }
-
 </script>
 
 <template>
