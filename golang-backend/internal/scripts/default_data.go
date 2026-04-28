@@ -23,7 +23,7 @@ func CreateDefaultData(db database.Database) {
 			ID:   userID,
 			Name: "administrator",
 		},
-		Email:       "admin@localhost",
+		Email:       "admin@localhost.localnet",
 		Password:    &password,
 		CreatedAt:   utils.CurrentMSTimestamp(),
 		UpdatedAt:   nil,
