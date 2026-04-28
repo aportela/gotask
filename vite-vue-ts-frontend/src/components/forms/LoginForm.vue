@@ -63,7 +63,7 @@
 <template>
     <form action="/api/auth/signin" method="post" autocomplete="off" @submit.prevent="onSubmit">
         <div class="mb-3">
-            <label class="form-label">Email address</label>
+            <label class="form-label">Email</label>
             <input type="email" v-model.trim="email" :disabled="state.ajaxRunning" class="form-control"
                 :class="{ 'is-invalid': invalidEmailField }" placeholder="your@email.com" autocomplete="off" required>
             <div class="invalid-feedback" v-if="invalidEmailField">{{ invalidEmailFeedbackMessage }}</div>
@@ -82,7 +82,7 @@
                     placeholder="Your password" autocomplete="off" v-model="password" :disabled="state.ajaxRunning"
                     required minlength="5">
                 <div class="invalid-feedback" v-if="invalidPasswordField">{{ invalidPasswordFeedbackMessage
-                }}
+                    }}
                 </div>
             </div>
         </div>
