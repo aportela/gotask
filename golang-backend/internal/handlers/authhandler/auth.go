@@ -28,20 +28,6 @@ func NewAuthHandler(db database.Database, secretKey string, accessTokenExpiratio
 	return &AuthHandler{service: authService, secretKey: secretKey, accessTokenExpirationHours: accessTokenExpirationHours, refreshTokenExpirationDays: refreshTokenExpirationDays}
 }
 
-func (h *AuthHandler) SignUp(w http.ResponseWriter, r *http.Request) {
-	var request signUpRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] invalid request payload: %w", err))
-		return
-	}
-	err := h.service.SignUp(r.Context(), mapSignUpRequestToUserDomain(request))
-	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to register user with email %s: %w", request.Email, err))
-		return
-	}
-	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil, http.StatusCreated)
-}
-
 func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	var request signInRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
