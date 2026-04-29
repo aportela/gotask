@@ -2,12 +2,12 @@
     import type { MenuOption, } from 'naive-ui'
     import { NMenu } from 'naive-ui';
     import type { Component } from 'vue'
-    import { IconBug, IconSitemap, IconHome, IconFileAnalytics, IconSettings } from '@tabler/icons-vue';
+    import { IconBug, IconSitemap, IconHome, IconFileAnalytics, IconSettings, IconSquarePlus, IconListDetails } from '@tabler/icons-vue';
     import { NIcon } from 'naive-ui'
     import { h } from 'vue'
     import { RouterLink } from 'vue-router'
 
-    const commonIconSize = 18;
+    const commonIconSize = 20;
 
     function renderIcon(icon: Component) {
         return (size = commonIconSize) =>
@@ -57,7 +57,41 @@
                     { default: () => 'Projects' }
                 ),
             key: 'projects',
-            icon: renderIcon(IconSitemap)(commonIconSize)
+            icon: renderIcon(IconSitemap)(commonIconSize),
+            children: [
+                {
+                    label: () =>
+                        h(
+                            RouterLink,
+                            {
+                                to: {
+                                    name: 'tasks',
+                                    params: {
+                                    }
+                                }
+                            },
+                            { default: () => 'Add' }
+                        ),
+                    key: 'add_project',
+                    icon: renderIcon(IconSquarePlus)(commonIconSize)
+                },
+                {
+                    label: () =>
+                        h(
+                            RouterLink,
+                            {
+                                to: {
+                                    name: 'tasks',
+                                    params: {
+                                    }
+                                }
+                            },
+                            { default: () => 'List' }
+                        ),
+                    key: 'list_project',
+                    icon: renderIcon(IconListDetails)(commonIconSize)
+                },
+            ]
         },
         {
             label: () =>
@@ -105,7 +139,25 @@
                     { default: () => 'Settings' }
                 ),
             key: 'settings',
-            icon: renderIcon(IconSettings)(commonIconSize)
+            icon: renderIcon(IconSettings)(commonIconSize),
+            children: [
+                {
+                    label: () =>
+                        h(
+                            RouterLink,
+                            {
+                                to: {
+                                    name: 'users',
+                                    params: {
+                                    }
+                                }
+                            },
+                            { default: () => 'Manage users' }
+                        ),
+                    key: 'users',
+                    icon: renderIcon(IconSettings)(commonIconSize)
+                },
+            ]
         },
     ]
 
@@ -115,7 +167,8 @@
 </script>
 
 <template>
-    <n-menu :options="menuOptions" @update:value="handleUpdateValue" />
+    <n-menu :collapsed-width="64" :collapsed-icon-size="commonIconSize" :options="menuOptions"
+        @update:value="handleUpdateValue" />
 </template>
 
 <style lang="css" scoped></style>

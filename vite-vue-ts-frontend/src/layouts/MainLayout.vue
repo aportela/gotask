@@ -20,7 +20,8 @@
                 <TopMenu v-if="!withSidebar" />
             </n-layout-header>
             <n-layout :has-sider="true" v-if="withSidebar">
-                <n-layout-sider :collapsed-width="64" :width="240" v-model:collapsed="isCollapsed" show-trigger>
+                <n-layout-sider collapse-mode="width" :collapsed-width="64" :width="240" :collapsed="isCollapsed"
+                    @collapse="isCollapsed = true" @expand="isCollapsed = false" show-trigger>
                     <SidebarMenu />
                 </n-layout-sider>
                 <n-layout-content>
