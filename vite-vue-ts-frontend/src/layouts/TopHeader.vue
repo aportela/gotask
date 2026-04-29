@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { NLayoutHeader, NButton, NDropdown } from 'naive-ui'
-    import { NIcon, NSpace } from 'naive-ui'
+    import { NIcon, NFlex } from 'naive-ui'
     import { IconUserCircle, IconDatabaseStar, IconId, IconLogout } from '@tabler/icons-vue';
     import type { Component } from 'vue'
     import { h } from 'vue'
@@ -43,7 +43,7 @@
                 <IconDatabaseStar :size="commonIconSize" />
                 <span class="brand-name">Doneo</span>
             </div>
-            <n-space>
+            <n-flex>
                 <GithubButton :size="commonIconSize" />
                 <SwitchColorSchemeButton :size="commonIconSize" />
                 <SwitchFluidLayoutButton :size="commonIconSize" />
@@ -53,7 +53,7 @@
                         <span class="username">Administrator</span>
                     </n-button>
                 </n-dropdown>
-            </n-space>
+            </n-flex>
         </div>
     </n-layout-header>
 </template>
@@ -64,6 +64,7 @@
         justify-content: center;
         align-items: center;
         height: 48px;
+        padding: 0px 10px;
         box-sizing: border-box;
         width: 100%;
     }
