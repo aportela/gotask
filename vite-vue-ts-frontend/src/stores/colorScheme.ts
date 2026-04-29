@@ -9,7 +9,7 @@ const systemTheme: Schemes = window.matchMedia("(prefers-color-scheme: dark)")
   : "light";
 
 const localStorageColorScheme = createStorageEntry<Schemes>(
-  "colorScheme",
+  "userSettings.colorScheme",
   systemTheme,
 );
 
