@@ -1,9 +1,55 @@
 import axios from "axios";
+//import { useSessionStore } from "../stores/session";
 import { SERVER_API_BASE_PATH } from "../constants";
+
+//const sessionStore = useSessionStore();
 
 const axiosInstance = axios.create({
   baseURL: SERVER_API_BASE_PATH,
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (!error) {
+      throw new Error("Unknown API error");
+    } else {
+      if (!error.response) {
+        error.response = {
+          status: 0,
+          statusText: "undefined",
+        };
+      }
+      if (error.response?.status === 401) {
+        /*
+        if (sessionStore.hasAccessToken) {
+          sessionStore.removeAccessToken();
+        }
+          */
+      }
+      error.isAPIError =
+        error.response.headers["content-type"] == "application/json" &&
+        error.response.data.APIError === true;
+      error.customAPIErrorDetails = {
+        method: error.config?.method || "N/A",
+        url: error.request?.responseURL || "N/A",
+        httpCode: error.response?.status || "N/A",
+        httpStatus: error.response?.statusText || "Unknown error",
+        contentType: error.response.headers["content-type"],
+        request: {
+          params: {
+            query: error.config.params || null,
+            data: error.config.data || null,
+          },
+        },
+        response: error.response.data || null,
+      };
+      throw error;
+    }
+  },
+);
 
 const bgDownload = async (url: string, fileName: string = "fileName") => {
   const startTime = Date.now();
