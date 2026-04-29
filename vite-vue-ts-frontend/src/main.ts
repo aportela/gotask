@@ -9,6 +9,8 @@ import AppNaiveUI from "./App-NaiveUI.vue";
 import { useI18nStore } from "./stores/i18n";
 import { useSessionStore } from "./stores/session";
 
+import { useUserSettingsStore } from "./stores/userSettings";
+
 const pinia = createPinia();
 
 const useNaiveUI = true;
@@ -33,6 +35,9 @@ declare module "vue-i18n" {
   export interface DefineNumberFormat {}
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
+
+const userSettingsStore = useUserSettingsStore();
+userSettingsStore.init();
 
 const i18nStore = useI18nStore();
 
