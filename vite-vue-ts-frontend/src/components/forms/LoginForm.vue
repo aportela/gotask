@@ -51,7 +51,7 @@
                 if (serverErrors.value.password) return new Error(serverErrors.value.password)
                 return true
             },
-            trigger: ['input', 'blur']
+            trigger: ['blur']
         }
     }
 
@@ -139,8 +139,8 @@
     <n-spin :show="state.ajaxRunning" stroke="pink">
         <n-form ref="signInFormRef" :model="formValues" label-width="100px" :rules="rules">
             <n-form-item label="Email" path="email" show-feedback>
-                <n-input type="text" v-model:value="formValues.email" placeholder="Enter your email address"
-                    :disabled="state.ajaxRunning" />
+                <n-input type="text" :autofocus="true" v-model:value="formValues.email"
+                    placeholder="Enter your email address" :disabled="state.ajaxRunning" />
             </n-form-item>
 
             <n-form-item label="Password" path="password" show-feedback>
@@ -157,7 +157,7 @@
             <n-form-item>
                 <n-button secondary @click="validateForm" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                }}</n-button>
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
