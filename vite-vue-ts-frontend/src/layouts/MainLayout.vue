@@ -28,7 +28,7 @@
                     <router-view />
                 </n-layout-content>
             </n-layout>
-            <n-layout-content>
+            <n-layout-content v-else>
                 <router-view />
             </n-layout-content>
         </n-layout>
