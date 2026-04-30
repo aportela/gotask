@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { h, onMounted, shallowRef } from 'vue';
+    import { h, onMounted, ref, shallowRef } from 'vue';
     import { api } from '../composables/api';
     import { NDataTable, NAvatar } from 'naive-ui';
     import type { DataTableColumns } from 'naive-ui'
@@ -74,12 +74,15 @@
 
     const users = shallowRef<User[]>([]);
 
+    const loading = ref<boolean>(false);
+
     onMounted(() => {
+        loading.value = true;
         api.user.search().then((successResponse: any) => {
             users.value = successResponse.data.users;
         }).catch((errorResponse: any) => {
             console.log(errorResponse);
-        });
+        }).finally(() => { loading.value = false; })
     });
 
     const pagination = false as const
@@ -87,7 +90,7 @@
 </script>
 
 <template>
-    <n-data-table :columns="columns" :data="users" :pagination="pagination" :bordered="false" />
+    <n-data-table :columns="columns" :data="users" :pagination="pagination" :bordered="false" :loading="loading" />
 </template>
 
 <style lang="css"></style>
