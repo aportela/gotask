@@ -3,7 +3,6 @@ package projectrepository
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/utils"
@@ -26,12 +25,13 @@ func NewProjectRepository(database database.Database) ProjectRepository {
 }
 
 func (projectRepository *projectRepository) Add(ctx context.Context, project projectDTO) error {
-	fmt.Println(project.TypeId)
 	_, err := projectRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO projects (id, workspace_id, key, summary, description, creator_id, created_at, updated_at, started_at, finished_at, due_at, type_id)
-			VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?)
+            INSERT INTO projects
+				(id, workspace_id, key, summary, description, creator_id, created_at, updated_at, started_at, finished_at, due_at, type_id)
+			VALUES
+				(?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?)
         `,
 		project.ID,
 		project.WorkspaceId,
@@ -40,7 +40,6 @@ func (projectRepository *projectRepository) Add(ctx context.Context, project pro
 		utils.NullableStringToSQL(project.Description),
 		project.CreatorId,
 		project.CreatedAt,
-		utils.NullableInt64ToSQL(project.UpdatedAt),
 		utils.NullableInt64ToSQL(project.StartedAt),
 		utils.NullableInt64ToSQL(project.FinishedAt),
 		utils.NullableInt64ToSQL(project.DueAt),
@@ -99,7 +98,7 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
             SELECT
                 P.id, P.key, P.summary, P.description, P.created_at, P.updated_at, P.started_at, P.finished_at, P.due_at, P.type_id, PT.name, P.creator_id, U.name
             FROM projects P
-			INNER JOIN project_types PT ON PT.id = P.type
+			INNER JOIN project_types PT ON PT.id = P.type_id
 			INNER JOIN users U ON U.ID = P.creator_id
             WHERE P.id = ?
         `,
@@ -119,7 +118,7 @@ func (projectRepository *projectRepository) Search(ctx context.Context) ([]proje
             SELECT
                 P.id, P.key, P.summary, P.description, P.created_at, P.updated_at, P.started_at, P.finished_at, P.due_at, P.type_id, PT.name, P.creator_id, U.name
             FROM projects P
-			INNER JOIN project_types PT ON PT.id = P.type
+			INNER JOIN project_types PT ON PT.id = P.type_id
 			INNER JOIN users U ON U.ID = P.creator_id
         `,
 	)
