@@ -10,7 +10,7 @@
         email: string;
         isAdministrator: boolean;
         createdAt: number;
-        lastUpdateAt: number;
+        updatedAt: number;
         avatar: string;
     };
 
@@ -20,7 +20,7 @@
         email: string;
         isAdministrator: boolean;
         createdAt: number;
-        lastUpdateAt: number;
+        updatedAt: number;
         avatar: string;
 
         constructor(item: UserInterface) {
@@ -29,7 +29,7 @@
             this.email = item.email;
             this.isAdministrator = item.isAdministrator;
             this.createdAt = item.createdAt;
-            this.lastUpdateAt = item.lastUpdateAt;
+            this.updatedAt = item.updatedAt;
             this.avatar = item.avatar;
         }
     }
@@ -60,11 +60,11 @@
             }
         },
         {
-            title: 'Last Updated',
-            key: 'lastUpdateAt',
+            title: 'Updated at',
+            key: 'updatedAt',
             render(row) {
-                if (row.lastUpdateAt) {
-                    return new Date(row.lastUpdateAt).toLocaleString()
+                if (row.updatedAt) {
+                    return new Date(row.updatedAt).toLocaleString()
                 } else {
                     return null;
                 }
