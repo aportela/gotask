@@ -66,7 +66,7 @@ func (s *userService) DeleteUser(ctx context.Context, id string) error {
 }
 
 func (s *userService) GetUser(ctx context.Context, id string) (domain.User, error) {
-	user, err := s.repository.GetById(ctx, id)
+	user, err := s.repository.Get(ctx, id)
 	if err != nil {
 		return userrepository.MapUserDTOToUserDomain(user), fmt.Errorf("[UserService] failed to get user with ID %s: %w", id, err)
 	}

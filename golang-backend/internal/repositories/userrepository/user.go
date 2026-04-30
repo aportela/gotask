@@ -14,7 +14,7 @@ type UserRepository interface {
 	Add(ctx context.Context, user userDTO) error
 	Update(ctx context.Context, user userDTO) error
 	Delete(ctx context.Context, id string) error
-	GetById(ctx context.Context, id string) (userDTO, error)
+	Get(ctx context.Context, id string) (userDTO, error)
 	GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (userDTO, error)
 	Search(ctx context.Context) ([]userDTO, error)
 }
@@ -80,7 +80,7 @@ func (userRepository *userRepository) Delete(ctx context.Context, id string) err
 	return err
 }
 
-func (userRepository *userRepository) GetById(ctx context.Context, id string) (userDTO, error) {
+func (userRepository *userRepository) Get(ctx context.Context, id string) (userDTO, error) {
 	var user userDTO
 	var updatedAt sql.NullInt64
 	var isSuperUser sql.NullByte
