@@ -7,4 +7,5 @@ const (
 	Update
 	Delete
 	View
+	// TODO: List, Execute, Admin/Full ?
 )
