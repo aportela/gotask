@@ -46,9 +46,9 @@ func (projectRepository *ProjectRepository) add(ctx context.Context, project dom
 		utils.NullableStringToSQL(project.Description),
 		project.CreatedBy.ID,
 		project.CreatedAt,
-		utils.NullableInt64ToSQL(project.LastModifiedAt),
+		utils.NullableInt64ToSQL(project.UpdatedAt),
 		utils.NullableInt64ToSQL(project.StartedAt),
-		utils.NullableInt64ToSQL(project.FinishedAt),
+		utils.NullableInt64ToSQL(project.UpdatedAt),
 		utils.NullableInt64ToSQL(project.DueAt),
 		project.Type.ID,
 	)
@@ -90,7 +90,7 @@ func (projectRepository *ProjectRepository) Update(ctx context.Context, project 
 		utils.NullableStringToSQL(project.Description),
 		utils.CurrentMSTimestamp(),
 		utils.NullableInt64ToSQL(project.StartedAt),
-		utils.NullableInt64ToSQL(project.FinishedAt),
+		utils.NullableInt64ToSQL(project.UpdatedAt),
 		utils.NullableInt64ToSQL(project.DueAt),
 		project.Type.ID,
 		project.ID,
@@ -164,9 +164,9 @@ func (projectRepository *ProjectRepository) get(ctx context.Context, id string) 
 		id).Scan(&project.ID, &project.Key, &project.Summary, &description, &project.CreatedAt, &updated_at, &started_at, &finished_at, &due_at, &project.Type.ID, &project.Type.Name, &creatorID, &creatorName)
 	project.CreatedBy = domain.UserBase{ID: creatorID, Name: creatorName}
 	project.Description = utils.SQLStrPtr(description)
-	project.LastModifiedAt = utils.SQLInt64Ptr(updated_at)
+	project.UpdatedAt = utils.SQLInt64Ptr(updated_at)
 	project.StartedAt = utils.SQLInt64Ptr(started_at)
-	project.FinishedAt = utils.SQLInt64Ptr(finished_at)
+	project.UpdatedAt = utils.SQLInt64Ptr(finished_at)
 	project.DueAt = utils.SQLInt64Ptr(due_at)
 
 	return &project, err
@@ -221,9 +221,9 @@ func (projectRepository *ProjectRepository) Search(ctx context.Context) ([]domai
 
 		project.CreatedBy = domain.UserBase{ID: creatorID, Name: creatorName}
 		project.Description = utils.SQLStrPtr(description)
-		project.LastModifiedAt = utils.SQLInt64Ptr(updated_at)
+		project.UpdatedAt = utils.SQLInt64Ptr(updated_at)
 		project.StartedAt = utils.SQLInt64Ptr(started_at)
-		project.FinishedAt = utils.SQLInt64Ptr(finished_at)
+		project.UpdatedAt = utils.SQLInt64Ptr(finished_at)
 		project.DueAt = utils.SQLInt64Ptr(due_at)
 
 		projects = append(projects, project)

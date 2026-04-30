@@ -124,18 +124,17 @@ func getRandomProject(userIds []string, projectTypeIds []string) domain.Project 
 		participants = append(participants, domain.UserBase{ID: userIds[i]})
 	}
 	return domain.Project{
-		ID:             projectID,
-		Key:            getRandomProjectKey(),
-		Summary:        getRandomProjectSummary(),
-		Description:    &projectDescription,
-		CreatedBy:      domain.UserBase{ID: userIds[rand.Intn(len(userIds))]},
-		CreatedAt:      ctime,
-		LastModifiedAt: &ftime,
-		StartedAt:      &stime,
-		FinishedAt:     &ftime,
-		DueAt:          &dtime,
-		Type:           domain.ProjectType{ID: projectTypeIds[rand.Intn(len(projectTypeIds))]},
-		Participants:   participants,
+		ID:           projectID,
+		Key:          getRandomProjectKey(),
+		Summary:      getRandomProjectSummary(),
+		Description:  &projectDescription,
+		CreatedBy:    domain.UserBase{ID: userIds[rand.Intn(len(userIds))]},
+		CreatedAt:    ctime,
+		UpdatedAt:    &ftime,
+		StartedAt:    &stime,
+		DueAt:        &dtime,
+		Type:         domain.ProjectType{ID: projectTypeIds[rand.Intn(len(projectTypeIds))]},
+		Participants: participants,
 	}
 }
 

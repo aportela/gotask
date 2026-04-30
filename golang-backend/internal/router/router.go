@@ -12,6 +12,7 @@ import (
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/handlers/authhandler"
 	"github.com/aportela/doneo/internal/handlers/userhandler"
+	"github.com/aportela/doneo/internal/handlers/workspacehandler"
 	"github.com/aportela/doneo/internal/ui"
 )
 
@@ -41,6 +42,15 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 			r.Put("/", userHandler.UpdateUser)
 			r.Delete("/", userHandler.DeleteUser)
 		})
+	})
+
+	apiRouter.Route("/workspaces", func(r chi.Router) {
+		//r.Use(middlewares.CheckJWT(cfg.Auth.SecretKey))
+		//r.Use(middlewares.RequireAuthentication)
+		//r.Use(middlewares.RequireSuperUser)
+		workspaceHandler := workspacehandler.NewWorkspaceHandler(db)
+		r.Post("/", workspaceHandler.AddWorkspace)
+		r.Get("/", workspaceHandler.SearchWorkspaces)
 	})
 
 	/*
