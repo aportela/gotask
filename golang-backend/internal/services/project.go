@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"github.com/aportela/doneo/internal/domain"
-	"github.com/aportela/doneo/internal/repositories"
+	"github.com/aportela/doneo/internal/repositories/projectrepository"
 )
 
 type ProjectService struct {
-	repository *repositories.ProjectRepository
+	repository *projectrepository.ProjectRepository
 }
 
-func NewProjectService(repository *repositories.ProjectRepository) *ProjectService {
+func NewProjectService(repository *projectrepository.ProjectRepository) *ProjectService {
 	return &ProjectService{
 		repository: repository,
 	}

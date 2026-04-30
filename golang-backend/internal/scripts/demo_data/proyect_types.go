@@ -6,7 +6,7 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
-	"github.com/aportela/doneo/internal/repositories"
+	"github.com/aportela/doneo/internal/repositories/projecttyperepository"
 	"github.com/aportela/doneo/internal/services"
 	"github.com/gofrs/uuid"
 )
@@ -21,7 +21,7 @@ func createProjectTypes(database database.Database) []string {
 	}
 
 	var newProjectTypeIds []string
-	projectTypeRepository := repositories.NewProjectTypeRepository(database)
+	projectTypeRepository := projecttyperepository.NewProjectTypeRepository(database)
 	projectTypeService := services.NewProjectTypeService(projectTypeRepository)
 	for _, projectTypeName := range projectTypeNames {
 		projectTypeID := func() string { u, _ := uuid.NewV7(); return u.String() }()

@@ -8,7 +8,7 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
-	"github.com/aportela/doneo/internal/repositories"
+	"github.com/aportela/doneo/internal/repositories/projectrepository"
 	"github.com/aportela/doneo/internal/services"
 	"github.com/aportela/doneo/internal/utils"
 	"github.com/gofrs/uuid"
@@ -140,7 +140,7 @@ func getRandomProject(userIds []string, projectTypeIds []string) domain.Project 
 
 func createProjects(database database.Database, projectTypeIds []string, userIds []string, count int) []string {
 	var newProjectIds []string
-	projectRepository := repositories.NewProjectRepository(database)
+	projectRepository := projectrepository.NewProjectRepository(database)
 	projectService := services.NewProjectService(projectRepository)
 	for i := 1; i <= count; i++ {
 		newProject := getRandomProject(userIds, projectTypeIds)
