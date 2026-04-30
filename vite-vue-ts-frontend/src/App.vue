@@ -1,8 +1,12 @@
 <script setup lang="ts">
+  import { NConfigProvider } from 'naive-ui';
+
 </script>
 
 <template>
-  <router-view />
+  <n-config-provider>
+    <router-view />
+  </n-config-provider>
 </template>
 
 <style lang="css" scoped></style>
