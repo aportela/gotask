@@ -73,7 +73,10 @@
         },
         {
             title: 'Type',
-            key: 'type'
+            key: 'type',
+            render(row) {
+                return row.type.name
+            }
         },
         {
             title: 'Summary',
@@ -93,6 +96,9 @@
         {
             title: 'Creator',
             key: 'createdBy',
+            render(row) {
+                return row.createdBy.name
+            }
         },
     ];
 
@@ -103,7 +109,7 @@
     onMounted(() => {
         loading.value = true;
         api.project.search().then((successResponse: any) => {
-            projects.value = successResponse.data;
+            projects.value = successResponse.data.projects;
         }).catch((errorResponse: any) => {
             console.log(errorResponse);
         }).finally(() => { loading.value = false; })
