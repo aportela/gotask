@@ -6,22 +6,28 @@ import (
 
 func mapAddProjectStatusRequestToProjectStatusDomain(request addProjectStatusRequest) domain.ProjectStatus {
 	return domain.ProjectStatus{
-		ID:   request.ID,
-		Name: request.Name,
+		ID:       request.ID,
+		Name:     request.Name,
+		Index:    request.Index,
+		HexColor: request.HexColor,
 	}
 }
 
 func mapUpdateProjectStatusRequestToProjectStatusDomain(request updateProjectStatusRequest) domain.ProjectStatus {
 	return domain.ProjectStatus{
-		ID:   request.ID,
-		Name: request.Name,
+		ID:       request.ID,
+		Name:     request.Name,
+		Index:    request.Index,
+		HexColor: request.HexColor,
 	}
 }
 
 func mapProjectStatusDomainToProjectStatusResponse(projectStatus domain.ProjectStatus) projectStatusResponse {
 	return projectStatusResponse{
-		ID:   projectStatus.ID,
-		Name: projectStatus.Name,
+		ID:       projectStatus.ID,
+		Name:     projectStatus.Name,
+		Index:    projectStatus.Index,
+		HexColor: projectStatus.HexColor,
 	}
 }
 

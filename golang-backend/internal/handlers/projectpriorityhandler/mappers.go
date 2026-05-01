@@ -6,22 +6,28 @@ import (
 
 func mapAddProjectPriorityRequestToProjectPriorityDomain(request addProjectPriorityRequest) domain.ProjectPriority {
 	return domain.ProjectPriority{
-		ID:   request.ID,
-		Name: request.Name,
+		ID:       request.ID,
+		Name:     request.Name,
+		Index:    request.Index,
+		HexColor: request.HexColor,
 	}
 }
 
 func mapUpdateProjectPriorityRequestToProjectPriorityDomain(request updateProjectPriorityRequest) domain.ProjectPriority {
 	return domain.ProjectPriority{
-		ID:   request.ID,
-		Name: request.Name,
+		ID:       request.ID,
+		Name:     request.Name,
+		Index:    request.Index,
+		HexColor: request.HexColor,
 	}
 }
 
 func mapProjectPriorityDomainToProjectPriorityResponse(projectPriority domain.ProjectPriority) projectPriorityResponse {
 	return projectPriorityResponse{
-		ID:   projectPriority.ID,
-		Name: projectPriority.Name,
+		ID:       projectPriority.ID,
+		Name:     projectPriority.Name,
+		Index:    projectPriority.Index,
+		HexColor: projectPriority.HexColor,
 	}
 }
 
