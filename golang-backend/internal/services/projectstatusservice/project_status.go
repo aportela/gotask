@@ -13,7 +13,7 @@ type ProjectStatusService interface {
 	UpdateProjectStatus(ctx context.Context, projectStatus domain.ProjectStatus) error
 	DeleteProjectStatus(ctx context.Context, id string) error
 	GetProjectStatus(ctx context.Context, id string) (domain.ProjectStatus, error)
-	SearchProjectStatuss(ctx context.Context) ([]domain.ProjectStatus, error)
+	SearchProjectStatuses(ctx context.Context) ([]domain.ProjectStatus, error)
 }
 
 type projectStatusService struct {
@@ -44,7 +44,7 @@ func (s *projectStatusService) GetProjectStatus(ctx context.Context, id string) 
 	return projectstatusrepository.MapProjectStatusDTOToProjectStatusDomain(projectStatus), nil
 }
 
-func (s *projectStatusService) SearchProjectStatuss(ctx context.Context) ([]domain.ProjectStatus, error) {
+func (s *projectStatusService) SearchProjectStatuses(ctx context.Context) ([]domain.ProjectStatus, error) {
 	projectStatuss, err := s.repository.Search(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectStatusService] failed to search project statuses: %w", err)
