@@ -244,7 +244,7 @@
         }
     }
 
-    const color = ref<string>("");
+    const color = ref<string>("#000000");
 </script>
 
 <template>
@@ -261,7 +261,7 @@
     <n-table :bordered="true" size="small" :striped="false" v-if="simpleTable">
         <thead>
             <tr>
-                <th>Key</th>
+                <th style="text-align: center">Task Key</th>
                 <th>Summary</th>
                 <th>Type</th>
                 <th>Creator</th>
@@ -272,7 +272,9 @@
         </thead>
         <tbody>
             <tr v-for="project in projects" :key="project.id">
-                <td>{{ project.key }}</td>
+                <td style="text-align: center"><router-link :to="{ name: 'project', params: { id: project.id } }">{{
+                    project.key }}</router-link>
+                </td>
                 <td><router-link :to="{ name: 'project', params: { id: project.id } }">{{ project.summary
                 }}</router-link></td>
                 <td>{{ project.type.name }}</td>
