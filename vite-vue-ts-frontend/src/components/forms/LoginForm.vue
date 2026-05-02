@@ -6,7 +6,7 @@
     import { api } from '../../composables/api';
     import { required, minLength, validEmail, runValidators } from '../../composables/form-validators';
     import { useSessionStore } from "../../stores/session";
-    import { type AjaxState as AjaxStateInterface, defaultAjaxState } from "../../types/ajaxState";
+    import { type AjaxStateInterface, defaultAjaxState } from "../../types/ajaxState";
     import { default as RemoteAPIAlert } from '../alerts/RemoteAPIAlert.vue';
 
     import { useI18n } from "vue-i18n";
@@ -157,7 +157,7 @@
             <n-form-item>
                 <n-button secondary @click="validateForm" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
