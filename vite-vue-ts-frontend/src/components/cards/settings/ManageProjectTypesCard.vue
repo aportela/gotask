@@ -3,7 +3,7 @@
     import { NSpin, NTable, NButton, NGrid, NGridItem, NFlex, NInput, useDialog, NDialog } from 'naive-ui'
     import { v7 as uuidv7 } from 'uuid';
     import { api } from '../../../composables/api';
-    import { IconDeviceFloppy, IconPlus, IconTrash } from '@tabler/icons-vue';
+    import { IconDeviceFloppy, IconEdit, IconPlus, IconTrash } from '@tabler/icons-vue';
 
     interface ProjectTypeInterface {
         id: string;
@@ -105,22 +105,29 @@
             </caption>
             <thead>
                 <tr>
-                    <th class="text-center column-action">#</th>
                     <th>Name</th>
+                    <th class="text-center column-action">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="projectType, index in projectTypes" :key="projectType.id">
+                    <td>{{ projectType.name }}</td>
                     <td class="text-center">
-                        <n-button @click="onRemoveProjectType(projectType, index)">
-                            Delete
-                            <template #icon>
-                                <IconTrash :size="22" />
-                            </template>
-                        </n-button>
+                        <n-flex>
+                            <n-button @click="onRemoveProjectType(projectType, index)">
+                                Update
+                                <template #icon>
+                                    <IconEdit :size="22" />
+                                </template>
+                            </n-button>
+                            <n-button @click="onRemoveProjectType(projectType, index)">
+                                Delete
+                                <template #icon>
+                                    <IconTrash :size="22" />
+                                </template>
+                            </n-button>
+                        </n-flex>
                     </td>
-                    <td><n-input v-model:value="projectType.name" required
-                            placeholder="Please input project type name" /></td>
                 </tr>
             </tbody>
             <tfoot ref="tableFooter"></tfoot>
@@ -140,7 +147,7 @@
     }
 
     .column-action {
-        width: 1%;
+        width: 12%;
         white-space: nowrap;
     }
 
