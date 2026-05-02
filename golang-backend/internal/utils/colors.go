@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 )
 
@@ -10,7 +11,7 @@ func hslToRgb(h, s, l float64) (int, int, int) {
 	var r, g, b float64
 
 	c := (1 - abs(2*l-1)) * s
-	x := c * (1 - abs(float64(int(h/60)%2)-1))
+	x := c * (1 - abs(math.Mod(h/60.0, 2)-1))
 	m := l - c/2
 
 	switch {
