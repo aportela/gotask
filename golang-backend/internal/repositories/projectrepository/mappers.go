@@ -20,6 +20,8 @@ func MapProjectDomainToProjectDTO(project domain.Project) projectDTO {
 		DueAt:        project.DueAt,
 		TypeId:       project.Type.ID,
 		TypeName:     project.Type.Name,
+		TypeIndex:    project.Type.Index,
+		TypeHexColor: project.Type.HexColor,
 		PriorityId:   project.Priority.ID,
 		PriorityName: project.Priority.Name,
 		StatusId:     project.Status.ID,
@@ -40,7 +42,7 @@ func MapProjectDTOToProjectDomain(project projectDTO) domain.Project {
 		StartedAt:   project.StartedAt,
 		FinishedAt:  project.FinishedAt,
 		DueAt:       project.DueAt,
-		Type:        domain.ProjectType{ID: project.TypeId, Name: project.TypeName},
+		Type:        domain.ProjectType{ID: project.TypeId, Name: project.TypeName, Index: project.TypeIndex, HexColor: project.TypeHexColor},
 		Priority:    domain.ProjectPriority{ID: project.PriorityId, Name: project.PriorityName, Index: project.PriorityIndex, HexColor: project.PriorityHexColor},
 		Status:      domain.ProjectStatus{ID: project.StatusId, Name: project.StatusName, Index: project.StatusIndex, HexColor: project.StatusHexColor},
 	}

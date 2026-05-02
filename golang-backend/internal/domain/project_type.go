@@ -1,6 +1,8 @@
 package domain
 
 type ProjectType struct {
-	ID   string
-	Name string
+	ID       string
+	Name     string
+	Index    int
+	HexColor string
 }

@@ -29,6 +29,10 @@ const api = {
     search: () => axiosInstance.get("/projects"),
   },
   projectTypes: {
+    add: () => axiosInstance.post("/project_types/"),
+    update: () => axiosInstance.put("/project_types/"),
+    delete: (id: string) => axiosInstance.delete("/project_types/" + id),
+    get: (id: string) => axiosInstance.get("/project_types/" + id),
     search: () => axiosInstance.get("/project_types"),
   },
   projectStatuses: {

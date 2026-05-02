@@ -6,15 +6,19 @@ import (
 
 func MapProjectTypeDomainToProjectTypeDTO(projectType domain.ProjectType) projectTypeDTO {
 	return projectTypeDTO{
-		ID:   projectType.ID,
-		Name: projectType.Name,
+		ID:       projectType.ID,
+		Name:     projectType.Name,
+		Index:    projectType.Index,
+		HexColor: projectType.HexColor,
 	}
 }
 
 func MapProjectTypeDTOToProjectTypeDomain(projectType projectTypeDTO) domain.ProjectType {
 	return domain.ProjectType{
-		ID:   projectType.ID,
-		Name: projectType.Name,
+		ID:       projectType.ID,
+		Name:     projectType.Name,
+		Index:    projectType.Index,
+		HexColor: projectType.HexColor,
 	}
 }
 

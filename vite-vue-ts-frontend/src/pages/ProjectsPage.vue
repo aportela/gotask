@@ -7,14 +7,20 @@
     interface ProjectTypeInterface {
         id: string;
         name: string;
+        index: number;
+        hexColor: string;
     }
 
     class ProjectType implements ProjectTypeInterface {
         id: string;
         name: string;
+        index: number;
+        hexColor: string;
         constructor(item: ProjectTypeInterface) {
             this.id = item.id;
             this.name = item.name;
+            this.index = item.index;
+            this.hexColor = item.hexColor;
         }
     }
 
@@ -119,7 +125,19 @@
             title: 'Type',
             key: 'type',
             render(row) {
-                return row.type.name
+                return h(
+                    NTag,
+                    {
+                        style: {
+                            marginRight: '6px'
+                        },
+                        type: 'info',
+                        bordered: false
+                    },
+                    {
+                        default: () => row.priority.name
+                    }
+                )
             }
         },
         {
@@ -267,7 +285,11 @@
                 </td>
                 <td><router-link :to="{ name: 'project', params: { id: project.id } }">{{ project.summary
                 }}</router-link></td>
-                <td>{{ project.type.name }}</td>
+                <td><n-tag :color="tagColor(project.type.hexColor)" class="clickable_tag"
+                        title="Filter by this value">{{
+                            project.type.name
+                        }}</n-tag>
+                </td>
                 <td><n-avatar :src="'https://i.pravatar.cc/32?u=' + project.createdBy.id"></n-avatar><span
                         class="creator-name">{{
                             project.createdBy.name }}</span></td>

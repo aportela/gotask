@@ -8,6 +8,7 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/repositories/projecttyperepository"
 	"github.com/aportela/doneo/internal/services/projecttypeservice"
+	"github.com/aportela/doneo/internal/utils"
 	"github.com/gofrs/uuid"
 )
 
@@ -21,11 +22,13 @@ func createProjectTypes(database database.Database) []string {
 	var newProjectTypeIds []string
 	projectTypeRepository := projecttyperepository.NewProjectTypeRepository(database)
 	projectTypeService := projecttypeservice.NewProjectTypeService(projectTypeRepository)
-	for _, projectTypeName := range projectTypeNames {
+	for index, projectTypeName := range projectTypeNames {
 		projectTypeID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 		err := projectTypeService.AddProjectType(context.Background(), domain.ProjectType{
-			ID:   projectTypeID,
-			Name: projectTypeName,
+			ID:       projectTypeID,
+			Name:     projectTypeName,
+			Index:    index,
+			HexColor: utils.RandomSoftHexColor(),
 		})
 		if err != nil {
 			fmt.Printf("Error creating project type %s\n", err.Error())

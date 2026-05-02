@@ -1,80 +1,76 @@
 <script setup lang="ts">
-    import { ref, onMounted, nextTick } from 'vue'
-    import { NSpin, NTable, NButton, NGrid, NGridItem, NFlex, useDialog, NModal } from 'naive-ui'
-    //import { v7 as uuidv7 } from 'uuid';
+    import { ref, reactive, onMounted, nextTick, computed } from 'vue'
+    import { NSpin, NTable, NButton, NGrid, NGridItem, NFlex, useDialog, NModal, NTag } from 'naive-ui'
     import { api } from '../../../composables/api';
     import { IconDeviceFloppy, IconEdit, IconPlus, IconTrash } from '@tabler/icons-vue';
     import ProjectTypeForm from '../../forms/ProjectTypeForm.vue';
+    import { getNaiveUITagColorProperty } from '../../../composables/color';
+    import type { ProjectTypeInterface } from '../../../types/models/projectType';
+    import { type AjaxStateInterface, defaultAjaxState } from '../../../types/ajaxState';
+    import { type EntityAction } from '../../../types/common';
 
-    interface ProjectTypeInterface {
-        id: string;
-        name: string;
-    }
+    const dialog = useDialog();
 
-    class ProjectType implements ProjectTypeInterface {
-        id: string;
-        name: string;
-        constructor(item: ProjectTypeInterface) {
-            this.id = item.id;
-            this.name = item.name;
-        }
+    const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+    if (dialog !== null) {
+        dialog.destroyAll();
     }
 
     const tableFooter = ref<HTMLElement | null>(null);
+
     console.log(tableFooter);
+
     nextTick(() => { });
 
-    const projectTypes = ref<ProjectType[]>([]);
-    const loading = ref<boolean>(false);
+    const projectTypes = ref<ProjectTypeInterface[]>([]);
 
-    onMounted(() => {
-        loading.value = true;
+    const onRefresh = () => {
+        state.ajaxRunning = true;
         api.projectTypes.search().then((successResponse: any) => {
             projectTypes.value = successResponse.data.projectTypes;
         }).catch((errorResponse: any) => {
             console.log(errorResponse);
-        }).finally(() => { loading.value = false; })
+        }).finally(() => { state.ajaxRunning = false; })
+    };
+
+
+
+    onMounted(() => {
+        onRefresh();
     });
 
-    const dialog = useDialog()
+    const selectedProjectTypeId = ref<string | undefined>(undefined);
 
-    /*
     const onAddProjectType = () => {
-        projectTypes.value.push(
-            new ProjectType({ id: uuidv7(), name: "" })
-        );
-        nextTick(() => {
-            if (tableFooter.value) {
-                tableFooter.value?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'end'
-                });
-            }
-        });
+        actionDialogMode.value = "add";
     };
-    */
+    const onUpdateProjectType = (_projectType: ProjectTypeInterface, _index: number) => {
+        actionDialogMode.value = "update";
+        selectedProjectTypeId.value = _projectType.id;
+    };
+    const onDeleteProjectType = (_projectType: ProjectTypeInterface, _index: number) => {
+        actionDialogMode.value = "delete";
+        selectedProjectTypeId.value = _projectType.id;
+    };
 
-    const onRemoveProjectType = (projectType: ProjectType, index: number) => {
-        dialog.warning({
-            title: 'Please confirm: ',
-            content: `Are you sure you want to remove project type: ${projectType.name}?`,
-            positiveText: 'Sure',
-            negativeText: 'Cancel',
-            draggable: true,
-            onPositiveClick: () => {
-                projectTypes.value.splice(index, 1);
-            },
-            onNegativeClick: () => {
+    const actionDialogMode = ref<EntityAction>("none");
+
+    const isVisibleActionDialog = computed<boolean>({
+        get: () => actionDialogMode.value !== "none",
+        set: (value: boolean) => {
+            if (!value) {
+                actionDialogMode.value = "none";
             }
-        })
-    }
-    const showAddDialog = ref<boolean>(false);
+        }
+    });
+
 </script>
 
 <template>
-    <n-spin :show="loading">
-        <n-modal v-model:show="showAddDialog" @cancel="showAddDialog = false">
-            <ProjectTypeForm />
+    <n-spin :show="state.ajaxRunning">
+        <n-modal v-model:show="isVisibleActionDialog" @cancel="isVisibleActionDialog = false">
+            <ProjectTypeForm :mode="actionDialogMode" :project-type-id="selectedProjectTypeId" style="width: 40%;" />
         </n-modal>
         <n-table size="small">
             <caption class="table-caption">
@@ -84,7 +80,7 @@
                     </n-grid-item>
                     <n-grid-item style="display: flex; justify-content: flex-end;">
                         <n-flex>
-                            <n-button @click="showAddDialog = true">
+                            <n-button @click="onAddProjectType">
                                 <template #icon>
                                     <IconPlus />
                                 </template>
@@ -103,21 +99,22 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th class="text-center column-action">Actions</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="projectType, index in projectTypes" :key="projectType.id">
-                    <td>{{ projectType.name }}</td>
+                    <td><n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name
+                    }}</n-tag></td>
                     <td class="text-center">
                         <n-flex>
-                            <n-button @click="onRemoveProjectType(projectType, index)">
+                            <n-button @click="onUpdateProjectType(projectType, index)">
                                 Update
                                 <template #icon>
                                     <IconEdit :size="22" />
                                 </template>
                             </n-button>
-                            <n-button @click="onRemoveProjectType(projectType, index)">
+                            <n-button @click="onDeleteProjectType(projectType, index)">
                                 Delete
                                 <template #icon>
                                     <IconTrash :size="22" />
@@ -141,11 +138,6 @@
         font-weight: 700;
         font-size: large;
 
-    }
-
-    .column-action {
-        width: 12%;
-        white-space: nowrap;
     }
 
     .text-center {

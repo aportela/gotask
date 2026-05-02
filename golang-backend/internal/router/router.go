@@ -74,6 +74,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Post("/", projectTypeHandler.AddProjectType)
 		r.Get("/", projectTypeHandler.SearchProjectTypes)
 		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", projectTypeHandler.GetProjectType)
 			r.Put("/", projectTypeHandler.UpdateProjectType)
 			r.Delete("/", projectTypeHandler.DeleteProjectType)
 		})
@@ -84,6 +85,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Post("/", projectStatusHandler.AddProjectStatus)
 		r.Get("/", projectStatusHandler.SearchProjectStatus)
 		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", projectStatusHandler.GetProjectStatus)
 			r.Put("/", projectStatusHandler.UpdateProjectStatus)
 			r.Delete("/", projectStatusHandler.DeleteProjectStatus)
 		})
@@ -94,6 +96,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Post("/", projectTypeHandler.AddProjectPriority)
 		r.Get("/", projectTypeHandler.SearchProjectPriorities)
 		r.Route("/{id}", func(r chi.Router) {
+			r.Get("/", projectTypeHandler.GetProjectPriority)
 			r.Put("/", projectTypeHandler.UpdateProjectPriority)
 			r.Delete("/", projectTypeHandler.DeleteProjectPriority)
 		})

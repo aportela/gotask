@@ -29,11 +29,13 @@ func (projectTypeRepository *projectTypeRepository) Add(ctx context.Context, pro
 	_, err := projectTypeRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO project_types (id, name)
-			VALUES (?, ?)
+            INSERT INTO project_types (id, name, item_index, item_hex_color)
+			VALUES (?, ?, ?, ?)
         `,
 		projectType.ID,
 		projectType.Name,
+		projectType.Index,
+		projectType.HexColor,
 	)
 	return err
 }
@@ -43,11 +45,15 @@ func (projectTypeRepository *projectTypeRepository) Update(ctx context.Context, 
 		ctx,
 		`
             UPDATE project_types SET
-				name = ?
+				name = ?,
+				item_index = ?,
+				item_hex_color = ?
 			WHERE id = ?
         `,
 		projectType.ID,
 		projectType.Name,
+		projectType.Index,
+		projectType.HexColor,
 	)
 	return err
 }
@@ -70,11 +76,11 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
 		ctx,
 		`
             SELECT
-                PT.id, PT.name
+                PT.id, PT.name, PT.item_index, PT.item_hex_color
             FROM project_types PT
             WHERE PT.id = ?
         `,
-		id).Scan(&projectType.ID, &projectType.Name)
+		id).Scan(&projectType.ID, &projectType.Name, &projectType.Index, &projectType.HexColor)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return projectType, domain.ErrNotFound
@@ -89,7 +95,7 @@ func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context) 
 		ctx,
 		`
 			SELECT
-				PT.id, PT.name
+				PT.id, PT.name, PT.item_index, PT.item_hex_color
 			FROM project_types PT
 			ORDER BY PT.name
         `,
@@ -103,7 +109,7 @@ func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context) 
 		var projectType projectTypeDTO
 
 		if err := rows.Scan(
-			&projectType.ID, &projectType.Name,
+			&projectType.ID, &projectType.Name, &projectType.Index, &projectType.HexColor,
 		); err != nil {
 			return nil, err
 		}
