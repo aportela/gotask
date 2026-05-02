@@ -2,11 +2,13 @@
     import { NCard, NInput, NFlex, NButton } from 'naive-ui';
     import { IconCancel, IconPlus, IconTrash } from '@tabler/icons-vue';
     import { computed, onMounted } from 'vue';
-    //import { v7 as uuidv7 } from 'uuid';
+    import { v7 as uuidv7 } from 'uuid';
     import type { EntityAction } from '../../types/common';
 
+    import { ref } from 'vue';
     import type { CSSProperties } from 'vue';
     import { api } from '../../composables/api';
+    import { type ProjectTypeInterface, ProjectTypeClass } from '../../types/models/projectType';
 
     const emit = defineEmits(['add', 'update', 'delete', 'cancel'])
 
@@ -67,8 +69,16 @@ nextTick(() => {
 };
 */
 
+    const projectType = ref<ProjectTypeInterface>(
+        new ProjectTypeClass(
+            { id: uuidv7(), name: "", index: 0, hexColor: "" }
+        )
+    );
+
     const getProjectType = (id: string) => {
-        api.projectTypes.get(id);
+        api.projectTypes.get(id).then((_response: any) => {
+            projectType.value = _response.data.projectType;
+        }).catch((_error: any) => { console.error(_error); }).finally(() => { });
     };
 
     onMounted(() => {
@@ -85,7 +95,7 @@ nextTick(() => {
 
 <template>
     <n-card :title="title" :style="style">
-        <n-input placeholder="Project type name"></n-input>
+        <n-input placeholder="Project type name" v-model:value="projectType.name" :disabled="deleteMode"></n-input>
         <template #action>
             <n-flex>
                 <n-button @click="onAdd" v-if="addMode">

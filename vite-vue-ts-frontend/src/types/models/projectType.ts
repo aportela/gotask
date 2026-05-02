@@ -18,4 +18,4 @@ class ProjectTypeClass implements ProjectTypeInterface {
   }
 }
 
-export { type ProjectTypeInterface, type ProjectTypeClass };
+export { type ProjectTypeInterface, ProjectTypeClass };
