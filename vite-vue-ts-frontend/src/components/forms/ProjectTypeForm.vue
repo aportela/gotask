@@ -1,6 +1,6 @@
 <script setup lang="ts">
-    import { NCard, NInput, NFlex, NButton } from 'naive-ui';
-    import { IconCancel, IconPlus, IconTrash } from '@tabler/icons-vue';
+    import { NCard, NInput, NFlex, NButton, NColorPicker, NTag, NForm, NFormItem } from 'naive-ui';
+    import { IconCancel, IconDeviceFloppy, IconTrash } from '@tabler/icons-vue';
     import { computed, onMounted } from 'vue';
     import { v7 as uuidv7 } from 'uuid';
     import type { EntityAction } from '../../types/common';
@@ -8,7 +8,8 @@
     import { ref } from 'vue';
     import type { CSSProperties } from 'vue';
     import { api } from '../../composables/api';
-    import { type ProjectTypeInterface, ProjectTypeClass } from '../../types/models/projectType';
+    import { type ProjectTypeInterface, ProjectTypeClass, maxNameLength } from '../../types/models/projectType';
+    import { generateRandomSoftHexColor, getNaiveUITagColorProperty } from '../../composables/color';
 
     const emit = defineEmits(['add', 'update', 'delete', 'cancel'])
 
@@ -19,6 +20,13 @@
     }
 
     const props = defineProps<ProjectTypeFormProps>();
+
+    const saveButtonDisabled = computed<boolean>(() => {
+        const inactiveMode = !(addMode.value || updateMode.value);
+        const noName = !projectType.value.name;
+
+        return inactiveMode || noName;
+    });
 
     const addMode = computed<boolean>(() => props.mode === "add");
     const updateMode = computed<boolean>(() => props.mode === "update");
@@ -36,6 +44,16 @@
                 return "";
         }
     });
+
+    const onSave = () => {
+        if (addMode) {
+            onAdd();
+        } else if (updateMode) {
+            onUpdate()
+        } else {
+            console.error("TODO");
+        }
+    }
 
     const onAdd = () => {
         emit('add')
@@ -71,7 +89,7 @@ nextTick(() => {
 
     const projectType = ref<ProjectTypeInterface>(
         new ProjectTypeClass(
-            { id: uuidv7(), name: "", index: 0, hexColor: "" }
+            { id: uuidv7(), name: "", hexColor: generateRandomSoftHexColor() }
         )
     );
 
@@ -95,20 +113,27 @@ nextTick(() => {
 
 <template>
     <n-card :title="title" :style="style">
-        <n-input placeholder="Project type name" v-model:value="projectType.name" :disabled="deleteMode"></n-input>
+        <n-form>
+            <n-form-item label="Name">
+                <n-input placeholder="Project type name" v-model:value="projectType.name" :disabled="deleteMode"
+                    :maxlength="maxNameLength" show-count clearable required autofocus></n-input>
+            </n-form-item>
+            <n-form-item label="Preview">
+                <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">
+                    {{ projectType.name }}
+                </n-tag>
+            </n-form-item>
+            <n-form-item label="Color">
+                <n-color-picker :modes="['hex']" v-model:value="projectType.hexColor" />
+            </n-form-item>
+        </n-form>
         <template #action>
             <n-flex>
-                <n-button @click="onAdd" v-if="addMode">
+                <n-button @click="onSave" v-if="addMode || updateMode" :disabled="saveButtonDisabled">
                     <template #icon>
-                        <IconPlus />
+                        <IconDeviceFloppy />
                     </template>
-                    Add new
-                </n-button>
-                <n-button @click="onUpdate" v-else-if="updateMode">
-                    <template #icon>
-                        <IconPlus />
-                    </template>
-                    Update
+                    Save
                 </n-button>
                 <n-button @click="onDelete" v-else-if="deleteMode">
                     <template #icon>
@@ -127,4 +152,9 @@ nextTick(() => {
     </n-card>
 </template>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+    .full-width-tag {
+        display: block;
+        width: 100%;
+    }
+</style>

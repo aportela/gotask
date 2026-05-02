@@ -121,7 +121,6 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 				PP.item_hex_color AS priority_hex_color,
 				P.type_id,
 				PT.name AS type_name,
-				PT.item_index AS type_index,
 				PT.item_hex_color AS type_hex_color,
 				P.creator_id,
 				U.name AS creator_name
@@ -152,7 +151,6 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 		&project.PriorityHexColor,
 		&project.TypeId,
 		&project.TypeName,
-		&project.TypeIndex,
 		&project.TypeHexColor,
 		&project.CreatorId,
 		&project.CreatorName,
@@ -189,7 +187,6 @@ func (projectRepository *projectRepository) Search(ctx context.Context) ([]proje
 				PP.item_hex_color AS priority_hex_color,
 				P.type_id,
 				PT.name AS type_name,
-				PT.item_index AS type_index,
 				PT.item_hex_color AS type_hex_color,
 				P.creator_id,
 				U.name AS creator_name
@@ -229,7 +226,6 @@ func (projectRepository *projectRepository) Search(ctx context.Context) ([]proje
 			&project.PriorityHexColor,
 			&project.TypeId,
 			&project.TypeName,
-			&project.TypeIndex,
 			&project.TypeHexColor,
 			&project.CreatorId,
 			&project.CreatorName,

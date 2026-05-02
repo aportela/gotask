@@ -15,7 +15,6 @@ type projectDTO struct {
 	DueAt            *int64  `db:"due_at"`
 	TypeId           string  `db:"type_id"`
 	TypeName         string  `db:"type_name"`
-	TypeIndex        int     `db:"type_index"`
 	TypeHexColor     string  `db:"type_hex_color"`
 	StatusId         string  `db:"status_id"`
 	StatusName       string  `db:"status_name"`

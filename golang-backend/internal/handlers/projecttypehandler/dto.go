@@ -3,21 +3,18 @@ package projecttypehandler
 type addProjectTypeRequest struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
 }
 
 type updateProjectTypeRequest struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
 }
 
 type projectTypeResponse struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
 }
 

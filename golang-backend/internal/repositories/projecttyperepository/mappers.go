@@ -8,7 +8,6 @@ func MapProjectTypeDomainToProjectTypeDTO(projectType domain.ProjectType) projec
 	return projectTypeDTO{
 		ID:       projectType.ID,
 		Name:     projectType.Name,
-		Index:    projectType.Index,
 		HexColor: projectType.HexColor,
 	}
 }
@@ -17,7 +16,6 @@ func MapProjectTypeDTOToProjectTypeDomain(projectType projectTypeDTO) domain.Pro
 	return domain.ProjectType{
 		ID:       projectType.ID,
 		Name:     projectType.Name,
-		Index:    projectType.Index,
 		HexColor: projectType.HexColor,
 	}
 }

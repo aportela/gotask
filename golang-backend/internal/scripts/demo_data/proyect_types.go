@@ -22,12 +22,11 @@ func createProjectTypes(database database.Database) []string {
 	var newProjectTypeIds []string
 	projectTypeRepository := projecttyperepository.NewProjectTypeRepository(database)
 	projectTypeService := projecttypeservice.NewProjectTypeService(projectTypeRepository)
-	for index, projectTypeName := range projectTypeNames {
+	for _, projectTypeName := range projectTypeNames {
 		projectTypeID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 		err := projectTypeService.AddProjectType(context.Background(), domain.ProjectType{
 			ID:       projectTypeID,
 			Name:     projectTypeName,
-			Index:    index,
 			HexColor: utils.RandomSoftHexColor(),
 		})
 		if err != nil {

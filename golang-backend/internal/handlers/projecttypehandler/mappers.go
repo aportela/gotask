@@ -8,7 +8,6 @@ func mapAddProjectTypeRequestToProjectTypeDomain(request addProjectTypeRequest) 
 	return domain.ProjectType{
 		ID:       request.ID,
 		Name:     request.Name,
-		Index:    request.Index,
 		HexColor: request.HexColor,
 	}
 }
@@ -17,7 +16,6 @@ func mapUpdateProjectTypeRequestToProjectTypeDomain(request updateProjectTypeReq
 	return domain.ProjectType{
 		ID:       request.ID,
 		Name:     request.Name,
-		Index:    request.Index,
 		HexColor: request.HexColor,
 	}
 }
@@ -26,7 +24,6 @@ func mapProjectTypeDomainToProjectTypeResponse(projectType domain.ProjectType) p
 	return projectTypeResponse{
 		ID:       projectType.ID,
 		Name:     projectType.Name,
-		Index:    projectType.Index,
 		HexColor: projectType.HexColor,
 	}
 }
