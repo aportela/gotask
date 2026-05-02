@@ -1,8 +1,13 @@
 import axios from "axios";
-import { useSessionStore } from "../stores/session";
+import { AxiosError } from "axios";
 import { SERVER_API_BASE_PATH } from "../constants";
+import { type APIErrorDetails } from "../types/apiErrorDetails";
+import { useSessionStore } from "../stores/session";
 
-const sessionStore = useSessionStore();
+interface AxiosAPIError extends AxiosError {
+  isAPIError: boolean;
+  customAPIErrorDetails: APIErrorDetails;
+}
 
 const axiosInstance = axios.create({
   baseURL: SERVER_API_BASE_PATH,
@@ -22,6 +27,7 @@ axiosInstance.interceptors.response.use(
           statusText: "undefined",
         };
       }
+      const sessionStore = useSessionStore();
       if (error.response?.status === 401) {
         if (sessionStore.hasAccessToken) {
           sessionStore.removeAccessToken();
@@ -54,7 +60,7 @@ const bgDownload = async (url: string, fileName: string = "fileName") => {
   const response = await axiosInstance.get(url, {
     responseType: "blob",
   });
-  const blob = new Blob([response.data]);
+  const blob = response.data;
   const tmpLink = document.createElement("a");
   const urlBlob = URL.createObjectURL(blob);
   tmpLink.href = urlBlob;
@@ -73,4 +79,4 @@ const bgDownload = async (url: string, fileName: string = "fileName") => {
   };
 };
 
-export { axiosInstance, bgDownload };
+export { axiosInstance, type AxiosAPIError, bgDownload };
