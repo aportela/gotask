@@ -1,3 +1,5 @@
 type ValidAuthTypes = "Bearer";
 
-export { type ValidAuthTypes };
+type EntityAction = "none" | "add" | "update" | "delete";
+
+export { type ValidAuthTypes, type EntityAction };
