@@ -142,7 +142,6 @@
                 <n-input type="text" :autofocus="true" v-model:value="formValues.email"
                     placeholder="Enter your email address" :disabled="state.ajaxRunning" />
             </n-form-item>
-
             <n-form-item label="Password" path="password" show-feedback>
                 <n-input v-model:value="formValues.password" type="password" placeholder="Enter your password"
                     show-password-on="click" :disabled="state.ajaxRunning" @keydown.enter="validateForm">
@@ -157,7 +156,7 @@
             <n-form-item>
                 <n-button secondary @click="validateForm" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                }}</n-button>
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
