@@ -6,7 +6,7 @@ interface DefaultAxiosResponse<T = unknown> {
   data: AxiosResponse<T>;
 }
 
-interface LoginResponse extends Omit<DefaultAxiosResponse, "data"> {
+interface SignInSucessResponse extends Omit<DefaultAxiosResponse, "data"> {
   data: {
     accessToken: {
       token: string;
@@ -32,6 +32,6 @@ interface GetNewAccessTokenResponse extends Omit<DefaultAxiosResponse, "data"> {
 
 export {
   type DefaultAxiosResponse,
-  type LoginResponse,
+  type SignInSucessResponse,
   type GetNewAccessTokenResponse,
 };
