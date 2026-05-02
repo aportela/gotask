@@ -14,10 +14,14 @@
 
 <template>
     <n-button quaternary>
-        <a :href="GITHUB_PROJECT_URL" target="_blank">
+        <a :href="GITHUB_PROJECT_URL" class="link-color" target="_blank">
             <IconBrandGithub :size="size" />
         </a>
     </n-button>
 </template>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+    .link-color {
+        color: var(--n-text-color-base) !important;
+    }
+</style>
