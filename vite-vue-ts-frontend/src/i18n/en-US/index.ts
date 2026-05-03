@@ -16,4 +16,7 @@ export default {
   // signin form fields
   Email: "Email",
   Password: "Password",
+
+  // signin
+  "Login to your account": "Login to your account",
 };
