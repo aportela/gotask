@@ -1,5 +1,6 @@
 import { axiosInstance } from "./axios";
 
+import type { ProjectTypeInterface } from "../types/models/projectType";
 const api = {
   auth: {
     signIn: (email: string, password: string) => {
@@ -29,8 +30,10 @@ const api = {
     search: () => axiosInstance.get("/projects"),
   },
   projectTypes: {
-    add: () => axiosInstance.post("/project_types/"),
-    update: () => axiosInstance.put("/project_types/"),
+    add: (projectType: ProjectTypeInterface) =>
+      axiosInstance.post("/project_types", projectType),
+    update: (projectType: ProjectTypeInterface) =>
+      axiosInstance.put("/project_types/" + projectType.id, projectType),
     delete: (id: string) => axiosInstance.delete("/project_types/" + id),
     get: (id: string) => axiosInstance.get("/project_types/" + id),
     search: () => axiosInstance.get("/project_types"),
