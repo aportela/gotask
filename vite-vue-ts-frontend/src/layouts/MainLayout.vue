@@ -46,7 +46,7 @@
 <style lang="css" scoped>
 
     .main-container-contained {
-        width: 60%;
+        width: 95%;
         margin: 16px auto;
         border: 1px solid rgb(239, 239, 245);
         border-radius: 4px;
