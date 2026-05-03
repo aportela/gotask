@@ -17,7 +17,7 @@ export default {
   "Sign in error": "Error ó inicia-la sesión",
 
   // project types
-  "Add project type": "Engadir tipo de pxoyecto",
+  "Add project type": "Engadir tipo de proxecto",
   "Update project type": "Actualizar tipo de proxecto",
   "Delete project type": "Eliminar tipo de proxecto",
   "Project type name": "Nome do tipo de proxecto",
