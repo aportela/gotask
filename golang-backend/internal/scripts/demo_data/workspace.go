@@ -16,10 +16,10 @@ func createDefaultWorkspace(database database.Database, userId string) string {
 	workspaceRepository := workspacerepository.NewWorkspaceRepository(database)
 	workspaceService := workspaceservice.NewWorkspaceService(workspaceRepository)
 	workspaceID := func() string { u, _ := uuid.NewV7(); return u.String() }()
-	description := "Default workspace"
+	description := "Home workspace"
 	err := workspaceService.AddWorkspace(context.Background(), domain.Workspace{
 		ID:          workspaceID,
-		Name:        "Default",
+		Name:        "home",
 		Description: &description,
 		CreatedBy:   domain.UserBase{ID: userId},
 		CreatedAt:   utils.CurrentMSTimestamp(),
