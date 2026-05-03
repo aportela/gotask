@@ -2,6 +2,9 @@ export default {
   "Sign in": "Iniciar sesión",
 
   // common actions
+  Actions: "Accións",
+  Add: "Engadir",
+  Update: "Modificar",
   Save: "Gardar",
   Delete: "Eliminar",
   Cancel: "Cancelar",
@@ -17,6 +20,8 @@ export default {
   "Add project type": "Engadir tipo de pxoyecto",
   "Update project type": "Actualizar tipo de proxecto",
   "Delete project type": "Eliminar tipo de proxecto",
+  "Project type name": "Nome do tipo de proxecto",
+  "Project types": "Tipos de proxectos",
 
   // signin form fields
   Email: "Email",
@@ -24,4 +29,9 @@ export default {
 
   // signin
   "Login to your account": "Inicie sesión coa sua conta",
+
+  // other
+  Name: "Nome",
+  Preview: "Previsualización",
+  Color: "Cor",
 };
