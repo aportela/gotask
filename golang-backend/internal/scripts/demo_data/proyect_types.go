@@ -12,7 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-func createProjectTypes(database database.Database) []string {
+func createProjectTypes(database database.Database, workspaceId string) []string {
 	projectTypeNames := []string{
 		"Personal", "Business", "Work", "Educational", "Technology",
 		"Creative", "Research", "Social", "Marketing", "Sports",
@@ -25,9 +25,10 @@ func createProjectTypes(database database.Database) []string {
 	for _, projectTypeName := range projectTypeNames {
 		projectTypeID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 		err := projectTypeService.AddProjectType(context.Background(), domain.ProjectType{
-			ID:       projectTypeID,
-			Name:     projectTypeName,
-			HexColor: utils.RandomSoftHexColor(),
+			ID:          projectTypeID,
+			WorkspaceId: workspaceId,
+			Name:        projectTypeName,
+			HexColor:    utils.RandomSoftHexColor(),
 		})
 		if err != nil {
 			fmt.Printf("Error creating project type %s\n", err.Error())

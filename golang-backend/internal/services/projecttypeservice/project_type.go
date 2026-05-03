@@ -13,7 +13,7 @@ type ProjectTypeService interface {
 	UpdateProjectType(ctx context.Context, projectType domain.ProjectType) error
 	DeleteProjectType(ctx context.Context, id string) error
 	GetProjectType(ctx context.Context, id string) (domain.ProjectType, error)
-	SearchProjectTypes(ctx context.Context) ([]domain.ProjectType, error)
+	SearchProjectTypes(ctx context.Context, filter domain.ProjectTypeFilter) ([]domain.ProjectType, error)
 }
 
 type projectTypeService struct {
@@ -44,8 +44,8 @@ func (s *projectTypeService) GetProjectType(ctx context.Context, id string) (dom
 	return projecttyperepository.MapProjectTypeDTOToProjectTypeDomain(projectType), nil
 }
 
-func (s *projectTypeService) SearchProjectTypes(ctx context.Context) ([]domain.ProjectType, error) {
-	projectTypes, err := s.repository.Search(ctx)
+func (s *projectTypeService) SearchProjectTypes(ctx context.Context, filter domain.ProjectTypeFilter) ([]domain.ProjectType, error) {
+	projectTypes, err := s.repository.Search(ctx, projecttyperepository.MapProjectTypeFilterDomainToProjectTypeFilterDTO(filter))
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectTypeService] failed to search project types: %w", err)
 	}

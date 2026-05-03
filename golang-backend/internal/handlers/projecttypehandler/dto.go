@@ -30,6 +30,10 @@ type getProjectTypeResponse struct {
 	ProjectType projectTypeResponse `json:"projectType"`
 }
 
+type searchProjectTypesRequest struct {
+	WorkspaceId string `json:"workspaceId"`
+}
+
 type searchProjectTypesResponse struct {
 	ProjectTypes []projectTypeResponse `json:"projectTypes"`
 }

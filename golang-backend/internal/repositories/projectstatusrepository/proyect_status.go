@@ -14,7 +14,7 @@ type ProjectStatusRepository interface {
 	Update(ctx context.Context, projectStatus projectStatusDTO) error
 	Get(ctx context.Context, id string) (projectStatusDTO, error)
 	Delete(ctx context.Context, id string) error
-	Search(ctx context.Context) ([]projectStatusDTO, error)
+	Search(ctx context.Context, filter projectStatusFilterDTO) ([]projectStatusDTO, error)
 }
 
 type projectStatusRepository struct {
@@ -29,10 +29,11 @@ func (projectStatusRepository *projectStatusRepository) Add(ctx context.Context,
 	_, err := projectStatusRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO project_statuses (id, name, item_index, item_hex_color)
-			VALUES (?, ?, ?, ?)
+            INSERT INTO project_statuses (id, workspace_id, name, item_index, item_hex_color)
+			VALUES (?, ?, ?, ?, ?)
         `,
 		projectStatus.ID,
+		projectStatus.WorkspaceId,
 		projectStatus.Name,
 		projectStatus.Index,
 		projectStatus.HexColor,
@@ -76,11 +77,11 @@ func (projectStatusRepository *projectStatusRepository) Get(ctx context.Context,
 		ctx,
 		`
             SELECT
-                PS.id, PS.name, PS.item_index, PS.item_hex_color
+                PS.id, PS.workspace_id, PS.name, PS.item_index, PS.item_hex_color
             FROM project_statuses PS
             WHERE PS.id = ?
         `,
-		id).Scan(&projectStatus.ID, &projectStatus.Name, &projectStatus.Index, &projectStatus.HexColor)
+		id).Scan(&projectStatus.ID, &projectStatus.WorkspaceId, &projectStatus.Name, &projectStatus.Index, &projectStatus.HexColor)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return projectStatus, domain.ErrNotFound
@@ -90,15 +91,17 @@ func (projectStatusRepository *projectStatusRepository) Get(ctx context.Context,
 	return projectStatus, err
 }
 
-func (projectStatusRepository *projectStatusRepository) Search(ctx context.Context) ([]projectStatusDTO, error) {
+func (projectStatusRepository *projectStatusRepository) Search(ctx context.Context, filter projectStatusFilterDTO) ([]projectStatusDTO, error) {
 	rows, err := projectStatusRepository.database.QueryContext(
 		ctx,
 		`
 			SELECT
-				PS.id, PS.name, PS.item_index, PS.item_hex_color
+				PS.id, PS.workspace_id, PS.name, PS.item_index, PS.item_hex_color
 			FROM project_statuses PS
+			WHERE PS.workspace_id = ?
 			ORDER BY PS.item_index, PS.name
         `,
+		filter.WorkspaceId,
 	)
 	if err != nil {
 		return nil, err
@@ -108,7 +111,7 @@ func (projectStatusRepository *projectStatusRepository) Search(ctx context.Conte
 	for rows.Next() {
 		var projectStatus projectStatusDTO
 		if err := rows.Scan(
-			&projectStatus.ID, &projectStatus.Name, &projectStatus.Index, &projectStatus.HexColor,
+			&projectStatus.ID, &projectStatus.WorkspaceId, &projectStatus.Name, &projectStatus.Index, &projectStatus.HexColor,
 		); err != nil {
 			return nil, err
 		}

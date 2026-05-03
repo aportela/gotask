@@ -12,7 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-func createProjectStatuses(database database.Database) []string {
+func createProjectStatuses(database database.Database, workspaceId string) []string {
 	projectStatusNames := []string{
 		"Pending", "Started", "Stopped", "Finished", "Aborted",
 	}
@@ -22,10 +22,11 @@ func createProjectStatuses(database database.Database) []string {
 	for index, projectStatusName := range projectStatusNames {
 		projectStatusID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 		err := projectStatusService.AddProjectStatus(context.Background(), domain.ProjectStatus{
-			ID:       projectStatusID,
-			Name:     projectStatusName,
-			Index:    index,
-			HexColor: utils.RandomSoftHexColor(),
+			ID:          projectStatusID,
+			WorkspaceId: workspaceId,
+			Name:        projectStatusName,
+			Index:       index,
+			HexColor:    utils.RandomSoftHexColor(),
 		})
 		if err != nil {
 			fmt.Printf("Error creating project status %s\n", err.Error())

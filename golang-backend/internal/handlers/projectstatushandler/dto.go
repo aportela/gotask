@@ -33,6 +33,10 @@ type getProjectStatusResponse struct {
 	ProjectStatus projectStatusResponse `json:"projectStatus"`
 }
 
-type searchProjectStatussResponse struct {
+type searchProjectStatusesRequest struct {
+	WorkspaceId string `json:"workspaceId"`
+}
+
+type searchProjectStatusesResponse struct {
 	ProjectStatuses []projectStatusResponse `json:"projectStatuses"`
 }

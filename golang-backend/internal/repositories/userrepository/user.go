@@ -14,6 +14,7 @@ type UserRepository interface {
 	Add(ctx context.Context, user userDTO) error
 	Update(ctx context.Context, user userDTO) error
 	Delete(ctx context.Context, id string) error
+	Purge(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (userDTO, error)
 	GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (userDTO, error)
 	Search(ctx context.Context) ([]userDTO, error)
@@ -36,8 +37,8 @@ func (userRepository *userRepository) Add(ctx context.Context, user userDTO) err
 	_, err := userRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO users (id, email, name, password_hash, created_at, updated_at, is_super_user)
-			VALUES (?, ?, ?, ?, ?, NULL, ?)
+            INSERT INTO users (id, email, name, password_hash, created_at, updated_at, deleted_at, is_super_user)
+			VALUES (?, ?, ?, ?, ?, NULL, NULL, ?)
         `,
 		user.ID,
 		user.Email,
@@ -85,6 +86,19 @@ func (userRepository *userRepository) Delete(ctx context.Context, id string) err
 	_, err := userRepository.database.ExecContext(
 		ctx,
 		`
+            UPDATE users SET
+				deleted_at = ?
+			WHERE id = ?
+        `,
+		id,
+	)
+	return err
+}
+
+func (userRepository *userRepository) Purge(ctx context.Context, id string) error {
+	_, err := userRepository.database.ExecContext(
+		ctx,
+		`
             DELETE FROM users
 			WHERE id = ?
         `,
@@ -96,16 +110,17 @@ func (userRepository *userRepository) Delete(ctx context.Context, id string) err
 func (userRepository *userRepository) Get(ctx context.Context, id string) (userDTO, error) {
 	var user userDTO
 	var updatedAt sql.NullInt64
+	var deletedAt sql.NullInt64
 	var isSuperUser sql.NullByte
 	err := userRepository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
-                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.is_super_user
+                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
             FROM users U
             WHERE U.id = ?
         `,
-		id).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &updatedAt, &isSuperUser)
+		id).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &updatedAt, &deletedAt, &isSuperUser)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return user, domain.ErrNotFound
@@ -113,6 +128,7 @@ func (userRepository *userRepository) Get(ctx context.Context, id string) (userD
 		return user, err
 	}
 	user.UpdatedAt = utils.SQLInt64Ptr(updatedAt)
+	user.DeletedAt = utils.SQLInt64Ptr(deletedAt)
 	user.IsSuperUser = isSuperUser.Valid && isSuperUser.Byte == 1
 	return user, err
 }
@@ -120,33 +136,36 @@ func (userRepository *userRepository) Get(ctx context.Context, id string) (userD
 func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (userDTO, error) {
 	var user userDTO
 	var updatedAt sql.NullInt64
+	var deletedAt sql.NullInt64
 	var isSuperUser sql.NullByte
 	err := userRepository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
-                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.is_super_user
+                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
             FROM users U
             WHERE U.email = ?
         `,
-		email).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &updatedAt, &isSuperUser)
+		email).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &updatedAt, &deletedAt, &isSuperUser)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return user, domain.ErrNotFound
 		}
 		return user, err
 	}
+	user.DeletedAt = utils.SQLInt64Ptr(deletedAt)
 	user.UpdatedAt = utils.SQLInt64Ptr(updatedAt)
 	user.IsSuperUser = isSuperUser.Valid && isSuperUser.Byte == 1
 	return user, err
 }
 
 func (userRepository *userRepository) Search(ctx context.Context) ([]userDTO, error) {
+	// TODO: deleted filter
 	rows, err := userRepository.database.QueryContext(
 		ctx,
 		`
 			SELECT
-				U.id, U.email, U.name, U.created_at, U.updated_at, U.is_super_user
+				U.id, U.email, U.name, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
 			FROM users U
         `,
 	)
@@ -158,11 +177,13 @@ func (userRepository *userRepository) Search(ctx context.Context) ([]userDTO, er
 	for rows.Next() {
 		var user userDTO
 		var updatedAt sql.NullInt64
+		var deletedAt sql.NullInt64
 		var isSuperUser sql.NullByte
-		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.CreatedAt, &updatedAt, &isSuperUser); err != nil {
+		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.CreatedAt, &updatedAt, &deletedAt, &isSuperUser); err != nil {
 			return nil, err
 		}
 		user.UpdatedAt = utils.SQLInt64Ptr(updatedAt)
+		user.DeletedAt = utils.SQLInt64Ptr(deletedAt)
 		user.IsSuperUser = isSuperUser.Valid && isSuperUser.Byte == 1
 		users = append(users, user)
 	}

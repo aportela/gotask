@@ -7,12 +7,12 @@ type UserBase struct {
 
 type User struct {
 	UserBase
-	Email    string
-	Password *string
-	// TODO: remove this (also exists in repository DTO)
+	Email        string
+	Password     *string
 	PasswordHash *string
 	CreatedAt    int64
 	UpdatedAt    *int64
+	DeletedAt    *int64
 	IsSuperUser  bool
 	AvatarURL    string
 }

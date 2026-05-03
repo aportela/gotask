@@ -84,6 +84,11 @@ func (h *ProjectStatusHandler) GetProjectStatus(w http.ResponseWriter, r *http.R
 
 func (h *ProjectStatusHandler) SearchProjectStatus(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectStatuses, err := h.service.SearchProjectStatuses(r.Context())
+	var request searchProjectStatusesRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] invalid request payload: %w", err))
+		return
+	}
+	projectStatuses, err := h.service.SearchProjectStatuses(r.Context(), mapSearchProjectPrioritysRequestToProjectPriorityFilterDomain(request))
 	handlers.ToHandlerJSONResponse(w, mapProjectStatusArrayDomainToSearchProjectStatussResponse(projectStatuses), err)
 }

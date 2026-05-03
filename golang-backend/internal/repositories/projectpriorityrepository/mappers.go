@@ -6,19 +6,21 @@ import (
 
 func MapProjectPriorityDomainToProjectPriorityDTO(projectPriority domain.ProjectPriority) projectPriorityDTO {
 	return projectPriorityDTO{
-		ID:       projectPriority.ID,
-		Name:     projectPriority.Name,
-		Index:    projectPriority.Index,
-		HexColor: projectPriority.HexColor,
+		ID:          projectPriority.ID,
+		WorkspaceId: projectPriority.WorkspaceId,
+		Name:        projectPriority.Name,
+		Index:       projectPriority.Index,
+		HexColor:    projectPriority.HexColor,
 	}
 }
 
 func MapProjectPriorityDTOToProjectPriorityDomain(projectPriority projectPriorityDTO) domain.ProjectPriority {
 	return domain.ProjectPriority{
-		ID:       projectPriority.ID,
-		Name:     projectPriority.Name,
-		Index:    projectPriority.Index,
-		HexColor: projectPriority.HexColor,
+		ID:          projectPriority.ID,
+		WorkspaceId: projectPriority.WorkspaceId,
+		Name:        projectPriority.Name,
+		Index:       projectPriority.Index,
+		HexColor:    projectPriority.HexColor,
 	}
 }
 
@@ -28,4 +30,16 @@ func MapProjectPriorityArrayDTOToProjectPriorityArrayDomain(projectPriority []pr
 		results = append(results, MapProjectPriorityDTOToProjectPriorityDomain(projectPriority))
 	}
 	return results
+}
+
+func MapProjectPriorityFilterDomainToProjectPriorityFilterDTO(filter domain.ProjectPriorityFilter) projectPriorityFilterDTO {
+	return projectPriorityFilterDTO{
+		WorkspaceId: filter.WorkspaceId,
+	}
+}
+
+func MapProjectPriorityFilterDTOToProjectPriorityFilterDomain(filter projectPriorityFilterDTO) domain.ProjectPriorityFilter {
+	return domain.ProjectPriorityFilter{
+		WorkspaceId: filter.WorkspaceId,
+	}
 }

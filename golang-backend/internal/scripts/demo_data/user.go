@@ -55,6 +55,7 @@ func getRandomUser() domain.User {
 		Password:    &password,
 		CreatedAt:   utils.GetRandomMSTimestamp(time.Now().AddDate(-5, 0, 0), time.Now()),
 		UpdatedAt:   nil,
+		DeletedAt:   nil,
 		IsSuperUser: false,
 	}
 }

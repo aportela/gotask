@@ -13,7 +13,7 @@ type ProjectPriorityService interface {
 	UpdateProjectPriority(ctx context.Context, projectPriority domain.ProjectPriority) error
 	DeleteProjectPriority(ctx context.Context, id string) error
 	GetProjectPriority(ctx context.Context, id string) (domain.ProjectPriority, error)
-	SearchProjectPriorities(ctx context.Context) ([]domain.ProjectPriority, error)
+	SearchProjectPriorities(ctx context.Context, filter domain.ProjectPriorityFilter) ([]domain.ProjectPriority, error)
 }
 
 type projectPriorityService struct {
@@ -44,8 +44,8 @@ func (s *projectPriorityService) GetProjectPriority(ctx context.Context, id stri
 	return projectpriorityrepository.MapProjectPriorityDTOToProjectPriorityDomain(projectPriority), nil
 }
 
-func (s *projectPriorityService) SearchProjectPriorities(ctx context.Context) ([]domain.ProjectPriority, error) {
-	projectPriorities, err := s.repository.Search(ctx)
+func (s *projectPriorityService) SearchProjectPriorities(ctx context.Context, filter domain.ProjectPriorityFilter) ([]domain.ProjectPriority, error) {
+	projectPriorities, err := s.repository.Search(ctx, projectpriorityrepository.MapProjectPriorityFilterDomainToProjectPriorityFilterDTO(filter))
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectPriorityService] failed to search project priorities: %w", err)
 	}

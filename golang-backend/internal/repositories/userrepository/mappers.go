@@ -12,6 +12,7 @@ func MapUserDomainToUserDTO(user domain.User) userDTO {
 		PasswordHash: user.PasswordHash,
 		CreatedAt:    user.CreatedAt,
 		UpdatedAt:    user.UpdatedAt,
+		DeletedAt:    user.DeletedAt,
 		IsSuperUser:  user.IsSuperUser,
 	}
 }
@@ -25,6 +26,7 @@ func MapUserDTOToUserDomain(user userDTO) domain.User {
 		Email:       user.Email,
 		CreatedAt:   user.CreatedAt,
 		UpdatedAt:   user.UpdatedAt,
+		DeletedAt:   user.DeletedAt,
 		IsSuperUser: user.IsSuperUser,
 	}
 }

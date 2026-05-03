@@ -57,8 +57,14 @@ func mapProjectStatusArrayDomainToProjectStatusArrayResponse(projectPriorities [
 	return projectStatusResponses
 }
 
-func mapProjectStatusArrayDomainToSearchProjectStatussResponse(users []domain.ProjectStatus) searchProjectStatussResponse {
-	return searchProjectStatussResponse{
+func mapProjectStatusArrayDomainToSearchProjectStatussResponse(users []domain.ProjectStatus) searchProjectStatusesResponse {
+	return searchProjectStatusesResponse{
 		ProjectStatuses: mapProjectStatusArrayDomainToProjectStatusArrayResponse(users),
+	}
+}
+
+func mapSearchProjectPrioritysRequestToProjectPriorityFilterDomain(request searchProjectStatusesRequest) domain.ProjectStatusFilter {
+	return domain.ProjectStatusFilter{
+		WorkspaceId: request.WorkspaceId,
 	}
 }

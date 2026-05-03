@@ -14,7 +14,7 @@ type ProjectTypeRepository interface {
 	Update(ctx context.Context, projectType projectTypeDTO) error
 	Get(ctx context.Context, id string) (projectTypeDTO, error)
 	Delete(ctx context.Context, id string) error
-	Search(ctx context.Context) ([]projectTypeDTO, error)
+	Search(ctx context.Context, filter projectTypeFilterDTO) ([]projectTypeDTO, error)
 }
 
 type projectTypeRepository struct {
@@ -29,10 +29,11 @@ func (projectTypeRepository *projectTypeRepository) Add(ctx context.Context, pro
 	_, err := projectTypeRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO project_types (id, name, item_hex_color)
-			VALUES (?, ?, ?)
+            INSERT INTO project_types (id, workspace_id, name, item_hex_color)
+			VALUES (?, ?, ?, ?)
         `,
 		projectType.ID,
+		projectType.WorkspaceId,
 		projectType.Name,
 		projectType.HexColor,
 	)
@@ -73,11 +74,11 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
 		ctx,
 		`
             SELECT
-                PT.id, PT.name, PT.item_hex_color
+                PT.id, PT.workspace_id, PT.name, PT.item_hex_color
             FROM project_types PT
             WHERE PT.id = ?
         `,
-		id).Scan(&projectType.ID, &projectType.Name, &projectType.HexColor)
+		id).Scan(&projectType.ID, &projectType.WorkspaceId, &projectType.Name, &projectType.HexColor)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return projectType, domain.ErrNotFound
@@ -87,15 +88,17 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
 	return projectType, err
 }
 
-func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context) ([]projectTypeDTO, error) {
+func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context, filter projectTypeFilterDTO) ([]projectTypeDTO, error) {
 	rows, err := projectTypeRepository.database.QueryContext(
 		ctx,
 		`
 			SELECT
-				PT.id, PT.name, PT.item_hex_color
+				PT.id, PT.workspace_id, PT.name, PT.item_hex_color
 			FROM project_types PT
+			WHERE PT.workspace_id = ?
 			ORDER BY PT.name
         `,
+		filter.WorkspaceId,
 	)
 	if err != nil {
 		return nil, err
@@ -106,11 +109,10 @@ func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context) 
 		var projectType projectTypeDTO
 
 		if err := rows.Scan(
-			&projectType.ID, &projectType.Name, &projectType.HexColor,
+			&projectType.ID, &projectType.WorkspaceId, &projectType.Name, &projectType.HexColor,
 		); err != nil {
 			return nil, err
 		}
-
 		projectTypes = append(projectTypes, projectType)
 	}
 	return projectTypes, nil

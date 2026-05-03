@@ -6,17 +6,19 @@ import (
 
 func MapProjectTypeDomainToProjectTypeDTO(projectType domain.ProjectType) projectTypeDTO {
 	return projectTypeDTO{
-		ID:       projectType.ID,
-		Name:     projectType.Name,
-		HexColor: projectType.HexColor,
+		ID:          projectType.ID,
+		WorkspaceId: projectType.WorkspaceId,
+		Name:        projectType.Name,
+		HexColor:    projectType.HexColor,
 	}
 }
 
 func MapProjectTypeDTOToProjectTypeDomain(projectType projectTypeDTO) domain.ProjectType {
 	return domain.ProjectType{
-		ID:       projectType.ID,
-		Name:     projectType.Name,
-		HexColor: projectType.HexColor,
+		ID:          projectType.ID,
+		WorkspaceId: projectType.WorkspaceId,
+		Name:        projectType.Name,
+		HexColor:    projectType.HexColor,
 	}
 }
 
@@ -26,4 +28,16 @@ func MapProjectTypeArrayDTOToProjectTypeArrayDomain(projectTypes []projectTypeDT
 		results = append(results, MapProjectTypeDTOToProjectTypeDomain(projectType))
 	}
 	return results
+}
+
+func MapProjectTypeFilterDomainToProjectTypeFilterDTO(filter domain.ProjectTypeFilter) projectTypeFilterDTO {
+	return projectTypeFilterDTO{
+		WorkspaceId: filter.WorkspaceId,
+	}
+}
+
+func MapProjectTypeFilterDTOToProjectTypeFilterDomain(filter projectTypeFilterDTO) domain.ProjectTypeFilter {
+	return domain.ProjectTypeFilter{
+		WorkspaceId: filter.WorkspaceId,
+	}
 }

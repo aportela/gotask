@@ -84,6 +84,11 @@ func (h *ProjectPriorityHandler) GetProjectPriority(w http.ResponseWriter, r *ht
 
 func (h *ProjectPriorityHandler) SearchProjectPriorities(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectPriorities, err := h.service.SearchProjectPriorities(r.Context())
+	var request searchProjectPrioritysRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] invalid request payload: %w", err))
+		return
+	}
+	projectPriorities, err := h.service.SearchProjectPriorities(r.Context(), mapSearchProjectPrioritysRequestToProjectPriorityFilterDomain(request))
 	handlers.ToHandlerJSONResponse(w, mapProjectPriorityArrayDomainToSearchProjectPrioritysResponse(projectPriorities), err)
 }

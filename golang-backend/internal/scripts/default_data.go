@@ -29,6 +29,7 @@ func CreateDefaultData(db database.Database) {
 		Password:    &password,
 		CreatedAt:   utils.CurrentMSTimestamp(),
 		UpdatedAt:   nil,
+		DeletedAt:   nil,
 		IsSuperUser: true,
 	})
 	if err != nil {

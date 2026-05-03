@@ -84,6 +84,11 @@ func (h *ProjectTypeHandler) GetProjectType(w http.ResponseWriter, r *http.Reque
 
 func (h *ProjectTypeHandler) SearchProjectTypes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	users, err := h.service.SearchProjectTypes(r.Context())
+	var request searchProjectTypesRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] invalid request payload: %w", err))
+		return
+	}
+	users, err := h.service.SearchProjectTypes(r.Context(), mapSearchProjectTypesRequestToProjectTypeFilterDomain(request))
 	handlers.ToHandlerJSONResponse(w, mapProjectTypeArrayDomainToSearchProjectTypesResponse(users), err)
 }

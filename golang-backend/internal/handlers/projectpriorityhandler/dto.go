@@ -1,24 +1,27 @@
 package projectpriorityhandler
 
 type addProjectPriorityRequest struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Index    int    `json:"index"`
-	HexColor string `json:"hexColor"`
+	ID          string `json:"id"`
+	WorkspaceId string `json:"workspaceId"`
+	Name        string `json:"name"`
+	Index       int    `json:"index"`
+	HexColor    string `json:"hexColor"`
 }
 
 type updateProjectPriorityRequest struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Index    int    `json:"index"`
-	HexColor string `json:"hexColor"`
+	ID          string `json:"id"`
+	WorkspaceId string `json:"workspaceId"`
+	Name        string `json:"name"`
+	Index       int    `json:"index"`
+	HexColor    string `json:"hexColor"`
 }
 
 type projectPriorityResponse struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	Index    int    `json:"index"`
-	HexColor string `json:"hexColor"`
+	ID          string `json:"id"`
+	WorkspaceId string `json:"workspaceId"`
+	Name        string `json:"name"`
+	Index       int    `json:"index"`
+	HexColor    string `json:"hexColor"`
 }
 
 type addProjectPriorityResponse struct {
@@ -31,6 +34,10 @@ type updateProjectPriorityResponse struct {
 
 type getProjectPriorityResponse struct {
 	ProjectPriority projectPriorityResponse `json:"projectPriority"`
+}
+
+type searchProjectPrioritysRequest struct {
+	WorkspaceId string `json:"workspaceId"`
 }
 
 type searchProjectPrioritysResponse struct {
