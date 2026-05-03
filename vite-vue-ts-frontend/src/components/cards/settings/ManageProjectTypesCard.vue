@@ -108,14 +108,14 @@
         <template #thead>
             <tr>
                 <th>{{ t("Name") }}</th>
-                <th class="text-right">{{ t("Actions") }}</th>
+                <th class="text-right" style="padding-right: 8px;">{{ t("Actions") }}</th>
             </tr>
         </template>
         <template #tbody>
             <tr v-for="projectType, index in projectTypes" :key="projectType.id">
-                <td class="cell-flex-vertical-align"><n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{
-                    projectType.name
-                        }}</n-tag><span style="display: inline-block; width: 100%;">&nbsp;</span></td>
+                <td class="cell-flex-vertical-align">
+                    <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name }}</n-tag>
+                </td>
                 <td class="text-right">
                     <n-button-group>
                         <n-button size="small" @click="onUpdateProjectType(projectType, index)">
