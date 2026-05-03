@@ -1,6 +1,11 @@
 export default {
   "Sign in": "Sign in",
 
+  // common actions
+  Save: "Save",
+  Delete: "Delete",
+  Cancel: "Cancel",
+
   // errors
   "Invalid API response": "Invalid API response",
   "Email not found": "Email not found",

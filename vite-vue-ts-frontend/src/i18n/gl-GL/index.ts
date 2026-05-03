@@ -1,6 +1,11 @@
 export default {
   "Sign in": "Iniciar sesión",
 
+  // common actions
+  Save: "Gardar",
+  Delete: "Eliminar",
+  Cancel: "Cancelar",
+
   // errors
   "Invalid API response": "Resposta da API non válida",
   "Email not found": "O Email non existe",
