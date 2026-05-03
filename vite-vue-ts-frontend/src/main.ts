@@ -8,8 +8,6 @@ import App from "./App.vue";
 import { useI18nStore } from "./stores/i18n";
 import { useSessionStore } from "./stores/session";
 
-import { useUserSettingsStore } from "./stores/userSettings";
-
 import "./assets/styles/main.css";
 
 const pinia = createPinia();
@@ -34,9 +32,6 @@ declare module "vue-i18n" {
   export interface DefineNumberFormat {}
 }
 /* eslint-enable @typescript-eslint/no-empty-object-type */
-
-const userSettingsStore = useUserSettingsStore();
-userSettingsStore.init();
 
 const i18nStore = useI18nStore();
 
