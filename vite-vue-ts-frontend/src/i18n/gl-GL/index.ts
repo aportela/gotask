@@ -41,4 +41,6 @@ export default {
 
   // hints
   "Open project page": "Abrir páxina do proxecto",
+  "Switch to dark mode": "Trocar a modo oscuro",
+  "Switch to light mode": "Trocar a modo claro",
 };
