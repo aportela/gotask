@@ -4,12 +4,16 @@
     import { NTable, NButton, NButtonGroup, NGrid, NGridItem, NModal, NTag } from 'naive-ui'
     import { api } from '../../../composables/api';
     import { IconEdit, IconPlus, IconTrash } from '@tabler/icons-vue';
-    import ProjectTypeForm from '../../forms/ProjectTypeForm.vue';
     import { getNaiveUITagColorProperty } from '../../../composables/color';
     import type { ProjectTypeInterface } from '../../../types/models/projectType';
     import { type AjaxStateInterface, defaultAjaxState } from '../../../types/ajaxState';
     import { type EntityAction } from '../../../types/common';
     import { useLoadingStore } from '../../../stores/loading';
+    import { useNotify } from '../../../composables/notification';
+    import { default as ProjectTypeForm } from '../../forms/ProjectTypeForm.vue';
+    import { default as ManageTable } from '../../custom/ManageTable.vue';
+
+    const { notify } = useNotify();
 
     const { t } = useI18n();
 
@@ -25,6 +29,7 @@
         api.projectTypes.search().then((successResponse: any) => {
             projectTypes.value = [...successResponse.data.projectTypes];
         }).catch((errorResponse: any) => {
+            // TODO
             console.log(errorResponse);
         }).finally(() => {
             loadingStore.set(false);
@@ -61,16 +66,19 @@
 
     const onAdd = () => {
         isVisibleActionDialog.value = false;
+        notify('success', "Project type added")
         onRefresh();
     };
 
     const onUpdate = () => {
         isVisibleActionDialog.value = false;
+        notify('success', "Project type updated")
         onRefresh();
     };
 
     const onDelete = () => {
         isVisibleActionDialog.value = false;
+        notify('success', "Project type deleted")
         onRefresh();
     };
 
@@ -89,7 +97,37 @@
         <ProjectTypeForm :mode="actionDialogMode" :project-type-id="selectedProjectTypeId" style="width: 40%;"
             @add="onAdd" @update="onUpdate" @delete="onDelete" @cancel="onCancel" />
     </n-modal>
-    <n-table size="small">
+    <ManageTable size="small" :title="t('Project types')">
+        <template #thead>
+            <tr>
+                <th>{{ t("Name") }}</th>
+                <th class="text-center">{{ t("Actions") }}</th>
+            </tr>
+        </template>
+        <template #tbody>
+            <tr v-for="projectType, index in projectTypes" :key="projectType.id">
+                <td><n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name
+                }}</n-tag></td>
+                <td class="text-center">
+                    <n-button-group>
+                        <n-button @click="onUpdateProjectType(projectType, index)">
+                            {{ t("Update") }}
+                            <template #icon>
+                                <IconEdit :size="22" />
+                            </template>
+                        </n-button>
+                        <n-button @click="onDeleteProjectType(projectType, index)">
+                            {{ t("Delete") }}
+                            <template #icon>
+                                <IconTrash :size="22" />
+                            </template>
+                        </n-button>
+                    </n-button-group>
+                </td>
+            </tr>
+        </template>
+    </ManageTable>
+    <n-table size="small" v-if="false">
         <caption class="table-caption">
             <n-grid :cols="2" align="center">
                 <n-grid-item style="text-align: left;">
@@ -114,7 +152,7 @@
         <tbody>
             <tr v-for="projectType, index in projectTypes" :key="projectType.id">
                 <td><n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name
-                        }}</n-tag></td>
+                }}</n-tag></td>
                 <td class="text-center">
                     <n-button-group>
                         <n-button @click="onUpdateProjectType(projectType, index)">

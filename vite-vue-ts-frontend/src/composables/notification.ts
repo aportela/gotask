@@ -6,7 +6,11 @@ export const useNotify = () => {
   const userSettingsStore = useUserSettingsStore();
   const notification = useNotification();
 
-  const notify = (type: NotificationType, content: string, meta: string) => {
+  const notify = (
+    type: NotificationType,
+    content: string,
+    meta: string | undefined = undefined,
+  ) => {
     if (userSettingsStore.hasNotificationsEnabled) {
       notification[type]({
         content,

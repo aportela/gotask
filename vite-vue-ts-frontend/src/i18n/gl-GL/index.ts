@@ -34,4 +34,8 @@ export default {
   Name: "Nome",
   Preview: "Previsualización",
   Color: "Cor",
+
+  // notifications
+  "Enable notifications": "Activar notificacións",
+  "Disable notifications": "Desactivar notificacións",
 };

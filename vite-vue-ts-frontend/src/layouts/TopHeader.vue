@@ -4,6 +4,7 @@
     import { IconUserCircle, IconDatabaseStar, IconId, IconLogout, IconSearch } from '@tabler/icons-vue';
     import type { Component } from 'vue'
     import { h } from 'vue'
+    import { default as SwitchNotificationsButton } from '../components/buttons/SwitchNotificationsButton.vue';
     import { default as SwitchFluidLayoutButton } from '../components/buttons/SwitchFluidLayoutButton.vue';
     import { default as GithubButton } from '../components/buttons/GithubButton.vue';
     import { default as SwitchColorSchemeButton } from '../components/buttons/SwitchColorSchemeButton.vue';
@@ -95,6 +96,7 @@
             <n-flex>
 
                 <GithubButton :size="commonIconSize" />
+                <SwitchNotificationsButton :size="commonIconSize" />
                 <SwitchColorSchemeButton :size="commonIconSize" />
                 <SwitchFluidLayoutButton :size="commonIconSize" />
                 <n-dropdown :options="userDropdownOptions" placement="bottom-end" trigger="hover"
