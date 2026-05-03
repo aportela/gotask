@@ -34,6 +34,7 @@ export default {
   "Login to your account": "Login to your account",
 
   // other
+  Error: "Error",
   Name: "Name",
   Preview: "Preview",
   Color: "Color",

@@ -3,14 +3,16 @@
     import { useI18n } from "vue-i18n";
     import { NSpin, NCard, NInput, NFlex, NButton, NColorPicker, NTag, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules } from 'naive-ui';
     import { v7 as uuidv7 } from 'uuid';
-    import { IconCancel, IconDeviceFloppy, IconTrash } from '@tabler/icons-vue';
+    import { IconCancel, IconDeviceFloppy, IconPalette, IconTrash } from '@tabler/icons-vue';
     import { type AxiosAPIError } from '../../composables/axios';
     import type { EntityAction } from '../../types/common';
+    import { type GetProjectTypeResponse } from '../../types/apiResponses';
     import { type ProjectTypeInterface, ProjectTypeClass, maxNameLength as projectTypeMaxNameLength } from '../../types/models/projectType';
     import { type AjaxStateInterface, defaultAjaxState } from '../../types/ajaxState';
     import { api } from '../../composables/api';
     import { required, minLength, runValidators } from '../../composables/form-validators';
     import { generateRandomSoftHexColor, getNaiveUITagColorProperty } from '../../composables/color';
+    import { default as RemoteAPIAlert } from '../alerts/RemoteAPIAlert.vue';
 
     const emit = defineEmits(['add', 'update', 'delete', 'cancel'])
 
@@ -95,18 +97,25 @@
     }
 
     const onGet = (id: string) => {
+        Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
-        api.projectTypes.get(id).then((_response: any) => {
-            projectType.value = _response.data.projectType;
+        api.projectTypes.get(id).then((response: GetProjectTypeResponse) => {
+            if (response.data.projectType.id === id) {
+                projectType.value = response.data.projectType;
+            } else {
+                state.ajaxErrorMessage = t("Unable to load project type: invalid API response");
+            }
         }).catch((_error: AxiosAPIError) => {
             // TODO:
             console.error(_error);
+            state.ajaxErrorMessage = t("Unable to load project type: invalid API response");
         }).finally(() => {
             state.ajaxRunning = false;
         });
     };
 
     const onAdd = () => {
+        Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
         api.projectTypes.add(projectType.value).then((_response: any) => {
             emit('add')
@@ -119,6 +128,7 @@
     };
 
     const onUpdate = () => {
+        Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
         api.projectTypes.update(projectType.value).then((_response: any) => {
             emit('update')
@@ -131,6 +141,7 @@
     };
 
     const onDelete = () => {
+        Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
         api.projectTypes.delete(projectType.value.id).then((_response: any) => {
             emit('delete')
@@ -172,14 +183,26 @@
                     :show-count="!deleteMode" clearable required autofocus></n-input>
             </n-form-item>
             <n-form-item :label="t('Preview')" v-if="!deleteMode">
-                <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">
-                    {{ projectType.name }}
-                </n-tag>
-            </n-form-item>
-            <n-form-item :label="t('Color')" v-if="!deleteMode">
-                <n-color-picker :modes="['hex']" :show-alpha="false" v-model:value="projectType.hexColor" />
+                <n-flex style="width: 100%" align="center" :wrap="false">
+                    <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)" style="width: 100%;">
+                        {{ projectType.name }}
+                    </n-tag>
+                    <n-color-picker :modes="['hex']" :show-alpha="false" v-model:value="projectType.hexColor">
+                        <template #trigger="{ onClick, ref: triggerRef }">
+                            <n-button :ref="triggerRef" quaternary @click="onClick">
+                                <template #icon>
+                                    <IconPalette />
+                                </template>
+                            </n-button>
+                        </template>
+                    </n-color-picker>
+                </n-flex>
             </n-form-item>
         </n-form>
+        <template #footer>
+            <RemoteAPIAlert v-if="state.ajaxErrorMessage" type="error" :title="t('Error')"
+                :message="state.ajaxErrorMessage" />
+        </template>
         <template #action>
             <n-flex>
                 <n-button @click="onSave" v-if="addMode || updateMode" :disabled="saveButtonDisabled">

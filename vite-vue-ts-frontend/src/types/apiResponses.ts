@@ -2,6 +2,8 @@ import { type AxiosResponse } from "axios";
 
 import { type ValidAuthTypes } from "./common";
 
+import type { ProjectTypeInterface } from "./models/projectType";
+
 interface DefaultAxiosResponse<T = unknown> {
   data: AxiosResponse<T>;
 }
@@ -30,8 +32,15 @@ interface GetNewAccessTokenResponse extends Omit<DefaultAxiosResponse, "data"> {
   };
 }
 
+interface GetProjectTypeResponse extends Omit<DefaultAxiosResponse, "data"> {
+  data: {
+    projectType: ProjectTypeInterface;
+  };
+}
+
 export {
   type DefaultAxiosResponse,
   type SignInSucessResponse,
   type GetNewAccessTokenResponse,
+  type GetProjectTypeResponse,
 };

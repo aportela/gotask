@@ -34,6 +34,7 @@ export default {
   "Login to your account": "Inicie sesión con su cuenta",
 
   // other
+  Error: "Error",
   Name: "Nombre",
   Preview: "Previsualización",
   Color: "Color",
