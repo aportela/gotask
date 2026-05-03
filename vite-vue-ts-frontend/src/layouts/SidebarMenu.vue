@@ -1,12 +1,13 @@
 <script setup lang="ts">
     import type { MenuOption } from 'naive-ui'
-    import { NMenu, NSelect } from 'naive-ui';
+    import { NMenu } from 'naive-ui';
     import type { Component } from 'vue'
     import { IconPresentation, IconUserCircle, IconBug, IconSitemap, IconFileAnalytics, IconSettings, IconMatrix, IconUsers, IconChartHistogram } from '@tabler/icons-vue';
     // IconListDetails
     import { NIcon } from 'naive-ui'
-    import { h, ref } from 'vue'
+    import { h } from 'vue'
     import { RouterLink } from 'vue-router'
+    import { default as WorkspaceSelector } from '../components/selectors/WorkspaceSelector.vue';
 
     const commonIconSize = 20;
 
@@ -21,6 +22,7 @@
     const menuOptions: MenuOption[] = [
         {
             key: 'workspace',
+            /*
             label: () =>
                 h(NSelect, {
                     value: currentWorkspace.value,
@@ -29,7 +31,12 @@
                     },
                     options: workspaceOptions,
                     placeholder: 'Select workspace',
-                    style: 'width: 100%'
+
+                }),
+            */
+            label: () =>
+                h(WorkspaceSelector, {
+                    style: 'width: 100%;'
                 }),
             icon: renderIcon(IconMatrix)(commonIconSize)
         },
@@ -303,6 +310,7 @@
     function handleUpdateValue(_key: string, _item: MenuOption) {
     }
 
+    /*
     const currentWorkspace = ref<string>("w1");
 
     const workspaceOptions = [
@@ -322,8 +330,8 @@
             label: 'Workspace 4',
             value: 'w4',
         },
-
     ]
+    */
 </script>
 
 <template>

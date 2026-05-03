@@ -16,6 +16,9 @@ export default {
   "API Error: fatal error": "Error fatal de API",
   "Sign in error": "Error ó inicia-la sesión",
 
+  // workspace
+  Workspace: "Área de traballo",
+
   // project types
   "Add project type": "Engadir tipo de proxecto",
   "Update project type": "Actualizar tipo de proxecto",

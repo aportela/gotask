@@ -23,6 +23,9 @@ const api = {
       return axiosInstance.post("/auth/renew_access_token");
     },
   },
+  workspace: {
+    search: () => axiosInstance.get("/workspaces"),
+  },
   user: {
     search: () => axiosInstance.get("/users"),
   },

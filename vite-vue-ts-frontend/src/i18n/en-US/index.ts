@@ -16,6 +16,9 @@ export default {
   "API Error: fatal error": "API Error: fatal error",
   "Sign in error": "Sign in error",
 
+  // workspace
+  Workspace: "Workspace",
+
   // project types
   "Add project type": "Add project type",
   "Update project type": "Update project type",
