@@ -107,14 +107,14 @@
         </caption>
         <thead>
             <tr>
-                <th style="">{{ t("Name") }}</th>
+                <th>{{ t("Name") }}</th>
                 <th class="text-center">{{ t("Actions") }}</th>
             </tr>
         </thead>
         <tbody>
             <tr v-for="projectType, index in projectTypes" :key="projectType.id">
                 <td><n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name
-                }}</n-tag></td>
+                        }}</n-tag></td>
                 <td class="text-center">
                     <n-button-group>
                         <n-button @click="onUpdateProjectType(projectType, index)">
@@ -147,5 +147,4 @@
         font-size: large;
 
     }
-
 </style>
