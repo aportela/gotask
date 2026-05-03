@@ -20,10 +20,9 @@
 <template>
     <n-tooltip trigger="hover">
         <template #trigger>
-            <n-button quaternary>
-                <IconMoon :size="size" v-if="colorSchemeStore.light" @click.prevent="colorSchemeStore.toggle"
-                    @mousedown.prevent />
-                <IconSun :size="size" v-else @click="colorSchemeStore.toggle" @mousedown.prevent />
+            <n-button quaternary @click.prevent="colorSchemeStore.toggle" @mousedown.prevent>
+                <IconMoon :size="size" v-if="colorSchemeStore.light" />
+                <IconSun :size="size" v-else />
             </n-button>
         </template>
         {{

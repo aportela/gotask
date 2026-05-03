@@ -20,10 +20,9 @@
 <template>
     <n-tooltip trigger="hover">
         <template #trigger>
-            <n-button quaternary>
-                <IconBellOff :size="size" v-if="userSettingsStore.disableNotifications"
-                    @click.prevent="userSettingsStore.toggleNotifications" @mousedown.prevent />
-                <IconBell :size="size" v-else @click="userSettingsStore.toggleNotifications" @mousedown.prevent />
+            <n-button quaternary @click.prevent="userSettingsStore.toggleNotifications" @mousedown.prevent>
+                <IconBellOff :size="size" v-if="userSettingsStore.disableNotifications" />
+                <IconBell :size="size" v-else />
             </n-button>
         </template>
         {{
