@@ -20,7 +20,7 @@ const api = {
     },
     signOut: () => axiosInstance.post("/auth/signout"),
     renewAccessToken: function () {
-      return axiosInstance.post("/auth/renew_access_token");
+      return axiosInstance.post("/auth/renew-access-token");
     },
   },
   workspace: {

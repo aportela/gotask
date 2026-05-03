@@ -32,7 +32,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		userHandler := authhandler.NewAuthHandler(db, cfg.Auth.SecretKey, cfg.Auth.AccessTokenExpirationHours, cfg.Auth.RefreshTokenExpirationDays)
 		r.Post("/signin", userHandler.SignIn)
 		r.Post("/signout", userHandler.SignOut)
-		r.Post("/renew_access_token", userHandler.RenewAccessToken)
+		r.Post("/renew-access-token", userHandler.RenewAccessToken)
 	})
 
 	apiRouter.Route("/users", func(r chi.Router) {

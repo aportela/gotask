@@ -53,7 +53,7 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     "refresh_token",
 		Value:    refreshToken.Token,
-		Path:     "/api/auth/renew_access_token",
+		Path:     "/api/auth/renew-access-token",
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
@@ -72,7 +72,7 @@ func (h *AuthHandler) SignOut(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",
-		Path:     "/api/auth/renew_access_token",
+		Path:     "/api/auth/renew-access-token",
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
