@@ -36,7 +36,7 @@ export default {
   // other
   Error: "Error",
   Name: "Nombre",
-  Preview: "Previsualización",
+  Preview: "Vista previa",
   Color: "Color",
 
   // notifications
