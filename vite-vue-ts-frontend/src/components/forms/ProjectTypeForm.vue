@@ -103,12 +103,28 @@
             if (response.data.projectType.id === id) {
                 projectType.value = response.data.projectType;
             } else {
-                state.ajaxErrorMessage = t("Unable to load project type: invalid API response");
+                state.ajaxErrorMessage = t("Unable to load project type: invalid API response data");
             }
-        }).catch((_error: AxiosAPIError) => {
-            // TODO:
-            console.error(_error);
-            state.ajaxErrorMessage = t("Unable to load project type: invalid API response");
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        break;
+                    case 404:
+                        state.ajaxErrorMessage = "Unable to load project type: project type not found";
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("Unable to load project type: invalid API response code");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = `Unable to load project type: ${errorResponse} `;
+                console.error(errorResponse);
+            }
         }).finally(() => {
             state.ajaxRunning = false;
         });
@@ -158,12 +174,14 @@
     }
 
     onMounted(() => {
-        if (props.mode == "update" || props.mode == "delete") {
+        if (props.mode === "update" || props.mode === "delete") {
             if (props.projectTypeId) {
                 onGet(props.projectTypeId);
             } else {
                 console.error(`TODO: missing projectTypeId prop for ${props.mode} action`);
             }
+        } else if (props.mode === "add") {
+            projectTypeFormRef.value?.validate();
         }
     });
 </script>
@@ -176,11 +194,12 @@
         <template #header-extra>
             <n-spin v-if="state.ajaxRunning" size="small" />
         </template>
-        <n-form ref="projectTypeFormRef" :model="projectType" :rules="projectTypeFormRules">
+        <n-form ref="projectTypeFormRef" :model="projectType" :rules="projectTypeFormRules"
+            :disabled="state.ajaxRunning">
             <n-form-item :label="t('Name')" path="name" show-feedback>
                 <n-input :placeholder="t('Project type name')" v-model:value="projectType.name"
-                    :disabled="state.ajaxRunning || deleteMode" :maxlength="projectTypeMaxNameLength"
-                    :show-count="!deleteMode" clearable required autofocus></n-input>
+                    :maxlength="projectTypeMaxNameLength" :show-count="!deleteMode" clearable required
+                    autofocus></n-input>
             </n-form-item>
             <n-form-item :label="t('Preview')" v-if="!deleteMode">
                 <n-flex style="width: 100%" align="center" :wrap="false">
