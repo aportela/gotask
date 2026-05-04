@@ -2,7 +2,7 @@
     import type { MenuOption } from 'naive-ui'
     import { NMenu } from 'naive-ui';
     import type { Component } from 'vue'
-    import { IconPresentation, IconUserCircle, IconBug, IconSitemap, IconFileAnalytics, IconSettings, IconMatrix, IconUsers, IconChartHistogram, IconDatabaseStar } from '@tabler/icons-vue';
+    import { IconPresentation, IconUserCircle, IconBug, IconSitemap, IconFileAnalytics, IconSettings, IconMatrix, IconUsers, IconChartHistogram } from '@tabler/icons-vue';
     // IconListDetails
     import { NIcon } from 'naive-ui'
     import { h } from 'vue'
@@ -334,24 +334,8 @@
 </script>
 
 <template>
-    <div class="brand-container">
-        <IconDatabaseStar :size="commonIconSize" />
-        <span class="brand-name">Doneo</span>
-    </div>
     <n-menu :collapsed-width="64" :collapsed-icon-size="commonIconSize" :options="menuOptions"
         @update:value="handleUpdateValue" />
 </template>
 
-<style lang="css" scoped>
-    .brand-container {
-        display: flex;
-        align-items: center;
-    }
-
-
-    .brand-name {
-        margin-left: 8px;
-        font-size: 18px;
-        font-weight: 600;
-    }
-</style>
+<style lang="css" scoped></style>
