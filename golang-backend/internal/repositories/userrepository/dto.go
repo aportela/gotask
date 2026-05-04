@@ -2,13 +2,13 @@ package userrepository
 
 import "database/sql"
 
-type userBaseDTO struct {
+type UserBaseDTO struct {
 	ID   string `db:"id"`
 	Name string `db:"name"`
 }
 
-type userDTO struct {
-	userBaseDTO
+type UserDTO struct {
+	UserBaseDTO
 	Email        string        `db:"email"`
 	PasswordHash string        `db:"password_hash"`
 	CreatedAt    int64         `db:"created_at"`

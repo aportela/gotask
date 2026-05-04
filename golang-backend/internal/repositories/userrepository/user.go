@@ -11,13 +11,13 @@ import (
 )
 
 type UserRepository interface {
-	Add(ctx context.Context, user userDTO) error
-	Update(ctx context.Context, user userDTO) error
+	Add(ctx context.Context, user UserDTO) error
+	Update(ctx context.Context, user UserDTO) error
 	Delete(ctx context.Context, id string) error
 	Purge(ctx context.Context, id string) error
-	Get(ctx context.Context, id string) (userDTO, error)
-	GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (userDTO, error)
-	Search(ctx context.Context) ([]userDTO, error)
+	Get(ctx context.Context, id string) (UserDTO, error)
+	GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (UserDTO, error)
+	Search(ctx context.Context) ([]UserDTO, error)
 }
 
 type userRepository struct {
@@ -28,8 +28,7 @@ func NewUserRepository(database database.Database) UserRepository {
 	return &userRepository{database: database}
 }
 
-func (userRepository *userRepository) Add(ctx context.Context, user userDTO) error {
-
+func (userRepository *userRepository) Add(ctx context.Context, user UserDTO) error {
 	adminFlag := 0
 	if user.IsSuperUser {
 		adminFlag = 1
@@ -50,7 +49,7 @@ func (userRepository *userRepository) Add(ctx context.Context, user userDTO) err
 	return err
 }
 
-func (userRepository *userRepository) Update(ctx context.Context, user userDTO) error {
+func (userRepository *userRepository) Update(ctx context.Context, user UserDTO) error {
 	var query string
 	var args []interface{}
 	adminFlag := 0
@@ -107,8 +106,8 @@ func (userRepository *userRepository) Purge(ctx context.Context, id string) erro
 	return err
 }
 
-func (userRepository *userRepository) Get(ctx context.Context, id string) (userDTO, error) {
-	var user userDTO
+func (userRepository *userRepository) Get(ctx context.Context, id string) (UserDTO, error) {
+	var user UserDTO
 	var isSuperUser byte
 	err := userRepository.database.QueryRowContext(
 		ctx,
@@ -121,16 +120,16 @@ func (userRepository *userRepository) Get(ctx context.Context, id string) (userD
 		id).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &isSuperUser)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return user, domain.ErrNotFound
+			return UserDTO{}, domain.ErrNotFound
 		}
-		return user, err
+		return UserDTO{}, err
 	}
 	user.IsSuperUser = isSuperUser == 1
 	return user, err
 }
 
-func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (userDTO, error) {
-	var user userDTO
+func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (UserDTO, error) {
+	var user UserDTO
 	var isSuperUser byte
 	err := userRepository.database.QueryRowContext(
 		ctx,
@@ -143,15 +142,15 @@ func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context
 		email).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &isSuperUser)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return user, domain.ErrNotFound
+			return UserDTO{}, domain.ErrNotFound
 		}
-		return user, err
+		return UserDTO{}, err
 	}
 	user.IsSuperUser = isSuperUser == 1
 	return user, err
 }
 
-func (userRepository *userRepository) Search(ctx context.Context) ([]userDTO, error) {
+func (userRepository *userRepository) Search(ctx context.Context) ([]UserDTO, error) {
 	rows, err := userRepository.database.QueryContext(
 		ctx,
 		`
@@ -164,9 +163,9 @@ func (userRepository *userRepository) Search(ctx context.Context) ([]userDTO, er
 		return nil, err
 	}
 	defer rows.Close()
-	var users []userDTO
+	var users []UserDTO
 	for rows.Next() {
-		var user userDTO
+		var user UserDTO
 		var isSuperUser byte
 		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &isSuperUser); err != nil {
 			return nil, err

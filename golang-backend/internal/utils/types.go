@@ -15,6 +15,15 @@ func TimePtrToSQLNullInt64(t *time.Time) sql.NullInt64 {
 	}
 }
 
+func TimePtrToInt64Ptr(t *time.Time) *int64 {
+	if t == nil {
+		return nil
+	}
+	var i int64
+	i = t.UnixMilli()
+	return &i
+}
+
 func SQLNullInt64ToTimePtr(ni64 sql.NullInt64) *time.Time {
 	if !ni64.Valid {
 		return nil

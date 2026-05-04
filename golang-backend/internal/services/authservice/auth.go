@@ -25,14 +25,14 @@ func NewAuthService(repository userrepository.UserRepository) AuthService {
 func (s *authService) SignIn(ctx context.Context, user domain.User) (domain.User, error) {
 	credentialUser, err := s.repository.GetByEmailForVerifyCredentials(ctx, user.Email, user.Password)
 	if err != nil {
-		return userrepository.DTOToUser(credentialUser), err
+		return domain.User{}, err
 	}
 	if user.DeletedAt != nil {
-		return userrepository.DTOToUser(credentialUser), domain.ErrDeleted
+		return domain.User{}, domain.ErrDeleted
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(credentialUser.PasswordHash), []byte(user.Password))
 	if err != nil {
-		return userrepository.DTOToUser(credentialUser), domain.ErrInvalidCredentials
+		return domain.User{}, domain.ErrInvalidCredentials
 	}
 	return userrepository.DTOToUser(credentialUser), nil
 }

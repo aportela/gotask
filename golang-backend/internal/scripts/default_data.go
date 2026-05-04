@@ -17,7 +17,7 @@ func CreateDefaultData(db database.Database) {
 	userService := userservice.NewUserService(userRepository)
 
 	userID := func() string { u, _ := uuid.NewV7(); return u.String() }()
-	err := userService.AddUser(context.Background(), domain.User{
+	err := userService.Add(context.Background(), domain.User{
 		UserBase: domain.UserBase{
 			ID:   userID,
 			Name: "administrator",

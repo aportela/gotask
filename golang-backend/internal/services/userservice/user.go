@@ -12,11 +12,12 @@ import (
 )
 
 type UserService interface {
-	AddUser(ctx context.Context, user domain.User) error
-	UpdateUser(ctx context.Context, user domain.User) error
-	DeleteUser(ctx context.Context, id string) error
-	GetUser(ctx context.Context, id string) (domain.User, error)
-	SearchUsers(ctx context.Context) ([]domain.User, error)
+	Add(ctx context.Context, user domain.User) error
+	Update(ctx context.Context, user domain.User) error
+	Delete(ctx context.Context, id string) error
+	Purge(ctx context.Context, id string) error
+	Get(ctx context.Context, id string) (domain.User, error)
+	Search(ctx context.Context) ([]domain.User, error)
 }
 
 type userService struct {
@@ -27,7 +28,7 @@ func NewUserService(repository userrepository.UserRepository) UserService {
 	return &userService{repository: repository}
 }
 
-func (s *userService) AddUser(ctx context.Context, user domain.User) error {
+func (s *userService) Add(ctx context.Context, user domain.User) error {
 	hashedPasswordBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if hashErr != nil {
 		return hashErr
@@ -40,7 +41,7 @@ func (s *userService) AddUser(ctx context.Context, user domain.User) error {
 	return nil
 }
 
-func (s *userService) UpdateUser(ctx context.Context, user domain.User) error {
+func (s *userService) Update(ctx context.Context, user domain.User) error {
 	if user.Password != "" {
 		hashedPasswordBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if hashErr != nil {
@@ -56,22 +57,29 @@ func (s *userService) UpdateUser(ctx context.Context, user domain.User) error {
 	return nil
 }
 
-func (s *userService) DeleteUser(ctx context.Context, id string) error {
+func (s *userService) Delete(ctx context.Context, id string) error {
 	if err := s.repository.Delete(ctx, id); err != nil {
 		return fmt.Errorf("[UserService] failed to delete user with ID %s: %w", id, err)
 	}
 	return nil
 }
 
-func (s *userService) GetUser(ctx context.Context, id string) (domain.User, error) {
+func (s *userService) Purge(ctx context.Context, id string) error {
+	if err := s.repository.Purge(ctx, id); err != nil {
+		return fmt.Errorf("[UserService] failed to purge user with ID %s: %w", id, err)
+	}
+	return nil
+}
+
+func (s *userService) Get(ctx context.Context, id string) (domain.User, error) {
 	user, err := s.repository.Get(ctx, id)
 	if err != nil {
-		return userrepository.DTOToUser(user), fmt.Errorf("[UserService] failed to get user with ID %s: %w", id, err)
+		return domain.User{}, fmt.Errorf("[UserService] failed to get user with ID %s: %w", id, err)
 	}
 	return userrepository.DTOToUser(user), nil
 }
 
-func (s *userService) SearchUsers(ctx context.Context) ([]domain.User, error) {
+func (s *userService) Search(ctx context.Context) ([]domain.User, error) {
 	users, err := s.repository.Search(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("[UserService] failed to search users: %w", err)
