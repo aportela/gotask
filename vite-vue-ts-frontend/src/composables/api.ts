@@ -25,6 +25,8 @@ const api = {
   },
   workspace: {
     search: () => axiosInstance.get("/workspaces"),
+    getProjectTypes: (workspaceId: string) =>
+      axiosInstance.get("/workspaces/" + workspaceId + "/project-types"),
   },
   user: {
     search: () => axiosInstance.get("/users"),
