@@ -2,24 +2,28 @@
     import { h, type CSSProperties, type VNodeChild, type Component } from 'vue';
     import { NSelect, NIcon, type SelectSize } from 'naive-ui';
     import { type NaiveUISelectOptionWithColor } from '../../types/customNaiveUI';
+    import { IconSquareFilled } from '@tabler/icons-vue';
+
 
     interface WorkspaceSelectorProps {
+        size?: SelectSize;
         disabled?: boolean;
         loading?: boolean;
-        size?: SelectSize;
-        placeholder?: string;
         clearable?: boolean;
         filterable?: boolean;
+        placeholder?: string;
         style?: string | CSSProperties;
         options: NaiveUISelectOptionWithColor[];
-        icon: Component;
+        icon?: Component;
     };
+
 
     const props = withDefaults(defineProps<WorkspaceSelectorProps>(), {
         size: "medium",
         disabled: false,
         loading: false,
         clearable: false,
+        filterable: false,
     });
 
     const modelValue = defineModel<string | null>('value');
@@ -38,7 +42,7 @@
                     }
                 },
                 {
-                    default: () => h(props.icon)
+                    default: () => h(props.icon || IconSquareFilled)
                 }
             ),
             option.label as string
@@ -49,7 +53,8 @@
 <template>
     <n-select :placeholder="placeholder" :size="size" v-model:value="modelValue" :options="options"
         :render-label="renderLabel" :style="style" :disabled="disabled" :loading="loading" :clearable="clearable"
-        :filterable="filterable"></n-select>
+        :filterable="filterable">
+    </n-select>
 </template>
 
 <style lang=" css" scoped></style>
