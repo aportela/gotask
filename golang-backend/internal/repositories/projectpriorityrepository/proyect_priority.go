@@ -14,7 +14,7 @@ type ProjectPriorityRepository interface {
 	Update(ctx context.Context, projectPriority projectPriorityDTO) error
 	Get(ctx context.Context, id string) (projectPriorityDTO, error)
 	Delete(ctx context.Context, id string) error
-	Search(ctx context.Context, filter projectPriorityFilterDTO) ([]projectPriorityDTO, error)
+	Search(ctx context.Context) ([]projectPriorityDTO, error)
 }
 
 type projectPriorityRepository struct {
@@ -29,11 +29,10 @@ func (projectPriorityRepository *projectPriorityRepository) Add(ctx context.Cont
 	_, err := projectPriorityRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO project_priorities (id, workspace_id, name, item_index, item_hex_color)
-			VALUES (?, ?, ?, ?, ?)
+            INSERT INTO project_priorities (id, name, item_index, item_hex_color)
+			VALUES (?, ?, ?, ?)
         `,
 		projectPriority.ID,
-		projectPriority.WorkspaceId,
 		projectPriority.Name,
 		projectPriority.Index,
 		projectPriority.HexColor,
@@ -77,11 +76,11 @@ func (projectPriorityRepository *projectPriorityRepository) Get(ctx context.Cont
 		ctx,
 		`
             SELECT
-                PP.id, PP.workspace_id, PP.name, PP.item_index, PP.item_hex_color
+                PP.id, PP.name, PP.item_index, PP.item_hex_color
             FROM project_priorities PP
             WHERE PP.id = ?
         `,
-		id).Scan(&projectPriority.ID, &projectPriority.WorkspaceId, &projectPriority.Name, &projectPriority.Index, &projectPriority.HexColor)
+		id).Scan(&projectPriority.ID, &projectPriority.Name, &projectPriority.Index, &projectPriority.HexColor)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return projectPriority, domain.ErrNotFound
@@ -91,17 +90,16 @@ func (projectPriorityRepository *projectPriorityRepository) Get(ctx context.Cont
 	return projectPriority, err
 }
 
-func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.Context, filter projectPriorityFilterDTO) ([]projectPriorityDTO, error) {
+func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.Context) ([]projectPriorityDTO, error) {
 	rows, err := projectPriorityRepository.database.QueryContext(
 		ctx,
 		`
 			SELECT
-				PP.id, PP.workspace_id, PP.name, PP.item_index, PP.item_hex_color
+				PP.id, PP.name, PP.item_index, PP.item_hex_color
 			FROM project_priorities PP
 			WHERE PP.workspace_id = ?
 			ORDER BY PP.item_index, PP.name
         `,
-		filter.WorkspaceId,
 	)
 	if err != nil {
 		return nil, err
@@ -111,7 +109,7 @@ func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.C
 	for rows.Next() {
 		var projectPriority projectPriorityDTO
 		if err := rows.Scan(
-			&projectPriority.ID, &projectPriority.WorkspaceId, &projectPriority.Name, &projectPriority.Index, &projectPriority.HexColor,
+			&projectPriority.ID, &projectPriority.Name, &projectPriority.Index, &projectPriority.HexColor,
 		); err != nil {
 			return nil, err
 		}

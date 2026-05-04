@@ -29,12 +29,11 @@ func (projectRepository *projectRepository) Add(ctx context.Context, project pro
 		ctx,
 		`
             INSERT INTO projects
-				(id, workspace_id, key, summary, description, creator_id, created_at, updated_at, started_at, finished_at, due_at, priority_id, status_id, type_id)
+				(id, key, summary, description, creator_id, created_at, updated_at, started_at, finished_at, due_at, priority_id, status_id, type_id)
 			VALUES
-				(?, ?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)
+				(?, ?, ?, ?, ?, ?, NULL, ?, ?, ?, ?, ?, ?)
         `,
 		project.ID,
-		project.WorkspaceId,
 		project.Key,
 		project.Summary,
 		utils.NullableStringToSQL(project.Description),

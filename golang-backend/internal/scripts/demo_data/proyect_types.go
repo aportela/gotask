@@ -9,10 +9,9 @@ import (
 	"github.com/aportela/doneo/internal/repositories/projecttyperepository"
 	"github.com/aportela/doneo/internal/services/projecttypeservice"
 	"github.com/aportela/doneo/internal/utils"
-	"github.com/gofrs/uuid"
 )
 
-func createProjectTypes(database database.Database, workspaceId string) []string {
+func createProjectTypes(database database.Database) []string {
 	projectTypeNames := []string{
 		"Personal", "Business", "Work", "Educational", "Technology",
 		"Creative", "Research", "Social", "Marketing", "Sports",
@@ -23,17 +22,17 @@ func createProjectTypes(database database.Database, workspaceId string) []string
 	projectTypeRepository := projecttyperepository.NewProjectTypeRepository(database)
 	projectTypeService := projecttypeservice.NewProjectTypeService(projectTypeRepository)
 	for _, projectTypeName := range projectTypeNames {
-		projectTypeID := func() string { u, _ := uuid.NewV7(); return u.String() }()
+		projectTypeID := utils.UUID()
 		err := projectTypeService.AddProjectType(context.Background(), domain.ProjectType{
-			ID:          projectTypeID,
-			WorkspaceId: workspaceId,
-			Name:        projectTypeName,
-			HexColor:    utils.RandomSoftHexColor(),
+			ID:       utils.UUID(),
+			Name:     projectTypeName,
+			HexColor: utils.RandomSoftHexColor(),
 		})
 		if err != nil {
 			fmt.Printf("Error creating project type %s\n", err.Error())
+		} else {
+			newProjectTypeIds = append(newProjectTypeIds, projectTypeID)
 		}
-		newProjectTypeIds = append(newProjectTypeIds, projectTypeID)
 	}
 	return newProjectTypeIds
 }

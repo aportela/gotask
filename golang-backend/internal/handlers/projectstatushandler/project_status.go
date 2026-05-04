@@ -89,6 +89,6 @@ func (h *ProjectStatusHandler) SearchProjectStatus(w http.ResponseWriter, r *htt
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] invalid request payload: %w", err))
 		return
 	}
-	projectStatuses, err := h.service.SearchProjectStatuses(r.Context(), mapSearchProjectPrioritysRequestToProjectPriorityFilterDomain(request))
+	projectStatuses, err := h.service.SearchProjectStatuses(r.Context())
 	handlers.ToHandlerJSONResponse(w, mapProjectStatusArrayDomainToSearchProjectStatussResponse(projectStatuses), err)
 }

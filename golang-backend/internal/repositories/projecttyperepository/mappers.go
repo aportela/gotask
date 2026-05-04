@@ -27,11 +27,3 @@ func MapProjectTypeArrayDTOToProjectTypeArrayDomain(projectTypes []projectTypeDT
 	}
 	return results
 }
-
-func MapProjectTypeFilterDomainToProjectTypeFilterDTO(filter domain.ProjectTypeFilter) projectTypeFilterDTO {
-	return projectTypeFilterDTO{}
-}
-
-func MapProjectTypeFilterDTOToProjectTypeFilterDomain(filter projectTypeFilterDTO) domain.ProjectTypeFilter {
-	return domain.ProjectTypeFilter{}
-}

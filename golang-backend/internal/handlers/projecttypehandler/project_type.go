@@ -31,7 +31,6 @@ func (h *ProjectTypeHandler) AddProjectType(w http.ResponseWriter, r *http.Reque
 		return
 	}
 	projectType := mapAddProjectTypeRequestToProjectTypeDomain(request)
-	projectType.WorkspaceId = chi.URLParam(r, "workspace_id")
 	err := h.service.AddProjectType(r.Context(), projectType)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to add project type with ID %s: %w", request.ID, err))
@@ -85,6 +84,6 @@ func (h *ProjectTypeHandler) GetProjectType(w http.ResponseWriter, r *http.Reque
 
 func (h *ProjectTypeHandler) SearchProjectTypes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectTypes, err := h.service.SearchProjectTypes(r.Context(), domain.ProjectTypeFilter{WorkspaceId: chi.URLParam(r, "workspace_id")})
+	projectTypes, err := h.service.SearchProjectTypes(r.Context())
 	handlers.ToHandlerJSONResponse(w, mapProjectTypeArrayDomainToSearchProjectTypesResponse(projectTypes), err)
 }

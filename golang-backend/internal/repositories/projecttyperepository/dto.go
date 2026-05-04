@@ -5,6 +5,3 @@ type projectTypeDTO struct {
 	Name     string `db:"name"`
 	HexColor string `db:"item_hex_color"`
 }
-
-type projectTypeFilterDTO struct {
-}

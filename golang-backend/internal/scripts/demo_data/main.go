@@ -1,14 +1,19 @@
 package demodatascripts
 
 import (
+	"fmt"
+
 	"github.com/aportela/doneo/internal/database"
 )
 
 func CreateDemoData(database database.Database) {
 	userIds := createUsers(database, 32)
-	workspaceId := createDefaultWorkspace(database, userIds[0])
-	projectTypeIds := createProjectTypes(database, workspaceId)
-	projectPriorityIds := createProjectPriorities(database, workspaceId)
-	projectStatusIds := createProjectStatuses(database, workspaceId)
-	createProjects(database, workspaceId, projectTypeIds, projectPriorityIds, projectStatusIds, userIds, 32)
+	projectTypeIds := createProjectTypes(database)
+	projectPriorityIds := createProjectPriorities(database)
+	projectStatusIds := createProjectStatuses(database)
+	fmt.Println(userIds)
+	fmt.Println(projectTypeIds)
+	fmt.Println(projectPriorityIds)
+	fmt.Println(projectStatusIds)
+	createProjects(database, projectTypeIds, projectPriorityIds, projectStatusIds, userIds, 32)
 }

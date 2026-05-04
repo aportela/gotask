@@ -12,7 +12,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
-func createProjectPriorities(database database.Database, workspaceId string) []string {
+func createProjectPriorities(database database.Database) []string {
 	projectPriorityNames := []string{"Low", "Medium", "High"}
 	var newProjectPriorityIds []string
 	projectPriorityRepository := projectpriorityrepository.NewProjectPriorityRepository(database)
@@ -20,11 +20,10 @@ func createProjectPriorities(database database.Database, workspaceId string) []s
 	for index, projectPriorityName := range projectPriorityNames {
 		projectPriorityID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 		err := projectPriorityService.AddProjectPriority(context.Background(), domain.ProjectPriority{
-			ID:          projectPriorityID,
-			WorkspaceId: workspaceId,
-			Name:        projectPriorityName,
-			Index:       index,
-			HexColor:    utils.RandomSoftHexColor(),
+			ID:       projectPriorityID,
+			Name:     projectPriorityName,
+			Index:    index,
+			HexColor: utils.RandomSoftHexColor(),
 		})
 		if err != nil {
 			fmt.Printf("Error creating project priority %s\n", err.Error())

@@ -2,7 +2,6 @@ package projectrepository
 
 type projectDTO struct {
 	ID               string  `db:"id"`
-	WorkspaceId      string  `db:"workspace_id"`
 	Key              string  `db:"key"`
 	Summary          string  `db:"summary"`
 	Description      *string `json:"description"`

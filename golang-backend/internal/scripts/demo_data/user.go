@@ -11,7 +11,7 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/repositories/userrepository"
 	"github.com/aportela/doneo/internal/services/userservice"
-	"github.com/gofrs/uuid"
+	"github.com/aportela/doneo/internal/utils"
 )
 
 func getRandomUserName() string {
@@ -42,11 +42,10 @@ func generateRandomEmail(fullName string) string {
 }
 
 func getRandomUser() domain.User {
-	userID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 	name := getRandomUserName()
 	return domain.User{
 		UserBase: domain.UserBase{
-			ID:   userID,
+			ID:   utils.UUID(),
 			Name: name,
 		},
 		Email:       generateRandomEmail(name),
@@ -67,8 +66,9 @@ func createUsers(database database.Database, count int) []string {
 		err := userService.Add(context.Background(), newUser)
 		if err != nil {
 			fmt.Printf("Error creating user %s\n", err.Error())
+		} else {
+			newUserIds = append(newUserIds, newUser.ID)
 		}
-		newUserIds = append(newUserIds, newUser.ID)
 	}
 	return newUserIds
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/aportela/doneo/internal/repositories/projectrepository"
 	"github.com/aportela/doneo/internal/services/projectservice"
 	"github.com/aportela/doneo/internal/utils"
-	"github.com/gofrs/uuid"
 )
 
 func getRandomProjectSummary() string {
@@ -105,8 +104,8 @@ func getRandomProjectKey() string {
 	return string(result)
 }
 
-func getRandomProject(workspaceId string, userIds []string, projectTypeIds []string, projectPriorityIds []string, projectStatusIds []string) domain.Project {
-	projectID := func() string { u, _ := uuid.NewV7(); return u.String() }()
+func getRandomProject(userIds []string, projectTypeIds []string, projectPriorityIds []string, projectStatusIds []string) domain.Project {
+	projectID := utils.UUID()
 	projectDescription := getRandomProjectDescription()
 	startOffset := rand.Int63n(48)
 	finishOffset := rand.Int63n(96)
@@ -124,16 +123,8 @@ func getRandomProject(workspaceId string, userIds []string, projectTypeIds []str
 	rand.Shuffle(len(projectStatusIds), func(i, j int) {
 		projectStatusIds[i], projectStatusIds[j] = projectStatusIds[j], projectStatusIds[i]
 	})
-	/*
-		numParticipants := rand.Intn(3) + 1
-		var participants []domain.UserBase
-		for i := 0; i < numParticipants; i++ {
-			participants = append(participants, domain.UserBase{ID: userIds[i]})
-		}
-	*/
 	return domain.Project{
 		ID:          projectID,
-		WorkspaceId: workspaceId,
 		Key:         getRandomProjectKey(),
 		Summary:     getRandomProjectSummary(),
 		Description: &projectDescription,
@@ -148,13 +139,13 @@ func getRandomProject(workspaceId string, userIds []string, projectTypeIds []str
 	}
 }
 
-func createProjects(database database.Database, workspaceId string, projectTypeIds []string, projectPriorityIds []string, projectStatusIds []string, userIds []string, count int) []string {
+func createProjects(database database.Database, projectTypeIds []string, projectPriorityIds []string, projectStatusIds []string, userIds []string, count int) []string {
 	var newProjectIds []string
 	projectRepository := projectrepository.NewProjectRepository(database)
 
 	projectService := projectservice.NewProjectService(projectRepository)
 	for i := 1; i <= count; i++ {
-		newProject := getRandomProject(workspaceId, userIds, projectTypeIds, projectPriorityIds, projectStatusIds)
+		newProject := getRandomProject(userIds, projectTypeIds, projectPriorityIds, projectStatusIds)
 		err := projectService.AddProject(context.Background(), newProject)
 		if err != nil {
 			fmt.Printf("Error creating project %s\n", err.Error())

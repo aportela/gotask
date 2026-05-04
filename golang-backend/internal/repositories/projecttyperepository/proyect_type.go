@@ -14,8 +14,7 @@ type ProjectTypeRepository interface {
 	Update(ctx context.Context, projectType projectTypeDTO) error
 	Get(ctx context.Context, id string) (projectTypeDTO, error)
 	Delete(ctx context.Context, id string) error
-	GetWorkspaceProjectTypes(ctx context.Context, workspaceId string) ([]projectTypeDTO, error)
-	Search(ctx context.Context, filter projectTypeFilterDTO) ([]projectTypeDTO, error)
+	Search(ctx context.Context) ([]projectTypeDTO, error)
 }
 
 type projectTypeRepository struct {
@@ -31,7 +30,7 @@ func (projectTypeRepository *projectTypeRepository) Add(ctx context.Context, pro
 		ctx,
 		`
             INSERT INTO project_types (id, name, item_hex_color)
-			VALUES (?, ?, ?, ?)
+			VALUES (?, ?, ?)
         `,
 		projectType.ID,
 		projectType.Name,
@@ -88,7 +87,7 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
 	return projectType, err
 }
 
-func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context, filter projectTypeFilterDTO) ([]projectTypeDTO, error) {
+func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context) ([]projectTypeDTO, error) {
 	rows, err := projectTypeRepository.database.QueryContext(
 		ctx,
 		`

@@ -6,31 +6,28 @@ import (
 
 func mapAddProjectPriorityRequestToProjectPriorityDomain(request addProjectPriorityRequest) domain.ProjectPriority {
 	return domain.ProjectPriority{
-		ID:          request.ID,
-		WorkspaceId: request.WorkspaceId,
-		Name:        request.Name,
-		Index:       request.Index,
-		HexColor:    request.HexColor,
+		ID:       request.ID,
+		Name:     request.Name,
+		Index:    request.Index,
+		HexColor: request.HexColor,
 	}
 }
 
 func mapUpdateProjectPriorityRequestToProjectPriorityDomain(request updateProjectPriorityRequest) domain.ProjectPriority {
 	return domain.ProjectPriority{
-		ID:          request.ID,
-		WorkspaceId: request.WorkspaceId,
-		Name:        request.Name,
-		Index:       request.Index,
-		HexColor:    request.HexColor,
+		ID:       request.ID,
+		Name:     request.Name,
+		Index:    request.Index,
+		HexColor: request.HexColor,
 	}
 }
 
 func mapProjectPriorityDomainToProjectPriorityResponse(projectPriority domain.ProjectPriority) ProjectPriorityResponse {
 	return ProjectPriorityResponse{
-		ID:          projectPriority.ID,
-		WorkspaceId: projectPriority.WorkspaceId,
-		Name:        projectPriority.Name,
-		Index:       projectPriority.Index,
-		HexColor:    projectPriority.HexColor,
+		ID:       projectPriority.ID,
+		Name:     projectPriority.Name,
+		Index:    projectPriority.Index,
+		HexColor: projectPriority.HexColor,
 	}
 }
 
@@ -63,11 +60,5 @@ func mapProjectPriorityArrayDomainToProjectPriorityArrayResponse(projectPrioriti
 func mapProjectPriorityArrayDomainToSearchProjectPrioritysResponse(users []domain.ProjectPriority) searchProjectPrioritysResponse {
 	return searchProjectPrioritysResponse{
 		ProjectPriorities: mapProjectPriorityArrayDomainToProjectPriorityArrayResponse(users),
-	}
-}
-
-func mapSearchProjectPrioritysRequestToProjectPriorityFilterDomain(request searchProjectPrioritysRequest) domain.ProjectPriorityFilter {
-	return domain.ProjectPriorityFilter{
-		WorkspaceId: request.WorkspaceId,
 	}
 }

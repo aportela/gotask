@@ -7,7 +7,6 @@ import (
 func MapProjectDomainToProjectDTO(project domain.Project) projectDTO {
 	return projectDTO{
 		ID:           project.ID,
-		WorkspaceId:  project.WorkspaceId,
 		Key:          project.Key,
 		Summary:      project.Summary,
 		Description:  project.Description,
@@ -31,7 +30,6 @@ func MapProjectDomainToProjectDTO(project domain.Project) projectDTO {
 func MapProjectDTOToProjectDomain(project projectDTO) domain.Project {
 	return domain.Project{
 		ID:          project.ID,
-		WorkspaceId: project.WorkspaceId,
 		Key:         project.Key,
 		Summary:     project.Summary,
 		Description: project.Description,
