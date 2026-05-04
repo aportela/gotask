@@ -117,7 +117,7 @@
             @add="onAdd" @update="onUpdate" @delete="onDelete" @cancel="onCancel" />
     </n-modal>
     <ManageTable size="small" :title="t('Project types')">
-        <template #caption-extra>
+        <template #caption-extra v-if="currentWorkSpaceStore.workspaceId">
             <n-button @click="onAddProjectType" :disabled="state.ajaxRunning" size="small">
                 <template #icon>
                     <IconPlus />
@@ -162,7 +162,7 @@
                     <span class="table-caption-title">{{ t("Project types") }}</span>
                 </n-grid-item>
                 <n-grid-item style="display: flex; justify-content: flex-end;">
-                    <n-button @click="onAddProjectType" :disabled="state.ajaxRunning">
+                    <n-button @click="onAddProjectType" :disabled="state.ajaxRunning || true">
                         <template #icon>
                             <IconPlus />
                         </template>
@@ -180,7 +180,7 @@
         <tbody>
             <tr v-for="projectType, index in projectTypes" :key="projectType.id">
                 <td><n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name
-                }}</n-tag></td>
+                        }}</n-tag></td>
                 <td class="text-center">
                     <n-button-group>
                         <n-button @click="onUpdateProjectType(projectType, index)">
