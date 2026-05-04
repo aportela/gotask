@@ -15,6 +15,7 @@ type WorkspaceRepository interface {
 	Update(ctx context.Context, workspace workspaceDTO) error
 	Get(ctx context.Context, id string) (workspaceDTO, error)
 	Delete(ctx context.Context, id string) error
+	Purge(ctx context.Context, id string) error
 	Search(ctx context.Context) ([]workspaceDTO, error)
 }
 
@@ -30,14 +31,16 @@ func (workspaceRepository *workspaceRepository) Add(ctx context.Context, workspa
 	_, err := workspaceRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO workspaces (id, name, description, creator_id, created_at, updated_at)
-			VALUES (?, ?, ?, ?, ?, NULL)
+            INSERT INTO workspaces (id, name, description, item_hex_color, creator_id, created_at, updated_at, deleted_at)
+			VALUES (?, ?, ?, ?, ?, ?, NULL, NULL)
         `,
 		workspace.ID,
 		workspace.Name,
 		utils.NullableStringToSQL(workspace.Description),
+		workspace.HexColor,
 		workspace.CreatorId,
 		workspace.CreatedAt,
+		workspace.HexColor,
 	)
 	return err
 }
@@ -48,12 +51,14 @@ func (workspaceRepository *workspaceRepository) Update(ctx context.Context, work
 		`
             UPDATE workspaces SET
 				name = ?,
-				description = ?
+				description = ?,
+				item_hex_color = ?,
 				updated_at = ?
 			WHERE id = ?
         `,
 		workspace.Name,
 		utils.NullableStringToSQL(workspace.Description),
+		utils.NullableStringToSQL(&workspace.HexColor),
 		utils.NullableInt64ToSQL(workspace.UpdatedAt),
 		workspace.ID,
 	)
@@ -61,6 +66,19 @@ func (workspaceRepository *workspaceRepository) Update(ctx context.Context, work
 }
 
 func (workspaceRepository *workspaceRepository) Delete(ctx context.Context, id string) error {
+	_, err := workspaceRepository.database.ExecContext(
+		ctx,
+		`
+            UPDATE workspaces SET
+				deleted_at = ?
+			WHERE id = ?
+        `,
+		id,
+	)
+	return err
+}
+
+func (workspaceRepository *workspaceRepository) Purge(ctx context.Context, id string) error {
 	_, err := workspaceRepository.database.ExecContext(
 		ctx,
 		`
@@ -76,16 +94,17 @@ func (workspaceRepository *workspaceRepository) Get(ctx context.Context, id stri
 	var workspace workspaceDTO
 	var description sql.NullString
 	var updatedAt sql.NullInt64
+	var deletedAt sql.NullInt64
 	err := workspaceRepository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
-                W.id, W.name, W.description, W.created_at, W.updated_at, W.creator_id, U.name
+                W.id, W.name, W.description, W.item_hex_color, W.created_at, W.updated_at, W.deleted_at, W.creator_id, U.name
             FROM workspaces W
 			INNER JOIN users U ON U.id = W.creator_id
             WHERE W.id = ?
         `,
-		id).Scan(&workspace.ID, &workspace.Name, &description, &workspace.CreatedAt, &updatedAt, &workspace.CreatorId, &workspace.CreatorName)
+		id).Scan(&workspace.ID, &workspace.Name, &description, &workspace.HexColor, &workspace.CreatedAt, &updatedAt, &deletedAt, &workspace.CreatorId, &workspace.CreatorName)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return workspace, domain.ErrNotFound
@@ -96,6 +115,7 @@ func (workspaceRepository *workspaceRepository) Get(ctx context.Context, id stri
 		workspace.Description = &description.String
 	}
 	workspace.UpdatedAt = utils.SQLInt64Ptr(updatedAt)
+	workspace.DeletedAt = utils.SQLInt64Ptr(deletedAt)
 	return workspace, err
 }
 
@@ -104,7 +124,7 @@ func (workspaceRepository *workspaceRepository) Search(ctx context.Context) ([]w
 		ctx,
 		`
 			SELECT
-				W.id, W.name, W.description, W.creator_id, U.name AS creator_name, W.created_at, W.updated_at
+				W.id, W.name, W.description, W.item_hex_color, W.creator_id, U.name AS creator_name, W.created_at, W.updated_at, W.deleted_at
 			FROM workspaces W
 			INNER JOIN users U ON U.id = W.creator_id
 			ORDER BY W.name
@@ -119,13 +139,15 @@ func (workspaceRepository *workspaceRepository) Search(ctx context.Context) ([]w
 		var workspace workspaceDTO
 		var description sql.NullString
 		var updatedAt sql.NullInt64
-		if err := rows.Scan(&workspace.ID, &workspace.Name, &description, &workspace.CreatorId, &workspace.CreatorName, &workspace.CreatedAt, &updatedAt); err != nil {
+		var deletedAt sql.NullInt64
+		if err := rows.Scan(&workspace.ID, &workspace.Name, &description, &workspace.HexColor, &workspace.CreatorId, &workspace.CreatorName, &workspace.CreatedAt, &updatedAt, &deletedAt); err != nil {
 			return nil, err
 		}
 		if description.Valid {
 			workspace.Description = &description.String
 		}
 		workspace.UpdatedAt = utils.SQLInt64Ptr(updatedAt)
+		workspace.DeletedAt = utils.SQLInt64Ptr(deletedAt)
 		workspaces = append(workspaces, workspace)
 	}
 	if err := rows.Err(); err != nil {

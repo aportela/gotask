@@ -1,10 +1,12 @@
 package domain
 
 type Workspace struct {
-	ID          string   `json:"id"`
-	Name        string   `json:"name"`
-	Description *string  `json:"description"`
-	CreatedBy   UserBase `json:"createdBy"`
-	CreatedAt   int64    `json:"createdAt"`
-	UpdatedAt   *int64   `json:"updatedAt"`
+	ID          string
+	Name        string
+	Description *string
+	HexColor    string
+	CreatedBy   UserBase
+	CreatedAt   int64
+	UpdatedAt   *int64
+	DeletedAt   *int64
 }

@@ -6,15 +6,17 @@ import (
 
 func mapAddWorkspaceRequestToWorkspaceDomain(request addWorkspaceRequest) domain.Workspace {
 	return domain.Workspace{
-		ID:   request.ID,
-		Name: request.Name,
+		ID:       request.ID,
+		Name:     request.Name,
+		HexColor: request.HexColor,
 	}
 }
 
 func mapWorkspaceDomainToWorkspaceResponse(workspace domain.Workspace) workspaceResponse {
 	return workspaceResponse{
-		ID:   workspace.ID,
-		Name: workspace.Name,
+		ID:       workspace.ID,
+		Name:     workspace.Name,
+		HexColor: workspace.HexColor,
 	}
 }
 

@@ -21,6 +21,7 @@ func createDefaultWorkspace(database database.Database, userId string) string {
 		ID:          workspaceID,
 		Name:        "home",
 		Description: &description,
+		HexColor:    utils.RandomSoftHexColor(),
 		CreatedBy:   domain.UserBase{ID: userId},
 		CreatedAt:   utils.CurrentMSTimestamp(),
 	})

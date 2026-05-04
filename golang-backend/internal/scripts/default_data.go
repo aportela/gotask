@@ -45,6 +45,7 @@ func CreateDefaultData(db database.Database) {
 		ID:          workspaceID,
 		Name:        "default",
 		Description: nil,
+		HexColor:    utils.RandomSoftHexColor(),
 		CreatedBy: domain.UserBase{
 			ID: userID,
 		},

@@ -1,10 +1,11 @@
 <script setup lang="ts">
     import { h, reactive, onMounted, type CSSProperties, shallowRef, type VNodeChild } from 'vue';
     import { useI18n } from "vue-i18n";
-    import { type SelectOption, NSelect, NIcon } from 'naive-ui';
+    import { NSelect, NIcon } from 'naive-ui';
     import { api } from '../../composables/api';
     import { type SearchProjectTypesResponse } from '../../types/apiResponses';
     import { type AjaxStateInterface, defaultAjaxState } from "../../types/ajaxState";
+    import { type NaiveUISelectOptionWithColor } from '../../types/customNaiveUI';
     import { IconSquareFilled } from '@tabler/icons-vue';
 
     const { t } = useI18n();
@@ -20,15 +21,11 @@
 
     const selectedProjectType = defineModel<string | null>('value');
 
-    export interface SelectOptionWithColor extends SelectOption {
-        color: string;
-    }
-
-    const options = shallowRef<SelectOptionWithColor[]>([]);
+    const options = shallowRef<NaiveUISelectOptionWithColor[]>([]);
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-    const findValidProjectType = (options: SelectOptionWithColor[], stored?: string | null) => {
+    const findValidProjectType = (options: NaiveUISelectOptionWithColor[], stored?: string | null) => {
         if (!options.length) return null;
 
         if (stored && options.some(o => o.value === stored)) {
@@ -59,7 +56,7 @@
         });
     };
 
-    const renderLabel = (option: SelectOptionWithColor): VNodeChild => {
+    const renderLabel = (option: NaiveUISelectOptionWithColor): VNodeChild => {
         if (option.type === 'group')
             return `${option.label}(Cool!)`
         return [

@@ -28,6 +28,7 @@ var installSchemaQueries = []string{
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			name TEXT NOT NULL UNIQUE CHECK(length(name) BETWEEN 1 AND 16),
 			description TEXT,
+			item_hex_color TEXT NOT NULL CHECK(length(item_hex_color) = 7),
 			creator_id TEXT NOT NULL CHECK(length(creator_id) == 36),
 			created_at INTEGER NOT NULL,
 			updated_at INTEGER,
