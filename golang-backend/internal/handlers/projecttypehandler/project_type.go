@@ -30,13 +30,14 @@ func (h *ProjectTypeHandler) AddProjectType(w http.ResponseWriter, r *http.Reque
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] invalid request payload: %w", err))
 		return
 	}
-	user := mapAddProjectTypeRequestToProjectTypeDomain(request)
-	err := h.service.AddProjectType(r.Context(), user)
+	projectType := mapAddProjectTypeRequestToProjectTypeDomain(request)
+	projectType.WorkspaceId = chi.URLParam(r, "workspace_id")
+	err := h.service.AddProjectType(r.Context(), projectType)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to add project type with ID %s: %w", request.ID, err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToAddProjectTypeResponse(user), nil, http.StatusCreated)
+	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToAddProjectTypeResponse(projectType), nil, http.StatusCreated)
 }
 
 func (h *ProjectTypeHandler) UpdateProjectType(w http.ResponseWriter, r *http.Request) {
@@ -46,21 +47,21 @@ func (h *ProjectTypeHandler) UpdateProjectType(w http.ResponseWriter, r *http.Re
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] invalid request payload: %w", err))
 		return
 	}
-	user := mapUpdateProjectTypeRequestToProjectTypeDomain(request)
-	err := h.service.UpdateProjectType(r.Context(), user)
+	projectType := mapUpdateProjectTypeRequestToProjectTypeDomain(request)
+	err := h.service.UpdateProjectType(r.Context(), projectType)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to update project type with ID %s: %w", user.ID, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to update project type with ID %s: %w", projectType.ID, err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToUpdateProjectTypeResponse(user), nil)
+	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToUpdateProjectTypeResponse(projectType), nil)
 }
 
 func (h *ProjectTypeHandler) DeleteProjectType(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	userId := chi.URLParam(r, "project_type_id")
-	err := h.service.DeleteProjectType(r.Context(), userId)
+	projectTypeId := chi.URLParam(r, "project_type_id")
+	err := h.service.DeleteProjectType(r.Context(), projectTypeId)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to delete project type with ID %s: %w", userId, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to delete project type with ID %s: %w", projectTypeId, err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
@@ -68,18 +69,18 @@ func (h *ProjectTypeHandler) DeleteProjectType(w http.ResponseWriter, r *http.Re
 
 func (h *ProjectTypeHandler) GetProjectType(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	userId := chi.URLParam(r, "project_type_id")
-	user, err := h.service.GetProjectType(r.Context(), userId)
+	projectTypeId := chi.URLParam(r, "project_type_id")
+	projectType, err := h.service.GetProjectType(r.Context(), projectTypeId)
 	if err != nil {
 		if err == domain.ErrNotFound {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] not found project type with ID %s: %w", userId, err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] not found project type with ID %s: %w", projectTypeId, err))
 			return
 		} else {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to get project type with ID %s: %w", userId, err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to get project type with ID %s: %w", projectTypeId, err))
 			return
 		}
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToGetProjectTypeResponse(user), nil)
+	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToGetProjectTypeResponse(projectType), nil)
 }
 
 func (h *ProjectTypeHandler) SearchProjectTypes(w http.ResponseWriter, r *http.Request) {
