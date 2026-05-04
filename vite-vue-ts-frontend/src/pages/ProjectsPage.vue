@@ -3,6 +3,7 @@
     import { api } from '../composables/api';
     import { NDataTable, NTag, NTable, NAvatar } from 'naive-ui';
     import type { DataTableColumns } from 'naive-ui'
+    import { getNaiveUITagColorProperty } from '../composables/color';
 
     interface ProjectTypeInterface {
         id: string;
@@ -222,45 +223,6 @@
 
     const simpleTable = true;
 
-    const hexToRgba = (hex: string, alphaOverride?: number) => {
-        if (!hex) return `rgba(0,0,0,1)`
-
-        let h = hex.replace('#', '')
-
-        let r, g, b, a = 1
-
-        if (h.length === 8) {
-            // RRGGBBAA
-            r = parseInt(h.slice(0, 2), 16)
-            g = parseInt(h.slice(2, 4), 16)
-            b = parseInt(h.slice(4, 6), 16)
-            a = parseInt(h.slice(6, 8), 16) / 255
-        } else {
-            // RRGGBB
-            r = parseInt(h.slice(0, 2), 16)
-            g = parseInt(h.slice(2, 4), 16)
-            b = parseInt(h.slice(4, 6), 16)
-        }
-
-        const alpha = alphaOverride ?? a
-
-        return `rgba(${r}, ${g}, ${b}, ${alpha})`
-    }
-
-    const tagColor = (base: string) => {
-        console.log(base);
-        console.log(hexToRgba(base, 1));
-        console.log({
-            color: hexToRgba(base, 0.2),
-            textColor: hexToRgba(base, 1),
-            borderColor: hexToRgba(base, 0.5)
-        });
-        return {
-            color: hexToRgba(base, 0.2),
-            textColor: hexToRgba(base, 1),
-            borderColor: hexToRgba(base, 0.5)
-        }
-    }
 </script>
 
 <template>
@@ -285,7 +247,7 @@
                 </td>
                 <td><router-link :to="{ name: 'project', params: { id: project.id } }">{{ project.summary
                 }}</router-link></td>
-                <td><n-tag :color="tagColor(project.type.hexColor)" class="clickable_tag"
+                <td><n-tag :color="getNaiveUITagColorProperty(project.type.hexColor)" class="clickable_tag"
                         title="Filter by this value">{{
                             project.type.name
                         }}</n-tag>
@@ -294,12 +256,12 @@
                         class="creator-name">{{
                             project.createdBy.name }}</span></td>
                 <td>{{ new Date(project.createdAt).toLocaleString() }}</td>
-                <td><n-tag :color="tagColor(project.priority.hexColor)" class="clickable_tag"
+                <td><n-tag :color="getNaiveUITagColorProperty(project.priority.hexColor)" class="clickable_tag"
                         title="Filter by this value">{{
                             project.priority.name
                         }}</n-tag>
                 </td>
-                <td><n-tag :color="tagColor(project.status.hexColor)" class="clickable_tag"
+                <td><n-tag :color="getNaiveUITagColorProperty(project.status.hexColor)" class="clickable_tag"
                         title="Filter by this value">{{ project.status.name
                         }}</n-tag></td>
             </tr>
