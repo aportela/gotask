@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { NMenu, NIcon, type MenuOption } from 'naive-ui'
-    import { IconBug, IconSitemap, IconFileAnalytics, IconSettings, IconPresentation, IconChartHistogram, IconUsers } from '@tabler/icons-vue';
+    import { IconUserCheck, IconBug, IconSitemap, IconFileAnalytics, IconSettings, IconUserCircle, IconPresentation, IconChartHistogram, IconUsers, IconBookmark, IconFlagBolt, IconAdjustmentsBolt, IconLogout, IconId } from '@tabler/icons-vue';
     import { ref, watch, h } from 'vue'
     import type { Component } from 'vue'
     import { useRouter } from "vue-router";
@@ -33,24 +33,6 @@
 
     const menuOptions: MenuOption[] = [
         {
-            key: 'divider-1',
-            type: 'divider',
-            props: {
-                style: {
-                    marginLeft: '32px'
-                }
-            }
-        },
-        {
-            key: 'divider-1',
-            type: 'divider',
-            props: {
-                style: {
-                    marginLeft: '32px'
-                }
-            }
-        },
-        {
             label: () =>
                 h(
                     RouterLink,
@@ -64,7 +46,7 @@
                     { default: () => 'Overview' }
                 ),
             key: 'home',
-            icon: renderIcon(IconPresentation)(commonIconSize)
+            icon: renderIcon(IconPresentation)(commonIconSize),
         },
         {
             label: () =>
@@ -84,87 +66,26 @@
         },
         {
             label: "Tasks",
-            /*
-            label: () =>
-                h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: 'tasks',
-                            params: {
-                            }
-                        }
-                    },
-                    { default: () => 'Tasks' }
-                ),
-            */
             key: 'tasks',
+            disabled: true,
             icon: renderIcon(IconBug)(commonIconSize)
         },
         {
             label: "Reports",
-            /*
-            label: () =>
-                h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: 'reports',
-                            params: {
-                            }
-                        }
-                    },
-                    { default: () => 'Reports' }
-                ),
-            key: 'reports',
-            */
+            key: "reports",
+            disabled: true,
             icon: renderIcon(IconFileAnalytics)(commonIconSize)
         },
         {
             label: "Charts",
-            /*
-            label: () =>
-                h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: 'charts',
-                            params: {
-                            }
-                        }
-                    },
-                    { default: () => 'Charts' }
-                ),
-            */
             key: 'charts',
+            disabled: true,
             icon: renderIcon(IconChartHistogram)(commonIconSize)
         },
         {
-            key: 'divider-1',
-            type: 'divider',
-            props: {
-                style: {
-                    marginLeft: '32px'
-                }
-            }
-        },
-        {
-            label: "Admin",
-            /*
-            label: () =>
-                h(
-                    RouterLink,
-                    {
-                        to: {
-                            name: 'settings',
-                            params: {
-                            }
-                        }
-                    },
-                    { default: () => 'Admin' }
-                ),
-            */
+            label: "Settings",
             key: 'settings',
+            show: false,
             icon: renderIcon(IconSettings)(commonIconSize),
             children: [
                 {
@@ -183,107 +104,95 @@
                     key: 'users',
                     icon: renderIcon(IconUsers)(commonIconSize)
                 },
-                /*
                 {
-                    label: () =>
-                        h(
-                            RouterLink,
-                            {
-                                to: {
-                                    name: 'users',
-                                    params: {
-                                    }
-                                }
-                            },
-                            { default: () => 'Workspaces' }
-                        ),
-                    key: 'users',
-                    icon: renderIcon(IconMatrix)(commonIconSize)
+                    label: 'Roles',
+                    key: 'roles',
+                    disabled: true,
+                    icon: renderIcon(IconUserCheck)(commonIconSize),
                 },
                 {
-                    label: () =>
-                        h(
-                            RouterLink,
-                            {
-                                to: {
-                                    name: 'projects',
-                                    params: {
-                                    }
-                                }
-                            },
-                            { default: () => 'Projects' }
-                        ),
-                    key: 'projects',
-                    icon: renderIcon(IconSitemap)(commonIconSize)
-                },
-                {
-                    label: () =>
-                        h(
-                            RouterLink,
-                            {
-                                to: {
-                                    name: 'tasks',
-                                    params: {
-                                    }
-                                }
-                            },
-                            { default: () => 'Tasks' }
-                        ),
-                    key: 'tasks',
-                    icon: renderIcon(IconBug)(commonIconSize)
-                },
-                {
-                    label: () =>
-                        h(
-                            RouterLink,
-                            {
-                                to: {
-                                    name: 'reports',
-                                    params: {
-                                    }
-                                }
-                            },
-                            { default: () => 'Reports' }
-                        ),
-                    key: 'reports',
-                    icon: renderIcon(IconBug)(commonIconSize)
-                },
-                */
-                {
-                    label: () =>
-                        h(
-                            RouterLink,
-                            {
-                                to: {
-                                    name: 'projectSettings',
-                                    params: {
-                                    }
-                                }
-                            },
-                            { default: () => 'Project settings' }
-                        ),
+                    label: "Project",
                     key: 'projectSettings',
-                    icon: renderIcon(IconSettings)(commonIconSize)
+                    icon: renderIcon(IconSettings)(commonIconSize),
+                    children: [
+                        {
+                            label: () =>
+                                h(
+                                    RouterLink,
+                                    {
+                                        to: {
+                                            name: 'manageProjectTypes',
+                                            params: {
+                                            }
+                                        }
+                                    },
+                                    { default: () => 'Type' }
+                                ),
+                            key: "projectTypes",
+                            icon: renderIcon(IconBookmark)(commonIconSize)
+                        },
+                        {
+                            label: () =>
+                                h(
+                                    RouterLink,
+                                    {
+                                        to: {
+                                            name: 'manageProjectPriorities',
+                                            params: {
+                                            }
+                                        }
+                                    },
+                                    { default: () => 'Priority' }
+                                ),
+                            key: "projectPriorities",
+                            icon: renderIcon(IconFlagBolt)(commonIconSize)
+                        },
+                        {
+                            label: () =>
+                                h(
+                                    RouterLink,
+                                    {
+                                        to: {
+                                            name: 'manageProjectStatuses',
+                                            params: {
+                                            }
+                                        }
+                                    },
+                                    { default: () => 'Status' }
+                                ),
+                            key: "projectStatuses",
+                            icon: renderIcon(IconAdjustmentsBolt)(commonIconSize)
+
+                        }
+                    ]
                 },
             ]
         },
         {
-            key: 'divider-1',
-            type: 'divider',
-            props: {
-                style: {
-                    marginLeft: '32px'
+            label: "John Doe",
+            key: 'myuser',
+            icon: renderIcon(IconUserCircle)(commonIconSize),
+            children: [
+                {
+                    label: "Profile",
+                    key: "profile",
+                    disabled: true,
+                    icon: renderIcon(IconId)(commonIconSize),
+                },
+                {
+                    label: "Logout",
+                    key: "signout",
+                    icon: renderIcon(IconLogout)(commonIconSize),
                 }
-            }
+            ]
         },
-
-    ]
+    ];
 </script>
 
 <template>
     <div class="header">
         <n-menu :collapsed-width="64" :collapsed-icon-size="commonIconSize" :options="menuOptions" mode="horizontal"
-            @update:value="handleUpdateValue" />
+            @update:value="handleUpdateValue" style="width: max-content;" />
     </div>
 </template>
 
@@ -295,27 +204,7 @@
         align-items: center;
         padding: 0 10px;
         box-sizing: border-box;
-        /*
         width: 100%;
-        */
     }
 
-    .header__container {
-        /*
-        width: 100%;
-        */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .header__container--contained {
-        max-width: 1320px;
-        margin: 0 auto;
-    }
-
-    .header__container--fluid {
-        max-width: 100%;
-        margin: 0;
-    }
 </style>
