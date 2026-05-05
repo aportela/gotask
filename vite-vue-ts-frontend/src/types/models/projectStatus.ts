@@ -18,6 +18,6 @@ class ProjectStatusClass implements ProjectStatusInterface {
   }
 }
 
-const maxNameLength = 32;
+const maxNameLength = 16;
 
 export { type ProjectStatusInterface, ProjectStatusClass, maxNameLength };
