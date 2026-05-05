@@ -21,7 +21,7 @@ func createProjectStatuses(database database.Database) []string {
 	projectStatusService := projectstatusservice.NewProjectStatusService(projectStatusRepository)
 	for index, projectStatusName := range projectStatusNames {
 		projectStatusID := func() string { u, _ := uuid.NewV7(); return u.String() }()
-		err := projectStatusService.AddProjectStatus(context.Background(), domain.ProjectStatus{
+		err := projectStatusService.Add(context.Background(), domain.ProjectStatus{
 			ID:       projectStatusID,
 			Name:     projectStatusName,
 			Index:    index,

@@ -23,11 +23,19 @@ var installSchemaQueries = []string{
 		) STRICT;
 	`,
 	`
+		CREATE TABLE IF NOT EXISTS project_types (
+			id TEXT NOT NULL CHECK(length(id) == 36),
+			name TEXT NOT NULL UNIQUE CHECK(length(name) BETWEEN 1 AND 32),
+			item_hex_color TEXT NOT NULL CHECK(length(item_hex_color) = 7),
+			PRIMARY KEY (id)
+		) STRICT;
+	`,
+	`
 		CREATE TABLE IF NOT EXISTS project_priorities(
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			name TEXT NOT NULL UNIQUE CHECK(length(name) BETWEEN 1 AND 32),
-			item_index INTEGER NOT NULL,
 			item_hex_color TEXT NOT NULL CHECK(length(item_hex_color) = 7),
+			item_index INTEGER NOT NULL,
 			PRIMARY KEY (id)
 		) STRICT;
 	`,
@@ -35,16 +43,8 @@ var installSchemaQueries = []string{
 		CREATE TABLE IF NOT EXISTS project_statuses (
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			name TEXT NOT NULL UNIQUE CHECK(length(name) BETWEEN 1 AND 32),
+			item_hex_color TEXT NOT NULL CHECK(length(item_hex_color) = 7),
 			item_index INTEGER NOT NULL,
-			item_hex_color TEXT NOT NULL CHECK(length(item_hex_color) = 7),
-			PRIMARY KEY (id)
-		) STRICT;
-	`,
-	`
-		CREATE TABLE IF NOT EXISTS project_types (
-			id TEXT NOT NULL CHECK(length(id) == 36),
-			name TEXT NOT NULL UNIQUE CHECK(length(name) BETWEEN 1 AND 32),
-			item_hex_color TEXT NOT NULL CHECK(length(item_hex_color) = 7),
 			PRIMARY KEY (id)
 		) STRICT;
 	`,

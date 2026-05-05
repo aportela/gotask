@@ -4,28 +4,28 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 )
 
-func MapProjectPriorityDomainToProjectPriorityDTO(projectPriority domain.ProjectPriority) projectPriorityDTO {
+func ProjectPriorityToDTO(projectPriority domain.ProjectPriority) projectPriorityDTO {
 	return projectPriorityDTO{
 		ID:       projectPriority.ID,
 		Name:     projectPriority.Name,
-		Index:    projectPriority.Index,
 		HexColor: projectPriority.HexColor,
+		Index:    projectPriority.Index,
 	}
 }
 
-func MapProjectPriorityDTOToProjectPriorityDomain(projectPriority projectPriorityDTO) domain.ProjectPriority {
+func DTOToProjectPriority(projectPriority projectPriorityDTO) domain.ProjectPriority {
 	return domain.ProjectPriority{
 		ID:       projectPriority.ID,
 		Name:     projectPriority.Name,
-		Index:    projectPriority.Index,
 		HexColor: projectPriority.HexColor,
+		Index:    projectPriority.Index,
 	}
 }
 
-func MapProjectPriorityArrayDTOToProjectPriorityArrayDomain(projectPriority []projectPriorityDTO) []domain.ProjectPriority {
-	results := []domain.ProjectPriority{}
-	for _, projectPriority := range projectPriority {
-		results = append(results, MapProjectPriorityDTOToProjectPriorityDomain(projectPriority))
+func ToProjectPriorityArray(projectPriorities []projectPriorityDTO) []domain.ProjectPriority {
+	results := make([]domain.ProjectPriority, 0, len(projectPriorities))
+	for _, projectPriority := range projectPriorities {
+		results = append(results, DTOToProjectPriority(projectPriority))
 	}
 	return results
 }

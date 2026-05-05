@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref, reactive, shallowRef, onMounted, computed } from 'vue'
     import { useI18n } from "vue-i18n";
-    import { NTable, NButton, NButtonGroup, NInput, NGrid, NGridItem, NModal, NTag } from 'naive-ui'
+    import { NTable, NButton, NButtonGroup, NGrid, NGridItem, NModal, NTag } from 'naive-ui'
     import { api } from '../../../composables/api';
     import { IconEdit, IconPlus, IconTrash } from '@tabler/icons-vue';
     import { getNaiveUITagColorProperty } from '../../../composables/color';
@@ -110,10 +110,6 @@
             <tr>
                 <th>{{ t("Name") }}</th>
                 <th class="text-right" style="padding-right: 8px;">{{ t("Actions") }}</th>
-            </tr>
-            <tr>
-                <th><n-input :placeholder="t('Filter by name')" clearable /></th>
-                <th></th>
             </tr>
         </template>
         <template #tbody>

@@ -2,9 +2,6 @@ package projecthandler
 
 import (
 	"github.com/aportela/doneo/internal/domain"
-	"github.com/aportela/doneo/internal/handlers/projectpriorityhandler"
-	"github.com/aportela/doneo/internal/handlers/projectstatushandler"
-	"github.com/aportela/doneo/internal/handlers/projecttypehandler"
 )
 
 func mapAddProjectRequestToProjectDomain(request addProjectRequest) domain.Project {
@@ -31,9 +28,9 @@ func mapProjectDomainToProjectResponse(project domain.Project) projectResponse {
 		Description: *project.Description,
 		CreatedBy:   creatorResponse{ID: project.CreatedBy.ID, Name: project.CreatedBy.Name},
 		CreatedAt:   project.CreatedAt,
-		Type:        projecttypehandler.ProjectTypeResponse{ID: project.Type.ID, Name: project.Type.Name, HexColor: project.Type.HexColor},
-		Priority:    projectpriorityhandler.ProjectPriorityResponse{ID: project.Priority.ID, Name: project.Priority.Name, Index: project.Priority.Index, HexColor: project.Priority.HexColor},
-		Status:      projectstatushandler.ProjectStatusResponse{ID: project.Status.ID, Name: project.Status.Name, Index: project.Status.Index, HexColor: project.Status.HexColor},
+		//Type:        projecttypehandler.ProjectTypeResponse{ID: project.Type.ID, Name: project.Type.Name, HexColor: project.Type.HexColor},
+		//Priority:    projectpriorityhandler.ProjectPriorityResponse{ID: project.Priority.ID, Name: project.Priority.Name, Index: project.Priority.Index, HexColor: project.Priority.HexColor},
+		//Status:      projectstatushandler.ProjectStatusResponse{ID: project.Status.ID, Name: project.Status.Name, Index: project.Status.Index, HexColor: project.Status.HexColor},
 	}
 }
 

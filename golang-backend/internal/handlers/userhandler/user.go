@@ -49,7 +49,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user := updateRequestToUser(request)
-	user.ID = chi.URLParam(r, "user_id")
+	user.ID = chi.URLParam(r, "id")
 	err := h.service.Update(r.Context(), user)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to update user: %w", err))
@@ -60,7 +60,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	userId := chi.URLParam(r, "user_id")
+	userId := chi.URLParam(r, "id")
 	err := h.service.Delete(r.Context(), userId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to delete user with ID %s: %w", err))
@@ -71,7 +71,7 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 
 func (h *UserHandler) Purge(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	userId := chi.URLParam(r, "user_id")
+	userId := chi.URLParam(r, "id")
 	err := h.service.Purge(r.Context(), userId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to purge user: %w", err))
@@ -82,7 +82,7 @@ func (h *UserHandler) Purge(w http.ResponseWriter, r *http.Request) {
 
 func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	userId := chi.URLParam(r, "user_id")
+	userId := chi.URLParam(r, "id")
 	user, err := h.service.Get(r.Context(), userId)
 	if err != nil {
 		if err == domain.ErrNotFound {

@@ -1,6 +1,9 @@
 import { axiosInstance } from "./axios";
 
 import type { ProjectTypeInterface } from "../types/models/projectType";
+import type { ProjectStatusInterface } from "../types/models/projectStatus";
+import type { ProjectPriorityInterface } from "../types/models/projectPriority";
+
 const api = {
   auth: {
     signIn: (email: string, password: string) => {
@@ -39,12 +42,25 @@ const api = {
     search: () => axiosInstance.get("/project-types"),
   },
   projectStatuses: {
-    search: (workspaceId: string) =>
-      axiosInstance.get("/project_statuses?workspace_id=" + workspaceId),
+    add: (projectStatus: ProjectStatusInterface) =>
+      axiosInstance.post("/project-statuses", projectStatus),
+    update: (projectStatus: ProjectStatusInterface) =>
+      axiosInstance.put("/project-statuses/" + projectStatus.id, projectStatus),
+    delete: (id: string) => axiosInstance.delete("/project-statuses/" + id),
+    get: (id: string) => axiosInstance.get("/project-statuses/" + id),
+    search: () => axiosInstance.get("/project-statuses"),
   },
   projectPriorities: {
-    search: (workspaceId: string) =>
-      axiosInstance.get("/project_priorities?workspace_id=" + workspaceId),
+    add: (projectPriority: ProjectPriorityInterface) =>
+      axiosInstance.post("/project-priorities", projectPriority),
+    update: (projectPriority: ProjectPriorityInterface) =>
+      axiosInstance.put(
+        "/project-priorities/" + projectPriority.id,
+        projectPriority,
+      ),
+    delete: (id: string) => axiosInstance.delete("/project-priorities/" + id),
+    get: (id: string) => axiosInstance.get("/project-priorities/" + id),
+    search: () => axiosInstance.get("/project-priorities"),
   },
 };
 

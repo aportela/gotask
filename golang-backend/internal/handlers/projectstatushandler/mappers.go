@@ -4,61 +4,61 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 )
 
-func mapAddProjectStatusRequestToProjectStatusDomain(request addProjectStatusRequest) domain.ProjectStatus {
+func addRequestToProjectStatus(request addRequest) domain.ProjectStatus {
 	return domain.ProjectStatus{
 		ID:       request.ID,
 		Name:     request.Name,
-		Index:    request.Index,
 		HexColor: request.HexColor,
+		Index:    request.Index,
 	}
 }
 
-func mapUpdateProjectStatusRequestToProjectStatusDomain(request updateProjectStatusRequest) domain.ProjectStatus {
+func updateRequestToProjectStatus(request updateRequest) domain.ProjectStatus {
 	return domain.ProjectStatus{
 		ID:       request.ID,
 		Name:     request.Name,
-		Index:    request.Index,
 		HexColor: request.HexColor,
+		Index:    request.Index,
 	}
 }
 
-func mapProjectStatusDomainToProjectStatusResponse(projectStatus domain.ProjectStatus) ProjectStatusResponse {
-	return ProjectStatusResponse{
+func mapProjectStatusDomainToResponse(projectStatus domain.ProjectStatus) projectStatusResponse {
+	return projectStatusResponse{
 		ID:       projectStatus.ID,
 		Name:     projectStatus.Name,
-		Index:    projectStatus.Index,
 		HexColor: projectStatus.HexColor,
+		Index:    projectStatus.Index,
 	}
 }
 
-func mapProjectStatusDomainToAddProjectStatusResponse(projectStatus domain.ProjectStatus) addProjectStatusResponse {
-	return addProjectStatusResponse{
-		ProjectStatus: mapProjectStatusDomainToProjectStatusResponse(projectStatus),
+func projectStatusToAddResponse(projectStatus domain.ProjectStatus) addResponse {
+	return addResponse{
+		ProjectStatus: mapProjectStatusDomainToResponse(projectStatus),
 	}
 }
 
-func mapProjectStatusDomainToUpdateProjectStatusResponse(projectStatus domain.ProjectStatus) updateProjectStatusResponse {
-	return updateProjectStatusResponse{
-		ProjectStatus: mapProjectStatusDomainToProjectStatusResponse(projectStatus),
+func projectStatusToUpdateResponse(projectStatus domain.ProjectStatus) updateResponse {
+	return updateResponse{
+		ProjectStatus: mapProjectStatusDomainToResponse(projectStatus),
 	}
 }
 
-func mapProjectStatusDomainToGetProjectStatusResponse(projectStatus domain.ProjectStatus) getProjectStatusResponse {
-	return getProjectStatusResponse{
-		ProjectStatus: mapProjectStatusDomainToProjectStatusResponse(projectStatus),
+func projectStatusToGetResponse(projectStatus domain.ProjectStatus) getResponse {
+	return getResponse{
+		ProjectStatus: mapProjectStatusDomainToResponse(projectStatus),
 	}
 }
 
-func mapProjectStatusArrayDomainToProjectStatusArrayResponse(projectPriorities []domain.ProjectStatus) []ProjectStatusResponse {
-	projectStatusResponses := []ProjectStatusResponse{}
-	for _, projectStatus := range projectPriorities {
-		projectStatusResponses = append(projectStatusResponses, mapProjectStatusDomainToProjectStatusResponse(projectStatus))
+func projectStatusArrayToResponse(projectStatuses []domain.ProjectStatus) []projectStatusResponse {
+	projectStatusResponses := []projectStatusResponse{}
+	for _, projectStatus := range projectStatuses {
+		projectStatusResponses = append(projectStatusResponses, mapProjectStatusDomainToResponse(projectStatus))
 	}
 	return projectStatusResponses
 }
 
-func mapProjectStatusArrayDomainToSearchProjectStatussResponse(users []domain.ProjectStatus) searchProjectStatusesResponse {
-	return searchProjectStatusesResponse{
-		ProjectStatuses: mapProjectStatusArrayDomainToProjectStatusArrayResponse(users),
+func projectStatusArrayToSearchResponse(users []domain.ProjectStatus) searchResponse {
+	return searchResponse{
+		ProjectStatuses: projectStatusArrayToResponse(users),
 	}
 }

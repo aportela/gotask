@@ -10,6 +10,7 @@ import (
 	"github.com/aportela/doneo/internal/handlers"
 	"github.com/aportela/doneo/internal/repositories/projecttyperepository"
 	"github.com/aportela/doneo/internal/services/projecttypeservice"
+	"github.com/aportela/doneo/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -23,67 +24,69 @@ func NewProjectTypeHandler(db database.Database) *ProjectTypeHandler {
 	return &ProjectTypeHandler{service: projectTypeService}
 }
 
-func (h *ProjectTypeHandler) AddProjectType(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectTypeHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var request addProjectTypeRequest
+	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] invalid request payload: %w", err))
 		return
 	}
-	projectType := mapAddProjectTypeRequestToProjectTypeDomain(request)
-	err := h.service.AddProjectType(r.Context(), projectType)
+	projectType := addRequestToProjectType(request)
+	projectType.ID = utils.UUID()
+	err := h.service.Add(r.Context(), projectType)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to add project type with ID %s: %w", request.ID, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to add project type: %w", err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToAddProjectTypeResponse(projectType), nil, http.StatusCreated)
+	handlers.ToHandlerJSONResponse(w, projectTypeToAddResponse(projectType), nil, http.StatusCreated)
 }
 
-func (h *ProjectTypeHandler) UpdateProjectType(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectTypeHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var request updateProjectTypeRequest
+	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] invalid request payload: %w", err))
 		return
 	}
-	projectType := mapUpdateProjectTypeRequestToProjectTypeDomain(request)
-	err := h.service.UpdateProjectType(r.Context(), projectType)
+	projectType := updateRequestToProjectType(request)
+	projectType.ID = chi.URLParam(r, "id")
+	err := h.service.Update(r.Context(), projectType)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to update project type with ID %s: %w", projectType.ID, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to update project type: %w", err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToUpdateProjectTypeResponse(projectType), nil)
+	handlers.ToHandlerJSONResponse(w, projectTypeToUpdateResponse(projectType), nil)
 }
 
-func (h *ProjectTypeHandler) DeleteProjectType(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectTypeHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectTypeId := chi.URLParam(r, "project_type_id")
-	err := h.service.DeleteProjectType(r.Context(), projectTypeId)
+	projectTypeId := chi.URLParam(r, "id")
+	err := h.service.Delete(r.Context(), projectTypeId)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to delete project type with ID %s: %w", projectTypeId, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to delete project type: %w", err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *ProjectTypeHandler) GetProjectType(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectTypeHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectTypeId := chi.URLParam(r, "project_type_id")
-	projectType, err := h.service.GetProjectType(r.Context(), projectTypeId)
+	projectTypeId := chi.URLParam(r, "id")
+	projectType, err := h.service.Get(r.Context(), projectTypeId)
 	if err != nil {
 		if err == domain.ErrNotFound {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] not found project type with ID %s: %w", projectTypeId, err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to get non existent project type: %w", err))
 			return
 		} else {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to get project type with ID %s: %w", projectTypeId, err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to get project type: %w", err))
 			return
 		}
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectTypeDomainToGetProjectTypeResponse(projectType), nil)
+	handlers.ToHandlerJSONResponse(w, projectTypeToGetResponse(projectType), nil)
 }
 
-func (h *ProjectTypeHandler) SearchProjectTypes(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectTypeHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectTypes, err := h.service.SearchProjectTypes(r.Context())
-	handlers.ToHandlerJSONResponse(w, mapProjectTypeArrayDomainToSearchProjectTypesResponse(projectTypes), err)
+	projectTypes, err := h.service.Search(r.Context())
+	handlers.ToHandlerJSONResponse(w, projectTypeArrayToSearchResponse(projectTypes), err)
 }

@@ -23,7 +23,7 @@ func createProjectTypes(database database.Database) []string {
 	projectTypeService := projecttypeservice.NewProjectTypeService(projectTypeRepository)
 	for _, projectTypeName := range projectTypeNames {
 		projectTypeID := utils.UUID()
-		err := projectTypeService.AddProjectType(context.Background(), domain.ProjectType{
+		err := projectTypeService.Add(context.Background(), domain.ProjectType{
 			ID:       utils.UUID(),
 			Name:     projectTypeName,
 			HexColor: utils.RandomSoftHexColor(),

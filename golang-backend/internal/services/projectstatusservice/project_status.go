@@ -9,11 +9,11 @@ import (
 )
 
 type ProjectStatusService interface {
-	AddProjectStatus(ctx context.Context, projectStatus domain.ProjectStatus) error
-	UpdateProjectStatus(ctx context.Context, projectStatus domain.ProjectStatus) error
-	DeleteProjectStatus(ctx context.Context, id string) error
-	GetProjectStatus(ctx context.Context, id string) (domain.ProjectStatus, error)
-	SearchProjectStatuses(ctx context.Context) ([]domain.ProjectStatus, error)
+	Add(ctx context.Context, projectStatus domain.ProjectStatus) error
+	Update(ctx context.Context, projectStatus domain.ProjectStatus) error
+	Delete(ctx context.Context, id string) error
+	Get(ctx context.Context, id string) (domain.ProjectStatus, error)
+	Search(ctx context.Context) ([]domain.ProjectStatus, error)
 }
 
 type projectStatusService struct {
@@ -24,30 +24,30 @@ func NewProjectStatusService(repository projectstatusrepository.ProjectStatusRep
 	return &projectStatusService{repository: repository}
 }
 
-func (s *projectStatusService) AddProjectStatus(ctx context.Context, projectStatus domain.ProjectStatus) error {
-	return s.repository.Add(ctx, projectstatusrepository.MapProjectStatusDomainToProjectStatusDTO(projectStatus))
+func (s *projectStatusService) Add(ctx context.Context, projectStatus domain.ProjectStatus) error {
+	return s.repository.Add(ctx, projectstatusrepository.ProjectStatusToDTO(projectStatus))
 }
 
-func (s *projectStatusService) UpdateProjectStatus(ctx context.Context, projectStatus domain.ProjectStatus) error {
-	return s.repository.Update(ctx, projectstatusrepository.MapProjectStatusDomainToProjectStatusDTO(projectStatus))
+func (s *projectStatusService) Update(ctx context.Context, projectStatus domain.ProjectStatus) error {
+	return s.repository.Update(ctx, projectstatusrepository.ProjectStatusToDTO(projectStatus))
 }
 
-func (s *projectStatusService) DeleteProjectStatus(ctx context.Context, id string) error {
+func (s *projectStatusService) Delete(ctx context.Context, id string) error {
 	return s.repository.Delete(ctx, id)
 }
 
-func (s *projectStatusService) GetProjectStatus(ctx context.Context, id string) (domain.ProjectStatus, error) {
+func (s *projectStatusService) Get(ctx context.Context, id string) (domain.ProjectStatus, error) {
 	projectStatus, err := s.repository.Get(ctx, id)
 	if err != nil {
-		return projectstatusrepository.MapProjectStatusDTOToProjectStatusDomain(projectStatus), fmt.Errorf("[ProjectStatusService] failed to get project status with ID %s: %w", id, err)
+		return projectstatusrepository.DTOToProjectStatus(projectStatus), fmt.Errorf("[ProjectStatusService] failed to get project status with ID %s: %w", id, err)
 	}
-	return projectstatusrepository.MapProjectStatusDTOToProjectStatusDomain(projectStatus), nil
+	return projectstatusrepository.DTOToProjectStatus(projectStatus), nil
 }
 
-func (s *projectStatusService) SearchProjectStatuses(ctx context.Context) ([]domain.ProjectStatus, error) {
+func (s *projectStatusService) Search(ctx context.Context) ([]domain.ProjectStatus, error) {
 	projectStatuses, err := s.repository.Search(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectStatusService] failed to search project statuses: %w", err)
 	}
-	return projectstatusrepository.MapProjectStatusArrayDTOToProjectStatusArrayDomain(projectStatuses), nil
+	return projectstatusrepository.ToProjectStatusArray(projectStatuses), nil
 }

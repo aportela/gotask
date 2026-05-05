@@ -1,35 +1,33 @@
 package projecttypehandler
 
-type addProjectTypeRequest struct {
+type addRequest struct {
+	Name     string `json:"name"`
+	HexColor string `json:"hexColor"`
+}
+
+type updateRequest struct {
+	Name     string `json:"name"`
+	HexColor string `json:"hexColor"`
+}
+
+type projectTypeResponse struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
 	HexColor string `json:"hexColor"`
 }
 
-type updateProjectTypeRequest struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	HexColor string `json:"hexColor"`
+type addResponse struct {
+	ProjectType projectTypeResponse `json:"projectType"`
 }
 
-type ProjectTypeResponse struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	HexColor string `json:"hexColor"`
+type updateResponse struct {
+	ProjectType projectTypeResponse `json:"projectType"`
 }
 
-type addProjectTypeResponse struct {
-	ProjectType ProjectTypeResponse `json:"projectType"`
+type getResponse struct {
+	ProjectType projectTypeResponse `json:"projectType"`
 }
 
-type updateProjectTypeResponse struct {
-	ProjectType ProjectTypeResponse `json:"projectType"`
-}
-
-type getProjectTypeResponse struct {
-	ProjectType ProjectTypeResponse `json:"projectType"`
-}
-
-type searchProjectTypesResponse struct {
-	ProjectTypes []ProjectTypeResponse `json:"projectTypes"`
+type searchResponse struct {
+	ProjectTypes []projectTypeResponse `json:"projectTypes"`
 }

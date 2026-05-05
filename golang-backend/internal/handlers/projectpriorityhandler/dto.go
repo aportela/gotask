@@ -1,43 +1,38 @@
 package projectpriorityhandler
 
-type addProjectPriorityRequest struct {
+type addRequest struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
+	Index    int    `json:"index"`
 }
 
-type updateProjectPriorityRequest struct {
+type updateRequest struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
+	Index    int    `json:"index"`
 }
 
-type ProjectPriorityResponse struct {
-	ID          string `json:"id"`
-	WorkspaceId string `json:"workspaceId"`
-	Name        string `json:"name"`
-	Index       int    `json:"index"`
-	HexColor    string `json:"hexColor"`
+type projectPriorityResponse struct {
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	HexColor string `json:"hexColor"`
+	Index    int    `json:"index"`
 }
 
-type addProjectPriorityResponse struct {
-	ProjectPriority ProjectPriorityResponse `json:"projectPriority"`
+type addResponse struct {
+	ProjectPriority projectPriorityResponse `json:"projectPriority"`
 }
 
-type updateProjectPriorityResponse struct {
-	ProjectPriority ProjectPriorityResponse `json:"projectPriority"`
+type updateResponse struct {
+	ProjectPriority projectPriorityResponse `json:"projectPriority"`
 }
 
-type getProjectPriorityResponse struct {
-	ProjectPriority ProjectPriorityResponse `json:"projectPriority"`
+type getResponse struct {
+	ProjectPriority projectPriorityResponse `json:"projectPriority"`
 }
 
-type searchProjectPrioritysRequest struct {
-	WorkspaceId string `json:"workspaceId"`
-}
-
-type searchProjectPrioritysResponse struct {
-	ProjectPriorities []ProjectPriorityResponse `json:"projectPriorities"`
+type searchResponse struct {
+	ProjectPriorities []projectPriorityResponse `json:"projectPriorities"`
 }

@@ -80,9 +80,9 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
 		id).Scan(&projectType.ID, &projectType.Name)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return projectType, domain.ErrNotFound
+			return projectTypeDTO{}, domain.ErrNotFound
 		}
-		return projectType, err
+		return projectTypeDTO{}, err
 	}
 	return projectType, err
 }
@@ -104,13 +104,15 @@ func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context) 
 	var projectTypes []projectTypeDTO
 	for rows.Next() {
 		var projectType projectTypeDTO
-
 		if err := rows.Scan(
 			&projectType.ID, &projectType.Name, &projectType.HexColor,
 		); err != nil {
 			return nil, err
 		}
 		projectTypes = append(projectTypes, projectType)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return projectTypes, nil
 }

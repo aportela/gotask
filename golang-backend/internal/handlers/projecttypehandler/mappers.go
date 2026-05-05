@@ -4,58 +4,56 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 )
 
-func mapAddProjectTypeRequestToProjectTypeDomain(request addProjectTypeRequest) domain.ProjectType {
+func addRequestToProjectType(request addRequest) domain.ProjectType {
 	return domain.ProjectType{
-		ID:       request.ID,
 		Name:     request.Name,
 		HexColor: request.HexColor,
 	}
 }
 
-func mapUpdateProjectTypeRequestToProjectTypeDomain(request updateProjectTypeRequest) domain.ProjectType {
+func updateRequestToProjectType(request updateRequest) domain.ProjectType {
 	return domain.ProjectType{
-		ID:       request.ID,
 		Name:     request.Name,
 		HexColor: request.HexColor,
 	}
 }
 
-func mapProjectTypeDomainToProjectTypeResponse(projectType domain.ProjectType) ProjectTypeResponse {
-	return ProjectTypeResponse{
+func projectTypeToResponse(projectType domain.ProjectType) projectTypeResponse {
+	return projectTypeResponse{
 		ID:       projectType.ID,
 		Name:     projectType.Name,
 		HexColor: projectType.HexColor,
 	}
 }
 
-func mapProjectTypeDomainToAddProjectTypeResponse(projectType domain.ProjectType) addProjectTypeResponse {
-	return addProjectTypeResponse{
-		ProjectType: mapProjectTypeDomainToProjectTypeResponse(projectType),
+func projectTypeToAddResponse(projectType domain.ProjectType) addResponse {
+	return addResponse{
+		ProjectType: projectTypeToResponse(projectType),
 	}
 }
 
-func mapProjectTypeDomainToUpdateProjectTypeResponse(projectType domain.ProjectType) updateProjectTypeResponse {
-	return updateProjectTypeResponse{
-		ProjectType: mapProjectTypeDomainToProjectTypeResponse(projectType),
+func projectTypeToUpdateResponse(projectType domain.ProjectType) updateResponse {
+	return updateResponse{
+		ProjectType: projectTypeToResponse(projectType),
 	}
 }
 
-func mapProjectTypeDomainToGetProjectTypeResponse(projectType domain.ProjectType) getProjectTypeResponse {
-	return getProjectTypeResponse{
-		ProjectType: mapProjectTypeDomainToProjectTypeResponse(projectType),
+func projectTypeToGetResponse(projectType domain.ProjectType) getResponse {
+	return getResponse{
+		ProjectType: projectTypeToResponse(projectType),
 	}
 }
 
-func mapProjectTypeArrayDomainToProjectTypeArrayResponse(projectTypes []domain.ProjectType) []ProjectTypeResponse {
-	projectTypeResponses := []ProjectTypeResponse{}
+func projectTypeArrayToResponse(projectTypes []domain.ProjectType) []projectTypeResponse {
+	projectTypeResponses := []projectTypeResponse{}
 	for _, projectType := range projectTypes {
-		projectTypeResponses = append(projectTypeResponses, mapProjectTypeDomainToProjectTypeResponse(projectType))
+		projectTypeResponses = append(projectTypeResponses, projectTypeToResponse(projectType))
 	}
 	return projectTypeResponses
 }
 
-func mapProjectTypeArrayDomainToSearchProjectTypesResponse(users []domain.ProjectType) searchProjectTypesResponse {
-	return searchProjectTypesResponse{
-		ProjectTypes: mapProjectTypeArrayDomainToProjectTypeArrayResponse(users),
+func projectTypeArrayToSearchResponse(users []domain.ProjectType) searchResponse {
+	return searchResponse{
+		ProjectTypes: projectTypeArrayToResponse(users),
 	}
 }

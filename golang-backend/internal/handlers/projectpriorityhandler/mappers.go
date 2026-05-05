@@ -4,61 +4,61 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 )
 
-func mapAddProjectPriorityRequestToProjectPriorityDomain(request addProjectPriorityRequest) domain.ProjectPriority {
+func addRequestToProjectPriority(request addRequest) domain.ProjectPriority {
 	return domain.ProjectPriority{
 		ID:       request.ID,
 		Name:     request.Name,
-		Index:    request.Index,
 		HexColor: request.HexColor,
+		Index:    request.Index,
 	}
 }
 
-func mapUpdateProjectPriorityRequestToProjectPriorityDomain(request updateProjectPriorityRequest) domain.ProjectPriority {
+func updateRequestToProjectPriority(request updateRequest) domain.ProjectPriority {
 	return domain.ProjectPriority{
 		ID:       request.ID,
 		Name:     request.Name,
-		Index:    request.Index,
 		HexColor: request.HexColor,
+		Index:    request.Index,
 	}
 }
 
-func mapProjectPriorityDomainToProjectPriorityResponse(projectPriority domain.ProjectPriority) ProjectPriorityResponse {
-	return ProjectPriorityResponse{
+func projectPriorityToResponse(projectPriority domain.ProjectPriority) projectPriorityResponse {
+	return projectPriorityResponse{
 		ID:       projectPriority.ID,
 		Name:     projectPriority.Name,
-		Index:    projectPriority.Index,
 		HexColor: projectPriority.HexColor,
+		Index:    projectPriority.Index,
 	}
 }
 
-func mapProjectPriorityDomainToAddProjectPriorityResponse(projectPriority domain.ProjectPriority) addProjectPriorityResponse {
-	return addProjectPriorityResponse{
-		ProjectPriority: mapProjectPriorityDomainToProjectPriorityResponse(projectPriority),
+func projectPriorityToAddResponse(projectPriority domain.ProjectPriority) addResponse {
+	return addResponse{
+		ProjectPriority: projectPriorityToResponse(projectPriority),
 	}
 }
 
-func mapProjectPriorityDomainToUpdateProjectPriorityResponse(projectPriority domain.ProjectPriority) updateProjectPriorityResponse {
-	return updateProjectPriorityResponse{
-		ProjectPriority: mapProjectPriorityDomainToProjectPriorityResponse(projectPriority),
+func projectPriorityToUpdateResponse(projectPriority domain.ProjectPriority) updateResponse {
+	return updateResponse{
+		ProjectPriority: projectPriorityToResponse(projectPriority),
 	}
 }
 
-func mapProjectPriorityDomainToGetProjectPriorityResponse(projectPriority domain.ProjectPriority) getProjectPriorityResponse {
-	return getProjectPriorityResponse{
-		ProjectPriority: mapProjectPriorityDomainToProjectPriorityResponse(projectPriority),
+func projectPriorityToGetResponse(projectPriority domain.ProjectPriority) getResponse {
+	return getResponse{
+		ProjectPriority: projectPriorityToResponse(projectPriority),
 	}
 }
 
-func mapProjectPriorityArrayDomainToProjectPriorityArrayResponse(projectPriorities []domain.ProjectPriority) []ProjectPriorityResponse {
-	projectPriorityResponses := []ProjectPriorityResponse{}
+func projectPriorityArrayToResponse(projectPriorities []domain.ProjectPriority) []projectPriorityResponse {
+	projectPriorityResponses := []projectPriorityResponse{}
 	for _, projectPriority := range projectPriorities {
-		projectPriorityResponses = append(projectPriorityResponses, mapProjectPriorityDomainToProjectPriorityResponse(projectPriority))
+		projectPriorityResponses = append(projectPriorityResponses, projectPriorityToResponse(projectPriority))
 	}
 	return projectPriorityResponses
 }
 
-func mapProjectPriorityArrayDomainToSearchProjectPrioritysResponse(users []domain.ProjectPriority) searchProjectPrioritysResponse {
-	return searchProjectPrioritysResponse{
-		ProjectPriorities: mapProjectPriorityArrayDomainToProjectPriorityArrayResponse(users),
+func projectPriorityArrayToSearchResponse(projectPriorities []domain.ProjectPriority) searchResponse {
+	return searchResponse{
+		ProjectPriorities: projectPriorityArrayToResponse(projectPriorities),
 	}
 }

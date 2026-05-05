@@ -10,6 +10,7 @@ import (
 	"github.com/aportela/doneo/internal/handlers"
 	"github.com/aportela/doneo/internal/repositories/projectstatusrepository"
 	"github.com/aportela/doneo/internal/services/projectstatusservice"
+	"github.com/aportela/doneo/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -23,72 +24,69 @@ func NewProjectStatusHandler(db database.Database) *ProjectStatusHandler {
 	return &ProjectStatusHandler{service: projectStatusService}
 }
 
-func (h *ProjectStatusHandler) AddProjectStatus(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var request addProjectStatusRequest
+	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] invalid request payload: %w", err))
 		return
 	}
-	projectStatus := mapAddProjectStatusRequestToProjectStatusDomain(request)
-	err := h.service.AddProjectStatus(r.Context(), projectStatus)
+	projectStatus := addRequestToProjectStatus(request)
+	projectStatus.ID = utils.UUID()
+	err := h.service.Add(r.Context(), projectStatus)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to add project status with ID %s: %w", request.ID, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to add project status: %w", err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectStatusDomainToAddProjectStatusResponse(projectStatus), nil, http.StatusCreated)
+	handlers.ToHandlerJSONResponse(w, projectStatusToAddResponse(projectStatus), nil, http.StatusCreated)
 }
 
-func (h *ProjectStatusHandler) UpdateProjectStatus(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var request updateProjectStatusRequest
+	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] invalid request payload: %w", err))
 		return
 	}
-	projectStatus := mapUpdateProjectStatusRequestToProjectStatusDomain(request)
-	err := h.service.UpdateProjectStatus(r.Context(), projectStatus)
+	projectStatus := updateRequestToProjectStatus(request)
+	projectStatus.ID = chi.URLParam(r, "id")
+	err := h.service.Update(r.Context(), projectStatus)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to update project status with ID %s: %w", projectStatus.ID, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to update project status: %w", err))
 		return
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectStatusDomainToUpdateProjectStatusResponse(projectStatus), nil)
+	handlers.ToHandlerJSONResponse(w, projectStatusToUpdateResponse(projectStatus), nil)
 }
 
-func (h *ProjectStatusHandler) DeleteProjectStatus(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectStatusHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectStatusId := chi.URLParam(r, "id")
-	err := h.service.DeleteProjectStatus(r.Context(), projectStatusId)
+	err := h.service.Delete(r.Context(), projectStatusId)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusService] failed to delete project status with ID %s: %w", projectStatusId, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusService] failed to delete project status: %w", err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *ProjectStatusHandler) GetProjectStatus(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectStatusId := chi.URLParam(r, "id")
-	projectStatus, err := h.service.GetProjectStatus(r.Context(), projectStatusId)
+	projectStatus, err := h.service.Get(r.Context(), projectStatusId)
 	if err != nil {
 		if err == domain.ErrNotFound {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusService] not found projectStatus with ID %s: %w", projectStatusId, err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusService] failed to get non existent project status: %w", err))
 			return
 		} else {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusService] failed to get projectStatus with ID %s: %w", projectStatusId, err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusService] failed to get projectStatus: %w", err))
 			return
 		}
 	}
-	handlers.ToHandlerJSONResponse(w, mapProjectStatusDomainToGetProjectStatusResponse(projectStatus), nil)
+	handlers.ToHandlerJSONResponse(w, projectStatusToGetResponse(projectStatus), nil)
 }
 
-func (h *ProjectStatusHandler) SearchProjectStatus(w http.ResponseWriter, r *http.Request) {
+func (h *ProjectStatusHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	var request searchProjectStatusesRequest
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] invalid request payload: %w", err))
-		return
-	}
-	projectStatuses, err := h.service.SearchProjectStatuses(r.Context())
-	handlers.ToHandlerJSONResponse(w, mapProjectStatusArrayDomainToSearchProjectStatussResponse(projectStatuses), err)
+	projectStatuses, err := h.service.Search(r.Context())
+	handlers.ToHandlerJSONResponse(w, projectStatusArrayToSearchResponse(projectStatuses), err)
 }

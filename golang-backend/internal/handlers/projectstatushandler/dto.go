@@ -1,42 +1,38 @@
 package projectstatushandler
 
-type addProjectStatusRequest struct {
+type addRequest struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
+	Index    int    `json:"index"`
 }
 
-type updateProjectStatusRequest struct {
+type updateRequest struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
+	Index    int    `json:"index"`
 }
 
-type ProjectStatusResponse struct {
+type projectStatusResponse struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	Index    int    `json:"index"`
 	HexColor string `json:"hexColor"`
+	Index    int    `json:"index"`
 }
 
-type addProjectStatusResponse struct {
-	ProjectStatus ProjectStatusResponse `json:"projectStatus"`
+type addResponse struct {
+	ProjectStatus projectStatusResponse `json:"projectStatus"`
 }
 
-type updateProjectStatusResponse struct {
-	ProjectStatus ProjectStatusResponse `json:"projectStatus"`
+type updateResponse struct {
+	ProjectStatus projectStatusResponse `json:"projectStatus"`
 }
 
-type getProjectStatusResponse struct {
-	ProjectStatus ProjectStatusResponse `json:"projectStatus"`
+type getResponse struct {
+	ProjectStatus projectStatusResponse `json:"projectStatus"`
 }
 
-type searchProjectStatusesRequest struct {
-	WorkspaceId string `json:"workspaceId"`
-}
-
-type searchProjectStatusesResponse struct {
-	ProjectStatuses []ProjectStatusResponse `json:"projectStatuses"`
+type searchResponse struct {
+	ProjectStatuses []projectStatusResponse `json:"projectStatuses"`
 }
