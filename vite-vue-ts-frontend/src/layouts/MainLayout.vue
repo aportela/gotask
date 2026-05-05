@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { ref, onMounted, onBeforeUnmount } from 'vue';
     import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent, NSpin, NDialogProvider } from 'naive-ui'
     import { default as TopHeader } from './TopHeader.vue';
     import { default as TopMenu } from './TopMenu.vue';
@@ -7,17 +7,37 @@
     import { useUserSettingsStore } from '../stores/userSettings';
     import { useLoadingStore } from '../stores/loading';
 
+    import SearchModal from '../components/modals/SearchModal.vue';
+
     const userSettingsStore = useUserSettingsStore();
 
     const loadingStore = useLoadingStore();
 
     const isCollapsed = ref<boolean>(false);
+
+    const showSearchModal = ref(false)
+
+    function onGlobalKeydown(e: KeyboardEvent) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault()
+            showSearchModal.value = true
+        }
+    }
+
+    onMounted(() => {
+        window.addEventListener('keydown', onGlobalKeydown)
+    })
+
+    onBeforeUnmount(() => {
+        window.removeEventListener('keydown', onGlobalKeydown)
+    })
 </script>
 
 <template>
     <n-dialog-provider>
         <n-spin style="height: 100vh;" :show="loadingStore.isLoading">
             <n-layout>
+                <SearchModal v-model:show="showSearchModal" />
                 <n-layout-header bordered>
                     <TopHeader />
                     <TopMenu v-if="userSettingsStore.topNavigationMode" />
