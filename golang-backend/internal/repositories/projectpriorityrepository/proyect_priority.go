@@ -30,12 +30,11 @@ func (projectPriorityRepository *projectPriorityRepository) Add(ctx context.Cont
 		ctx,
 		`
             INSERT INTO project_priorities (id, name, item_hex_color, item_index)
-			VALUES (?, ?, ?, ?)
+			VALUES (?, ?, ?, COALESCE((SELECT MAX(item_index) FROM project_priorities), 0) + 1)
         `,
 		projectPriority.ID,
 		projectPriority.Name,
 		projectPriority.HexColor,
-		projectPriority.Index,
 	)
 	return err
 }

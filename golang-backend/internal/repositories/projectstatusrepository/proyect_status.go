@@ -30,12 +30,11 @@ func (projectStatusRepository *projectStatusRepository) Add(ctx context.Context,
 		ctx,
 		`
             INSERT INTO project_statuses (id, name, item_hex_color, item_index)
-			VALUES (?, ?, ?, ?)
+			VALUES (?, ?, ?, COALESCE((SELECT MAX(item_index) FROM project_statuses), 0) + 1)
         `,
 		projectStatus.ID,
 		projectStatus.Name,
 		projectStatus.HexColor,
-		projectStatus.Index,
 	)
 	return err
 }
