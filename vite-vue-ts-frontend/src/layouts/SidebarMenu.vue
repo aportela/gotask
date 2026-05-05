@@ -1,8 +1,8 @@
 <script setup lang="ts">
     import type { MenuOption } from 'naive-ui'
-    import { NMenu } from 'naive-ui';
+    import { NMenu, NInput } from 'naive-ui';
     import type { Component } from 'vue'
-    import { IconPresentation, IconUserCircle, IconBug, IconSitemap, IconFileAnalytics, IconUserCheck, IconSettings, IconUsers, IconChartHistogram, IconBookmark, IconFlagBolt, IconAdjustmentsBolt, IconLogout, IconId } from '@tabler/icons-vue';
+    import { IconPresentation, IconUserCircle, IconBug, IconDatabaseStar, IconSitemap, IconFileAnalytics, IconUserCheck, IconSettings, IconUsers, IconChartHistogram, IconBookmark, IconFlagBolt, IconAdjustmentsBolt, IconLogout, IconId, IconSearch } from '@tabler/icons-vue';
     // IconListDetails
     import { NIcon } from 'naive-ui'
     import { h } from 'vue'
@@ -22,6 +22,22 @@
 
     const menuOptions: MenuOption[] = [
         {
+            label: () => h(
+                "div",
+                {
+                    style: {
+                        fontWeight: "bold",
+                        cursor: "default",
+                        opacity: 1,
+                    }
+                },
+                "Doneo"
+            ),
+            key: "brand",
+            icon: renderIcon(IconDatabaseStar)(commonIconSize),
+            disabled: true,
+        },
+        {
             key: 'divider-1',
             type: 'divider',
             props: {
@@ -29,6 +45,20 @@
                     marginLeft: '32px'
                 }
             }
+        },
+        {
+            label: () =>
+                h(
+                    NInput,
+                    {
+                        placeholder: "search...",
+                        clearable: true,
+                    },
+                    { default: () => 'Overview' }
+                ),
+            key: 'search',
+            show: false,
+            icon: renderIcon(IconSearch)(commonIconSize),
         },
         {
             label: () =>
@@ -93,7 +123,7 @@
         {
             label: "Settings",
             key: 'settings',
-            show: false,
+            show: true,
             icon: renderIcon(IconSettings)(commonIconSize),
             children: [
                 {
