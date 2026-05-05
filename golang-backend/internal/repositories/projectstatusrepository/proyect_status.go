@@ -40,6 +40,25 @@ func (projectStatusRepository *projectStatusRepository) Add(ctx context.Context,
 }
 
 func (projectStatusRepository *projectStatusRepository) Update(ctx context.Context, projectStatus projectStatusDTO) error {
+	/*
+		`
+			WITH moved AS (
+				SELECT id, item_index AS old_index
+				FROM project_statuses
+				WHERE id = ?
+			)
+			UPDATE project_statuses
+			SET item_index = CASE
+				WHEN id = (SELECT id FROM moved) THEN ?  -- nuevo índice
+				WHEN (SELECT old_index FROM moved) > ?
+					AND item_index >= ? AND item_index < (SELECT old_index FROM moved) THEN item_index + 1
+				WHEN (SELECT old_index FROM moved) < ?
+					AND item_index <= ? AND item_index > (SELECT old_index FROM moved) THEN item_index - 1
+				ELSE item_index
+			END
+			WHERE item_index BETWEEN MIN(?, (SELECT old_index FROM moved)) AND MAX(?, (SELECT old_index FROM moved));
+		`
+	*/
 	_, err := projectStatusRepository.database.ExecContext(
 		ctx,
 		`
