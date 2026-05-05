@@ -77,7 +77,7 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
             FROM project_types PT
             WHERE PT.id = ?
         `,
-		id).Scan(&projectType.ID, &projectType.Name)
+		id).Scan(&projectType.ID, &projectType.Name, &projectType.HexColor)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return projectTypeDTO{}, domain.ErrNotFound
