@@ -29,6 +29,16 @@ export default {
   "Project type added": "Se ha añadido el tipo de proyecto",
   "Project type updated": "Se ha actualizado el tipo de proyecto",
   "Project type deleted": "Se ha eliminado el tipo de proyecto",
+  "There was a problem loading the project type data":
+    "Se produjo un problema al cargar los datos del tipo de proyecto",
+  "There was a problem adding the project type data":
+    "Se produjo un problema al añadir los datos del tipo de proyecto",
+  "There was a problem updating the project type data":
+    "Se produjo un problema al modificar los datos del tipo de proyecto",
+  "There was a problem deleting the project type data":
+    "Se produjo un problema al eliminar los datos del tipo de proyecto",
+  "We couldn’t find the specified project type":
+    "El tipo de proyecto especificado no existe",
 
   // signin form fields
   Email: "Email",

@@ -29,6 +29,16 @@ export default {
   "Project type added": "Engadiuse o tipo do proxecto",
   "Project type updated": "Modificouse o tipo do proxecto",
   "Project type deleted": "Eliminouse o tipo do proxecto",
+  "There was a problem loading the project type data":
+    "Produciuse un problema ó carga-los datos do tipo de proxecto",
+  "There was a problem adding the project type data":
+    "Produciuse un problema ó engadi-los datos do tipo de proxecto",
+  "There was a problem updating the project type data":
+    "Produciuse un problema ó modifica-los datos do tipo de proxecto",
+  "There was a problem deleting the project type data":
+    "Produciuse un problema ó elimina-los datos do tipo de proxecto",
+  "We couldn’t find the specified project type":
+    "O tipo de proxecto especificado non existe",
 
   // signin form fields
   Email: "Email",

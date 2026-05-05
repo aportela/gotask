@@ -2,7 +2,6 @@
     import { ref, reactive, computed, onMounted, watch, type CSSProperties } from 'vue';
     import { useI18n } from "vue-i18n";
     import { NSpin, NCard, NInput, NFlex, NButton, NColorPicker, NTag, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules } from 'naive-ui';
-    import { v7 as uuidv7 } from 'uuid';
     import { IconCancel, IconDeviceFloppy, IconPalette, IconTrash } from '@tabler/icons-vue';
     import { type AxiosAPIError } from '../../composables/axios';
     import type { EntityAction } from '../../types/common';
@@ -28,7 +27,7 @@
 
     const projectType = ref<ProjectTypeInterface>(
         new ProjectTypeClass(
-            { id: uuidv7(), name: "", hexColor: generateRandomSoftHexColor() }
+            { id: "", name: "", hexColor: generateRandomSoftHexColor() }
         )
     );
 
@@ -89,7 +88,7 @@
             } else if (updateMode.value) {
                 onUpdate()
             } else {
-                console.error("TODO");
+                console.error("onSave invalid mode");
             }
         } catch (e) {
             //console.debug("ProjectType form validation error", e)
@@ -103,7 +102,7 @@
             if (response.data.projectType.id === id) {
                 projectType.value = response.data.projectType;
             } else {
-                state.ajaxErrorMessage = t("Unable to load project type: invalid API response data");
+                state.ajaxErrorMessage = t("There was a problem loading the project type data");
             }
         }).catch((errorResponse: AxiosAPIError) => {
             state.ajaxErrors = true;
@@ -115,14 +114,14 @@
                         //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
                         break;
                     case 404:
-                        state.ajaxErrorMessage = "Unable to load project type: project type not found";
+                        state.ajaxErrorMessage = t("We couldn’t find the specified project type");
                         break;
                     default:
-                        state.ajaxErrorMessage = t("Unable to load project type: invalid API response code");
+                        state.ajaxErrorMessage = t("There was a problem loading the project type data");
                         break;
                 }
             } else {
-                state.ajaxErrorMessage = `Unable to load project type: ${errorResponse} `;
+                state.ajaxErrorMessage = t("There was a problem loading the project type data");
                 console.error(errorResponse);
             }
         }).finally(() => {
@@ -135,9 +134,27 @@
         state.ajaxRunning = true;
         api.projectTypes.add(projectType.value).then((_response: any) => {
             emit('add')
-        }).catch((_error: AxiosAPIError) => {
-            // TODO:
-            console.error(_error);
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        break;
+                    case 409:
+                        // TODO: conflict (invalid id || name ?)
+                        state.ajaxErrorMessage = t("There was a problem adding the project type data");
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("There was a problem adding the project type data");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = t("There was a problem adding the project type data");
+                console.error(errorResponse);
+            }
         }).finally(() => {
             state.ajaxRunning = false;
         });
@@ -148,9 +165,27 @@
         state.ajaxRunning = true;
         api.projectTypes.update(projectType.value).then((_response: any) => {
             emit('update')
-        }).catch((_error: AxiosAPIError) => {
-            // TODO:
-            console.error(_error);
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        break;
+                    case 409:
+                        // TODO: conflict (invalid id || name ?)
+                        state.ajaxErrorMessage = t("There was a problem updating the project type data");
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("There was a problem updating the project type data");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = t("There was a problem updating the project type data");
+                console.error(errorResponse);
+            }
         }).finally(() => {
             state.ajaxRunning = false;
         });
@@ -161,9 +196,26 @@
         state.ajaxRunning = true;
         api.projectTypes.delete(projectType.value.id).then((_response: any) => {
             emit('delete')
-        }).catch((_error: AxiosAPIError) => {
-            // TODO:
-            console.error(_error);
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        break;
+                    case 404:
+                        state.ajaxErrorMessage = t("We couldn’t find the specified project type");
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("There was a problem deleting the project type data");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = t("There was a problem deleting the project type data");
+                console.error(errorResponse);
+            }
         }).finally(() => {
             state.ajaxRunning = false;
         });
@@ -178,7 +230,7 @@
             if (props.projectTypeId) {
                 onGet(props.projectTypeId);
             } else {
-                console.error(`TODO: missing projectTypeId prop for ${props.mode} action`);
+                console.error(`TODO: missing projectTypeId property for ${props.mode} action`);
             }
         } else if (props.mode === "add") {
             projectTypeFormRef.value?.validate();

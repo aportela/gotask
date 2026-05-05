@@ -29,6 +29,16 @@ export default {
   "Project type added": "Project type added",
   "Project type updated": "Project type updated",
   "Project type deleted": "Project type deleted",
+  "There was a problem loading the project type data":
+    "There was a problem loading the project type data",
+  "There was a problem adding the project type data":
+    "There was a problem adding the project type data",
+  "There was a problem updating the project type data":
+    "There was a problem updating the project type data",
+  "There was a problem deleting the project type data":
+    "There was a problem deleting the project type data",
+  "We couldn’t find the specified project type":
+    "We couldn’t find the specified project type",
 
   // signin form fields
   Email: "Email",
