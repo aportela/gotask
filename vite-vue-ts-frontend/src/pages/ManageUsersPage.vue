@@ -22,7 +22,7 @@
 
     const filterByUsername = ref<string | null>(null);
     const filterByEmail = ref<string | null>(null);
-    const userFilterType = ref<number | null>(1);
+    const userFilterType = ref<number | null>(0);
 
     const searchMappedUsers = computed(() => {
         return users.value.map(u => ({
