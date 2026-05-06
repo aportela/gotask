@@ -109,7 +109,6 @@
                     </n-button>
                 </th>
             </tr>
-
         </template>
         <template #tbody>
             <tr v-for="user in filteredUsers" :key="user.id">
