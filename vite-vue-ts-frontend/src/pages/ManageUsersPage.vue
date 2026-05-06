@@ -75,7 +75,7 @@
             </tr>
             <tr>
                 <th>
-                    <n-input size="small" placeholder="username condition" v-model:value="filterByUsername" clearable>
+                    <n-input size="small" placeholder="search by name..." v-model:value="filterByUsername" clearable>
                         <template #prefix>
                             <n-icon>
                                 <IconSearch />
@@ -84,7 +84,7 @@
                     </n-input>
                 </th>
                 <th>
-                    <n-input size="small" placeholder="email condition" v-model:value="filterByEmail" clearable>
+                    <n-input size="small" placeholder="search by email..." v-model:value="filterByEmail" clearable>
                         <template #prefix>
                             <n-icon>
                                 <IconSearch />
@@ -94,7 +94,7 @@
                 </th>
                 <th>
                     <n-select size="small" trigger="click" :options="filterUserOptions" v-model:value="userFilterType"
-                        placeholder="Select user filter">
+                        placeholder="Search by user type">
                     </n-select>
                 </th>
                 <th>
