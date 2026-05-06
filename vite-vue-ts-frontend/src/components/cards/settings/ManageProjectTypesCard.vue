@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import { ref, reactive, shallowRef, onMounted, computed } from 'vue'
     import { useI18n } from "vue-i18n";
-    import { NButton, NButtonGroup, NModal, NTag, NList, NListItem } from 'naive-ui'
+    import { NButton, NButtonGroup, NModal, NTag, NInput, NIcon } from 'naive-ui'
     import { api } from '../../../composables/api';
-    import { IconEdit, IconPlus, IconTrash } from '@tabler/icons-vue';
+    import { IconEdit, IconPlus, IconTrash, IconSearch } from '@tabler/icons-vue';
     import { getNaiveUITagColorProperty } from '../../../composables/color';
     import type { ProjectTypeInterface } from '../../../types/models/projectType';
     import type { SearchProjectTypesResponse } from '../../../types/apiResponses';
@@ -12,6 +12,7 @@
     import { useLoadingStore } from '../../../stores/loading';
     import { useNotify } from '../../../composables/notification';
     import { default as ProjectTypeForm } from '../../forms/ProjectTypeForm.vue';
+    import { default as ManageTable } from '../../custom/ManageTable.vue';
 
     const { notify } = useNotify();
 
@@ -85,6 +86,7 @@
         isVisibleActionDialog.value = false;
     };
 
+    const filterByName = ref<string | null>(null);
     onMounted(() => {
         onRefresh();
     });
@@ -96,46 +98,60 @@
         <ProjectTypeForm :mode="actionDialogMode" :project-type-id="selectedProjectTypeId" style="width: 40%;"
             @add="onAdd" @update="onUpdate" @delete="onDelete" @cancel="onCancel" />
     </n-modal>
-    <n-list>
-        <template #header>
-            {{ t('Project types') }}
-            <n-button @click="onAddProjectType" :disabled="state.ajaxRunning" size="small">
-                <template #icon>
-                    <IconPlus />
-                </template>
-                {{ t("Add") }}
-            </n-button>
+
+    <ManageTable size="small" title="Manage project types">
+        <template #thead>
+            <tr>
+                <th style="width: auto;">Name</th>
+                <th class="text-center" style="width: 1%;white-space: nowrap;">Actions</th>
+            </tr>
+            <tr>
+                <th>
+                    <n-input size="small" placeholder="search by name..." v-model:value="filterByName" clearable>
+                        <template #prefix>
+                            <n-icon>
+                                <IconSearch />
+                            </n-icon>
+                        </template>
+                    </n-input>
+                </th>
+                <th class="text-center">
+                    <n-button size="small" block @click="onAddProjectType">
+                        <template #icon>
+                            <NIcon>
+                                <IconPlus />
+                            </NIcon>
+                        </template>
+                        Add
+                    </n-button>
+                </th>
+            </tr>
         </template>
-        <n-list-item v-for="projectType, index in projectTypes" :key="projectType.id">
-            <template #prefix>
-                <n-button-group>
-                    <n-button size="small" @click="onUpdateProjectType(projectType, index)">
-                        {{ t("Update") }}
-                        <template #icon>
-                            <IconEdit :size="22" />
-                        </template>
-                    </n-button>
-                    <n-button size="small" @click="onDeleteProjectType(projectType, index)">
-                        {{ t("Delete") }}
-                        <template #icon>
-                            <IconTrash :size="22" />
-                        </template>
-                    </n-button>
-                </n-button-group>
-            </template>
-            <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name }}</n-tag>
-        </n-list-item>
-    </n-list>
+        <template #tbody>
+            <tr v-for="projectType, index in projectTypes" :key="projectType.id">
+                <td>
+                    <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name }}</n-tag>
+                </td>
+                <td class="text-center">
+                    <n-button-group>
+                        <n-button size="small" @click="onUpdateProjectType(projectType, index)">
+                            {{ t("Update") }}
+                            <template #icon>
+                                <IconEdit :size="22" />
+                            </template>
+                        </n-button>
+                        <n-button size="small" @click="onDeleteProjectType(projectType, index)">
+                            {{ t("Delete") }}
+                            <template #icon>
+                                <IconTrash :size="22" />
+                            </template>
+                        </n-button>
+                    </n-button-group>
+                </td>
+            </tr>
+        </template>
+
+    </ManageTable>
 </template>
 
-<style lang="css" scoped>
-    .table-caption {
-        padding-bottom: 4px;
-    }
-
-    .table-caption-title {
-        font-weight: 700;
-        font-size: large;
-
-    }
-</style>
+<style lang="css" scoped></style>
