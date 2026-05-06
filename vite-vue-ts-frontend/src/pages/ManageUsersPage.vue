@@ -1,27 +1,18 @@
 <script setup lang="ts">
     import { onMounted, ref, computed, shallowRef } from 'vue';
     import { useI18n } from "vue-i18n";
-    import { api } from '../composables/api';
-    import { NAvatar, NInput, NSelect, NIcon, NButton, NButtonGroup, NDatePicker } from 'naive-ui';
-    import { default as ManageTable } from '../components/custom/ManageTable.vue';
+    import { NAvatar, NInput, NSelect, NIcon, NButton, NButtonGroup } from 'naive-ui';
     import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash } from '@tabler/icons-vue';
-
+    import { api } from '../composables/api';
     import { type UserInterface, UserClass } from '../types/models/user';
+    import { default as ManageTable } from '../components/custom/ManageTable.vue';
+    import { default as DateFilter } from '../components/forms/DateFilter.vue';
 
     const { t } = useI18n();
+
     const users = shallowRef<UserClass[]>([]);
 
     const loading = ref<boolean>(false);
-
-    onMounted(() => {
-        loading.value = true;
-        api.user.search().then((successResponse: any) => {
-            users.value = successResponse.data.users.map((u: UserInterface) => new UserClass(u));
-        }).catch((errorResponse: any) => {
-            console.log(errorResponse);
-        }).finally(() => { loading.value = false; })
-    });
-
 
     const filterUserOptions = [
         { label: 'All users', value: 0 },
@@ -29,22 +20,9 @@
         { label: 'Users only', value: 2 }
     ];
 
-    const filterDateOptions = [
-        { label: 'Any date', value: 0 },
-        { label: 'Today', value: 1 },
-        { label: 'Yesterday', value: 2 },
-        { label: 'This week', value: 3 },
-        { label: 'Custom date', value: 4 }
-    ];
-
     const filterByUsername = ref<string | null>(null);
     const filterByEmail = ref<string | null>(null);
     const userFilterType = ref<number | null>(1);
-
-    const createdAtFilter = ref<number | null>(0);
-    const createdAtDatepickerFilter = ref<number | null>(0);
-    const updatedAtFilter = ref<number | null>(0);
-    const deletedAtFilter = ref<number | null>(0);
 
     const searchMappedUsers = computed(() => {
         return users.value.map(u => ({
@@ -63,7 +41,16 @@
             const matchType = userFilterType.value === 0 || (u.isSuperUser && userFilterType.value == 1) || (!u.isSuperUser && userFilterType.value == 2);
             return matchName && matchEmail && matchType;
         });
-    })
+    });
+
+    onMounted(() => {
+        loading.value = true;
+        api.user.search().then((successResponse: any) => {
+            users.value = successResponse.data.users.map((u: UserInterface) => new UserClass(u));
+        }).catch((errorResponse: any) => {
+            console.log(errorResponse);
+        }).finally(() => { loading.value = false; })
+    });
 </script>
 
 <template>
@@ -85,15 +72,6 @@
                     </n-select>
                 </th>
                 <th>
-                    <n-input size="small" placeholder="search by email..." v-model:value="filterByEmail" clearable>
-                        <template #prefix>
-                            <n-icon>
-                                <IconSearch />
-                            </n-icon>
-                        </template>
-                    </n-input>
-                </th>
-                <th>
                     <n-input size="small" placeholder="search by name..." v-model:value="filterByUsername" clearable>
                         <template #prefix>
                             <n-icon>
@@ -103,21 +81,22 @@
                     </n-input>
                 </th>
                 <th>
-                    <n-date-picker size="small" v-if="createdAtFilter === 4" clearable @clear="createdAtFilter = 0"
-                        v-model:value="createdAtDatepickerFilter" type="date" required :actions="[]"></n-date-picker>
-                    <n-select size="small" trigger="click" :options="filterDateOptions" v-model:value="createdAtFilter"
-                        placeholder="Select date filter" v-else>
-                    </n-select>
+                    <n-input size="small" placeholder="search by email..." v-model:value="filterByEmail" clearable>
+                        <template #prefix>
+                            <n-icon>
+                                <IconSearch />
+                            </n-icon>
+                        </template>
+                    </n-input>
                 </th>
                 <th>
-                    <n-select size="small" trigger="click" :options="filterDateOptions" v-model:value="updatedAtFilter"
-                        placeholder="Select date filter">
-                    </n-select>
+                    <DateFilter />
                 </th>
                 <th>
-                    <n-select size="small" trigger="click" :options="filterDateOptions" v-model:value="deletedAtFilter"
-                        placeholder="Select date filter">
-                    </n-select>
+                    <DateFilter />
+                </th>
+                <th>
+                    <DateFilter />
                 </th>
                 <th class="text-center">
                     <n-button size="small" block>
@@ -166,8 +145,6 @@
             </tr>
         </template>
     </ManageTable>
-
-
 </template>
 
 <style lang="css">
