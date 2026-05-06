@@ -134,7 +134,7 @@
                         <n-avatar :src="user.avatar" class="avatar" /> {{ user.name }}
                     </div>
                 </td>
-                <td>{{ user.email }}</td>
+                <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>
                 <td class="text-center">
                     <IconUserKey v-if="user.isSuperUser" color="red" />
                     <IconUser v-else />
