@@ -31,4 +31,7 @@ class UserClass implements UserInterface {
   }
 }
 
-export { type UserInterface, UserClass };
+const maxNameLength = 32;
+const maxEmailLength = 255;
+
+export { type UserInterface, UserClass, maxNameLength, maxEmailLength };

@@ -1,15 +1,15 @@
 <script setup lang="ts">
     import { ref, reactive, computed, onMounted, watch, type CSSProperties } from 'vue';
     import { useI18n } from "vue-i18n";
-    import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules } from 'naive-ui';
-    import { IconCancel, IconDeviceFloppy, IconTrash } from '@tabler/icons-vue';
+    import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon } from 'naive-ui';
+    import { IconCancel, IconDeviceFloppy, IconTrash, IconEye, IconEyeCancel } from '@tabler/icons-vue';
     import { type AxiosAPIError } from '../../composables/axios';
     import type { EntityAction } from '../../types/common';
     import { type GetUserResponse } from '../../types/apiResponses';
-    import { type UserInterface, UserClass } from '../../types/models/user';
+    import { type UserInterface, UserClass, maxNameLength, maxEmailLength } from '../../types/models/user';
     import { type AjaxStateInterface, defaultAjaxState } from '../../types/ajaxState';
     import { api } from '../../composables/api';
-    import { required, minLength, runValidators } from '../../composables/form-validators';
+    import { required, minLength, validEmail, runValidators } from '../../composables/form-validators';
     import { default as RemoteAPIAlert } from '../alerts/RemoteAPIAlert.vue';
 
     const emit = defineEmits(['add', 'update', 'delete', 'cancel'])
@@ -69,6 +69,24 @@
                 return true
             },
             trigger: ['blur', 'input'],
+        },
+        email: {
+            validator: (_rule: FormItemRule, value) => {
+                const localResult = runValidators(value, [required('Email'), validEmail])
+                if (localResult !== true) return localResult
+                if (serverErrors.value.email) return new Error(serverErrors.value.email)
+                return true
+            },
+            trigger: ['blur'],
+        },
+        password: {
+            validator: (_rule: FormItemRule, value) => {
+                const localResult = runValidators(value, [required('Password'), minLength(4)])
+                if (localResult !== true) return localResult
+                if (serverErrors.value.password) return new Error(serverErrors.value.password)
+                return true
+            },
+            trigger: ['blur']
         }
     };
 
@@ -245,8 +263,23 @@
         </template>
         <n-form ref="projectTypeFormRef" :model="user" :rules="projectTypeFormRules" :disabled="state.ajaxRunning">
             <n-form-item :label="t('Name')" path="name" show-feedback>
-                <n-input :placeholder="t('Project type name')" v-model:value="user.name" :maxlength="10"
+                <n-input :placeholder="t('Name')" v-model:value="user.name" :maxlength="maxNameLength"
                     :show-count="!deleteMode" clearable required autofocus :readonly="deleteMode"></n-input>
+            </n-form-item>
+            <n-form-item :label="t('Email')" path="email" show-feedback>
+                <n-input :placeholder="t('Password')" v-model:value="user.email" :maxlength="maxEmailLength"
+                    :show-count="!deleteMode" clearable required autofocus :readonly="deleteMode"></n-input>
+            </n-form-item>
+            <n-form-item :label="t('Password')" path="password" show-feedback>
+                <n-input type="password" placeholder="Enter your password" show-password-on="click"
+                    :disabled="state.ajaxRunning" ref="inputPasswordRef">
+                    <template #password-visible-icon>
+                        <n-icon :size="16" :component="IconEyeCancel" />
+                    </template>
+                    <template #password-invisible-icon>
+                        <n-icon :size="16" :component="IconEye" />
+                    </template>
+                </n-input>
             </n-form-item>
         </n-form>
         <template #footer>

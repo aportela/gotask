@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { onMounted, ref, reactive, computed, shallowRef } from 'vue';
     import { useI18n } from "vue-i18n";
-    import { NAvatar, NInput, NSelect, NIcon, NButton, NButtonGroup } from 'naive-ui';
+    import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup } from 'naive-ui';
     import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash } from '@tabler/icons-vue';
     import { api } from '../composables/api';
     import { type UserInterface, UserClass } from '../types/models/user';
