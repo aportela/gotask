@@ -20,7 +20,7 @@
     const onRefresh = () => {
         Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
-        api.projectTypes.search().then((response: SearchProjectTypesResponse) => {
+        api.projectType.search().then((response: SearchProjectTypesResponse) => {
             options.value = response.data.projectTypes.map((item) => ({
                 value: item.id,
                 label: item.name,

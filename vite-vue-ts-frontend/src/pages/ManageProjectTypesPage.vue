@@ -27,7 +27,7 @@
     const onRefresh = () => {
         state.ajaxRunning = true;
         loadingStore.set(true);
-        api.projectTypes.search().then((successResponse: SearchProjectTypesResponse) => {
+        api.projectType.search().then((successResponse: SearchProjectTypesResponse) => {
             projectTypes.value = [...successResponse.data.projectTypes];
         }).catch((errorResponse: any) => {
             // TODO

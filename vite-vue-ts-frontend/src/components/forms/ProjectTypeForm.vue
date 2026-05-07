@@ -98,7 +98,7 @@
     const onGet = (id: string) => {
         Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
-        api.projectTypes.get(id).then((response: GetProjectTypeResponse) => {
+        api.projectType.get(id).then((response: GetProjectTypeResponse) => {
             if (response.data.projectType.id === id) {
                 projectType.value = response.data.projectType;
             } else {
@@ -132,7 +132,7 @@
     const onAdd = () => {
         Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
-        api.projectTypes.add(projectType.value).then((_response: any) => {
+        api.projectType.add(projectType.value).then((_response: any) => {
             emit('add')
         }).catch((errorResponse: AxiosAPIError) => {
             state.ajaxErrors = true;
@@ -163,7 +163,7 @@
     const onUpdate = () => {
         Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
-        api.projectTypes.update(projectType.value).then((_response: any) => {
+        api.projectType.update(projectType.value).then((_response: any) => {
             emit('update')
         }).catch((errorResponse: AxiosAPIError) => {
             state.ajaxErrors = true;
@@ -194,7 +194,7 @@
     const onDelete = () => {
         Object.assign(state, defaultAjaxState);
         state.ajaxRunning = true;
-        api.projectTypes.delete(projectType.value.id).then((_response: any) => {
+        api.projectType.delete(projectType.value.id).then((_response: any) => {
             emit('delete')
         }).catch((errorResponse: AxiosAPIError) => {
             state.ajaxErrors = true;

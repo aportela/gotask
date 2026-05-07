@@ -27,7 +27,7 @@
     const onRefresh = () => {
         state.ajaxRunning = true;
         loadingStore.set(true);
-        api.projectPriorities.search().then((successResponse: SearchProjectPrioritiesResponse) => {
+        api.projectPriority.search().then((successResponse: SearchProjectPrioritiesResponse) => {
             projectPriorities.value = [...successResponse.data.projectPriorities];
         }).catch((errorResponse: any) => {
             // TODO
@@ -131,7 +131,7 @@
             <tr v-for="projectPriority, index in projectPriorities" :key="projectPriority.id">
                 <td>
                     <n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor)">{{ projectPriority.name
-                        }}</n-tag>
+                    }}</n-tag>
                 </td>
                 <td class="text-center">
                     <n-button-group>

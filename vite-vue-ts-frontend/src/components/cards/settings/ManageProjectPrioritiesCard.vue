@@ -20,12 +20,12 @@
     const loading = ref<boolean>(false);
 
     const onChangeIndex = (projectPriorityId: string, index: number) => {
-        api.projectPriorities.patchIndex(projectPriorityId, index);
+        api.projectPriority.patchIndex(projectPriorityId, index);
     }
 
     onMounted(() => {
         loading.value = true;
-        api.projectPriorities.search().then((successResponse: any) => {
+        api.projectPriority.search().then((successResponse: any) => {
             projectPriorities.value = successResponse.data.projectPriorities;
         }).catch((errorResponse: any) => {
             console.log(errorResponse);
@@ -50,7 +50,7 @@
                     <td><n-color-picker v-model:value="projectPriority.hexColor" :modes="['hex']"
                             :show-alpha="false"></n-color-picker></td>
                     <td><n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor)">{{ projectPriority.name
-                            }}</n-tag></td>
+                    }}</n-tag></td>
                     <td>
                         <n-button-group>
                             <n-button size="small" @click="onChangeIndex(projectPriority.id, index - 1)"

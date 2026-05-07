@@ -38,7 +38,7 @@ const api = {
   project: {
     search: () => axiosInstance.get("/projects"),
   },
-  projectTypes: {
+  projectType: {
     add: (projectType: ProjectTypeInterface) =>
       axiosInstance.post("/project-types", projectType),
     update: (projectType: ProjectTypeInterface) =>
@@ -47,7 +47,7 @@ const api = {
     get: (id: string) => axiosInstance.get("/project-types/" + id),
     search: () => axiosInstance.get("/project-types"),
   },
-  projectStatuses: {
+  projectStatus: {
     add: (projectStatus: ProjectStatusInterface) =>
       axiosInstance.post("/project-statuses", projectStatus),
     update: (projectStatus: ProjectStatusInterface) =>
@@ -62,7 +62,7 @@ const api = {
     get: (id: string) => axiosInstance.get("/project-statuses/" + id),
     search: () => axiosInstance.get("/project-statuses"),
   },
-  projectPriorities: {
+  projectPriority: {
     add: (projectPriority: ProjectPriorityInterface) =>
       axiosInstance.post("/project-priorities", projectPriority),
     update: (projectPriority: ProjectPriorityInterface) =>
