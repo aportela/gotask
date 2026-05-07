@@ -1,5 +1,6 @@
 import { axiosInstance } from "./axios";
 
+import type { UserInterface } from "../types/models/user";
 import type { ProjectTypeInterface } from "../types/models/projectType";
 import type { ProjectStatusInterface } from "../types/models/projectStatus";
 import type { ProjectPriorityInterface } from "../types/models/projectPriority";
@@ -27,6 +28,11 @@ const api = {
     },
   },
   user: {
+    add: (user: UserInterface) => axiosInstance.post("/users", user),
+    update: (user: UserInterface) =>
+      axiosInstance.put("/users/" + user.id, user),
+    delete: (id: string) => axiosInstance.delete("/users/" + id),
+    get: (id: string) => axiosInstance.get("/users/" + id),
     search: () => axiosInstance.get("/users"),
   },
   project: {
