@@ -15,12 +15,15 @@ func addRequestToUser(request addRequest) domain.User {
 }
 
 func updateRequestToUser(request updateRequest) domain.User {
-	return domain.User{
+	user := domain.User{
 		UserBase:    domain.UserBase{Name: request.Name},
 		Email:       request.Email,
-		Password:    *request.Password,
 		IsSuperUser: request.IsSuperUser,
 	}
+	if request.Password != nil {
+		user.Password = *request.Password
+	}
+	return user
 }
 
 func userToResponse(user domain.User) userResponse {
