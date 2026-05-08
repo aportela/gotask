@@ -10,6 +10,7 @@ import (
 
 type AuthService interface {
 	SignIn(ctx context.Context, user domain.User) (domain.User, error)
+	GetUserInfo(ctx context.Context, userId string) (domain.User, error)
 }
 
 type authService struct {
@@ -35,4 +36,16 @@ func (s *authService) SignIn(ctx context.Context, user domain.User) (domain.User
 		return domain.User{}, domain.ErrInvalidCredentials
 	}
 	return userrepository.DTOToUser(credentialUser), nil
+}
+
+func (s *authService) GetUserInfo(ctx context.Context, userId string) (domain.User, error) {
+	user, err := s.repository.Get(ctx, userId)
+	if err != nil {
+		return domain.User{}, err
+	}
+	if !user.DeletedAt.Valid {
+		// TODO: FAIL
+		//return domain.User{}, domain.ErrDeleted
+	}
+	return userrepository.DTOToUser(user), nil
 }

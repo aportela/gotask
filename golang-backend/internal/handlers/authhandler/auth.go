@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/aportela/doneo/internal/database"
-	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/handlers"
 	"github.com/aportela/doneo/internal/jwt"
 	"github.com/aportela/doneo/internal/repositories/userrepository"
@@ -102,8 +101,10 @@ func (h *AuthHandler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
-	user := domain.User{
-		UserBase: domain.UserBase{ID: userId},
+	user, err := h.service.GetUserInfo(r.Context(), userId)
+	if err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to get user info: %w", err))
+		return
 	}
 	accessToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(h.accessTokenExpirationHours)*time.Hour), h.secretKey)
 	if err != nil {

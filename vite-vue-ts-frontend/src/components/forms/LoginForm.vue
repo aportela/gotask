@@ -79,6 +79,7 @@
                 .then((successResponse: SignInSucessResponse) => {
                     if (successResponse.data.accessToken) {
                         sessionStore.setAccessToken(successResponse.data.accessToken.token, successResponse.data.accessToken.expiresAtTimestamp);
+                        sessionStore.setUser(successResponse.data.user);
                         localStorageLastUsedEmail.set(signinFormValues.value.email);
                         emit('success');
                     } else {
@@ -163,7 +164,7 @@
             <n-form-item>
                 <n-button secondary @click="validateForm" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>

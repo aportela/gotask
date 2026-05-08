@@ -27,6 +27,8 @@ export const useSessionStore = defineStore("session", {
   getters: {
     sessionUserId: (state: State): string | null =>
       state.session.user?.id || null,
+    sessionUserName: (state: State): string | null =>
+      state.session.user?.name || null,
     hasAccessToken: (state: State): boolean =>
       state.session.accessToken.token !== null &&
       state.session.accessToken.expiresAtTimestamp !== null,

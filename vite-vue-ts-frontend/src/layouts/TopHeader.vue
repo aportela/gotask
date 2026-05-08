@@ -107,7 +107,7 @@
                     @select="onUserDropDownSelect">
                     <n-button quaternary>
                         <IconUserCircle :size="commonIconSize" />
-                        <span class="username">Administrator</span>
+                        <span class="username">{{ sessionStore.sessionUserName }}</span>
                     </n-button>
                 </n-dropdown>
             </n-flex>
