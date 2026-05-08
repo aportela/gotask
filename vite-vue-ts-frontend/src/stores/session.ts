@@ -1,6 +1,7 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
 import { AxiosError } from "axios";
 import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "../types/apiResponses";
+import type { UserInterface } from "../types/models/user";
 import { api } from "../composables/api";
 
 interface State {
@@ -9,6 +10,7 @@ interface State {
       token: string | null;
       expiresAtTimestamp: number | null;
     };
+    user: UserInterface | null;
   };
 }
 
@@ -19,9 +21,12 @@ export const useSessionStore = defineStore("session", {
         token: null,
         expiresAtTimestamp: null,
       },
+      user: null,
     },
   }),
   getters: {
+    sessionUserId: (state: State): string | null =>
+      state.session.user?.id || null,
     hasAccessToken: (state: State): boolean =>
       state.session.accessToken.token !== null &&
       state.session.accessToken.expiresAtTimestamp !== null,
@@ -39,6 +44,7 @@ export const useSessionStore = defineStore("session", {
           successResponse.data.accessToken.token,
           successResponse.data.accessToken.expiresAtTimestamp,
         );
+        this.setUser(successResponse.data.user);
         return true;
       } catch (e: unknown) {
         if (e instanceof AxiosError) {
@@ -70,6 +76,9 @@ export const useSessionStore = defineStore("session", {
     removeAccessToken(): void {
       this.session.accessToken.token = null;
       this.session.accessToken.expiresAtTimestamp = null;
+    },
+    setUser(user: UserInterface): void {
+      this.session.user = user;
     },
   },
 });

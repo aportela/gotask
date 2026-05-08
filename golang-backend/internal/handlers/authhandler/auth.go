@@ -63,6 +63,13 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 		SignInResponse{
 			AccessToken:  TokenResponse{Token: accessToken.Token, ExpiresAt: accessToken.ExpiresAt.UnixMilli()},
 			RefreshToken: TokenResponse{Token: refreshToken.Token, ExpiresAt: refreshToken.ExpiresAt.UnixMilli()},
+			User: userResponse{
+				ID:          user.ID,
+				Name:        user.Name,
+				Email:       user.Email,
+				AvatarURL:   user.AvatarURL,
+				IsSuperUser: user.IsSuperUser,
+			},
 		},
 	)
 }
@@ -105,6 +112,13 @@ func (h *AuthHandler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
 	}
 	utils.ToJSONResponse(w, http.StatusOK,
 		RenewAccessTokenResponse{
+			User: userResponse{
+				ID:          user.ID,
+				Name:        user.Name,
+				Email:       user.Email,
+				AvatarURL:   user.AvatarURL,
+				IsSuperUser: user.IsSuperUser,
+			},
 			AccessToken: TokenResponse{Token: accessToken.Token, ExpiresAt: accessToken.ExpiresAt.UnixMilli()},
 		},
 	)
