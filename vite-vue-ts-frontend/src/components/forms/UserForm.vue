@@ -270,7 +270,7 @@
                 <n-input :placeholder="t('Password')" v-model:value="user.email" :maxlength="maxEmailLength"
                     :show-count="!deleteMode" clearable required autofocus :readonly="deleteMode"></n-input>
             </n-form-item>
-            <n-form-item :label="t('Password')" path="password" show-feedback>
+            <n-form-item :label="t('Password')" path="password" show-feedback v-show="!deleteMode">
                 <n-input type="password" placeholder="Enter your password" show-password-on="click"
                     :disabled="state.ajaxRunning" ref="inputPasswordRef">
                     <template #password-visible-icon>
