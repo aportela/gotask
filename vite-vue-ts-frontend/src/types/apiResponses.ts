@@ -21,6 +21,7 @@ interface SignInSucessResponse extends Omit<DefaultAxiosResponse, "data"> {
       expiresAtTimestamp: number;
     };
     tokenType: ValidAuthTypes;
+    user: UserInterface;
   };
 }
 
@@ -31,6 +32,7 @@ interface GetNewAccessTokenResponse extends Omit<DefaultAxiosResponse, "data"> {
       expiresAtTimestamp: number;
     };
     tokenType: ValidAuthTypes;
+    user: UserInterface;
   };
 }
 
