@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { ref, onMounted, onBeforeUnmount } from 'vue';
-    import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent, NSpin, NDialogProvider, NButton, NDrawer } from 'naive-ui'
+    import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent, NSpin, NDialogProvider, NButton, NDrawer, NDrawerContent } from 'naive-ui'
     import { default as TopHeader } from './TopHeader.vue';
     import { default as TopMenu } from './TopMenu.vue';
     import { default as SidebarMenu } from './SidebarMenu.vue';
