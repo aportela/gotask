@@ -58,12 +58,43 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, userToUpdateResponse(user), nil)
 }
 
+func (h *UserHandler) Patch(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var request patchRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] invalid request payload: %w", err))
+		return
+	}
+	userId := chi.URLParam(r, "id")
+
+	user, err := h.service.Get(r.Context(), userId)
+	if err != nil {
+		if err == domain.ErrNotFound {
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to get non existent user: %w", err))
+			return
+		} else {
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to get user: %w", err))
+			return
+		}
+	}
+	if request.DeletedAt == nil {
+		user.DeletedAt = nil
+	}
+	err = h.service.Patch(r.Context(), user)
+	if err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to patch user: %w", err))
+		return
+	}
+	handlers.ToHandlerJSONResponse(w, userToGetResponse(user), nil)
+
+}
+
 func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	userId := chi.URLParam(r, "id")
 	err := h.service.Delete(r.Context(), userId)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to delete user with ID %s: %w", err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to delete user: %w", err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)

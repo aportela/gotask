@@ -32,6 +32,8 @@ const api = {
     update: (user: UserInterface) =>
       axiosInstance.put("/users/" + user.id, user),
     delete: (id: string) => axiosInstance.delete("/users/" + id),
+    unDelete: (id: string) =>
+      axiosInstance.patch("/users/" + id, { deletedAt: null }),
     get: (id: string) => axiosInstance.get("/users/" + id),
     search: () => axiosInstance.get("/users"),
   },

@@ -14,6 +14,10 @@ type updateRequest struct {
 	IsSuperUser bool    `json:"isSuperUser"`
 }
 
+type patchRequest struct {
+	DeletedAt *int64 `json:"deletedAt"`
+}
+
 type userResponse struct {
 	ID          string `json:"id"`
 	Name        string `json:"name"`

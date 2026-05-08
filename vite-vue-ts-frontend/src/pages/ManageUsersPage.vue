@@ -2,7 +2,7 @@
     import { onMounted, ref, reactive, computed, shallowRef } from 'vue';
     import { useI18n } from "vue-i18n";
     import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup } from 'naive-ui';
-    import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash } from '@tabler/icons-vue';
+    import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash, IconTrashOff } from '@tabler/icons-vue';
     import { api } from '../composables/api';
     import { type UserInterface, UserClass } from '../types/models/user';
     import type { SearchUsersResponse } from '../types/apiResponses';
@@ -81,6 +81,11 @@
         selectedUserId.value = user.id;
     };
 
+    const onUnDeleteUser = (user: UserInterface, _index: number) => {
+        actionDialogMode.value = "undelete";
+        selectedUserId.value = user.id;
+    };
+
     const actionDialogMode = ref<EntityAction>("none");
 
     const isVisibleActionDialog = computed<boolean>({
@@ -110,6 +115,12 @@
         onRefresh();
     };
 
+    const onUnDelete = () => {
+        isVisibleActionDialog.value = false;
+        notify('success', t("User undeleted"))
+        onRefresh();
+    };
+
     const onCancel = () => {
         isVisibleActionDialog.value = false;
     };
@@ -122,7 +133,7 @@
 <template>
     <n-modal v-model:show="isVisibleActionDialog">
         <UserForm :mode="actionDialogMode" :user-id="selectedUserId" style="width: 40%;" @add="onAdd" @update="onUpdate"
-            @delete="onDelete" @cancel="onCancel" />
+            @delete="onDelete" @cancel="onCancel" @undelete="onUnDelete" />
     </n-modal>
 
     <ManageTable size="small" title="Manage users">
@@ -197,7 +208,7 @@
                 <td class="hide-mobile">{{ user.updatedAt ? new Date(user.updatedAt).toLocaleString() : null }}</td>
                 <td class="hide-mobile">{{ user.deletedAt ? new Date(user.deletedAt).toLocaleString() : null }}</td>
                 <td class="text-center">
-                    <n-button-group>
+                    <n-button-group v-if="!user.deletedAt">
                         <n-button size="small" @click="onUpdateUser(user, index)">
                             {{ t("Update") }}
                             <template #icon>
@@ -210,7 +221,14 @@
                                 <IconTrash :size="22" />
                             </template>
                         </n-button>
+
                     </n-button-group>
+                    <n-button size="small" @click="onUnDeleteUser(user, index)" v-else>
+                        {{ t("Undelete") }}
+                        <template #icon>
+                            <IconTrashOff :size="22" />
+                        </template>
+                    </n-button>
                 </td>
             </tr>
         </template>

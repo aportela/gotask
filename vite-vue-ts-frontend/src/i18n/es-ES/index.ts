@@ -7,6 +7,7 @@ export default {
   Update: "Modificar",
   Save: "Guardar",
   Delete: "Eliminar",
+  Undelete: "Restaurar",
   Cancel: "Cancelar",
 
   // errors

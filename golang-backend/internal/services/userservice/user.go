@@ -14,7 +14,9 @@ import (
 type UserService interface {
 	Add(ctx context.Context, user domain.User) error
 	Update(ctx context.Context, user domain.User) error
+	Patch(ctx context.Context, user domain.User) error
 	Delete(ctx context.Context, id string) error
+	UnDelete(ctx context.Context, id string) error
 	Purge(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (domain.User, error)
 	Search(ctx context.Context) ([]domain.User, error)
@@ -49,7 +51,6 @@ func (s *userService) Update(ctx context.Context, user domain.User) error {
 		}
 		user.PasswordHash = string(hashedPasswordBytes)
 	}
-
 	user.UpdatedAt = utils.NowToTimePtr()
 	if err := s.repository.Update(ctx, userrepository.UserToDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to update user with ID %s: %w", user.ID, err)
@@ -57,9 +58,23 @@ func (s *userService) Update(ctx context.Context, user domain.User) error {
 	return nil
 }
 
+func (s *userService) Patch(ctx context.Context, user domain.User) error {
+	if err := s.repository.Patch(ctx, userrepository.UserToDTO(user)); err != nil {
+		return fmt.Errorf("[UserService] failed to patch user with ID %s: %w", user.ID, err)
+	}
+	return nil
+}
+
 func (s *userService) Delete(ctx context.Context, id string) error {
 	if err := s.repository.Delete(ctx, id); err != nil {
 		return fmt.Errorf("[UserService] failed to delete user with ID %s: %w", id, err)
+	}
+	return nil
+}
+
+func (s *userService) UnDelete(ctx context.Context, id string) error {
+	if err := s.repository.Delete(ctx, id); err != nil {
+		return fmt.Errorf("[UserService] failed to undelete user with ID %s: %w", id, err)
 	}
 	return nil
 }

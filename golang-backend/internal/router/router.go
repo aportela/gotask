@@ -44,6 +44,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Route("/{id}", func(r chi.Router) {
 			r.Get("/", userHandler.Get)
 			r.Put("/", userHandler.Update)
+			r.Patch("/", userHandler.Patch)
 			r.Delete("/", userHandler.Delete)
 		})
 	})

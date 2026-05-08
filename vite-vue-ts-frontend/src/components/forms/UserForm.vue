@@ -2,7 +2,7 @@
     import { ref, reactive, computed, onMounted, watch, type CSSProperties } from 'vue';
     import { useI18n } from "vue-i18n";
     import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon } from 'naive-ui';
-    import { IconCancel, IconDeviceFloppy, IconTrash, IconEye, IconEyeCancel } from '@tabler/icons-vue';
+    import { IconCancel, IconDeviceFloppy, IconTrash, IconTrashOff, IconEye, IconEyeCancel } from '@tabler/icons-vue';
     import { type AxiosAPIError } from '../../composables/axios';
     import type { EntityAction } from '../../types/common';
     import { type GetUserResponse } from '../../types/apiResponses';
@@ -12,7 +12,7 @@
     import { required, minLength, validEmail, runValidators } from '../../composables/form-validators';
     import { default as RemoteAPIAlert } from '../alerts/RemoteAPIAlert.vue';
 
-    const emit = defineEmits(['add', 'update', 'delete', 'cancel'])
+    const emit = defineEmits(['add', 'update', 'delete', 'undelete', 'cancel'])
 
     const { t } = useI18n();
 
@@ -31,6 +31,7 @@
     const addMode = computed<boolean>(() => props.mode === "add");
     const updateMode = computed<boolean>(() => props.mode === "update");
     const deleteMode = computed<boolean>(() => props.mode === "delete");
+    const unDeleteMode = computed<boolean>(() => props.mode === "undelete");
 
     const title = computed<string>(() => {
         switch (props.mode) {
@@ -40,6 +41,8 @@
                 return t("Update user");
             case "delete":
                 return t("Delete user");
+            case "delete":
+                return t("Undelete user");
             default:
                 return "";
         }
@@ -236,12 +239,42 @@
         });
     };
 
+    const onUnDelete = () => {
+        Object.assign(state, defaultAjaxState);
+        state.ajaxRunning = true;
+        api.user.unDelete(user.value.id).then((_response: any) => {
+            emit('undelete')
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        break;
+                    case 404:
+                        state.ajaxErrorMessage = t("We couldn’t find the specified user");
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("There was a problem undeleting the user data");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = t("There was a problem undeleting the user data");
+                console.error(errorResponse);
+            }
+        }).finally(() => {
+            state.ajaxRunning = false;
+        });
+    };
+
     const onCancel = () => {
         emit('cancel')
     }
 
     onMounted(() => {
-        if (props.mode === "update" || props.mode === "delete") {
+        if (props.mode === "update" || props.mode === "delete" || props.mode === "undelete") {
             if (props.userId) {
                 onGet(props.userId);
             } else {
@@ -299,6 +332,12 @@
                         <IconTrash />
                     </template>
                     {{ t("Delete") }}
+                </n-button>
+                <n-button @click="onUnDelete" v-else-if="unDeleteMode" :disabled="state.ajaxRunning">
+                    <template #icon>
+                        <IconTrashOff />
+                    </template>
+                    {{ t("Undelete") }}
                 </n-button>
                 <n-button @click="onCancel" :disabled="state.ajaxRunning">
                     <template #icon>
