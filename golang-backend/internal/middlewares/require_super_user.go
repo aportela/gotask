@@ -15,7 +15,7 @@ func RequireSuperUser(next http.Handler) http.Handler {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusForbidden)
 			resp := errorResponse{
-				Message: "missing super user flag",
+				UserMessage: "missing super user flag",
 			}
 			if err := json.NewEncoder(w).Encode(resp); err != nil {
 				http.Error(w, "internal error", http.StatusInternalServerError)
