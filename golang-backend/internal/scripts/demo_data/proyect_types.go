@@ -24,7 +24,7 @@ func createProjectTypes(database database.Database) []string {
 	for _, projectTypeName := range projectTypeNames {
 		projectTypeID := utils.UUID()
 		err := projectTypeService.Add(context.Background(), domain.ProjectType{
-			ID:       utils.UUID(),
+			ID:       projectTypeID,
 			Name:     projectTypeName,
 			HexColor: utils.RandomSoftHexColor(),
 		})
