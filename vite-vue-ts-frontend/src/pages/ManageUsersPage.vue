@@ -210,11 +210,17 @@
 
     function confirmDelete(user: UserInterface, _index: number) {
         dialog.warning({
-            title: 'Delete user',
+            title: t("Delete user"),
             icon: renderIcon(IconTrash)(24),
-            content: `You are going to delete user ${user.name}`,
-            positiveText: 'Delete',
-            negativeText: 'Cancel',
+            content: () =>
+                h('div', [
+                    `You are about to delete the user "${user.name}" from the system.`,
+                    h('br'),
+                    h('br'),
+                    'Do you want to continue?',
+                ]),
+            positiveText: t("Delete"),
+            negativeText: t("Cancel"),
             onPositiveClick: () => {
                 onDelete(user.id);
             },
@@ -223,11 +229,17 @@
 
     function confirmUnDelete(user: UserInterface, _index: number) {
         dialog.warning({
-            title: 'Undelete user',
+            title: t("Restore user"),
             icon: renderIcon(IconTrashOff)(24),
-            content: `You are going to undelete user ${user.name}`,
-            positiveText: 'Undelete',
-            negativeText: 'Cancel',
+            content: () =>
+                h('div', [
+                    `You are about to restore the user "${user.name}" from the system.`,
+                    h('br'),
+                    h('br'),
+                    'Do you want to continue?',
+                ]),
+            positiveText: t("Restore"),
+            negativeText: t("Cancel"),
             onPositiveClick: () => {
                 onUnDelete(user.id);
             },
@@ -330,7 +342,7 @@
 
                     </n-button-group>
                     <n-button size="small" @click="confirmUnDelete(user, index)" v-else>
-                        {{ t("Undelete") }}
+                        {{ t("Restore") }}
                         <template #icon>
                             <IconTrashOff :size="22" />
                         </template>

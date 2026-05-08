@@ -7,7 +7,7 @@ export default {
   Update: "Modificar",
   Save: "Guardar",
   Delete: "Eliminar",
-  Undelete: "Restaurar",
+  Restore: "Restaurar",
   Cancel: "Cancelar",
 
   // errors
@@ -17,8 +17,9 @@ export default {
   "API Error: fatal error": "Error fatal de API",
   "Sign in error": "Error al iniciar la sesión",
 
-  // workspace
-  Workspace: "Área de trabajo",
+  // users
+  "Delete user": "Eliminar usuario",
+  "Restore user": "Restaurar usuario",
 
   // project types
   "Add project type": "Añadir tipo de proyecto",
