@@ -9,6 +9,7 @@
     import { type AjaxStateInterface, defaultAjaxState } from '../types/ajaxState';
     import { type EntityAction } from '../types/common';
     import { useLoadingStore } from '../stores/loading';
+    import { useSessionStore } from '../stores/session';
     import { useNotify } from '../composables/notification';
     import { default as UserForm } from '../components/forms/UserForm.vue';
     import { default as ManageTable } from '../components/custom/ManageTable.vue';
@@ -17,6 +18,8 @@
     const { notify } = useNotify();
 
     const { t } = useI18n();
+
+    const sessionStore = useSessionStore();
 
     const loadingStore = useLoadingStore();
 
@@ -215,7 +218,8 @@
                                 <IconEdit :size="22" />
                             </template>
                         </n-button>
-                        <n-button size="small" @click="onDeleteUser(user, index)">
+                        <n-button size="small" @click="onDeleteUser(user, index)"
+                            :disabled="user.id === sessionStore.sessionUserId">
                             {{ t("Delete") }}
                             <template #icon>
                                 <IconTrash :size="22" />
