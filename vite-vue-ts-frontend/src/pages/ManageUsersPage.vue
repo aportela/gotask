@@ -304,7 +304,7 @@
                                 <IconPlus />
                             </NIcon>
                         </template>
-                        Add
+                        {{ t("Add") }}
                     </n-button>
                 </th>
             </tr>
