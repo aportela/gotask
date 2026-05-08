@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onMounted, ref, reactive, computed, shallowRef } from 'vue';
+    import { onMounted, onBeforeUnmount, ref, reactive, computed, shallowRef } from 'vue';
     import { useI18n } from "vue-i18n";
     import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup } from 'naive-ui';
     import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash, IconTrashOff } from '@tabler/icons-vue';
@@ -63,6 +63,9 @@
             users.value = successResponse.data.users.map((u: UserInterface) => new UserClass(u));
         }).catch((errorResponse: any) => {
             console.log(errorResponse);
+            // TODO: manage this
+            //bus.emit("reAuthRequired", { emitter: "ManageUsersPage" });
+
         }).finally(() => {
             loadingStore.set(false);
             state.ajaxRunning = false;
@@ -130,7 +133,22 @@
 
     onMounted(() => {
         onRefresh();
+        // TODO: manage this
+        /*
+        bus.on("reAuthSucess", (msg) => {
+            if (msg.to?.includes("ActivityHeatMapWidget")) {
+                onRefresh();
+            }
+        });
+        */
     });
+
+    onBeforeUnmount(() => {
+        // TODO: manage this
+        //bus.off("reAuthSucess");
+    });
+
+
 </script>
 
 <template>

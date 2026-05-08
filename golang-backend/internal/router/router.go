@@ -16,6 +16,7 @@ import (
 	"github.com/aportela/doneo/internal/handlers/projectstatushandler"
 	"github.com/aportela/doneo/internal/handlers/projecttypehandler"
 	"github.com/aportela/doneo/internal/handlers/userhandler"
+	"github.com/aportela/doneo/internal/middlewares"
 
 	"github.com/aportela/doneo/internal/ui"
 )
@@ -35,9 +36,9 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	})
 
 	apiRouter.Route("/users", func(r chi.Router) {
-		//r.Use(middlewares.CheckJWT(cfg.Auth.SecretKey))
-		//r.Use(middlewares.RequireAuthentication)
-		//r.Use(middlewares.RequireSuperUser)
+		r.Use(middlewares.CheckJWT(cfg.Auth.SecretKey))
+		r.Use(middlewares.RequireAuthentication)
+		r.Use(middlewares.RequireSuperUser)
 		userHandler := userhandler.NewUserHandler(db)
 		r.Post("/", userHandler.Add)
 		r.Get("/", userHandler.Search)
