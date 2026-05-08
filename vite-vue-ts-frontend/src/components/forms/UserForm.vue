@@ -12,7 +12,7 @@
     import { required, minLength, validEmail, runValidators } from '../../composables/form-validators';
     import { default as RemoteAPIAlert } from '../alerts/RemoteAPIAlert.vue';
 
-    const emit = defineEmits(['add', 'update', 'delete', 'undelete', 'cancel'])
+    const emit = defineEmits(['add', 'update', 'cancel'])
 
     const { t } = useI18n();
 
