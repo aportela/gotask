@@ -2,7 +2,7 @@
     import { ref, reactive, computed, onMounted, watch, type CSSProperties } from 'vue';
     import { useI18n } from "vue-i18n";
     import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon } from 'naive-ui';
-    import { IconCancel, IconDeviceFloppy, IconTrash, IconTrashOff, IconEye, IconEyeCancel } from '@tabler/icons-vue';
+    import { IconCancel, IconDeviceFloppy, IconEye, IconEyeCancel } from '@tabler/icons-vue';
     import { type AxiosAPIError } from '../../composables/axios';
     import type { EntityAction } from '../../types/common';
     import { type GetUserResponse } from '../../types/apiResponses';
@@ -30,8 +30,6 @@
 
     const addMode = computed<boolean>(() => props.mode === "add");
     const updateMode = computed<boolean>(() => props.mode === "update");
-    const deleteMode = computed<boolean>(() => props.mode === "delete");
-    const unDeleteMode = computed<boolean>(() => props.mode === "undelete");
 
     const title = computed<string>(() => {
         switch (props.mode) {
@@ -39,10 +37,6 @@
                 return t("Add user");
             case "update":
                 return t("Update user");
-            case "delete":
-                return t("Delete user");
-            case "delete":
-                return t("Undelete user");
             default:
                 return "";
         }
@@ -209,72 +203,12 @@
         });
     };
 
-    const onDelete = () => {
-        Object.assign(state, defaultAjaxState);
-        state.ajaxRunning = true;
-        api.user.delete(user.value.id).then((_response: any) => {
-            emit('delete')
-        }).catch((errorResponse: AxiosAPIError) => {
-            state.ajaxErrors = true;
-            if (errorResponse.isAPIError) {
-                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-                switch (errorResponse.status) {
-                    case 401:
-                        state.ajaxErrors = false;
-                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-                        break;
-                    case 404:
-                        state.ajaxErrorMessage = t("We couldn’t find the specified user");
-                        break;
-                    default:
-                        state.ajaxErrorMessage = t("There was a problem deleting the user data");
-                        break;
-                }
-            } else {
-                state.ajaxErrorMessage = t("There was a problem deleting the user data");
-                console.error(errorResponse);
-            }
-        }).finally(() => {
-            state.ajaxRunning = false;
-        });
-    };
-
-    const onUnDelete = () => {
-        Object.assign(state, defaultAjaxState);
-        state.ajaxRunning = true;
-        api.user.unDelete(user.value.id).then((_response: any) => {
-            emit('undelete')
-        }).catch((errorResponse: AxiosAPIError) => {
-            state.ajaxErrors = true;
-            if (errorResponse.isAPIError) {
-                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-                switch (errorResponse.status) {
-                    case 401:
-                        state.ajaxErrors = false;
-                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-                        break;
-                    case 404:
-                        state.ajaxErrorMessage = t("We couldn’t find the specified user");
-                        break;
-                    default:
-                        state.ajaxErrorMessage = t("There was a problem undeleting the user data");
-                        break;
-                }
-            } else {
-                state.ajaxErrorMessage = t("There was a problem undeleting the user data");
-                console.error(errorResponse);
-            }
-        }).finally(() => {
-            state.ajaxRunning = false;
-        });
-    };
-
     const onCancel = () => {
         emit('cancel')
     }
 
     onMounted(() => {
-        if (props.mode === "update" || props.mode === "delete" || props.mode === "undelete") {
+        if (props.mode === "update") {
             if (props.userId) {
                 onGet(props.userId);
             } else {
@@ -297,13 +231,13 @@
         <n-form ref="projectTypeFormRef" :model="user" :rules="projectTypeFormRules" :disabled="state.ajaxRunning">
             <n-form-item :label="t('Name')" path="name" show-feedback>
                 <n-input :placeholder="t('Name')" v-model:value="user.name" :maxlength="maxNameLength"
-                    :show-count="!deleteMode" clearable required autofocus :readonly="deleteMode"></n-input>
+                    :show-count="true" clearable required autofocus></n-input>
             </n-form-item>
             <n-form-item :label="t('Email')" path="email" show-feedback>
                 <n-input :placeholder="t('Password')" v-model:value="user.email" :maxlength="maxEmailLength"
-                    :show-count="!deleteMode" clearable required autofocus :readonly="deleteMode"></n-input>
+                    :show-count="true" clearable required autofocus></n-input>
             </n-form-item>
-            <n-form-item :label="t('Password')" path="password" show-feedback v-show="!deleteMode">
+            <n-form-item :label="t('Password')" path="password" show-feedback>
                 <n-input type="password" placeholder="Enter your password" show-password-on="click"
                     :disabled="state.ajaxRunning" ref="inputPasswordRef">
                     <template #password-visible-icon>
@@ -326,18 +260,6 @@
                         <IconDeviceFloppy />
                     </template>
                     {{ t("Save") }}
-                </n-button>
-                <n-button @click="onDelete" v-else-if="deleteMode" :disabled="state.ajaxRunning">
-                    <template #icon>
-                        <IconTrash />
-                    </template>
-                    {{ t("Delete") }}
-                </n-button>
-                <n-button @click="onUnDelete" v-else-if="unDeleteMode" :disabled="state.ajaxRunning">
-                    <template #icon>
-                        <IconTrashOff />
-                    </template>
-                    {{ t("Undelete") }}
                 </n-button>
                 <n-button @click="onCancel" :disabled="state.ajaxRunning">
                     <template #icon>

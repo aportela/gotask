@@ -1,12 +1,13 @@
 <script setup lang="ts">
-    import { onMounted, onBeforeUnmount, ref, reactive, computed, shallowRef } from 'vue';
+    import { onMounted, onBeforeUnmount, ref, reactive, computed, shallowRef, h, type Component } from 'vue';
     import { useI18n } from "vue-i18n";
-    import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup } from 'naive-ui';
+    import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup, useDialog } from 'naive-ui';
     import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash, IconTrashOff } from '@tabler/icons-vue';
     import { api } from '../composables/api';
     import { type UserInterface, UserClass } from '../types/models/user';
     import type { SearchUsersResponse } from '../types/apiResponses';
     import { type AjaxStateInterface, defaultAjaxState } from '../types/ajaxState';
+    import type { AxiosAPIError } from '../composables/axios';
     import { type EntityAction } from '../types/common';
     import { useLoadingStore } from '../stores/loading';
     import { useSessionStore } from '../stores/session';
@@ -82,15 +83,6 @@
         actionDialogMode.value = "update";
         selectedUserId.value = user.id;
     };
-    const onDeleteUser = (user: UserInterface, _index: number) => {
-        actionDialogMode.value = "delete";
-        selectedUserId.value = user.id;
-    };
-
-    const onUnDeleteUser = (user: UserInterface, _index: number) => {
-        actionDialogMode.value = "undelete";
-        selectedUserId.value = user.id;
-    };
 
     const actionDialogMode = ref<EntityAction>("none");
 
@@ -112,18 +104,6 @@
     const onUpdate = () => {
         isVisibleActionDialog.value = false;
         notify('success', t("User updated"))
-        onRefresh();
-    };
-
-    const onDelete = () => {
-        isVisibleActionDialog.value = false;
-        notify('success', t("User deleted"))
-        onRefresh();
-    };
-
-    const onUnDelete = () => {
-        isVisibleActionDialog.value = false;
-        notify('success', t("User undeleted"))
         onRefresh();
     };
 
@@ -149,6 +129,110 @@
     });
 
 
+    const onDelete = (userId: string) => {
+        Object.assign(state, defaultAjaxState);
+        state.ajaxRunning = true;
+        api.user.delete(userId).then((_response: any) => {
+            notify('success', t("User deleted"))
+            onRefresh();
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        break;
+                    case 404:
+                        state.ajaxErrorMessage = t("We couldn’t find the specified user");
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("There was a problem deleting the user data");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = t("There was a problem deleting the user data");
+                console.error(errorResponse);
+            }
+        }).finally(() => {
+            state.ajaxRunning = false;
+        });
+    };
+
+    const onUnDelete = (userId: string) => {
+        Object.assign(state, defaultAjaxState);
+        state.ajaxRunning = true;
+        api.user.unDelete(userId).then((_response: any) => {
+            notify('success', t("User undeleted"))
+            onRefresh();
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        break;
+                    case 404:
+                        state.ajaxErrorMessage = t("We couldn’t find the specified user");
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("There was a problem undeleting the user data");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = t("There was a problem undeleting the user data");
+                console.error(errorResponse);
+            }
+        }).finally(() => {
+            state.ajaxRunning = false;
+        });
+    };
+
+    // TODO: this is already declared on menu.ts
+
+    const renderIcon = (icon: Component) => {
+        return (size = 32) =>
+            () =>
+                h(
+                    NIcon,
+                    { size },
+                    {
+                        default: () => h(icon),
+                    },
+                );
+    };
+
+
+    const dialog = useDialog()
+
+    function confirmDelete(user: UserInterface, _index: number) {
+        dialog.warning({
+            title: 'Delete user',
+            icon: renderIcon(IconTrash)(24),
+            content: `You are going to delete user ${user.name}`,
+            positiveText: 'Delete',
+            negativeText: 'Cancel',
+            onPositiveClick: () => {
+                onDelete(user.id);
+            },
+        })
+    }
+
+    function confirmUnDelete(user: UserInterface, _index: number) {
+        dialog.warning({
+            title: 'Undelete user',
+            icon: renderIcon(IconTrashOff)(24),
+            content: `You are going to undelete user ${user.name}`,
+            positiveText: 'Undelete',
+            negativeText: 'Cancel',
+            onPositiveClick: () => {
+                onUnDelete(user.id);
+            },
+        })
+    }
 </script>
 
 <template>
@@ -236,7 +320,7 @@
                                 <IconEdit :size="22" />
                             </template>
                         </n-button>
-                        <n-button size="small" @click="onDeleteUser(user, index)"
+                        <n-button size="small" @click="confirmDelete(user, index)"
                             :disabled="user.id === sessionStore.sessionUserId">
                             {{ t("Delete") }}
                             <template #icon>
@@ -245,7 +329,7 @@
                         </n-button>
 
                     </n-button-group>
-                    <n-button size="small" @click="onUnDeleteUser(user, index)" v-else>
+                    <n-button size="small" @click="confirmUnDelete(user, index)" v-else>
                         {{ t("Undelete") }}
                         <template #icon>
                             <IconTrashOff :size="22" />
