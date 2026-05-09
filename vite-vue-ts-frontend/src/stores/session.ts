@@ -1,8 +1,5 @@
 import { defineStore, acceptHMRUpdate } from "pinia";
-import { AxiosError } from "axios";
-import { type GetNewAccessTokenResponse as GetNewAccessTokenResponseInterface } from "../types/apiResponses";
-import type { UserInterface } from "../types/models/user";
-import { api } from "../composables/api";
+import { User } from "../api/models/user";
 
 interface State {
   session: {
@@ -10,7 +7,7 @@ interface State {
       token: string | null;
       expiresAtTimestamp: number | null;
     };
-    user: UserInterface | null;
+    user: User | null;
   };
 }
 
@@ -38,28 +35,6 @@ export const useSessionStore = defineStore("session", {
       state.session.accessToken.expiresAtTimestamp,
   },
   actions: {
-    async refreshAccessToken(): Promise<boolean> {
-      try {
-        const successResponse: GetNewAccessTokenResponseInterface =
-          await api.auth.renewAccessToken();
-        this.setAccessToken(
-          successResponse.data.accessToken.token,
-          successResponse.data.accessToken.expiresAtTimestamp,
-        );
-        this.setUser(successResponse.data.user);
-        return true;
-      } catch (e: unknown) {
-        if (e instanceof AxiosError) {
-          if (e.response?.status !== 401) {
-            // 401 is the "normal" error response if we do not have a previous refresh token or refresh token is expired
-            console.error("Invalid error http response code", e.status);
-          }
-        } else {
-          console.error("Invalid error response", e);
-        }
-        return false;
-      }
-    },
     accessTokenExpiresBeforeInterval(interval: number) {
       if (this.session.accessToken.expiresAtTimestamp) {
         const currentTimestamp = Math.round(Date.now() / 1000);
@@ -79,7 +54,7 @@ export const useSessionStore = defineStore("session", {
       this.session.accessToken.token = null;
       this.session.accessToken.expiresAtTimestamp = null;
     },
-    setUser(user: UserInterface): void {
+    setUser(user: User): void {
       this.session.user = user;
     },
   },
