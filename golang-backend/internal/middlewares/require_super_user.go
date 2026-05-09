@@ -14,9 +14,9 @@ func RequireSuperUser(next http.Handler) http.Handler {
 		if !isSuperUser() {
 			log.Printf("forbidden request to %s", r.URL.Path)
 			writeJSONError(w, http.StatusForbidden,
-				"FORBIDDEN_ERROR",
-				"access denied",
-				"RequireSuperUser middleware failed")
+				"REQUIRE_SUPER_USER_MIDDLEWARE_ERROR",
+				"Forbidden",
+				"")
 			return
 		}
 		next.ServeHTTP(w, r)

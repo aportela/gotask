@@ -14,7 +14,7 @@ func RequireJWTAuthentication(secretKey string) func(http.Handler) http.Handler 
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				writeJSONError(w, http.StatusUnauthorized,
-					"JWT_AUTH_MIDDLEWARE_ERROR",
+					"REQUIRE_JWT_AUTH_MIDDLEWARE_ERROR",
 					"Authorization header missing",
 					"")
 				return
@@ -22,7 +22,7 @@ func RequireJWTAuthentication(secretKey string) func(http.Handler) http.Handler 
 			parts := strings.SplitN(authHeader, " ", 2)
 			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
 				writeJSONError(w, http.StatusUnauthorized,
-					"JWT_AUTH_MIDDLEWARE_ERROR",
+					"REQUIRE_JWT_AUTH_MIDDLEWARE_ERROR",
 					"Invalid Authorization header format",
 					"")
 				return
@@ -30,7 +30,7 @@ func RequireJWTAuthentication(secretKey string) func(http.Handler) http.Handler 
 			userID, err := jwt.VerifyToken(parts[1], secretKey)
 			if err != nil {
 				writeJSONError(w, http.StatusUnauthorized,
-					"JWT_AUTH_MIDDLEWARE_ERROR",
+					"REQUIRE_JWT_AUTH_MIDDLEWARE_ERROR",
 					"Invalid JWT",
 					err.Error())
 				return
