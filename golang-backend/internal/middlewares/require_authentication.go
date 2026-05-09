@@ -8,13 +8,13 @@ import (
 	"github.com/aportela/doneo/internal/jwt"
 )
 
-func RequireAuthentication(secretKey string) func(http.Handler) http.Handler {
+func RequireJWTAuthentication(secretKey string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			authHeader := r.Header.Get("Authorization")
 			if authHeader == "" {
 				writeJSONError(w, http.StatusUnauthorized,
-					"JWT_MIDDLEWARE_ERROR",
+					"JWT_AUTH_MIDDLEWARE_ERROR",
 					"Authorization header missing",
 					"")
 				return
@@ -22,7 +22,7 @@ func RequireAuthentication(secretKey string) func(http.Handler) http.Handler {
 			parts := strings.SplitN(authHeader, " ", 2)
 			if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
 				writeJSONError(w, http.StatusUnauthorized,
-					"JWT_MIDDLEWARE_ERROR",
+					"JWT_AUTH_MIDDLEWARE_ERROR",
 					"Invalid Authorization header format",
 					"")
 				return
@@ -30,7 +30,7 @@ func RequireAuthentication(secretKey string) func(http.Handler) http.Handler {
 			userID, err := jwt.VerifyToken(parts[1], secretKey)
 			if err != nil {
 				writeJSONError(w, http.StatusUnauthorized,
-					"JWT_MIDDLEWARE_ERROR",
+					"JWT_AUTH_MIDDLEWARE_ERROR",
 					"Invalid JWT",
 					err.Error())
 				return

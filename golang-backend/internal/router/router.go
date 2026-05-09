@@ -36,7 +36,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	})
 
 	apiRouter.Route("/users", func(r chi.Router) {
-		r.Use(middlewares.RequireAuthentication(cfg.Auth.SecretKey))
+		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
 		userHandler := userhandler.NewUserHandler(db)
 		r.Post("/", userHandler.Add)
