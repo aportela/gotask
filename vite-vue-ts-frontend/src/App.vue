@@ -5,7 +5,6 @@
   import { useColorSchemeStore } from './stores/colorScheme';
 
   const colorSchemeStore = useColorSchemeStore();
-
 </script>
 
 <template>
