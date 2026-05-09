@@ -10,9 +10,9 @@ export interface UserInterface {
   email: string;
   isSuperUser: boolean;
   createdAt: number;
-  updatedAt: number;
-  deletedAt: number;
-  avatar: string;
+  updatedAt: number | null;
+  deletedAt: number | null;
+  avatar: string | null;
 }
 
 type ValidAuthTypes = "Bearer";

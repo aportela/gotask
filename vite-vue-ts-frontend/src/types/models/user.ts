@@ -5,8 +5,8 @@ interface UserInterface {
   email: string;
   isSuperUser: boolean;
   createdAt: number;
-  updatedAt: number;
-  deletedAt: number;
+  updatedAt: number | null;
+  deletedAt: number | null;
   avatar: string;
 }
 
@@ -17,8 +17,8 @@ class UserClass implements UserInterface {
   email: string;
   isSuperUser: boolean;
   createdAt: number;
-  updatedAt: number;
-  deletedAt: number;
+  updatedAt: number | null;
+  deletedAt: number | null;
   avatar: string;
 
   constructor(item: UserInterface) {
