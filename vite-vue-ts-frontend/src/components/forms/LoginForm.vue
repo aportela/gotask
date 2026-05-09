@@ -16,7 +16,6 @@
     const emit = defineEmits(['success'])
 
 
-
     const { t } = useI18n();
 
     const sessionStore = useSessionStore();
@@ -81,7 +80,6 @@
             try {
                 const response: SignInResponseInterface = await authService.signIn(signinFormValues.value.email, signinFormValues.value.password);
                 sessionStore.setAccessToken(response.accessToken.token, response.accessToken.expiresAtTimestamp);
-
                 sessionStore.setUser(new User(response.user));
                 localStorageLastUsedEmail.set(signinFormValues.value.email);
                 emit('success');
@@ -158,7 +156,7 @@
             <n-form-item>
                 <n-button secondary @click="onSubmit" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
