@@ -16,12 +16,6 @@ type signInRequest struct {
 	Password string `json:"password"`
 }
 
-type signUpRequest struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
 type TokenResponse struct {
 	Token     string `json:"token"`
 	ExpiresAt int64  `json:"expiresAt"`
