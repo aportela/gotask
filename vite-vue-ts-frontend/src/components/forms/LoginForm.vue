@@ -11,7 +11,11 @@
     import { authService } from '../../api/services/auth';
     import type { SignInResponseInterface } from '../../api/types/dto/auth';
     import { handleAPIError } from '../../api/client/errorHandler';
+    import { User } from "../../api/models/user";
+
     const emit = defineEmits(['success'])
+
+
 
     const { t } = useI18n();
 
@@ -77,7 +81,8 @@
             try {
                 const response: SignInResponseInterface = await authService.signIn(signinFormValues.value.email, signinFormValues.value.password);
                 sessionStore.setAccessToken(response.accessToken.token, response.accessToken.expiresAtTimestamp);
-                sessionStore.setUser(response.user);
+
+                sessionStore.setUser(new User(response.user));
                 localStorageLastUsedEmail.set(signinFormValues.value.email);
                 emit('success');
             } catch (error: unknown) {
