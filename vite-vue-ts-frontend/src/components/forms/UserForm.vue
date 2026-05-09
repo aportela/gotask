@@ -25,7 +25,7 @@
     const props = defineProps<UserFormProps>();
 
     const user = ref<UserInterface>(
-        new UserClass({ "id": "", name: "", email: "", isSuperUser: false, createdAt: 0, updatedAt: 0, deletedAt: 0, avatar: "" })
+        new UserClass({ "id": "", name: "", email: "", isSuperUser: false, createdAt: 0, updatedAt: 0, deletedAt: 0, avatarURL: "" })
     );
 
     const addMode = computed<boolean>(() => props.mode === "add");

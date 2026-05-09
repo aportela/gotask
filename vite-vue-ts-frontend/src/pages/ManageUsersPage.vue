@@ -329,7 +329,7 @@
                 </td>
                 <td>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <n-avatar :src="user.avatar" class="avatar" /> {{ user.name }}
+                        <n-avatar :src="user.avatarURL" class="avatar" /> {{ user.name }}
                     </div>
                 </td>
                 <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>

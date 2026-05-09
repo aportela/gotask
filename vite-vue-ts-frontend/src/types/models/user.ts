@@ -7,7 +7,7 @@ interface UserInterface {
   createdAt: number;
   updatedAt: number | null;
   deletedAt: number | null;
-  avatar: string;
+  avatarURL: string;
 }
 
 class UserClass implements UserInterface {
@@ -19,7 +19,7 @@ class UserClass implements UserInterface {
   createdAt: number;
   updatedAt: number | null;
   deletedAt: number | null;
-  avatar: string;
+  avatarURL: string;
 
   constructor(item: UserInterface) {
     this.id = item.id;
@@ -30,7 +30,7 @@ class UserClass implements UserInterface {
     this.createdAt = item.createdAt;
     this.updatedAt = item.updatedAt;
     this.deletedAt = item.deletedAt;
-    this.avatar = item.avatar;
+    this.avatarURL = item.avatarURL;
   }
 }
 
