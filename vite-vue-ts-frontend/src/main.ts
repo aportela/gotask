@@ -44,41 +44,11 @@ const i18n = createI18n<{ message: MessageSchema }, MessageLanguages>({
 
 app.use(i18n);
 
-const sessionStore = useSessionStore();
-const accessTokenCheckInterval = 300; // check every 5 min (300 seconds)
-
-if (!sessionStore.hasAccessToken) {
-  await sessionStore.refreshAccessToken();
-}
-
-const refreshAccessTokenIfNeeded = async (): Promise<boolean> => {
-  if (
-    sessionStore.hasAccessToken &&
-    sessionStore.accessTokenExpiresBeforeInterval(accessTokenCheckInterval)
-  ) {
-    return await sessionStore.refreshAccessToken();
-  } else {
-    return false;
-  }
-};
-
-// create interval for checking && auto-refresh access token
-setInterval(() => {
-  refreshAccessTokenIfNeeded()
-    .then(() => {})
-    .catch((e: Error) => {
-      console.error(
-        "An unhandled exception occurred during access token refresh",
-        e,
-      );
-    })
-    .finally(() => {});
-}, accessTokenCheckInterval * 1000);
-
-router.beforeEach((to, _from) => {
+router.beforeEach(async (to, _from) => {
   if (!to.matched.length) {
     return { name: "notFound" };
   }
+  const sessionStore = useSessionStore();
   const loggedIn = sessionStore.hasAccessToken;
   if (loggedIn) {
     if (to.name === "login") {
@@ -89,7 +59,7 @@ router.beforeEach((to, _from) => {
     if (to.name === "login") {
       return true;
     }
-    return { name: "login" };
+    return { name: "login", query: { redirect: to.fullPath } };
   }
 });
 
