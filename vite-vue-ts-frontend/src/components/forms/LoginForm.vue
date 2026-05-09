@@ -4,14 +4,13 @@
     import { NIcon, NSpin, NForm, NFormItem, NInput, NButton, type FormItemRule, type FormInst, type FormRules, type InputInst } from 'naive-ui'
     import { IconEye, IconEyeCancel } from '@tabler/icons-vue';
     import { type AjaxStateInterface, defaultAjaxState } from "../../types/ajaxState";
-    import { type SignInSucessResponse } from '../../types/apiResponses';
-    import { type AxiosAPIError } from '../../composables/axios';
-    import { api } from '../../composables/api';
     import { required, minLength, validEmail, runValidators } from '../../composables/form-validators';
     import { createStorageEntry } from '../../composables/localStorage';
     import { useSessionStore } from "../../stores/session";
     import { default as RemoteAPIAlert } from '../alerts/RemoteAPIAlert.vue';
-
+    import { authService } from '../../api/services/auth';
+    import type { SignInResponseInterface } from '../../api/types/dto/auth';
+    import { handleAPIError } from '../../api/client/errorHandler';
     const emit = defineEmits(['success'])
 
     const { t } = useI18n();
@@ -70,27 +69,23 @@
         delete serverErrors.value.password
     });
 
-    const onSubmit = () => {
+    const submit = async () => {
         serverErrors.value = {}
         if (signinFormValues.value.email && signinFormValues.value.password) {
             Object.assign(state, defaultAjaxState);
             state.ajaxRunning = true;
-            api.auth.signIn(signinFormValues.value.email, signinFormValues.value.password)
-                .then((successResponse: SignInSucessResponse) => {
-                    if (successResponse.data.accessToken) {
-                        sessionStore.setAccessToken(successResponse.data.accessToken.token, successResponse.data.accessToken.expiresAtTimestamp);
-                        sessionStore.setUser(successResponse.data.user);
-                        localStorageLastUsedEmail.set(signinFormValues.value.email);
-                        emit('success');
-                    } else {
-                        state.ajaxErrorMessage = t("Invalid API response");
-                    }
-                })
-                .catch((errorResponse: AxiosAPIError) => {
-                    state.ajaxErrors = true;
-                    if (errorResponse.isAPIError) {
-                        state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-                        switch (errorResponse.status) {
+            try {
+                const response: SignInResponseInterface = await authService.signIn(signinFormValues.value.email, signinFormValues.value.password);
+                sessionStore.setAccessToken(response.accessToken.token, response.accessToken.expiresAtTimestamp);
+                sessionStore.setUser(response.user);
+                localStorageLastUsedEmail.set(signinFormValues.value.email);
+                emit('success');
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                error = null;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
                             case 404:
                                 serverErrors.value.email = t("Email not found");
                                 break;
@@ -100,31 +95,25 @@
                             default:
                                 state.ajaxErrorMessage = t("API Error: fatal error");
                                 break;
-
                         }
                         signInFormRef.value?.restoreValidation();
-                        signInFormRef.value?.validate().catch((e: any) => {
-                            console.error("TODO: SignIn form validation error", e);
-                        });
-                    }
-                    else {
-                        // TODO: i18n
-                        state.ajaxErrorMessage = `Uncaught exception (${errorResponse.status})\n\n${errorResponse}`;
-                        console.error("Unhandled API error", errorResponse);
-                    }
-                })
-                .finally(() => {
-                    state.ajaxRunning = false;
-                });
+                        signInFormRef.value?.validate().then(() => { }).catch(() => { });
+                    },
+                    (fatalError) => {
+                        console.error("Unhandled API error", { file: "LoginForm.ts", method: "submit" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
         }
     }
 
-    const validateForm = async (e: MouseEvent | KeyboardEvent) => {
+    const onSubmit = async (e: MouseEvent | KeyboardEvent) => {
         e.preventDefault()
         serverErrors.value = {};
         try {
             await signInFormRef.value?.validate();
-            onSubmit();
+            submit();
         }
         catch (e: any) {
             //console.debug("SignIn form validation error", e)
@@ -151,7 +140,7 @@
             </n-form-item>
             <n-form-item :label="t('Password')" path="password" show-feedback>
                 <n-input v-model:value="signinFormValues.password" type="password" placeholder="Enter your password"
-                    show-password-on="click" :disabled="state.ajaxRunning" @keydown.enter="validateForm"
+                    show-password-on="click" :disabled="state.ajaxRunning" @keydown.enter="onSubmit"
                     ref="inputPasswordRef">
                     <template #password-visible-icon>
                         <n-icon :size="16" :component="IconEyeCancel" />
@@ -162,9 +151,9 @@
                 </n-input>
             </n-form-item>
             <n-form-item>
-                <n-button secondary @click="validateForm" block :disabled="state.ajaxRunning">{{
+                <n-button secondary @click="onSubmit" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                }}</n-button>
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
