@@ -15,6 +15,9 @@
     import { default as UserForm } from '../components/forms/UserForm.vue';
     import { default as ManageTable } from '../components/custom/ManageTable.vue';
     import { default as DateFilter } from '../components/forms/DateFilter.vue';
+    import { useAppBus, type AppBusEvent } from '../composables/bus';
+
+    const appBus = useAppBus();
 
     const { notify } = useNotify();
 
@@ -62,11 +65,23 @@
         loadingStore.set(true);
         api.user.search().then((successResponse: SearchUsersResponse) => {
             users.value = successResponse.data.users.map((u: UserInterface) => new UserClass(u));
-        }).catch((errorResponse: any) => {
-            console.log(errorResponse);
-            // TODO: manage this
-            //bus.emit("reAuthRequired", { emitter: "ManageUsersPage" });
-
+        }).catch((errorResponse: AxiosAPIError) => {
+            state.ajaxErrors = true;
+            if (errorResponse.isAPIError) {
+                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
+                switch (errorResponse.status) {
+                    case 401:
+                        state.ajaxErrors = false;
+                        appBus.emitReauthRequired("ManageUsersPage.onRefresh");
+                        break;
+                    default:
+                        state.ajaxErrorMessage = t("There was a problem while refreshing the user list");
+                        break;
+                }
+            } else {
+                state.ajaxErrorMessage = t("There was a problem while refreshing the user list");
+                console.error(errorResponse);
+            }
         }).finally(() => {
             loadingStore.set(false);
             state.ajaxRunning = false;
@@ -113,14 +128,11 @@
 
     onMounted(() => {
         onRefresh();
-        // TODO: manage this
-        /*
-        bus.on("reAuthSucess", (msg) => {
-            if (msg.to?.includes("ActivityHeatMapWidget")) {
+        appBus.on((event: AppBusEvent) => {
+            if (event.type == "reauthValidNotify" && event.to.includes("ManageUsersPage.onRefresh")) {
                 onRefresh();
             }
         });
-        */
     });
 
     onBeforeUnmount(() => {
@@ -142,7 +154,7 @@
                 switch (errorResponse.status) {
                     case 401:
                         state.ajaxErrors = false;
-                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        appBus.emitReauthRequired("ManageUsersPage.onDelete");
                         break;
                     case 404:
                         state.ajaxErrorMessage = t("We couldn’t find the specified user");
@@ -173,7 +185,7 @@
                 switch (errorResponse.status) {
                     case 401:
                         state.ajaxErrors = false;
-                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
+                        appBus.emitReauthRequired("ManageUsersPage.onUnDelete");
                         break;
                     case 404:
                         state.ajaxErrorMessage = t("We couldn’t find the specified user");
