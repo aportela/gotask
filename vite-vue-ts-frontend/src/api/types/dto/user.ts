@@ -11,7 +11,7 @@ export type UserRequest = {
 };
 */
 
-export type AddRequestInterface = {
+export type AddRequest = {
   user: {
     name: string;
     email: string;
@@ -19,7 +19,7 @@ export type AddRequestInterface = {
   };
 };
 
-export type UpdateRequestInterface = {
+export type UpdateRequest = {
   user: {
     id: string;
     name: string;
@@ -28,7 +28,7 @@ export type UpdateRequestInterface = {
   };
 };
 
-export type SearchRequestInterface = {
+export type SearchRequest = {
   name?: string;
   email?: string;
   isSuperUser?: boolean;
@@ -47,18 +47,18 @@ export type UserResponse = {
   avatarURL: string | null;
 };
 
-export type AddResponseInterface = {
+export type AddResponse = {
   user: UserResponse;
 };
 
-export type UpdateResponseInterface = {
+export type UpdateResponse = {
   user: UserResponse;
 };
 
-export type GetResponseInterface = {
+export type GetResponse = {
   user: UserResponse;
 };
 
-export type SearchResponseInterface = {
+export type SearchResponse = {
   users: UserResponse[];
 };

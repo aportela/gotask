@@ -1,21 +1,21 @@
 import type { UserResponse } from "./user";
 
-export type TokenInterface = {
+export type Token = {
   token: string;
   expiresAtTimestamp: number;
 };
 
 type ValidAuthTypes = "Bearer";
 
-export type SignInResponseInterface = {
-  accessToken: TokenInterface;
-  refreshToken: TokenInterface;
+export type SignInResponse = {
+  accessToken: Token;
+  refreshToken: Token;
   tokenType: ValidAuthTypes;
   user: UserResponse;
 };
 
-export type RenewAccessTokenResponseInterface = {
-  accessToken: TokenInterface;
+export type RenewAccessTokenResponse = {
+  accessToken: Token;
   tokenType: ValidAuthTypes;
   user: UserResponse;
 };

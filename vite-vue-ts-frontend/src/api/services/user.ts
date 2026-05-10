@@ -1,26 +1,21 @@
 import { axiosInstance } from "../client";
 import type {
-  AddRequestInterface,
-  AddResponseInterface,
-  UpdateRequestInterface,
-  SearchRequestInterface,
-  UpdateResponseInterface,
-  GetResponseInterface,
-  SearchResponseInterface,
+  AddRequest,
+  AddResponse,
+  UpdateRequest,
+  SearchRequest,
+  UpdateResponse,
+  GetResponse,
+  SearchResponse,
 } from "../types/dto/user";
 
 export const authService = {
-  async add(payload: AddRequestInterface): Promise<AddResponseInterface> {
-    const { data } = await axiosInstance.post<AddResponseInterface>(
-      "/users",
-      payload,
-    );
+  async add(payload: AddRequest): Promise<AddResponse> {
+    const { data } = await axiosInstance.post<AddResponse>("/users", payload);
     return data;
   },
-  async update(
-    payload: UpdateRequestInterface,
-  ): Promise<UpdateResponseInterface> {
-    const { data } = await axiosInstance.post<UpdateResponseInterface>(
+  async update(payload: UpdateRequest): Promise<UpdateResponse> {
+    const { data } = await axiosInstance.post<UpdateResponse>(
       "/users/" + payload.user.id,
       payload,
     );
@@ -35,19 +30,14 @@ export const authService = {
     };
     await axiosInstance.patch<void>("/users/" + id, params);
   },
-  async get(id: string): Promise<GetResponseInterface> {
-    const { data } = await axiosInstance.get<GetResponseInterface>(
-      "/users/" + id,
-    );
+  async get(id: string): Promise<GetResponse> {
+    const { data } = await axiosInstance.get<GetResponse>("/users/" + id);
     return data;
   },
-  async search(
-    params?: SearchRequestInterface,
-  ): Promise<SearchResponseInterface> {
-    const { data } = await axiosInstance.get<SearchResponseInterface>(
-      "/users",
-      { params },
-    );
+  async search(params?: SearchRequest): Promise<SearchResponse> {
+    const { data } = await axiosInstance.get<SearchResponse>("/users", {
+      params,
+    });
     return data;
   },
 };
