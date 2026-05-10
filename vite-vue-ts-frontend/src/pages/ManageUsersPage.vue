@@ -299,7 +299,7 @@
         <ManageTable size="small">
             <template #thead>
                 <tr>
-                    <th class="text-center">Type</th>
+                    <th>Type</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th class="hide-mobile">Created at</th>
@@ -356,8 +356,18 @@
             <template #tbody>
                 <tr v-for="user, index in filteredUsers" :key="user.id">
                     <td class="text-center">
-                        <IconUserKey v-if="user.isSuperUser" color="red" />
-                        <IconUser v-else />
+                        <span style="display: flex; align-items: center;" v-if="user.isSuperUser">
+                            <n-icon :size="16" style="margin-right: 6px;">
+                                <IconUserKey color="red" />
+                            </n-icon>
+                            Administrator
+                        </span>
+                        <span style="display: flex; align-items: center;" v-else>
+                            <n-icon :size="16" style="margin-right: 6px;">
+                                <IconUser />
+                            </n-icon>
+                            User
+                        </span>
                     </td>
                     <td>
                         <div style="display: flex; align-items: center; gap: 8px;">
