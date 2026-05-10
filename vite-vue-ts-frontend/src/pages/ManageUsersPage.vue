@@ -1,8 +1,8 @@
 <script setup lang="ts">
     import { onMounted, onBeforeUnmount, ref, reactive, computed, shallowRef, h, type Component } from 'vue';
     import { useI18n } from "vue-i18n";
-    import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup, useDialog } from 'naive-ui';
-    import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash, IconTrashOff } from '@tabler/icons-vue';
+    import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup, useDialog, NEmpty, NCard } from 'naive-ui';
+    import { IconUser, IconUserKey, IconUserSearch, IconSearch, IconPlus, IconEdit, IconTrash, IconTrashOff } from '@tabler/icons-vue';
     import { api } from '../composables/api';
     import { type AjaxStateInterface, defaultAjaxState } from '../types/ajaxState';
     import type { AxiosAPIError } from '../composables/axios';
@@ -279,104 +279,129 @@
             @delete="onDelete" @cancel="onCancel" @undelete="onUnDelete" />
     </n-modal>
 
-    <ManageTable size="small" title="Manage users">
-        <template #thead>
-            <tr>
-                <th class="text-center">Type</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th class="hide-mobile">Created at</th>
-                <th class="hide-mobile">Updated at</th>
-                <th class="hide-mobile">Deleted at</th>
-                <th class="text-center">Operations</th>
-            </tr>
-            <tr class="hide-mobile">
-                <th>
-                    <n-select size="small" trigger="click" :options="filterUserOptions" v-model:value="userFilterType"
-                        placeholder="Search by user type">
-                    </n-select>
-                </th>
-                <th>
-                    <n-input size="small" placeholder="search by name..." v-model:value="filterByUsername" clearable>
-                        <template #prefix>
-                            <n-icon>
-                                <IconSearch />
-                            </n-icon>
-                        </template>
-                    </n-input>
-                </th>
-                <th>
-                    <n-input size="small" placeholder="search by email..." v-model:value="filterByEmail" clearable>
-                        <template #prefix>
-                            <n-icon>
-                                <IconSearch />
-                            </n-icon>
-                        </template>
-                    </n-input>
-                </th>
-                <th>
-                    <DateFilter />
-                </th>
-                <th>
-                    <DateFilter />
-                </th>
-                <th>
-                    <DateFilter />
-                </th>
-                <th class="text-center">
-                    <n-button size="small" block @click="onAddUser">
-                        <template #icon>
-                            <NIcon>
-                                <IconPlus />
-                            </NIcon>
-                        </template>
-                        {{ t("Add") }}
-                    </n-button>
-                </th>
-            </tr>
+    <n-card :title="t('Manage users')">
+        <template #header-extra>
+            <n-button-group>
+                <n-button type="warning" secondary v-if="filteredUsers.length != users.length">
+                    <n-icon :size="16" style="margin-right: 6px;">
+                        <IconUserSearch />
+                    </n-icon>
+                    Filtered users: {{ filteredUsers.length }}
+                </n-button>
+                <n-button type="info" secondary>
+                    <n-icon :size="16" style="margin-right: 6px;">
+                        <IconUser />
+                    </n-icon>
+                    Total users: {{ users.length }}
+                </n-button>
+            </n-button-group>
         </template>
-        <template #tbody>
-            <tr v-for="user, index in filteredUsers" :key="user.id">
-                <td class="text-center">
-                    <IconUserKey v-if="user.isSuperUser" color="red" />
-                    <IconUser v-else />
-                </td>
-                <td>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <n-avatar v-if="user.avatarURL" :src="user.avatarURL" class="avatar" /> {{ user.name }}
-                    </div>
-                </td>
-                <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>
-                <td class="hide-mobile">{{ user.createdAt.toLocaleString() }}</td>
-                <td class="hide-mobile">{{ user.updatedAt?.toLocaleString() }}</td>
-                <td class="hide-mobile">{{ user.deletedAt?.toLocaleString() }}</td>
-                <td class="text-center">
-                    <n-button-group v-if="!user.deletedAt">
-                        <n-button size="small" @click="onUpdateUser(user, index)">
-                            {{ t("Update") }}
-                            <template #icon>
-                                <IconEdit :size="22" />
+        <ManageTable size="small">
+            <template #thead>
+                <tr>
+                    <th class="text-center">Type</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th class="hide-mobile">Created at</th>
+                    <th class="hide-mobile">Updated at</th>
+                    <th class="hide-mobile">Deleted at</th>
+                    <th class="text-center">Operations</th>
+                </tr>
+                <tr class="hide-mobile">
+                    <th>
+                        <n-select size="small" trigger="click" :options="filterUserOptions"
+                            v-model:value="userFilterType" placeholder="Search by user type">
+                        </n-select>
+                    </th>
+                    <th>
+                        <n-input size="small" placeholder="search by name..." v-model:value="filterByUsername"
+                            clearable>
+                            <template #prefix>
+                                <n-icon>
+                                    <IconSearch />
+                                </n-icon>
                             </template>
-                        </n-button>
-                        <n-button size="small" @click="confirmDelete(user, index)"
-                            :disabled="user.id === sessionStore.sessionUserId">
-                            {{ t("Delete") }}
-                            <template #icon>
-                                <IconTrash :size="22" />
+                        </n-input>
+                    </th>
+                    <th>
+                        <n-input size="small" placeholder="search by email..." v-model:value="filterByEmail" clearable>
+                            <template #prefix>
+                                <n-icon>
+                                    <IconSearch />
+                                </n-icon>
                             </template>
+                        </n-input>
+                    </th>
+                    <th>
+                        <DateFilter />
+                    </th>
+                    <th>
+                        <DateFilter />
+                    </th>
+                    <th>
+                        <DateFilter />
+                    </th>
+                    <th class="text-center">
+                        <n-button size="small" block @click="onAddUser">
+                            <template #icon>
+                                <NIcon>
+                                    <IconPlus />
+                                </NIcon>
+                            </template>
+                            {{ t("Add") }}
                         </n-button>
+                    </th>
+                </tr>
+            </template>
+            <template #tbody>
+                <tr v-for="user, index in filteredUsers" :key="user.id">
+                    <td class="text-center">
+                        <IconUserKey v-if="user.isSuperUser" color="red" />
+                        <IconUser v-else />
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <n-avatar v-if="user.avatarURL" :src="user.avatarURL" class="avatar" /> {{ user.name }}
+                        </div>
+                    </td>
+                    <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>
+                    <td class="hide-mobile">{{ user.createdAt.toLocaleString() }}</td>
+                    <td class="hide-mobile">{{ user.updatedAt?.toLocaleString() }}</td>
+                    <td class="hide-mobile">{{ user.deletedAt?.toLocaleString() }}</td>
+                    <td class="text-center">
+                        <n-button-group v-if="!user.deletedAt">
+                            <n-button size="small" @click="onUpdateUser(user, index)">
+                                {{ t("Update") }}
+                                <template #icon>
+                                    <IconEdit :size="22" />
+                                </template>
+                            </n-button>
+                            <n-button size="small" @click="confirmDelete(user, index)"
+                                :disabled="user.id === sessionStore.sessionUserId">
+                                {{ t("Delete") }}
+                                <template #icon>
+                                    <IconTrash :size="22" />
+                                </template>
+                            </n-button>
 
-                    </n-button-group>
-                    <n-button size="small" @click="confirmUnDelete(user, index)" v-else>
-                        {{ t("Restore") }}
-                        <template #icon>
-                            <IconTrashOff :size="22" />
-                        </template>
-                    </n-button>
-                </td>
-            </tr>
-        </template>
-    </ManageTable>
+                        </n-button-group>
+                        <n-button size="small" @click="confirmUnDelete(user, index)" v-else>
+                            {{ t("Restore") }}
+                            <template #icon>
+                                <IconTrashOff :size="22" />
+                            </template>
+                        </n-button>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="7" v-if="filteredUsers.length < 1 && !state.ajaxRunning">
+                        <n-empty :description="t('No results')">
+                        </n-empty>
+                    </td>
+                </tr>
+            </template>
+        </ManageTable>
+    </n-card>
 </template>
 
 <style lang="css">
