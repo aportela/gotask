@@ -4,8 +4,6 @@
     import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup, useDialog } from 'naive-ui';
     import { IconUser, IconUserKey, IconSearch, IconPlus, IconEdit, IconTrash, IconTrashOff } from '@tabler/icons-vue';
     import { api } from '../composables/api';
-    import { type UserInterface, UserClass } from '../types/models/user';
-    import type { SearchUsersResponse } from '../types/apiResponses';
     import { type AjaxStateInterface, defaultAjaxState } from '../types/ajaxState';
     import type { AxiosAPIError } from '../composables/axios';
     import { type EntityAction } from '../types/common';
@@ -16,6 +14,9 @@
     import { default as ManageTable } from '../components/custom/ManageTable.vue';
     import { default as DateFilter } from '../components/forms/DateFilter.vue';
     import { useAppBus, type AppBusEvent } from '../composables/bus';
+    import { userService } from '../api/services/user';
+    import { User } from '../api/models/user';
+    import type { UserResponse } from '../api/types/dto/user';
 
     const appBus = useAppBus();
 
@@ -29,7 +30,18 @@
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-    const users = shallowRef<UserClass[]>([]);
+    class SearchableUser extends User {
+        _searchName: string;
+        _searchEmail: string;
+
+        constructor(data: UserResponse) {
+            super(data);
+            this._searchName = data.name.toLowerCase();
+            this._searchEmail = data.email.toLowerCase();
+        }
+    }
+
+    const users = shallowRef<SearchableUser[]>([]);
 
     const filterUserOptions = [
         { label: 'All users', value: 0 },
@@ -41,18 +53,10 @@
     const filterByEmail = ref<string | null>(null);
     const userFilterType = ref<number | null>(0);
 
-    const searchMappedUsers = computed(() => {
-        return users.value.map(u => ({
-            ...u,
-            _searchName: (u.name).toLowerCase(),
-            _searchEmail: (u.email).toLowerCase()
-        }));
-    });
-
-    const filteredUsers = computed(() => {
+    const filteredUsers = computed<SearchableUser[]>(() => {
         const name = filterByUsername.value?.trim().toLowerCase();
         const email = filterByEmail.value?.trim().toLowerCase();
-        return searchMappedUsers.value.filter(u => {
+        return users.value.filter(u => {
             const matchName = !name || u._searchName.includes(name);
             const matchEmail = !email || u._searchEmail.includes(email);
             const matchType = userFilterType.value === 0 || (u.isSuperUser && userFilterType.value == 1) || (!u.isSuperUser && userFilterType.value == 2);
@@ -60,9 +64,18 @@
         });
     });
 
-    const onRefresh = () => {
+    const onRefresh = async () => {
         state.ajaxRunning = true;
         loadingStore.set(true);
+        try {
+            const response = await userService.search();
+            users.value = response.users.map((user: UserResponse) => new SearchableUser(user));
+        }
+        finally {
+            state.ajaxRunning = false;
+            loadingStore.set(false);
+        }
+        /*
         api.user.search().then((successResponse: SearchUsersResponse) => {
             users.value = successResponse.data.users.map((u: UserInterface) => new UserClass(u));
         }).catch((errorResponse: AxiosAPIError) => {
@@ -86,6 +99,7 @@
             loadingStore.set(false);
             state.ajaxRunning = false;
         });
+        */
     };
 
     const selectedUserId = ref<string | undefined>(undefined);
@@ -94,7 +108,7 @@
         actionDialogMode.value = "add";
     };
 
-    const onUpdateUser = (user: UserInterface, _index: number) => {
+    const onUpdateUser = (user: User, _index: number) => {
         actionDialogMode.value = "update";
         selectedUserId.value = user.id;
     };
@@ -220,7 +234,7 @@
 
     const dialog = useDialog()
 
-    function confirmDelete(user: UserInterface, _index: number) {
+    function confirmDelete(user: User, _index: number) {
         dialog.warning({
             title: t("Delete user"),
             icon: renderIcon(IconTrash)(24),
@@ -239,7 +253,7 @@
         })
     }
 
-    function confirmUnDelete(user: UserInterface, _index: number) {
+    function confirmUnDelete(user: User, _index: number) {
         dialog.warning({
             title: t("Restore user"),
             icon: renderIcon(IconTrashOff)(24),
@@ -329,13 +343,13 @@
                 </td>
                 <td>
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <n-avatar :src="user.avatarURL" class="avatar" /> {{ user.name }}
+                        <n-avatar v-if="user.avatarURL" :src="user.avatarURL" class="avatar" /> {{ user.name }}
                     </div>
                 </td>
                 <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>
-                <td class="hide-mobile">{{ user.createdAt ? new Date(user.createdAt).toLocaleString() : null }}</td>
-                <td class="hide-mobile">{{ user.updatedAt ? new Date(user.updatedAt).toLocaleString() : null }}</td>
-                <td class="hide-mobile">{{ user.deletedAt ? new Date(user.deletedAt).toLocaleString() : null }}</td>
+                <td class="hide-mobile">{{ user.createdAt.toLocaleString() }}</td>
+                <td class="hide-mobile">{{ user.updatedAt?.toLocaleString() }}</td>
+                <td class="hide-mobile">{{ user.deletedAt?.toLocaleString() }}</td>
                 <td class="text-center">
                     <n-button-group v-if="!user.deletedAt">
                         <n-button size="small" @click="onUpdateUser(user, index)">
