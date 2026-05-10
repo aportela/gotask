@@ -1,18 +1,17 @@
 <script setup lang="ts">
     import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
     import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent, NSpin, NDialogProvider, NButton, NDrawer, NDrawerContent, NModal } from 'naive-ui'
-    import { default as TopHeader } from './TopHeader.vue';
-    import { default as TopMenu } from './TopMenu.vue';
-    import { default as SidebarMenu } from './SidebarMenu.vue';
+    import { useBreakpoints } from '@vueuse/core';
+    import { useAppBus, type AppBusEvent } from '../composables/bus';
+    import { TokenManager } from '../api/services/tokenManager';
     import { useUserSettingsStore } from '../stores/userSettings';
     import { useLoadingStore } from '../stores/loading';
-    import { useBreakpoints } from '@vueuse/core';
     import { useSessionStore } from '../stores/session';
+    import TopHeader from './TopHeader.vue';
+    import TopMenu from './TopMenu.vue';
     import SearchModal from '../components/modals/SearchModal.vue';
-
     import LoginForm from '../components/forms/LoginForm.vue';
-
-    import { useAppBus, type AppBusEvent } from '../composables/bus';
+    import SidebarMenu from './SidebarMenu.vue';
 
     const appBus = useAppBus();
 
@@ -23,14 +22,6 @@
     const breakpoints = useBreakpoints({
         mobile: 768
     });
-
-
-    const onSuccessReauth = () => {
-        visibleReauthDialog.value = false;
-        appBus.emitReauthValidNotify(reAuthEmitters);
-        reAuthEmitters.length = 0;
-    };
-
 
     const userSettingsStore = useUserSettingsStore();
 
@@ -51,12 +42,35 @@
         }
     }
 
-    onMounted(() => {
+    const accessTokenCheckInterval = 300; // check every 5 min (300 seconds)
+
+    const refreshAccessTokenIfNeeded = async (): Promise<boolean> => {
+        if (
+            sessionStore.hasAccessToken &&
+            sessionStore.accessTokenExpiresBeforeInterval(accessTokenCheckInterval)
+        ) {
+            return await TokenManager.refreshAccessToken(sessionStore);
+        } else {
+            return false;
+        }
+    };
+
+
+    const onSuccessReauth = () => {
+        visibleReauthDialog.value = false;
+        appBus.emitReauthValidNotify(reAuthEmitters);
+        reAuthEmitters.length = 0;
+    };
+
+    let refreshInterval: number;
+
+    onMounted(async () => {
         window.addEventListener('keydown', onGlobalKeydown)
-        appBus.on((event: AppBusEvent) => {
+        appBus.on(async (event: AppBusEvent) => {
             if (event.type === "reauthRequired") {
                 reAuthEmitters.push(event.emitter);
-                sessionStore.refreshAccessToken().then((success: boolean) => {
+                try {
+                    const success = await TokenManager.refreshAccessToken(sessionStore);
                     if (success) {
                         visibleReauthDialog.value = false;
                         appBus.emitReauthValidNotify(reAuthEmitters);
@@ -64,17 +78,26 @@
                     } else {
                         visibleReauthDialog.value = true;
                     }
-                }).catch((e: Error) => {
-                    console.error("An unhandled exception occurred during access token refresh", e);
+                } catch (error: unknown) {
+                    console.error("An unhandled exception occurred during access token refresh", error);
                     visibleReauthDialog.value = true;
-                }).finally(() => {
-                });
+                };
             }
         });
-
+        refreshInterval = setInterval(() => {
+            refreshAccessTokenIfNeeded()
+                .catch((e: Error) => {
+                    console.error(
+                        "An unhandled exception occurred during access token refresh",
+                        e,
+                    );
+                })
+                .finally(() => { });
+        }, accessTokenCheckInterval * 1000);
     });
 
     onBeforeUnmount(() => {
+        clearInterval(refreshInterval);
         window.removeEventListener('keydown', onGlobalKeydown)
     });
     const visibleReauthDialog = ref(false);
@@ -97,7 +120,6 @@
                 <n-layout-header bordered>
                     <TopHeader />
                     <TopMenu v-if="userSettingsStore.topNavigationMode" />
-                    <!-- BOTON MOBILE -->
                     <n-button v-if="isMobile" quaternary circle @click="mobileMenuOpen = true">☰</n-button>
                 </n-layout-header>
                 <n-layout :has-sider="true" v-if="userSettingsStore.sideNavigationMode">
