@@ -1,8 +1,8 @@
 <script setup lang="ts">
-    import { onMounted, onBeforeUnmount, ref, reactive, computed, shallowRef, h, type Component } from 'vue';
+    import { onMounted, onBeforeUnmount, ref, reactive, computed, shallowRef, h, type Component, watch } from 'vue';
     import { useI18n } from "vue-i18n";
-    import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup, useDialog, NEmpty, NCard } from 'naive-ui';
-    import { IconUser, IconUserKey, IconUserSearch, IconSearch, IconPlus, IconEdit, IconTrash, IconTrashOff } from '@tabler/icons-vue';
+    import { NAvatar, NInput, NSelect, NIcon, NButton, NModal, NButtonGroup, useDialog, NEmpty, NCard, NPagination, NFlex } from 'naive-ui';
+    import { IconUser, IconUserKey, IconPlus, IconEdit, IconSearch, IconTrash, IconTrashOff } from '@tabler/icons-vue';
     import { api } from '../composables/api';
     import { type AjaxStateInterface, defaultAjaxState } from '../types/ajaxState';
     import type { AxiosAPIError } from '../composables/axios';
@@ -62,6 +62,27 @@
             const matchType = userFilterType.value === 0 || (u.isSuperUser && userFilterType.value == 1) || (!u.isSuperUser && userFilterType.value == 2);
             return matchName && matchEmail && matchType;
         });
+    });
+
+    const currentPage = ref(1);
+    const pageSize = ref(10);
+
+    const paginatedUsers = computed<SearchableUser[]>(() => {
+        const start = (currentPage.value - 1) * pageSize.value;
+        const end = start + pageSize.value;
+        return filteredUsers.value.slice(start, end);
+    });
+
+    const totalPages = computed(() => {
+        return Math.ceil(filteredUsers.value.length / pageSize.value);
+    });
+
+    watch([filterByUsername, filterByEmail, userFilterType], () => {
+        currentPage.value = 1;
+    });
+
+    watch(pageSize, () => {
+        currentPage.value = 1;
     });
 
     const onRefresh = async () => {
@@ -271,6 +292,32 @@
             },
         })
     }
+    const pageSizes = [
+        {
+            label: '5 results/page',
+            value: 5
+        },
+        {
+            label: '10 results/page',
+            value: 10
+        },
+        {
+            label: '20 results/page',
+            value: 20
+        },
+        {
+            label: '50 results/page',
+            value: 50
+        },
+        {
+            label: '100 results/page',
+            value: 100
+        },
+        {
+            label: '200 results/page',
+            value: 200
+        },
+    ];
 </script>
 
 <template>
@@ -280,22 +327,18 @@
     </n-modal>
 
     <n-card :title="t('Manage users')">
-        <template #header-extra>
-            <n-button-group>
-                <n-button type="warning" secondary v-if="filteredUsers.length != users.length">
-                    <n-icon :size="16" style="margin-right: 6px;">
-                        <IconUserSearch />
-                    </n-icon>
-                    Filtered users: {{ filteredUsers.length }}
-                </n-button>
-                <n-button type="info" secondary>
-                    <n-icon :size="16" style="margin-right: 6px;">
-                        <IconUser />
-                    </n-icon>
-                    Total users: {{ users.length }}
-                </n-button>
-            </n-button-group>
-        </template>
+        <n-flex justify="space-between" class="pagination-container">
+            <div style="padding-top: 2px; padding-left: 2px;">
+                <span>Total users: {{ users.length }}</span>
+                <span v-if="users.length != filteredUsers.length"> | Filtered users: {{ filteredUsers.length }}</span>
+            </div>
+            <n-pagination v-model:page="currentPage" :page-count="totalPages" v-model:page-size="pageSize"
+                show-size-picker :page-sizes="pageSizes" :page-slot="8">
+                <template #prefix="{ page, pageCount }">
+                    Page {{ page }} of {{ pageCount }}
+                </template>
+            </n-pagination>
+        </n-flex>
         <ManageTable size="small">
             <template #thead>
                 <tr>
@@ -354,7 +397,7 @@
                 </tr>
             </template>
             <template #tbody>
-                <tr v-for="user, index in filteredUsers" :key="user.id">
+                <tr v-for="user, index in paginatedUsers" :key="user.id">
                     <td class="text-center">
                         <span style="display: flex; align-items: center;" v-if="user.isSuperUser">
                             <n-icon :size="16" style="margin-right: 6px;">
@@ -417,6 +460,15 @@
 <style lang="css">
     .avatar {
         margin-right: 4px;
+    }
+
+    .pagination-container {
+        padding: 4px;
+        background-color: rgba(250, 250, 252, 1);
+        margin-bottom: 8px;
+        border: 1px solid;
+        border-color: rgb(239, 239, 245);
+        border-radius: 3px;
     }
 
     @media (max-width: 768px) {
