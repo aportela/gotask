@@ -1,15 +1,15 @@
 import { axiosInstance } from "../client";
 import type {
+  SignInRequest,
   SignInResponse,
   RenewAccessTokenResponse,
 } from "../types/dto/auth";
 
 export const authService = {
-  async signIn(email: string, password: string): Promise<SignInResponse> {
-    const params = { email, password };
+  async signIn(payload: SignInRequest): Promise<SignInResponse> {
     const { data } = await axiosInstance.post<SignInResponse>(
       "/auth/signin",
-      params,
+      payload,
     );
     return data;
   },

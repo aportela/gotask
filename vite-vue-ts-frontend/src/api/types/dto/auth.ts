@@ -7,6 +7,11 @@ export type Token = {
 
 type ValidAuthTypes = "Bearer";
 
+export type SignInRequest = {
+  email: string;
+  password: string;
+};
+
 export type SignInResponse = {
   accessToken: Token;
   refreshToken: Token;

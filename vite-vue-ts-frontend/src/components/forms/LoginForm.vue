@@ -78,7 +78,8 @@
             Object.assign(state, defaultAjaxState);
             state.ajaxRunning = true;
             try {
-                const response: SignInResponse = await authService.signIn(signinFormValues.value.email, signinFormValues.value.password);
+                const payload = { email: signinFormValues.value.email, password: signinFormValues.value.password };
+                const response: SignInResponse = await authService.signIn(payload);
                 sessionStore.setAccessToken(response.accessToken.token, response.accessToken.expiresAtTimestamp);
                 sessionStore.setUser(new User(response.user));
                 localStorageLastUsedEmail.set(signinFormValues.value.email);
@@ -156,7 +157,7 @@
             <n-form-item>
                 <n-button secondary @click="onSubmit" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
