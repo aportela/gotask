@@ -1,25 +1,28 @@
 import { axiosInstance } from "../client";
 import type {
+  AddRequestInterface,
   AddResponseInterface,
+  UpdateRequestInterface,
+  SearchRequestInterface,
   UpdateResponseInterface,
   GetResponseInterface,
   SearchResponseInterface,
 } from "../types/dto/user";
 
-import type { User } from "../models/user";
-
 export const authService = {
-  async add(user: User): Promise<AddResponseInterface> {
+  async add(payload: AddRequestInterface): Promise<AddResponseInterface> {
     const { data } = await axiosInstance.post<AddResponseInterface>(
       "/users",
-      user,
+      payload,
     );
     return data;
   },
-  async update(user: User): Promise<UpdateResponseInterface> {
+  async update(
+    payload: UpdateRequestInterface,
+  ): Promise<UpdateResponseInterface> {
     const { data } = await axiosInstance.post<UpdateResponseInterface>(
-      "/users/" + user.id,
-      user,
+      "/users/" + payload.user.id,
+      payload,
     );
     return data;
   },
@@ -38,8 +41,13 @@ export const authService = {
     );
     return data;
   },
-  async search(): Promise<SearchResponseInterface> {
-    const { data } = await axiosInstance.get<SearchResponseInterface>("/users");
+  async search(
+    params?: SearchRequestInterface,
+  ): Promise<SearchResponseInterface> {
+    const { data } = await axiosInstance.get<SearchResponseInterface>(
+      "/users",
+      { params },
+    );
     return data;
   },
 };

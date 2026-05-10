@@ -1,4 +1,5 @@
-export type User = {
+/*
+export type UserRequest = {
   id: string;
   name: string;
   email: string;
@@ -8,19 +9,56 @@ export type User = {
   deletedAt: number | null;
   avatarURL: string;
 };
+*/
+
+export type AddRequestInterface = {
+  user: {
+    name: string;
+    email: string;
+    isSuperUser: boolean;
+  };
+};
+
+export type UpdateRequestInterface = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    isSuperUser: boolean;
+  };
+};
+
+export type SearchRequestInterface = {
+  name?: string;
+  email?: string;
+  isSuperUser?: boolean;
+  page?: number;
+  limit?: number;
+};
+
+export type UserResponse = {
+  id: string;
+  name: string;
+  email: string;
+  isSuperUser: boolean;
+  createdAt: number;
+  updatedAt: number | null;
+  deletedAt: number | null;
+  avatarURL: string | null;
+};
 
 export type AddResponseInterface = {
-  user: User;
+  user: UserResponse;
 };
 
 export type UpdateResponseInterface = {
-  user: User;
+  user: UserResponse;
 };
 
 export type GetResponseInterface = {
-  user: User;
+  user: UserResponse;
 };
 
 export type SearchResponseInterface = {
-  users: User[];
+  users: UserResponse[];
 };

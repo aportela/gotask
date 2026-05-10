@@ -1,4 +1,4 @@
-import type { User } from "./user";
+import type { UserResponse } from "./user";
 
 export type TokenInterface = {
   token: string;
@@ -11,11 +11,11 @@ export type SignInResponseInterface = {
   accessToken: TokenInterface;
   refreshToken: TokenInterface;
   tokenType: ValidAuthTypes;
-  user: User;
+  user: UserResponse;
 };
 
 export type RenewAccessTokenResponseInterface = {
   accessToken: TokenInterface;
   tokenType: ValidAuthTypes;
-  user: User;
+  user: UserResponse;
 };
