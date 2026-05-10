@@ -8,6 +8,10 @@ class IDate {
     this.msTimestamp = msTimestamp;
     this.date = new Date(msTimestamp);
   }
+
+  toLocaleString = () => {
+    return this.date.toLocaleString();
+  };
 }
 
 export class User {
