@@ -74,7 +74,12 @@
     });
 
     watch(pageSize, () => {
-        currentPage.value = 1;
+        if (currentPage.value != 1) {
+            currentPage.value = 1;
+        } else {
+            onRefresh();
+        }
+
     });
 
     watch(currentPage, () => {
