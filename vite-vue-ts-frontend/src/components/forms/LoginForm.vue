@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { ref, reactive, watch, nextTick, onMounted } from 'vue';
     import { useI18n } from "vue-i18n";
+
     import { NIcon, NSpin, NForm, NFormItem, NInput, NButton, type FormItemRule, type FormInst, type FormRules, type InputInst } from 'naive-ui'
     import { IconEye, IconEyeCancel } from '@tabler/icons-vue';
 
@@ -10,39 +11,38 @@
     import { useSessionStore } from "../../stores/session";
     import RemoteAPIAlert from '../alerts/RemoteAPIAlert.vue';
     import { authService } from '../../api/services/auth';
-    import type { SignInResponse } from '../../api/types/dto/auth';
+    import type { SignInRequest, SignInResponse } from '../../api/types/dto/auth';
     import { handleAPIError } from '../../api/client/errorHandler';
     import { User } from "../../api/models/user";
 
-    const emit = defineEmits(['success'])
+    type signInFormValuesInterface = {
+        email: string;
+        password: string;
+    };
 
+    const emit = defineEmits(['success'])
 
     const { t } = useI18n();
 
     const sessionStore = useSessionStore();
 
-    const inputEmailRef = ref<InputInst | null>(null);
-    const inputPasswordRef = ref<InputInst | null>(null);
-
     const localStorageLastUsedEmail = createStorageEntry<string | null>("lastUsedEmail", null);
 
     const lastUsedEmail = localStorageLastUsedEmail.get();
 
+    const inputEmailRef = ref<InputInst | null>(null);
+    const inputPasswordRef = ref<InputInst | null>(null);
+
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+    const serverErrors = ref<Record<string, string>>({});
 
     const signInFormRef = ref<FormInst | null>(null)
 
-    type signInFormValuesInterface = {
-        email: string | null,
-        password: string | null,
-    };
-
     const signinFormValues = ref<signInFormValuesInterface>({
-        email: lastUsedEmail || null,
-        password: null,
+        email: lastUsedEmail || "",
+        password: "",
     });
-
-    const serverErrors = ref<Record<string, string>>({});
 
     const signInFormRules: FormRules = {
         email: {
@@ -61,24 +61,23 @@
                 if (serverErrors.value.password) return new Error(serverErrors.value.password)
                 return true
             },
-            trigger: ['blur']
-        }
-    }
+            trigger: ['blur'],
+        },
+    };
 
-    watch(() => signinFormValues.value.email, () => {
-        delete serverErrors.value.email
-    });
+    watch(() => signinFormValues.value.email, () => { delete serverErrors.value.email });
 
-    watch(() => signinFormValues.value.password, () => {
-        delete serverErrors.value.password
-    });
+    watch(() => signinFormValues.value.password, () => { delete serverErrors.value.password });
 
-    const submit = async () => {
-        serverErrors.value = {}
+    const onSubmit = async () => {
         if (signinFormValues.value.email && signinFormValues.value.password) {
+            serverErrors.value = {}
             Object.assign(state, defaultAjaxStateRunning);
             try {
-                const payload = { email: signinFormValues.value.email, password: signinFormValues.value.password };
+                const payload: SignInRequest = {
+                    email: signinFormValues.value.email,
+                    password: signinFormValues.value.password
+                };
                 const response: SignInResponse = await authService.signIn(payload);
                 sessionStore.setAccessToken(response.accessToken.token, response.accessToken.expiresAtTimestamp);
                 sessionStore.setUser(new User(response.user));
@@ -86,6 +85,7 @@
                 emit('success');
             } catch (error: unknown) {
                 state.ajaxErrors = true;
+                error = null;
                 handleAPIError(error,
                     (apiError) => {
                         switch (apiError.response?.status) {
@@ -96,30 +96,33 @@
                                 serverErrors.value.password = t("Invalid password");
                                 break;
                             default:
-                                state.ajaxErrorMessage = t("API Error: fatal error");
+                                state.ajaxErrorMessage = t("Invalid API response code");
                                 break;
                         }
                         signInFormRef.value?.restoreValidation();
                         signInFormRef.value?.validate().then(() => { }).catch(() => { });
                     },
                     (fatalError) => {
-                        console.error("Unhandled API error", { file: "LoginForm.ts", method: "submit" }, { err: fatalError });
+                        state.ajaxErrorMessage = t("Uncaught exception");
+                        console.error("Fatal error", { file: "LoginForm.vue", method: "onSubmit", details: "uncaught exception", error: fatalError });
                     });
             } finally {
                 state.ajaxRunning = false;
             }
+        } else {
+            console.error("Fatal error", { file: "LoginForm.vue", method: "onSubmit", details: "missing email/password values" });
         }
     }
 
-    const onSubmit = async (e: MouseEvent | KeyboardEvent) => {
+    const onSignIn = async (e: MouseEvent | KeyboardEvent) => {
         e.preventDefault()
         serverErrors.value = {};
         try {
             await signInFormRef.value?.validate();
-            submit();
+            onSubmit();
         }
-        catch (e: any) {
-            //console.debug("SignIn form validation error", e)
+        catch (error: any) {
+            console.debug("Debug", { file: "LoginForm.vue", method: "onSignIn", details: "form validation error", error: error });
         }
     }
 
@@ -143,7 +146,7 @@
             </n-form-item>
             <n-form-item :label="t('Password')" path="password" show-feedback>
                 <n-input v-model:value="signinFormValues.password" type="password" placeholder="Enter your password"
-                    show-password-on="click" :disabled="state.ajaxRunning" @keydown.enter="onSubmit"
+                    show-password-on="click" :disabled="state.ajaxRunning" @keydown.enter="onSignIn"
                     ref="inputPasswordRef">
                     <template #password-visible-icon>
                         <n-icon :size="16" :component="IconEyeCancel" />
@@ -154,7 +157,7 @@
                 </n-input>
             </n-form-item>
             <n-form-item>
-                <n-button secondary @click="onSubmit" block :disabled="state.ajaxRunning">{{
+                <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
                     }}</n-button>
             </n-form-item>
