@@ -68,7 +68,6 @@
     });
 
 
-    /*
     const onToggleSort = (field: string) => {
         if (field !== sortField.value) {
             sortField.value = field;
@@ -78,7 +77,6 @@
         }
         onRefresh();
     }
-        */
 
     const onRefresh = async () => {
         state.ajaxRunning = true;
@@ -311,7 +309,8 @@
             </n-pagination>
         </n-flex>
         <UsersTable :users="users" :columns="columns" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onAddUser"
-            @update="onUpdateUser" @delete="onDelete" @undelete="onUnDelete" />
+            @update="onUpdateUser" @delete="onDelete" @undelete="onUnDelete" :sort-field="sortField"
+            :sort-order="sortOrder" @toggle-sort="onToggleSort" />
     </n-card>
 </template>
 

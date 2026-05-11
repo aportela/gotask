@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, h } from 'vue';
+    import { h } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { useDialog, NButtonGroup, NButton, NFlex, NEmpty, NAvatar, NIcon } from 'naive-ui';
@@ -16,23 +16,22 @@
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
     import { useSessionStore } from '../../../stores/session';
 
+
     interface Props {
         loading: boolean;
         users: User[];
         columns: UsersTableColumn[]
+        sortField: string;
+        sortOrder: SortOrder;
     }
 
     const { t } = useI18n();
 
     const sessionStore = useSessionStore();
 
-    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'undelete']);
+    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'undelete', 'toggleSort']);
 
     const props = defineProps<Props>();
-
-    const sortField = ref<string>("");
-
-    const sortOrder = ref<SortOrder>("ASC");
 
     const userNameFilter = defineModel<string>("userNameFilter", {
         default: "",
@@ -45,7 +44,7 @@
     const dialog = useDialog();
 
     const onToggleSort = (field: string) => {
-        console.log(field);
+        emit("toggleSort", field);
     };
 
     const onRefresh = () => {
@@ -108,11 +107,10 @@
                 <th v-for="column in props.columns" :key="column.field" @click="onToggleSort(column.field)">
                     <n-flex justify="space-between">
                         <span>{{ column.label }}</span>
-
-                        <TableCellHeaderSortIcon v-if="sortField === column.field" :order="sortOrder" />
+                        <TableCellHeaderSortIcon v-if="props.sortField === column.field" :order="props.sortOrder" />
                     </n-flex>
                 </th>
-                <th class="text-center">Operations</th>
+                <th class="text-center">{{ t("Operations") }}</th>
             </tr>
             <tr class="hide-mobile">
                 <th>
