@@ -1,3 +1,6 @@
+import type { PagerRequest, PagerResponse } from "./pager";
+import type { Order } from "./order";
+
 /*
 export type UserRequest = {
   id: string;
@@ -29,14 +32,8 @@ export type UpdateRequest = {
 };
 
 export type SearchRequest = {
-  pager: {
-    currentPage: number;
-    resultsPage: number;
-  };
-  order: {
-    field: string;
-    sort: string;
-  };
+  pager: PagerRequest;
+  order: Order;
 };
 
 export type UserResponse = {
@@ -64,11 +61,5 @@ export type GetResponse = {
 
 export type SearchResponse = {
   users: UserResponse[];
-  pager: {
-    enabled: boolean;
-    currentPage: number;
-    resultsPage: number;
-    totalPages: number;
-    totalResults: number;
-  };
+  pager: PagerResponse;
 };

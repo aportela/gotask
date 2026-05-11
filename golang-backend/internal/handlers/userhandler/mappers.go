@@ -3,6 +3,7 @@ package userhandler
 import (
 	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/domain"
+	"github.com/aportela/doneo/internal/handlers"
 	"github.com/aportela/doneo/internal/utils"
 )
 
@@ -69,7 +70,7 @@ func userArrayToResponse(users []domain.User) []userResponse {
 func ToSearchResponse(users []domain.User, pager browser.Result) searchResponse {
 	return searchResponse{
 		Users: userArrayToResponse(users),
-		Pager: PagerResponse{
+		Pager: handlers.PagerResponse{
 			Enabled:      pager.ResultsPage > 0,
 			CurrentPage:  pager.CurrentPage,
 			ResultsPage:  pager.ResultsPage,

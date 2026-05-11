@@ -361,9 +361,9 @@
         <ManageTable size="small">
             <template #thead>
                 <tr>
-                    <th class="cursor-pointer th-content" @click="onToggleSort('type')">
+                    <th class="cursor-pointer th-content" @click="onToggleSort('isSuperUser')">
                         <span>Type</span>
-                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'type'" />
+                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'isSuperUser'" />
                     </th>
                     <th class="cursor-pointer" @click="onToggleSort('name')">
                         <span>Name</span>

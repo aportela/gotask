@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/aportela/doneo/internal/browser"
@@ -20,7 +21,7 @@ type UserRepository interface {
 	Purge(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (UserDTO, error)
 	GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (UserDTO, error)
-	Search(ctx context.Context, pager browser.Params) ([]UserDTO, browser.Result, error)
+	Search(ctx context.Context, pager browser.Params, order browser.Order) ([]UserDTO, browser.Result, error)
 }
 
 type userRepository struct {
@@ -181,19 +182,49 @@ func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context
 	return user, err
 }
 
-func (userRepository *userRepository) Search(ctx context.Context, pager browser.Params) ([]UserDTO, browser.Result, error) {
+func (userRepository *userRepository) Search(ctx context.Context, pager browser.Params, order browser.Order) ([]UserDTO, browser.Result, error) {
 	var args []any
-	query := `
+	sqlQuery := `
 		SELECT
 			U.id, U.email, U.name, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
 		FROM users U
 	`
-	query += " ORDER BY U.name COLLATE NOCASE "
-	if pager.Enabled() {
-		query += " LIMIT ? OFFSET ? "
-		args = append(args, pager.Limit(), pager.Offset())
+	var field string
+	switch order.Field {
+	case "name":
+		field = "U.name"
+	case "email":
+		field = "U.email"
+	case "createdAt":
+		field = "U.created_at"
+	case "updatedAt":
+		field = "U.updated_at"
+	case "deletedAt":
+		field = "U.deleted_at"
+	case "isSuperUser":
+		field = "U.is_super_user"
+	default:
+		field = "U.name"
 	}
-	rows, err := userRepository.database.QueryContext(ctx, query, args...)
+	var sort string
+	switch order.Sort {
+	case "DESC":
+		sort = "DESC"
+	case "ASC":
+		sort = "ASC"
+	default:
+		sort = "ASC"
+	}
+	sqlOrder := fmt.Sprintf(" ORDER BY %s COLLATE NOCASE %s ", field, sort)
+	var sqlLimit string
+	if pager.Enabled() {
+		sqlLimit = " LIMIT ? OFFSET ? "
+		args = append(args, pager.Limit(), pager.Offset())
+	} else {
+		sqlLimit = ""
+	}
+	sqlQuery = fmt.Sprintf("%s %s %s ", sqlQuery, sqlOrder, sqlLimit)
+	rows, err := userRepository.database.QueryContext(ctx, sqlQuery, args...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}

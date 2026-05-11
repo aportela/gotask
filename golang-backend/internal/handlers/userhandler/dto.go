@@ -1,5 +1,7 @@
 package userhandler
 
+import "github.com/aportela/doneo/internal/handlers"
+
 type addRequest struct {
 	Name        string `json:"name"`
 	Email       string `json:"email"`
@@ -18,35 +20,13 @@ type patchRequest struct {
 	DeletedAt *int64 `json:"deletedAt"`
 }
 
-type PagerRequest struct {
-	Enabled     bool `json:"enabled"`
-	CurrentPage int  `json:"currentPage"`
-	ResultsPage int  `json:"resultsPage"`
-}
-
-type SortOrder string
-
-const (
-	SortAsc  SortOrder = "ASC"
-	SortDesc SortOrder = "DESC"
-)
-
-func (o SortOrder) IsValid() bool {
-	return o == SortAsc || o == SortDesc
-}
-
-type OrderRequest struct {
-	Field string    `json:"field"`
-	Sort  SortOrder `json:"sort"`
-}
-
 type FilterRequest struct {
 }
 
 type searchRequest struct {
-	Pager  PagerRequest  `json:"pager"`
-	Order  OrderRequest  `json:"order"`
-	Filter FilterRequest `json:"filter"`
+	Pager  handlers.PagerRequest `json:"pager"`
+	Order  handlers.OrderRequest `json:"order"`
+	Filter FilterRequest         `json:"filter"`
 }
 
 type userResponse struct {
@@ -72,15 +52,7 @@ type getResponse struct {
 	User userResponse `json:"user"`
 }
 
-type PagerResponse struct {
-	Enabled      bool `json:"enabled"`
-	CurrentPage  int  `json:"currentPage"`
-	ResultsPage  int  `json:"resultsPage"`
-	TotalPages   int  `json:"totalPages"`
-	TotalResults int  `json:"totalResults"`
-}
-
 type searchResponse struct {
-	Users []userResponse `json:"users"`
-	Pager PagerResponse  `json:"pager"`
+	Users []userResponse         `json:"users"`
+	Pager handlers.PagerResponse `json:"pager"`
 }

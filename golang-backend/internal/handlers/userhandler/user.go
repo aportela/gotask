@@ -140,6 +140,10 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,
 		},
+		browser.Order{
+			Field: request.Order.Field,
+			Sort:  string(request.Order.Sort),
+		},
 	)
 	if pagerResult.TotalResults > 0 {
 	}
