@@ -85,7 +85,6 @@
                 emit('success');
             } catch (error: unknown) {
                 state.ajaxErrors = true;
-                error = null;
                 handleAPIError(error,
                     (apiError) => {
                         switch (apiError.response?.status) {
