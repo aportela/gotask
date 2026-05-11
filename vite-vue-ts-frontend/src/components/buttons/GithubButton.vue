@@ -1,10 +1,10 @@
 <script setup lang="ts">
     import { useI18n } from "vue-i18n";
-    import { NButton, NTooltip } from 'naive-ui'
-    import { IconBrandGithub } from '@tabler/icons-vue';
-    import { GITHUB_PROJECT_URL } from '../../constants';
 
-    const { t } = useI18n();
+    import { NButton, NIcon, NTooltip } from 'naive-ui'
+    import { IconBrandGithub } from '@tabler/icons-vue';
+
+    import { GITHUB_PROJECT_URL } from '../../constants';
 
     interface GithubButtonProps {
         iconSize?: number,
@@ -13,6 +13,9 @@
     withDefaults(defineProps<GithubButtonProps>(), {
         iconSize: 20
     });
+
+    const { t } = useI18n();
+
 </script>
 
 <template>
@@ -20,7 +23,7 @@
         <template #trigger>
             <n-button quaternary>
                 <a :href="GITHUB_PROJECT_URL" class="link-color" target="_blank">
-                    <IconBrandGithub :size="iconSize" />
+                    <n-icon :size="iconSize" :component="IconBrandGithub" />
                 </a>
             </n-button>
         </template>

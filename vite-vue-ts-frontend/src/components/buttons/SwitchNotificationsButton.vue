@@ -1,10 +1,10 @@
 <script setup lang="ts">
     import { useI18n } from "vue-i18n";
-    import { NButton, NTooltip } from 'naive-ui';
-    import { IconBell, IconBellOff } from '@tabler/icons-vue';
-    import { useUserSettingsStore } from '../../stores/userSettings';
 
-    const { t } = useI18n();
+    import { NButton, NIcon, NTooltip } from 'naive-ui';
+    import { IconBell, IconBellOff } from '@tabler/icons-vue';
+
+    import { useUserSettingsStore } from '../../stores/userSettings';
 
     interface SwitchNotificationsButtonProps {
         iconSize?: number,
@@ -14,6 +14,8 @@
         iconSize: 20
     });
 
+    const { t } = useI18n();
+
     const userSettingsStore = useUserSettingsStore();
 </script>
 
@@ -21,8 +23,7 @@
     <n-tooltip trigger="hover">
         <template #trigger>
             <n-button quaternary @click.prevent="userSettingsStore.toggleNotifications" @mousedown.prevent>
-                <IconBellOff :size="iconSize" v-if="userSettingsStore.disableNotifications" />
-                <IconBell :size="iconSize" v-else />
+                <n-icon :size="iconSize" :component="userSettingsStore.disableNotifications ? IconBellOff : IconBell" />
             </n-button>
         </template>
         {{

@@ -1,10 +1,11 @@
 <script setup lang="ts">
     import { useI18n } from "vue-i18n";
-    import { NButton, NTooltip } from 'naive-ui';
+
+    import { NButton, NIcon, NTooltip } from 'naive-ui';
     import { IconLayoutSidebarLeftExpand, IconLayoutNavbarExpand } from '@tabler/icons-vue';
+
     import { useUserSettingsStore } from '../../stores/userSettings';
 
-    const { t } = useI18n();
 
     interface SwitchFluidLayoutButtonProps {
         iconSize?: number,
@@ -14,6 +15,8 @@
         iconSize: 20
     });
 
+    const { t } = useI18n();
+
     const userSettingsStore = useUserSettingsStore();
 </script>
 
@@ -21,8 +24,8 @@
     <n-tooltip trigger="hover">
         <template #trigger>
             <n-button quaternary @click="userSettingsStore.toggleNavigationMode" @mousedown.prevent>
-                <IconLayoutNavbarExpand :size="iconSize" v-if="userSettingsStore.sideNavigationMode" />
-                <IconLayoutSidebarLeftExpand :size="iconSize" v-else />
+                <n-icon :size="iconSize"
+                    :component="userSettingsStore.sideNavigationMode ? IconLayoutNavbarExpand : IconLayoutSidebarLeftExpand" />
             </n-button>
         </template>
         {{
