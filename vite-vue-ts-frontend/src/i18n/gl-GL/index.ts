@@ -9,6 +9,7 @@ export default {
   Delete: "Eliminar",
   Restore: "Restaurar",
   Cancel: "Cancelar",
+  Refresh: "Recargar",
 
   // errors
   "Invalid API response": "Resposta da API non válida",
@@ -18,6 +19,7 @@ export default {
   "Sign in error": "Error ó inicia-la sesión",
 
   // users
+  "Manage users": "Xestión de usuarios",
   "Delete user": "Eliminar usuario",
   "Restore user": "Restaurar usuario",
 

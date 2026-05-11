@@ -9,6 +9,7 @@ export default {
   Delete: "Delete",
   Restore: "Restore",
   Cancel: "Cancel",
+  Refresh: "Refresh",
 
   // errors
   "Invalid API response": "Invalid API response",
@@ -18,6 +19,7 @@ export default {
   "Sign in error": "Sign in error",
 
   // users
+  "Manage users": "Manage users",
   "Delete user": "Delete user",
   "Restore user": "Restore user",
 
