@@ -19,9 +19,20 @@ export const required = (label: string): Validator => {
 // TODO: i18n
 export const minLength = (min: number): Validator => {
   return (value: string) => {
-    if (!value) return true; // required se encarga de esto
+    if (!value) return true;
     if (value.length < min) {
       return new Error(`min length is ${min}`);
+    }
+    return true;
+  };
+};
+
+// TODO: i18n
+export const maxLength = (max: number): Validator => {
+  return (value: string) => {
+    if (!value) return true;
+    if (value.length > max) {
+      return new Error(`max length is ${max}`);
     }
     return true;
   };
