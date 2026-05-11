@@ -121,7 +121,7 @@
             onSubmit();
         }
         catch (error: any) {
-            console.debug("Debug", { file: "LoginForm.vue", method: "onSignIn", details: "form validation error", error: error });
+            console.warn("Warning", { file: "LoginForm.vue", method: "onSignIn", details: "form validation error", error: error });
         }
     }
 
