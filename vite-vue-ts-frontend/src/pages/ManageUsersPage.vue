@@ -17,6 +17,8 @@
     import { userService } from '../api/services/user';
     import { User } from '../api/models/user';
     import type { UserResponse } from '../api/types/dto/user';
+    import TableCellHeaderSortIcon from '../components/custom/TableCellHeaderSortIcon.vue';
+    import type { SortOrder } from '../types/common';
 
     const appBus = useAppBus();
 
@@ -49,6 +51,9 @@
         { label: 'Users only', value: 2 }
     ];
 
+    const sortField = ref<string>("name");
+    const sortOrder = ref<SortOrder>("ASC");
+
     const filterByUsername = ref<string | null>(null);
     const filterByEmail = ref<string | null>(null);
     const userFilterType = ref<number | null>(0);
@@ -71,6 +76,17 @@
         onRefresh();
     });
 
+
+    const onToggleSort = (field: string) => {
+        if (field !== sortField.value) {
+            sortField.value = field;
+            sortOrder.value = "ASC";
+        } else {
+            sortOrder.value = sortOrder.value === "ASC" ? "DESC" : "ASC";
+        }
+        onRefresh();
+    }
+
     const onRefresh = async () => {
         state.ajaxRunning = true;
         loadingStore.set(true);
@@ -81,8 +97,8 @@
                     resultsPage: pageSize.value,
                 },
                 order: {
-                    field: "name",
-                    sort: "ASC",
+                    field: sortField.value,
+                    sort: sortOrder.value,
                 }
             };
             const response = await userService.search(payload);
@@ -321,6 +337,7 @@
             value: 200
         },
     ];
+
 </script>
 
 <template>
@@ -344,12 +361,30 @@
         <ManageTable size="small">
             <template #thead>
                 <tr>
-                    <th>Type</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th class="hide-mobile">Created at</th>
-                    <th class="hide-mobile">Updated at</th>
-                    <th class="hide-mobile">Deleted at</th>
+                    <th class="cursor-pointer th-content" @click="onToggleSort('type')">
+                        <span>Type</span>
+                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'type'" />
+                    </th>
+                    <th class="cursor-pointer" @click="onToggleSort('name')">
+                        <span>Name</span>
+                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'name'" />
+                    </th>
+                    <th class="cursor-pointer" @click="onToggleSort('email')">
+                        <span>Email</span>
+                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'email'" />
+                    </th>
+                    <th class="cursor-pointer" @click="onToggleSort('createdAt')">
+                        <span>Created at</span>
+                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'createdAt'" />
+                    </th>
+                    <th class="cursor-pointer" @click="onToggleSort('updatedAt')">
+                        <span>Updated at</span>
+                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'updatedAt'" />
+                    </th>
+                    <th class="cursor-pointer" @click="onToggleSort('deletedAt')">
+                        <span>Deleted at</span>
+                        <TableCellHeaderSortIcon :order="sortOrder" v-if="sortField === 'deletedAt'" />
+                    </th>
                     <th class="text-center">Operations</th>
                 </tr>
                 <tr class="hide-mobile">
@@ -486,6 +521,13 @@
         border: 1px solid;
         border-color: rgb(239, 239, 245);
         border-radius: 3px;
+    }
+
+    .th-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
     }
 
     @media (max-width: 768px) {
