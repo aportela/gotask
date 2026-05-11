@@ -18,6 +18,17 @@ export default {
   "Invalid password": "La contraseña es incorrecta",
   "Sign in error": "Error al iniciar la sesión",
 
+  // date filter
+  "select date": "seleccione una fecha",
+  "Any date": "Cualquier fecha",
+  "Custom date": "Fecha específica",
+  Yesterday: "Ayer",
+  Today: "Hoy",
+  Tomorrow: "Mañana",
+  "This week": "Esta semana",
+  "This month": "Este mes",
+  "This year": "Este año",
+
   // users
   "Manage users": "Gestión de usuarios",
   "Delete user": "Eliminar usuario",

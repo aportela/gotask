@@ -18,6 +18,17 @@ export default {
   "Invalid password": "A contrasinal é incorrecta",
   "Sign in error": "Error ó inicia-la sesión",
 
+  // date filter
+  "select date": "seleccione unha data",
+  "Any date": "Calquera data",
+  "Custom date": "data específica",
+  Yesterday: "Onte",
+  Today: "Hoxe",
+  Tomorrow: "Mañá",
+  "This week": "Esta semana",
+  "This month": "Este mes",
+  "This year": "Este ano",
+
   // users
   "Manage users": "Xestión de usuarios",
   "Delete user": "Eliminar usuario",

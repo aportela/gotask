@@ -18,6 +18,17 @@ export default {
   "Invalid password": "Invalid password",
   "Sign in error": "Sign in error",
 
+  // date filter
+  "select date": "select date",
+  "Any date": "Any date",
+  "Custom date": "Custom date",
+  Yesterday: "Yesterday",
+  Today: "Today",
+  Tomorrow: "Tomorrow",
+  "This week": "This week",
+  "This month": "This month",
+  "This year": "This year",
+
   // users
   "Manage users": "Manage users",
   "Delete user": "Delete user",

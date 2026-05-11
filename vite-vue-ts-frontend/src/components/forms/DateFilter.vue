@@ -1,26 +1,26 @@
 <script setup lang="ts">
-    import { ref, watch } from 'vue';
+    import { ref, watch, computed } from 'vue';
+    import { useI18n } from "vue-i18n";
+
     import { NSelect, NDatePicker } from 'naive-ui';
+    import type { SelectMixedOption } from 'naive-ui/es/select/src/interface';
 
+    const { t } = useI18n();
 
-    const filterDateOptions = [
-        { label: 'Any date', value: 0 },
-        { label: 'Today', value: 1 },
-        { label: 'Yesterday', value: 2 },
-        { label: 'This week', value: 3 },
-        { label: 'Custom date', value: 4 }
-    ];
-
+    const dateFilterOptions = computed<SelectMixedOption[]>(() => [
+        { label: t("Any date"), value: 0 },
+        { label: t("Custom date"), value: 1 },
+        { label: t("Yesterday"), value: 2 },
+        { label: t("Today"), value: 3 },
+        { label: t("Tomorrow"), value: 4 },
+        { label: t("This week"), value: 5 },
+        { label: t("This month"), value: 6 },
+        { label: t("This year"), value: 7 },
+    ]);
 
     const selectorValue = ref<number>(0)
     const datepickerValue = ref<number | null>(null)
     const showPicker = ref<boolean>(false);
-
-    const onClearDate = () => {
-        datepickerValue.value = null
-        selectorValue.value = 0
-        showPicker.value = false
-    };
 
     watch(selectorValue, async (val) => {
         if (val !== 4) {
@@ -37,13 +37,18 @@
         }
     });
 
+    const onClearDate = () => {
+        datepickerValue.value = null
+        selectorValue.value = 0
+        showPicker.value = false
+    };
+
 </script>
 
 <template>
-    <n-select v-if="selectorValue !== 4" v-model:value="selectorValue" :options="filterDateOptions" size="small" />
-
-    <n-date-picker v-else v-model:value="datepickerValue" type="date" clearable size="small" v-model:show="showPicker"
-        @clear="onClearDate" :actions="['clear']" />
+    <n-select v-if="selectorValue !== 1" v-model:value="selectorValue" :options="dateFilterOptions" size="small" />
+    <n-date-picker :placeholder="t('select date')" v-else v-model:value="datepickerValue" type="date" clearable
+        size="small" v-model:show="showPicker" @clear="onClearDate" :actions="['clear']" />
 </template>
 
 <style lang="css" scoped></style>
