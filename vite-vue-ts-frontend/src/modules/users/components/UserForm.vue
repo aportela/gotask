@@ -53,7 +53,7 @@
                 } else if (serverErrors.value.name) {
                     return new Error(t(serverErrors.value.name));
                 } else {
-                    return true
+                    return true;
                 }
             },
             trigger: ['blur'],
@@ -72,7 +72,7 @@
                 } else if (serverErrors.value.email) {
                     return new Error(t(serverErrors.value.email));
                 } else {
-                    return true
+                    return true;
                 }
             }, trigger: ['blur'],
         },
@@ -87,7 +87,7 @@
                 } else if (serverErrors.value.password) {
                     return new Error(t(serverErrors.value.password));
                 } else {
-                    return true
+                    return true;
                 }
             },
             trigger: ['blur']
@@ -117,8 +117,9 @@
             } else {
                 await onUpdate()
             }
-        } catch (error) {
-            console.debug("User form validation error", error)
+        }
+        catch (error: any) {
+            console.warn("Warning", { file: "UserForm.vue", method: "onSave", details: "form validation error", error: error });
         }
     };
 
@@ -127,6 +128,7 @@
     }
 
     const onGet = async (id: string) => {
+        serverErrors.value = {};
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const response: UserResponse = await userService.get(id);
@@ -206,6 +208,7 @@
     };
 
     const onUpdate = async () => {
+        serverErrors.value = {};
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
@@ -235,8 +238,8 @@
                             state.ajaxErrorMessage = t("There was a problem while updating the user data");
                             break;
                     }
-                    //signInFormRef.value?.restoreValidation();
-                    //signInFormRef.value?.validate().then(() => { }).catch(() => { });
+                    userFormRef.value?.restoreValidation();
+                    userFormRef.value?.validate().then(() => { }).catch(() => { });
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while updating the user data");
@@ -270,7 +273,8 @@
         <template #header-extra>
             <n-spin v-if="state.ajaxRunning" size="small" />
         </template>
-        <n-form ref="userFormRef" :model="user" :rules="userFormRules" :disabled="state.ajaxRunning">
+        <n-form ref="userFormRef" :model="user" :rules="state.ajaxRunning ? {} : userFormRules"
+            :disabled="state.ajaxRunning">
             <n-form-item :label="t('userFormNameLabel')" path="name" show-feedback>
                 <n-input type="text" :placeholder="t('userFormNameFieldPlaceholder')" v-model:value="user.name"
                     :maxlength="maxNameLength" :show-count="true" clearable required autofocus>
