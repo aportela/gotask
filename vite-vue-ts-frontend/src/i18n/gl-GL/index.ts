@@ -67,7 +67,7 @@ export default {
   "There was a problem while restoring the user":
     "Producíuse un erro o restaura-lo usuario",
   userAddedNotification: 'O usuario "{name}" engadiuse',
-  userUpdatedNotification: 'O usuario "{name}" actualizouse',
+  userUpdatedNotification: 'O usuario "{name}" modificouse',
   userDeletedNotification: 'O usuario "{name}" eliminouse',
   userRestoredNotification: 'O usuario "{name}" restaurouse',
   userFormNameLabel: "Nome",

@@ -67,7 +67,7 @@ export default {
   "There was a problem while restoring the user":
     "Se ha producido un error al restaurar el usuario",
   userAddedNotification: 'El usuario "{name}" se ha añadido',
-  userUpdatedNotification: 'El usuario "{name}" se ha actualizado',
+  userUpdatedNotification: 'El usuario "{name}" se ha modificado',
   userDeletedNotification: 'El usuario "{name}" se ha eliminado',
   userRestoredNotification: 'El usuario "{name}" se ha restaurado',
   userFormNameLabel: "Nombre",
@@ -86,7 +86,7 @@ export default {
   "Project type": "Tipo de proyecto",
   "Project types": "Tipos de proyectos",
   "Project type added": "Se ha añadido el tipo de proyecto",
-  "Project type updated": "Se ha actualizado el tipo de proyecto",
+  "Project type updated": "Se ha modificado el tipo de proyecto",
   "Project type deleted": "Se ha eliminado el tipo de proyecto",
   "There was a problem loading the project type data":
     "Se produjo un problema al cargar los datos del tipo de proyecto",
