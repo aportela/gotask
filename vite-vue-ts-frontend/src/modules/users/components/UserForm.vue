@@ -1,16 +1,16 @@
 <script setup lang="ts">
-    import { ref, reactive, computed, onMounted, type CSSProperties, nextTick } from 'vue';
+    import { ref, reactive, computed, onMounted, type CSSProperties, nextTick, watch } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon, type InputInst, NTooltip } from 'naive-ui';
     import { IconCancel, IconDeviceFloppy, IconEye, IconEyeCancel, IconMail, IconUser, IconUserEdit, IconUserPlus, IconKey } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
-    import { User, maxNameLength, maxEmailLength } from '../models/user';
+    import { User, maxNameLength, maxEmailLength, minPasswordLength } from '../models/user';
     import { userService } from '../services/user'
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { UserResponse, AddRequest, UpdateRequest } from '../types/dto';
-    import { required, minLength, validEmail, runValidators, maxLength } from '../../../shared/composables/form-validators';
+    import { isValidEmail } from '../../../shared/composables/form-validators';
     import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import type { FormMode } from '../types/form-mode';
 
@@ -43,35 +43,60 @@
     const userFormRules: FormRules =
     {
         name: {
-            validator: (_rule: FormItemRule, value) => {
-                if (state.ajaxRunning) return true;
-                const localResult = runValidators(value, [required('name'), minLength(3), maxLength(maxNameLength)])
-                if (localResult !== true) return localResult;
-                if (serverErrors.value.name) return new Error(serverErrors.value.name)
-                return true;
+            required: true,
+            validator: (_rule: FormItemRule, value: string) => {
+                if (!value) {
+                    return new Error(t("userFormNameFieldEmptyError"));
+                }
+                else if (value.length > maxNameLength) {
+                    return new Error(t("userFormNameFieldTooLargeError"));
+                } else if (serverErrors.value.name) {
+                    return new Error(t(serverErrors.value.name));
+                } else {
+                    return true
+                }
             },
             trigger: ['blur'],
         },
         email: {
-            validator: (_rule: FormItemRule, value) => {
-                const localResult = runValidators(value, [required('Email'), validEmail, maxLength(maxEmailLength)])
-                if (localResult !== true) return localResult;
-                if (serverErrors.value.email) return new Error(serverErrors.value.email)
-                return true;
-            },
-            trigger: ['blur'],
+            required: true,
+            validator: (_rule: FormItemRule, value: string) => {
+                if (!value) {
+                    return new Error(t("userFormEmailFieldEmptyError"));
+                }
+                else if (!isValidEmail(value)) {
+                    return new Error(t("userFormEmailFieldInvalidError"));
+                }
+                else if (value.length > maxEmailLength) {
+                    return new Error(t("userFormEmailFieldTooLargeError"));
+                } else if (serverErrors.value.email) {
+                    return new Error(t(serverErrors.value.email));
+                } else {
+                    return true
+                }
+            }, trigger: ['blur'],
         },
         password: {
-            validator: (_rule: FormItemRule, value) => {
-                if (!showPasswordField.value) return true;
-                const localResult = runValidators(value, [required('Password'), minLength(4)])
-                if (localResult !== true) return localResult;
-                if (serverErrors.value.password) return new Error(serverErrors.value.password)
-                return true;
+            required: true,
+            validator: (_rule: FormItemRule, value: string) => {
+                if (!value) {
+                    return new Error(t("userFormPasswordFieldEmptyError"));
+                }
+                else if (value.length < minPasswordLength) {
+                    return new Error(t("userFormPasswordFieldTooShortError"));
+                } else if (serverErrors.value.password) {
+                    return new Error(t(serverErrors.value.password));
+                } else {
+                    return true
+                }
             },
             trigger: ['blur']
         }
     };
+
+    watch(() => user.value.name, () => { delete serverErrors.value.name });
+    watch(() => user.value.email, () => { delete serverErrors.value.email });
+    watch(() => user.value.password, () => { delete serverErrors.value.password });
 
     const isSaveDisabled = computed<boolean>(() => {
         return !user.value.name;
@@ -107,6 +132,7 @@
             const response: UserResponse = await userService.get(id);
             if (response.id === id) {
                 user.value = new User(response);
+                userFormRef.value?.restoreValidation();
             } else {
                 state.ajaxErrorMessage = t("There was a problem while loading the user data");
             }
@@ -116,7 +142,7 @@
                 (apiError) => {
                     switch (apiError.response?.status) {
                         case 404:
-                            serverErrors.value.email = t("Email not found");
+                            state.ajaxErrorMessage = t("userFormEmailNotFoundError");
                             break;
                         case 401:
                             state.ajaxErrors = false;
@@ -167,8 +193,8 @@
                             state.ajaxErrorMessage = t("There was a problem while adding the user data");
                             break;
                     }
-                    //signInFormRef.value?.restoreValidation();
-                    //signInFormRef.value?.validate().then(() => { }).catch(() => { });
+                    userFormRef.value?.restoreValidation();
+                    userFormRef.value?.validate().then(() => { }).catch(() => { });
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while adding the user data");
@@ -221,7 +247,6 @@
         }
     };
 
-
     onMounted(() => {
         if (props.mode === "update") {
             showPasswordField.value = false;
@@ -230,11 +255,8 @@
             } else {
                 console.error(`TODO: missing userId property for ${props.mode} action`);
             }
-        } else if (props.mode === "add") {
-            //userFormRef.value?.validate();
         }
     });
-
 </script>
 
 <template>
@@ -267,7 +289,7 @@
             </n-form-item>
             <n-form-item :label="t('userFormPasswordLabel')" path="password" show-feedback>
                 <n-input v-if="showPasswordField" type="password" :placeholder="t('userFormPasswordFieldPlaceholder')"
-                    show-password-on="click" ref="inputPasswordRef">
+                    v-model:value="user.password" show-password-on="click" ref="inputPasswordRef">
                     <template #prefix>
                         <n-icon :component="IconKey" />
                     </template>
@@ -289,7 +311,7 @@
                     </template>
                 </n-input>
                 <n-button v-else @click="onShowPasswordFormItem" block>{{ t("userFormChangePasswordButtonLabel")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
         <template #footer v-if="state.ajaxErrorMessage">

@@ -73,7 +73,15 @@ export default {
   userFormNameFieldPlaceholder: "Enter name address",
   userFormEmailFieldPlaceholder: "Enter email address",
   userFormPasswordFieldPlaceholder: "Enter password",
+  userFormNameFieldEmptyError: "Name is empty",
+  userFormNameFieldTooLargeError: "Name is too large",
+  userFormEmailFieldEmptyError: "Email is empty",
+  userFormEmailFieldInvalidError: "Email is invalid",
+  userFormEmailFieldTooLargeError: "Email is too large",
+  userFormPasswordFieldEmptyError: "Password is empty",
+  userFormPasswordFieldTooShortError: "Password is too short",
   userFormChangePasswordButtonLabel: "Change password",
+  userFormEmailNotFoundError: "Email not found",
 
   // project types
   "Add project type": "Add project type",

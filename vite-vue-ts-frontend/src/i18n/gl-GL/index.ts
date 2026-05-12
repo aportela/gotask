@@ -73,7 +73,15 @@ export default {
   userFormNameFieldPlaceholder: "Introduzca o nome",
   userFormEmailFieldPlaceholder: "Introduzca a dirección de correo",
   userFormPasswordFieldPlaceholder: "Introduzca o contrasinal",
-  userFormChangePasswordButtonLabel: "Modificar contraseña",
+  userFormNameFieldEmptyError: "O nome está vacío",
+  userFormNameFieldTooLargeError: "O nome é moi longo",
+  userFormEmailFieldEmptyError: "O email está vacío",
+  userFormEmailFieldInvalidError: "O email non ten un formato válido",
+  userFormEmailFieldTooLargeError: "O email é moi longo",
+  userFormPasswordFieldEmptyError: "O contrasinal está vacío",
+  userFormPasswordFieldTooShortError: "O contrasinal é moi curto",
+  userFormChangePasswordButtonLabel: "Modificar contrasinal",
+  userFormEmailNotFoundError: "O email non existe",
 
   // project types
   "Add project type": "Engadir tipo de proxecto",
