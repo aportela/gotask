@@ -16,7 +16,6 @@
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
     import { useSessionStore } from '../../../stores/session';
 
-
     interface Props {
         loading: boolean;
         users: User[];
@@ -59,20 +58,17 @@
         emit("update", user, index);
     };
 
-
     const onConfirmDelete = (user: User, index: number) => {
         dialog.warning({
             title: t("Delete user"),
             icon: renderIcon(IconTrash)(24),
             content: () =>
                 h('div', [
-                    // TODO: i18n
-                    `You are about to delete the user "${user.name}" from the system.`,
+                    t("deleteUserConfirmation", { name: user.name }),
                     h('br'),
                     h('br'),
                     'Do you want to continue?',
                 ]),
-            positiveText: t("Delete"),
             negativeText: t("Cancel"),
             onPositiveClick: () => {
                 emit("delete", user, index)
@@ -86,7 +82,7 @@
             icon: renderIcon(IconTrashOff)(24),
             content: () =>
                 h('div', [
-                    `You are about to restore the user "${user.name}" from the system.`,
+                    t("restoreUserConfirmation", { name: user.name }),
                     h('br'),
                     h('br'),
                     'Do you want to continue?',
@@ -110,18 +106,18 @@
                         <TableCellHeaderSortIcon v-if="props.sortField === column.field" :order="props.sortOrder" />
                     </n-flex>
                 </th>
-                <th class="text-center">{{ t("Operations") }}</th>
+                <th class="text-center">{{ t("Actions") }}</th>
             </tr>
             <tr class="hide-mobile">
                 <th>
                     <FilterUserTypeSelector clearable size="small" />
                 </th>
                 <th>
-                    <TextFilterInput clearable size="small" :placeholder="t('search by name')"
+                    <TextFilterInput clearable size="small" :placeholder="t('searchByNameDefaultPlaceholder')"
                         v-model:value="userNameFilter" />
                 </th>
                 <th>
-                    <TextFilterInput clearable size="small" :placeholder="t('search by email')"
+                    <TextFilterInput clearable size="small" :placeholder="t('searchByEmailDefaultPlaceholder')"
                         v-model:value="emailFilter" />
                 </th>
                 <th>
@@ -158,22 +154,19 @@
         <template #tbody>
             <tr v-for="user, index in users" :key="user.id">
                 <td class="text-center">
-                    <span style="display: flex; align-items: center;" v-if="user.isSuperUser">
-                        <n-icon :size="16" style="margin-right: 6px;">
+                    <!-- TODO: hide icon /label on small screens ? -->
+                    <span class="doneo-flex-center-align">
+                        <n-icon :size="16" style="margin-right: 6px;"
+                            :component="user.isSuperUser ? IconUserKey : IconUser">
                             <IconUserKey color="red" />
                         </n-icon>
-                        Administrator
-                    </span>
-                    <span style="display: flex; align-items: center;" v-else>
-                        <n-icon :size="16" style="margin-right: 6px;">
-                            <IconUser />
-                        </n-icon>
-                        User
+                        {{ user.isSuperUser ? t("Administrator") : t("User") }}
                     </span>
                 </td>
                 <td>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <n-avatar v-if="user.avatarUrl" :src="user.avatarUrl" class="avatar" /> {{ user.name }}
+                    <div class="doneo-flex-center-align" style="gap: 8px;">
+                        <n-avatar v-if="user.avatarUrl" :src="user.avatarUrl" class="avatar" />
+                        {{ user.name }}
                     </div>
                 </td>
                 <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>
@@ -212,7 +205,7 @@
             </tr>
             <tr>
                 <td :colspan="columns.length + 1" v-if="users.length < 1 && !props.loading">
-                    <n-empty :description="t('No results')">
+                    <n-empty :description="t('No users found')">
                     </n-empty>
                 </td>
             </tr>
