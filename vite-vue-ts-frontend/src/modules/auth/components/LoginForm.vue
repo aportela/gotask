@@ -2,8 +2,8 @@
     import { ref, reactive, watch, nextTick, onMounted } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NIcon, NSpin, NForm, NFormItem, NInput, NButton, type FormItemRule, type FormInst, type FormRules, type InputInst } from 'naive-ui'
-    import { IconEye, IconEyeCancel } from '@tabler/icons-vue';
+    import { NIcon, NSpin, NForm, NFormItem, NInput, NButton, type FormItemRule, type FormInst, type FormRules, type InputInst, NTooltip } from 'naive-ui'
+    import { IconEye, IconEyeCancel, IconMail, IconKey } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from "../../../shared/types/ajaxState";
     import { required, minLength, validEmail, runValidators } from '../../../shared/composables/form-validators';
@@ -141,24 +141,41 @@
         <n-form ref="signInFormRef" :model="signinFormValues" label-width="100px" :rules="signInFormRules">
             <n-form-item :label="t('Email')" path="email" show-feedback>
                 <n-input type="text" v-model:value="signinFormValues.email" :placeholder="t('Enter your email address')"
-                    :disabled="state.ajaxRunning" ref="inputEmailRef" />
+                    :disabled="state.ajaxRunning" ref="inputEmailRef">
+                    <template #prefix>
+                        <n-icon :component="IconMail" />
+                    </template>
+                </n-input>
             </n-form-item>
             <n-form-item :label="t('Password')" path="password" show-feedback>
                 <n-input v-model:value="signinFormValues.password" type="password"
                     :placeholder="t('Enter your password')" show-password-on="click" :disabled="state.ajaxRunning"
                     @keydown.enter="onSignIn" ref="inputPasswordRef">
+                    <template #prefix>
+                        <n-icon :component="IconKey" />
+                    </template>
                     <template #password-visible-icon>
-                        <n-icon :size="16" :component="IconEyeCancel" />
+                        <n-tooltip trigger="hover">
+                            <template #trigger>
+                                <n-icon :size="16" :component="IconEyeCancel" />
+                            </template>
+                            {{ t("hide password") }}
+                        </n-tooltip>
                     </template>
                     <template #password-invisible-icon>
-                        <n-icon :size="16" :component="IconEye" />
+                        <n-tooltip trigger="hover">
+                            <template #trigger>
+                                <n-icon :size="16" :component="IconEye" />
+                            </template>
+                            {{ t("show password") }}
+                        </n-tooltip>
                     </template>
                 </n-input>
             </n-form-item>
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
