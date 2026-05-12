@@ -77,8 +77,11 @@
             }, trigger: ['blur'],
         },
         password: {
-            required: true,
+            required: showPasswordField.value,
             validator: (_rule: FormItemRule, value: string) => {
+                if (!showPasswordField.value) {
+                    return true;
+                }
                 if (!value) {
                     return new Error(t("userFormPasswordFieldEmptyError"));
                 }
@@ -214,6 +217,7 @@
             const payload: UpdateRequest = {
                 id: user.value.id,
                 name: user.value.name,
+                password: user.value.password || undefined,
                 email: user.value.email,
                 isSuperUser: user.value.isSuperUser,
             };

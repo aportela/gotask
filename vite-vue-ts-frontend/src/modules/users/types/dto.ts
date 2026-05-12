@@ -27,6 +27,7 @@ export type UpdateRequest = {
   id: string;
   name: string;
   email: string;
+  password?: string;
   isSuperUser: boolean;
 };
 
