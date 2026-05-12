@@ -16,7 +16,7 @@ export const userService = {
     return data;
   },
   async update(payload: UpdateRequest): Promise<UpdateResponse> {
-    const { data } = await axiosInstance.post<UpdateResponse>(
+    const { data } = await axiosInstance.put<UpdateResponse>(
       "/users/" + payload.user.id,
       payload,
     );
