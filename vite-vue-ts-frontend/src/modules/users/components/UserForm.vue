@@ -13,7 +13,7 @@
     import { required, minLength, validEmail, runValidators, maxLength } from '../../../shared/composables/form-validators';
     import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
-    import type { FormMode } from '../types/user.form';
+    import type { FormMode } from '../types/form-mode';
 
     interface UserFormProps {
         mode: FormMode;
@@ -68,17 +68,6 @@
             trigger: ['blur']
         }
     };
-
-    const title = computed<string>(() => {
-        switch (props.mode) {
-            case "add":
-                return t("Add user");
-            case "update":
-                return t("Update user");
-            default:
-                return "";
-        }
-    });
 
     const isSaveDisabled = computed<boolean>(() => {
         return !user.value.name;
@@ -242,7 +231,7 @@
 <template>
     <n-card :style="style" bordered>
         <template #header>
-            {{ title }}
+            {{ t(props.mode == "add" ? "Add user" : "Update user") }}
         </template>
         <template #header-extra>
             <n-spin v-if="state.ajaxRunning" size="small" />

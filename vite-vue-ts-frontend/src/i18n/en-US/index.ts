@@ -50,6 +50,8 @@ export default {
   DeletedAtTableHeader: "Deleted at",
   AdminTypeValue: "Administrator",
   UserTypeValue: "User",
+  "Add user": "Add user",
+  "Update user": "Update user",
   "Delete user": "Delete user",
   "Restore user": "Restore user",
   "No users found": "No users found",
