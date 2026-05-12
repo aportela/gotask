@@ -6,7 +6,7 @@
     import { IconUserKey, IconUser, IconEdit, IconPlus, IconRefresh, IconTrash, IconTrashOff } from '@tabler/icons-vue';
 
     import { User } from '../models/user';
-    import type { UsersTableColumn } from '../types/users-table-column';
+    import type { TableHeaderColumn } from '../../../shared/types/table-header-column';
     import { type SortOrder } from '../../../shared/types/common';
     import { renderIcon } from '../../../shared/composables/naive-ui-icon';
     import ManageTable from '../../../shared/components/tables/ManageTable.vue';
@@ -19,7 +19,7 @@
     interface Props {
         loading: boolean;
         users: User[];
-        columns: UsersTableColumn[]
+        columns: TableHeaderColumn[]
         sortField: string;
         sortOrder: SortOrder;
     }

@@ -20,6 +20,7 @@
 
     import UsersTable from '../components/UsersTable.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
+    import type { TableHeaderColumn } from '../../../shared/types/table-header-column';
 
     const appBus = useAppBus();
 
@@ -212,7 +213,8 @@
         });
     };
 
-    const columns = computed(() => [
+
+    const columns = computed<TableHeaderColumn[]>(() => [
         {
             label: t("UserTypeTableHeader"),
             field: "isSuperUser",
