@@ -45,7 +45,7 @@
         name: {
             validator: (_rule: FormItemRule, value) => {
                 if (state.ajaxRunning) return true;
-                const localResult = true;//runValidators(value, [required('name'), minLength(3), maxLength(maxNameLength)])
+                const localResult = runValidators(value, [required('name'), minLength(3), maxLength(maxNameLength)])
                 if (localResult !== true) return localResult;
                 if (serverErrors.value.name) return new Error(serverErrors.value.name)
                 return true;
@@ -54,7 +54,7 @@
         },
         email: {
             validator: (_rule: FormItemRule, value) => {
-                const localResult = true;//runValidators(value, [required('Email'), validEmail, maxLength(maxEmailLength)])
+                const localResult = runValidators(value, [required('Email'), validEmail, maxLength(maxEmailLength)])
                 if (localResult !== true) return localResult;
                 if (serverErrors.value.email) return new Error(serverErrors.value.email)
                 return true;
@@ -64,7 +64,7 @@
         password: {
             validator: (_rule: FormItemRule, value) => {
                 if (!showPasswordField.value) return true;
-                const localResult = true;//runValidators(value, [required('Password'), minLength(4)])
+                const localResult = runValidators(value, [required('Password'), minLength(4)])
                 if (localResult !== true) return localResult;
                 if (serverErrors.value.password) return new Error(serverErrors.value.password)
                 return true;
@@ -147,8 +147,8 @@
                 email: user.value.email,
                 isSuperUser: user.value.isSuperUser,
             };
-            await userService.add(payload);
-            emit('add')
+            const addedUser: UserResponse = await userService.add(payload);
+            emit('add', addedUser)
         } catch (error: unknown) {
             state.ajaxErrors = true;
             handleAPIError(error,
@@ -189,8 +189,8 @@
                 email: user.value.email,
                 isSuperUser: user.value.isSuperUser,
             };
-            await userService.update(payload);
-            emit('update')
+            const updatedUser: UserResponse = await userService.update(payload);
+            emit('update', updatedUser)
         } catch (error: unknown) {
             state.ajaxErrors = true;
             handleAPIError(error,
@@ -267,7 +267,7 @@
                     </template>
                 </n-input>
                 <n-button v-else @click="onShowPasswordFormItem" block>{{ t("userFormChangePasswordButtonLabel")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
         <template #footer v-if="state.ajaxErrorMessage">
