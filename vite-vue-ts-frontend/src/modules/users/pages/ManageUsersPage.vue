@@ -4,23 +4,19 @@
 
     import { NModal, NCard } from 'naive-ui';
 
-    import { api } from '../../../shared/composables/api';
-
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
-    import type { AxiosAPIError } from '../../../shared/composables/axios';
     import { useLoadingStore } from '../../../stores/loading';
     import { useNotify } from '../../../shared/composables/notification';
     import { useAppBus, type AppBusEvent } from '../../../shared/composables/bus';
     import { userService } from '../services/user';
-    import UserForm from '../components/UserForm.vue';
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { UserResponse } from '../types/dto';
-    import type { SortOrder } from '../../../shared/types/common';
     import { User } from '../models/user';
-
     import UsersTable from '../components/UsersTable.vue';
+    import UserForm from '../components/UserForm.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
     import type { TableHeaderColumn } from '../../../shared/types/table-header-column';
+    import { Sort } from '../../../shared/types/models/sort';
 
     const appBus = useAppBus();
 
@@ -28,16 +24,13 @@
 
     const { t } = useI18n();
 
-
     const loadingStore = useLoadingStore();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
     const users = shallowRef<User[]>([]);
 
-
-    const sortField = ref<string>("name");
-    const sortOrder = ref<SortOrder>("ASC");
+    const sort = ref<Sort>(new Sort("name", "ASC"));
 
     const filterByUsername = ref<string | null>(null);
     const filterByEmail = ref<string | null>(null);
@@ -73,12 +66,7 @@
     });
 
     const onToggleSort = (field: string) => {
-        if (field !== sortField.value) {
-            sortField.value = field;
-            sortOrder.value = "ASC";
-        } else {
-            sortOrder.value = sortOrder.value === "ASC" ? "DESC" : "ASC";
-        }
+        sort.value.toggleSort(field);
         onRefresh();
     }
 
@@ -120,8 +108,8 @@
                     resultsPage: pageSize.value,
                 },
                 order: {
-                    field: sortField.value,
-                    sort: sortOrder.value,
+                    field: sort.value.field,
+                    sort: sort.value.order,
                 }
             };
             const response = await userService.search(payload);
@@ -153,66 +141,69 @@
         }
     };
 
-    const onDelete = (user: User, _index: number) => {
+    const onDelete = async (user: User, _index: number) => {
         Object.assign(state, defaultAjaxStateRunning);
-        api.user.delete(user.id).then((_response: any) => {
+        try {
+            await userService.delete(user.id);
             notify('success', t("userDeletedNotification", { name: user.name }));
             onRefresh();
-        }).catch((errorResponse: AxiosAPIError) => {
+        } catch (error: unknown) {
             state.ajaxErrors = true;
-            if (errorResponse.isAPIError) {
-                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-                switch (errorResponse.status) {
-                    case 401:
-                        state.ajaxErrors = false;
-                        appBus.emitReauthRequired("ManageUsersPage.onDelete");
-                        break;
-                    case 404:
-                        state.ajaxErrorMessage = t("We couldn’t find the specified user");
-                        break;
-                    default:
-                        state.ajaxErrorMessage = t("There was a problem while deleting the user");
-                        break;
-                }
-            } else {
-                state.ajaxErrorMessage = t("There was a problem while deleting the user");
-                console.error(errorResponse);
-            }
-        }).finally(() => {
+            handleAPIError(error,
+                (apiError) => {
+                    switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            appBus.emitReauthRequired("ManageUsersPage.onDelete");
+                            break;
+                        case 404:
+                            state.ajaxErrorMessage = t("We couldn’t find the specified user");
+                            break;
+                        default:
+                            state.ajaxErrorMessage = t("There was a problem while deleting the user");
+                            break;
+                    }
+                },
+                (fatalError) => {
+                    state.ajaxErrorMessage = t("There was a problem while deleting the user");
+                    console.error("Unhandled API error", { file: "ManageUsersPage.vue", method: "onRefresh" }, { err: fatalError });
+                });
+        } finally {
             state.ajaxRunning = false;
-        });
-    };
+        }
+    }
 
-    const onUnDelete = (user: User, _index: number) => {
+    const onUnDelete = async (user: User, _index: number) => {
         Object.assign(state, defaultAjaxStateRunning);
-        api.user.unDelete(user.id).then((_response: any) => {
+        try {
+            await userService.unDelete(user.id);
             notify('success', t("userRestoredNotification", { name: user.name }));
             onRefresh();
-        }).catch((errorResponse: AxiosAPIError) => {
+        } catch (error: unknown) {
             state.ajaxErrors = true;
-            if (errorResponse.isAPIError) {
-                state.ajaxAPIErrorDetails = errorResponse.customAPIErrorDetails;
-                switch (errorResponse.status) {
-                    case 401:
-                        state.ajaxErrors = false;
-                        appBus.emitReauthRequired("ManageUsersPage.onUnDelete");
-                        break;
-                    case 404:
-                        state.ajaxErrorMessage = t("We couldn’t find the specified user");
-                        break;
-                    default:
-                        state.ajaxErrorMessage = t("There was a problem while restoring the user");
-                        break;
-                }
-            } else {
-                state.ajaxErrorMessage = t("There was a problem while restoring the user");
-                console.error(errorResponse);
-            }
-        }).finally(() => {
+            handleAPIError(error,
+                (apiError) => {
+                    switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            appBus.emitReauthRequired("ManageUsersPage.onUnDelete");
+                            break;
+                        case 404:
+                            state.ajaxErrorMessage = t("We couldn’t find the specified user");
+                            break;
+                        default:
+                            state.ajaxErrorMessage = t("There was a problem while restoring the user");
+                            break;
+                    }
+                },
+                (fatalError) => {
+                    state.ajaxErrorMessage = t("There was a problem while restoring the user");
+                    console.error("Unhandled API error", { file: "ManageUsersPage.vue", method: "onRefresh" }, { err: fatalError });
+                });
+        } finally {
             state.ajaxRunning = false;
-        });
+        }
     };
-
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
@@ -272,7 +263,7 @@
         </Pager>
         <UsersTable :users="users" :columns="columns" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @undelete="onUnDelete"
-            :sort-field="sortField" :sort-order="sortOrder" @toggle-sort="onToggleSort" />
+            :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort" />
     </n-card>
 </template>
 
