@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch, computed } from 'vue';
+    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NModal, NCard } from 'naive-ui';
@@ -15,7 +15,6 @@
     import UsersTable from '../components/UsersTable.vue';
     import UserForm from '../components/UserForm.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
-    import type { TableHeaderColumn } from '../../../shared/types/table-header-column';
     import { Sort } from '../../../shared/types/models/sort';
 
     const appBus = useAppBus();
@@ -44,6 +43,8 @@
     const showUserDialog = ref<boolean>(false);
     const userDialogMode = ref<string>("add");
 
+    const selectedUserId = ref<string | undefined>(undefined);
+
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
     });
@@ -68,9 +69,7 @@
     const onToggleSort = (field: string) => {
         sort.value.toggleSort(field);
         onRefresh();
-    }
-
-    const selectedUserId = ref<string | undefined>(undefined);
+    };
 
     const onShowAddForm = () => {
         userDialogMode.value = "add";
@@ -171,7 +170,7 @@
         } finally {
             state.ajaxRunning = false;
         }
-    }
+    };
 
     const onUnDelete = async (user: User, _index: number) => {
         Object.assign(state, defaultAjaxStateRunning);
@@ -205,33 +204,6 @@
         }
     };
 
-    const columns = computed<TableHeaderColumn[]>(() => [
-        {
-            label: t("UserTypeTableHeader"),
-            field: "isSuperUser",
-        },
-        {
-            label: t("UsernameTableHeader"),
-            field: "name",
-        },
-        {
-            label: t("EmailTableHeader"),
-            field: "email",
-        },
-        {
-            label: t("CreatedAtTableHeader"),
-            field: "createdAt"
-        },
-        {
-            label: t("UpdatedAtTableHeader"),
-            field: "updatedAt"
-        },
-        {
-            label: t("DeletedAtTableHeader"),
-            field: "deletedAt"
-        },
-    ]);
-
     onMounted(() => {
         onRefresh();
         appBus.on((event: AppBusEvent) => {
@@ -244,8 +216,6 @@
     onBeforeUnmount(() => {
         appBus.reset();
     });
-
-
 </script>
 
 <template>
@@ -261,9 +231,9 @@
                 {{ t("TotalUsersPagerLabel", { total: totalResults }) }}
             </template>
         </Pager>
-        <UsersTable :users="users" :columns="columns" :loading="state.ajaxRunning" @refresh="onRefresh"
-            @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @undelete="onUnDelete"
-            :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort" />
+        <UsersTable :users="users" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
+            @update="onShowUpdateForm" @delete="onDelete" @undelete="onUnDelete" :sort-field="sort.field"
+            :sort-order="sort.order" @toggle-sort="onToggleSort" />
     </n-card>
 </template>
 

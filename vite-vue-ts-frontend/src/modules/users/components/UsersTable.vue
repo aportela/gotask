@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { h } from 'vue';
+    import { h, computed } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { useDialog, NButtonGroup, NButton, NFlex, NEmpty, NAvatar, NIcon } from 'naive-ui';
@@ -19,7 +19,6 @@
     interface Props {
         loading: boolean;
         users: User[];
-        columns: TableHeaderColumn[]
         sortField: string;
         sortOrder: SortOrder;
     }
@@ -31,6 +30,33 @@
     const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'undelete', 'toggleSort']);
 
     const props = defineProps<Props>();
+
+    const columns = computed<TableHeaderColumn[]>(() => [
+        {
+            label: t("UserTypeTableHeader"),
+            field: "isSuperUser",
+        },
+        {
+            label: t("UsernameTableHeader"),
+            field: "name",
+        },
+        {
+            label: t("EmailTableHeader"),
+            field: "email",
+        },
+        {
+            label: t("CreatedAtTableHeader"),
+            field: "createdAt"
+        },
+        {
+            label: t("UpdatedAtTableHeader"),
+            field: "updatedAt"
+        },
+        {
+            label: t("DeletedAtTableHeader"),
+            field: "deletedAt"
+        },
+    ]);
 
     const userNameFilter = defineModel<string>("userNameFilter", {
         default: "",
@@ -101,7 +127,7 @@
     <ManageTable size="small">
         <template #thead>
             <tr class="table-header-click-action">
-                <th v-for="column in props.columns" :key="column.field" @click="onToggleSort(column.field)">
+                <th v-for="column in columns" :key="column.field" @click="onToggleSort(column.field)">
                     <n-flex justify="space-between">
                         <span>{{ column.label }}</span>
                         <TableCellHeaderSortIcon v-if="props.sortField === column.field" :order="props.sortOrder" />
