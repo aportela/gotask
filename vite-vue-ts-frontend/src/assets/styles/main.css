@@ -14,7 +14,7 @@
     cursor: pointer;
 }
 
-/* deny select text (clicking at element) on table header & menu items  */
-th, .n-menu .n-menu-item {
+/* deny select text (clicking at element) */
+th, td, .n-menu, .n-menu-item, .n-tabs-nav {
         user-select: none;
 }
