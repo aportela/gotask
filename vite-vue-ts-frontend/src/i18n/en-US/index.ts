@@ -70,6 +70,13 @@ export default {
   userUpdatedNotification: 'User "{name}" has been updated',
   userDeletedNotification: 'User "{name}" has been deleted',
   userRestoredNotification: 'User "{name}" has been restored',
+  userFormNameLabel: "Name",
+  userFormEmailLabel: "Email",
+  userFormPasswordLabel: "Password",
+  userFormNameFieldPlaceholder: "Enter name address",
+  userFormEmailFieldPlaceholder: "Enter email address",
+  userFormPasswordFieldPlaceholder: "Enter password",
+  userFormChangePasswordButtonLabel: "Change password",
 
   // project types
   "Add project type": "Add project type",

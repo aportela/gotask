@@ -70,6 +70,13 @@ export default {
   userUpdatedNotification: 'El usuario "{name}" se ha actualizado',
   userDeletedNotification: 'El usuario "{name}" se ha eliminado',
   userRestoredNotification: 'El usuario "{name}" se ha restaurado',
+  userFormNameLabel: "Nombre",
+  userFormEmailLabel: "Email",
+  userFormPasswordLabel: "Contraseña",
+  userFormNameFieldPlaceholder: "Introduzca el nombre",
+  userFormEmailFieldPlaceholder: "Introduzca la dirección de correo",
+  userFormPasswordFieldPlaceholder: "Introduzca la contraseña",
+  userFormChangePasswordButtonLabel: "Modificar contraseña",
 
   // project types
   "Add project type": "Añadir tipo de proyecto",
