@@ -1,7 +1,7 @@
 export default {
   "Sign in": "Sign in",
 
-  // common actions
+  // common actions/operations
   Actions: "Actions",
   Add: "Add",
   Update: "Update",
@@ -10,6 +10,7 @@ export default {
   Restore: "Restore",
   Cancel: "Cancel",
   Refresh: "Refresh",
+  "Do you want to continue ?": "Do you want to continue ?",
 
   // errors
   "Uncaught exception": "Uncaught exception",
@@ -17,6 +18,10 @@ export default {
   "Email not found": "Email not found",
   "Invalid password": "Invalid password",
   "Sign in error": "Sign in error",
+
+  // text filter
+  searchByNameDefaultPlaceholder: "search by name",
+  searchByEmailDefaultPlaceholder: "search by email",
 
   // date filter
   "select date": "select date",
@@ -33,6 +38,12 @@ export default {
   "Manage users": "Manage users",
   "Delete user": "Delete user",
   "Restore user": "Restore user",
+  "No users found": "No users found",
+
+  deleteUserConfirmation:
+    'You are about to delete the user "{name}" from the system.',
+  restoreUserConfirmation:
+    'You are about to restore the user "{name}" from the system.',
 
   // project types
   "Add project type": "Add project type",

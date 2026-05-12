@@ -1,7 +1,7 @@
 export default {
   "Sign in": "Iniciar sesión",
 
-  // common actions
+  // common actions/operations
   Actions: "Accións",
   Add: "Engadir",
   Update: "Modificar",
@@ -10,6 +10,7 @@ export default {
   Restore: "Restaurar",
   Cancel: "Cancelar",
   Refresh: "Recargar",
+  "Do you want to continue ?": "¿ Desexa continuar ?",
 
   // errors
   "Uncaught exception": "Excepción non controlada",
@@ -17,6 +18,10 @@ export default {
   "Email not found": "O Email non existe",
   "Invalid password": "A contrasinal é incorrecta",
   "Sign in error": "Error ó inicia-la sesión",
+
+  // text filter
+  searchByNameDefaultPlaceholder: "procurar por nome",
+  searchByEmailDefaultPlaceholder: "procurar por email",
 
   // date filter
   "select date": "seleccione unha data",
@@ -33,6 +38,11 @@ export default {
   "Manage users": "Xestión de usuarios",
   "Delete user": "Eliminar usuario",
   "Restore user": "Restaurar usuario",
+  "No users found": "No se atoparon usuarios",
+  deleteUserConfirmation:
+    'Está a punto de elimina-lo usuario "{name}" do sistema.',
+  restoreUserConfirmation:
+    'Está a punto de restaura-lo usuario "{name}" do sistema.',
 
   // project types
   "Add project type": "Engadir tipo de proxecto",
