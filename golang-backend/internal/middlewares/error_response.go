@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func writeJSONError(w http.ResponseWriter, status int, code, message, debug string) {
+func writeJSONError(w http.ResponseWriter, status int, code string, message string, debug string) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	errResp := map[string]interface{}{
