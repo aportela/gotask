@@ -176,7 +176,7 @@
                 <td class="hide-mobile">{{ user.deletedAt?.toLocaleString() }}</td>
                 <td class="text-center">
                     <n-button-group v-if="!user.deletedAt">
-                        <n-button size="small" @click="onUpdate(user, index)">
+                        <n-button size="small" @click="onUpdate(user, index)" :disabled="props.loading">
                             {{ t("Update") }}
                             <template #icon>
                                 <n-icon :size="22">
@@ -185,7 +185,7 @@
                             </template>
                         </n-button>
                         <n-button size="small" @click="onConfirmDelete(user, index)"
-                            :disabled="user.id === sessionStore.sessionUserId">
+                            :disabled="user.id === sessionStore.sessionUserId || props.loading">
                             {{ t("Delete") }}
                             <template #icon>
                                 <n-icon :size="22">
@@ -194,7 +194,7 @@
                             </template>
                         </n-button>
                     </n-button-group>
-                    <n-button size="small" @click="onConfirmUnDelete(user, index)" v-else>
+                    <n-button size="small" @click="onConfirmUnDelete(user, index)" :disabled="props.loading" v-else>
                         {{ t("Restore") }}
                         <template #icon>
                             <n-icon :size="22">
