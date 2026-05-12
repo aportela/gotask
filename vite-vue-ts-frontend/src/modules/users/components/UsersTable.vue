@@ -67,8 +67,9 @@
                     t("deleteUserConfirmation", { name: user.name }),
                     h('br'),
                     h('br'),
-                    'Do you want to continue?',
+                    t("Do you want to continue ?"),
                 ]),
+            positiveText: t("Delete"),
             negativeText: t("Cancel"),
             onPositiveClick: () => {
                 emit("delete", user, index)
@@ -85,7 +86,7 @@
                     t("restoreUserConfirmation", { name: user.name }),
                     h('br'),
                     h('br'),
-                    'Do you want to continue?',
+                    t("Do you want to continue ?"),
                 ]),
             positiveText: t("Restore"),
             negativeText: t("Cancel"),
