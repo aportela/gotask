@@ -41,6 +41,7 @@ export default {
 
   // users
   "Manage users": "Gestión de usuarios",
+  TotalUsersPagerLabel: "Total usuarios: {total}",
   UserTypeTableHeader: "Tipo",
   UsernameTableHeader: "Nombre",
   EmailTableHeader: "Email",
@@ -117,4 +118,5 @@ export default {
 
   // pager
   labelPageOfTotalPages: "Página {currentPage} de {totalPages}",
+  "Total results:": "Total resultados:",
 };

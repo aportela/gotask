@@ -11,6 +11,7 @@
     const props = defineProps<PagerProps>();
 
     const { t } = useI18n();
+
     const pageSizes = [
         {
             label: 'All results',
@@ -51,7 +52,11 @@
 <template>
     <n-flex justify="space-between" class="doneo-pagination-container">
         <div class="doneo-pagination-total-results-container">
-            <span>Total results: {{ props.totalResults }}</span>
+            <span>
+                <slot name="total-results-label" :total-results="props.totalResults">
+                    {{ t("Total results:") }} {{ props.totalResults }}
+                </slot>
+            </span>
         </div>
         <n-pagination v-model:page="currentPage" v-model:page-size="pageSize" :page-count="totalPages"
             :page-sizes="pageSizes" show-size-picker :page-slot="8">

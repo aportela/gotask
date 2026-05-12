@@ -264,7 +264,11 @@
 
     <n-card :title="t('Manage users')">
         <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
-            :total-results="users.length" />
+            :total-results="users.length">
+            <template #total-results-label="{ totalResults }">
+                {{ t("TotalUsersPagerLabel", { total: totalResults }) }}
+            </template>
+        </Pager>
         <UsersTable :users="users" :columns="columns" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @undelete="onUnDelete"
             :sort-field="sortField" :sort-order="sortOrder" @toggle-sort="onToggleSort" />
