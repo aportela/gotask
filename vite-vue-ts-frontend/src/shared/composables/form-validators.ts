@@ -41,7 +41,7 @@ export const maxLength = (max: number): Validator => {
 // TODO: i18n
 export const validEmail: Validator = (value: string) => {
   if (!value) return true;
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(value)) {
     return new Error("invalid email format");
   }
