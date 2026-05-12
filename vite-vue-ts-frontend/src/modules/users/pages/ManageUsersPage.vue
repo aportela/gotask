@@ -2,8 +2,7 @@
     import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NModal, NCard, NPagination, NFlex } from 'naive-ui';
-    //import { IconTrash, IconTrashOff, } from '@tabler/icons-vue';
+    import { NModal, NCard } from 'naive-ui';
 
     import { api } from '../../../shared/composables/api';
 
@@ -20,6 +19,7 @@
     import { User } from '../models/user';
 
     import UsersTable from '../components/UsersTable.vue';
+    import Pager from '../../../shared/components/tables/Pager.vue';
 
     const appBus = useAppBus();
 
@@ -214,37 +214,6 @@
         });
     };
 
-    const pageSizes = [
-        {
-            label: 'All results',
-            value: 0
-        },
-        {
-            label: '5 results/page',
-            value: 5
-        },
-        {
-            label: '10 results/page',
-            value: 10
-        },
-        {
-            label: '20 results/page',
-            value: 20
-        },
-        {
-            label: '50 results/page',
-            value: 50
-        },
-        {
-            label: '100 results/page',
-            value: 100
-        },
-        {
-            label: '200 results/page',
-            value: 200
-        },
-    ];
-
     const columns = [
         {
             label: "Type",
@@ -295,17 +264,8 @@
     </n-modal>
 
     <n-card :title="t('Manage users')">
-        <n-flex justify="space-between" class="pagination-container">
-            <div style="padding-top: 2px; padding-left: 2px;">
-                <span>Total users: {{ totalResuls }}</span>
-            </div>
-            <n-pagination v-model:page="currentPage" :page-count="totalPages" v-model:page-size="pageSize"
-                show-size-picker :page-sizes="pageSizes" :page-slot="8">
-                <template #prefix="{ page, pageCount }">
-                    Page {{ page }} of {{ pageCount }}
-                </template>
-            </n-pagination>
-        </n-flex>
+        <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
+            :total-results="users.length" />
         <UsersTable :users="users" :columns="columns" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onAddUser"
             @update="onUpdateUser" @delete="onDelete" @undelete="onUnDelete" :sort-field="sortField"
             :sort-order="sortOrder" @toggle-sort="onToggleSort" />
@@ -315,15 +275,6 @@
 <style lang="css">
     .avatar {
         margin-right: 4px;
-    }
-
-    .pagination-container {
-        padding: 4px;
-        background-color: rgba(250, 250, 252, 1);
-        margin-bottom: 8px;
-        border: 1px solid;
-        border-color: rgb(239, 239, 245);
-        border-radius: 3px;
     }
 
     .table-header-click-action th:not(:last-of-type) {
