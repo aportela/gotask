@@ -57,6 +57,7 @@
                 {{ t("Total results:") }} {{ props.totalResults }}
             </slot>
         </div>
+        <!-- TODO: simple property on small screens ? -->
         <n-pagination v-model:page="currentPage" v-model:page-size="pageSize" :page-count="totalPages"
             :page-sizes="pageSizes" show-size-picker :page-slot="8">
             <template #prefix="{ page, pageCount }">
