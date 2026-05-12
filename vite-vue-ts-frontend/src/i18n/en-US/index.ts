@@ -95,6 +95,8 @@ export default {
 
   // signin
   "Login to your account": "Login to your account",
+  "Enter your email address": "Enter your email address",
+  "Enter your password": "Enter your password",
 
   // other
   Error: "Error",

@@ -140,13 +140,13 @@
     <n-spin :show="state.ajaxRunning" stroke="pink">
         <n-form ref="signInFormRef" :model="signinFormValues" label-width="100px" :rules="signInFormRules">
             <n-form-item :label="t('Email')" path="email" show-feedback>
-                <n-input type="text" v-model:value="signinFormValues.email" placeholder="Enter your email address"
+                <n-input type="text" v-model:value="signinFormValues.email" :placeholder="t('Enter your email address')"
                     :disabled="state.ajaxRunning" ref="inputEmailRef" />
             </n-form-item>
             <n-form-item :label="t('Password')" path="password" show-feedback>
-                <n-input v-model:value="signinFormValues.password" type="password" placeholder="Enter your password"
-                    show-password-on="click" :disabled="state.ajaxRunning" @keydown.enter="onSignIn"
-                    ref="inputPasswordRef">
+                <n-input v-model:value="signinFormValues.password" type="password"
+                    :placeholder="t('Enter your password')" show-password-on="click" :disabled="state.ajaxRunning"
+                    @keydown.enter="onSignIn" ref="inputPasswordRef">
                     <template #password-visible-icon>
                         <n-icon :size="16" :component="IconEyeCancel" />
                     </template>
@@ -158,7 +158,7 @@
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                }}</n-button>
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>

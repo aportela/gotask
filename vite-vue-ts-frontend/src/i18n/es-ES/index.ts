@@ -95,6 +95,8 @@ export default {
 
   // signin
   "Login to your account": "Inicie sesión con su cuenta",
+  "Enter your email address": "Introduzca su correo electrónico",
+  "Enter your password": "Introduzca su contraseña",
 
   // other
   Error: "Error",

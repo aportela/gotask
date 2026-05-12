@@ -95,6 +95,8 @@ export default {
 
   // signin
   "Login to your account": "Inicie sesión coa sua conta",
+  "Enter your email address": "Introduzca o seu correo electrónico",
+  "Enter your password": "Introduzca o seu contrasinal",
 
   // other
   Error: "Error",
