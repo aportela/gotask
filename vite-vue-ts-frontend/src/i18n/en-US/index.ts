@@ -119,4 +119,6 @@ export default {
   // pager
   labelPageOfTotalPages: "Page {currentPage} of {totalPages}",
   "Total results:": "Total results:",
+  "All results": "All results",
+  labelSelectorResultsPage: "{number} results/page",
 };

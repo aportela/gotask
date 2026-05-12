@@ -1,7 +1,9 @@
 <script setup lang="ts">
+    import { computed } from "vue";
     import { useI18n } from "vue-i18n";
 
     import { NFlex, NPagination } from 'naive-ui';
+    import type { PaginationSizeOption } from "naive-ui";
 
     interface PagerProps {
         totalResults: number;
@@ -12,41 +14,40 @@
 
     const { t } = useI18n();
 
-    const pageSizes = [
+    const pageSizes = computed<PaginationSizeOption[]>(() => [
         {
-            label: 'All results',
+            label: t("All results"),
             value: 0
         },
         {
-            label: '5 results/page',
+            label: t("labelSelectorResultsPage", { number: 5 }),
             value: 5
         },
         {
-            label: '10 results/page',
+            label: t("labelSelectorResultsPage", { number: 10 }),
             value: 10
         },
         {
-            label: '20 results/page',
+            label: t("labelSelectorResultsPage", { number: 20 }),
             value: 20
         },
         {
-            label: '50 results/page',
+            label: t("labelSelectorResultsPage", { number: 50 }),
             value: 50
         },
         {
-            label: '100 results/page',
+            label: t("labelSelectorResultsPage", { number: 100 }),
             value: 100
         },
         {
-            label: '200 results/page',
+            label: t("labelSelectorResultsPage", { number: 200 }),
             value: 200
         },
-    ];
+    ]);
 
     const currentPage = defineModel<number>("currentPage");
 
     const pageSize = defineModel<number>("pageSize");
-
 </script>
 
 <template>
