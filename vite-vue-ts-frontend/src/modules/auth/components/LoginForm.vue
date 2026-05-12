@@ -87,7 +87,7 @@
 
     const onSubmit = async () => {
         if (signinFormValues.value.email && signinFormValues.value.password) {
-            serverErrors.value = {}
+            serverErrors.value = {};
             Object.assign(state, defaultAjaxStateRunning);
             try {
                 const payload: SignInRequest = {
@@ -192,7 +192,7 @@
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                }}</n-button>
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
