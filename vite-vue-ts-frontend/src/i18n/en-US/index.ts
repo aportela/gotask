@@ -34,16 +34,39 @@ export default {
   "This month": "This month",
   "This year": "This year",
 
+  // user type filter
+  "All users": "All users",
+  "Only administrators": "Only administrators",
+  "Only users": "Only users",
+
   // users
   "Manage users": "Manage users",
+  UserTypeTableHeader: "Type",
+  UsernameTableHeader: "Name",
+  EmailTableHeader: "Email",
+  CreatedAtTableHeader: "Created at",
+  UpdatedAtTableHeader: "Updated at",
+  DeletedAtTableHeader: "Deleted at",
+  AdminTypeValue: "Administrator",
+  UserTypeValue: "User",
   "Delete user": "Delete user",
   "Restore user": "Restore user",
   "No users found": "No users found",
-
   deleteUserConfirmation:
     'You are about to delete the user "{name}" from the system.',
   restoreUserConfirmation:
     'You are about to restore the user "{name}" from the system.',
+  "There was a problem while refreshing the user list":
+    "There was a problem while refreshing the user list",
+  "We couldn’t find the specified user": "We couldn’t find the specified user",
+  "There was a problem while deleting the user":
+    "There was a problem while deleting the user",
+  "There was a problem while restoring the user":
+    "There was a problem while restoring the user",
+  userAddedNotification: 'User "{name}" has been added',
+  userUpdatedNotification: 'User "{name}" has been updated',
+  userDeletedNotification: 'User "{name}" has been deleted',
+  userRestoredNotification: 'User "{name}" has been restored',
 
   // project types
   "Add project type": "Add project type",

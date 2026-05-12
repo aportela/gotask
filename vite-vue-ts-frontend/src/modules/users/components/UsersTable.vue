@@ -161,7 +161,7 @@
                             :component="user.isSuperUser ? IconUserKey : IconUser">
                             <IconUserKey color="red" />
                         </n-icon>
-                        {{ user.isSuperUser ? t("Administrator") : t("User") }}
+                        {{ t(user.isSuperUser ? "AdminTypeValue" : "UserTypeValue") }}
                     </span>
                 </td>
                 <td>

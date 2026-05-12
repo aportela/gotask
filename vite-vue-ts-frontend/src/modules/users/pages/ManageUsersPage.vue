@@ -1,12 +1,12 @@
 <script setup lang="ts">
-    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch } from 'vue';
+    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch, computed } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NModal, NCard } from 'naive-ui';
 
     import { api } from '../../../shared/composables/api';
 
-    import { type AjaxStateInterface, defaultAjaxState } from '../../../shared/types/ajaxState';
+    import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import type { AxiosAPIError } from '../../../shared/composables/axios';
     import { useLoadingStore } from '../../../stores/loading';
     import { useNotify } from '../../../shared/composables/notification';
@@ -50,6 +50,10 @@
     const showUserDialog = ref<boolean>(false);
     const userDialogMode = ref<string>("add");
 
+    watch(state, (newValue: AjaxStateInterface) => {
+        loadingStore.set(newValue.ajaxRunning);
+    });
+
     watch([filterByUsername, filterByEmail, userFilterType], () => {
         currentPage.value = 1;
     });
@@ -67,7 +71,6 @@
         onRefresh();
     });
 
-
     const onToggleSort = (field: string) => {
         if (field !== sortField.value) {
             sortField.value = field;
@@ -78,9 +81,37 @@
         onRefresh();
     }
 
+    const selectedUserId = ref<string | undefined>(undefined);
+
+    const onShowAddForm = () => {
+        userDialogMode.value = "add";
+        showUserDialog.value = true;
+    };
+
+    const onShowUpdateForm = (user: User, _index: number) => {
+        selectedUserId.value = user.id;
+        userDialogMode.value = "update";
+        showUserDialog.value = true;
+    };
+
+    const onAdd = (user: User) => {
+        showUserDialog.value = false;
+        notify('success', t("userAddedNotification", { name: user.name }));
+        onRefresh();
+    };
+
+    const onUpdate = (user: User) => {
+        showUserDialog.value = false;
+        notify('success', t("userUpdatedNotification", { name: user.name }));
+        onRefresh();
+    };
+
+    const onCancel = () => {
+        showUserDialog.value = false;
+    };
+
     const onRefresh = async () => {
-        state.ajaxRunning = true;
-        loadingStore.set(true);
+        Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload = {
                 pager: {
@@ -118,45 +149,13 @@
         }
         finally {
             state.ajaxRunning = false;
-            loadingStore.set(false);
         }
     };
 
-    const selectedUserId = ref<string | undefined>(undefined);
-
-    const onAddUser = () => {
-        userDialogMode.value = "add";
-        showUserDialog.value = true;
-    };
-
-    const onUpdateUser = (user: User, _index: number) => {
-        selectedUserId.value = user.id;
-        userDialogMode.value = "update";
-        showUserDialog.value = true;
-    };
-
-
-    const onAdd = () => {
-        showUserDialog.value = false;
-        notify('success', t("User added"))
-        onRefresh();
-    };
-
-    const onUpdate = () => {
-        showUserDialog.value = false;
-        notify('success', t("User updated"))
-        onRefresh();
-    };
-
-    const onCancel = () => {
-        showUserDialog.value = false;
-    };
-
     const onDelete = (user: User, _index: number) => {
-        Object.assign(state, defaultAjaxState);
-        state.ajaxRunning = true;
+        Object.assign(state, defaultAjaxStateRunning);
         api.user.delete(user.id).then((_response: any) => {
-            notify('success', t(`User ${user.name} has been deleted`))
+            notify('success', t("userDeletedNotification", { name: user.name }));
             onRefresh();
         }).catch((errorResponse: AxiosAPIError) => {
             state.ajaxErrors = true;
@@ -171,11 +170,11 @@
                         state.ajaxErrorMessage = t("We couldn’t find the specified user");
                         break;
                     default:
-                        state.ajaxErrorMessage = t("There was a problem deleting the user data");
+                        state.ajaxErrorMessage = t("There was a problem while deleting the user");
                         break;
                 }
             } else {
-                state.ajaxErrorMessage = t("There was a problem deleting the user data");
+                state.ajaxErrorMessage = t("There was a problem while deleting the user");
                 console.error(errorResponse);
             }
         }).finally(() => {
@@ -184,10 +183,9 @@
     };
 
     const onUnDelete = (user: User, _index: number) => {
-        Object.assign(state, defaultAjaxState);
-        state.ajaxRunning = true;
+        Object.assign(state, defaultAjaxStateRunning);
         api.user.unDelete(user.id).then((_response: any) => {
-            notify('success', t(`User ${user.name} has been restored`))
+            notify('success', t("userRestoredNotification", { name: user.name }));
             onRefresh();
         }).catch((errorResponse: AxiosAPIError) => {
             state.ajaxErrors = true;
@@ -202,11 +200,11 @@
                         state.ajaxErrorMessage = t("We couldn’t find the specified user");
                         break;
                     default:
-                        state.ajaxErrorMessage = t("There was a problem undeleting the user data");
+                        state.ajaxErrorMessage = t("There was a problem while restoring the user");
                         break;
                 }
             } else {
-                state.ajaxErrorMessage = t("There was a problem undeleting the user data");
+                state.ajaxErrorMessage = t("There was a problem while restoring the user");
                 console.error(errorResponse);
             }
         }).finally(() => {
@@ -214,32 +212,32 @@
         });
     };
 
-    const columns = [
+    const columns = computed(() => [
         {
-            label: "Type",
+            label: t("UserTypeTableHeader"),
             field: "isSuperUser",
         },
         {
-            label: "Name",
+            label: t("UsernameTableHeader"),
             field: "name",
         },
         {
-            label: "Email",
+            label: t("EmailTableHeader"),
             field: "email",
         },
         {
-            label: "Created at",
+            label: t("CreatedAtTableHeader"),
             field: "createdAt"
         },
         {
-            label: "Updated at",
+            label: t("UpdatedAtTableHeader"),
             field: "updatedAt"
         },
         {
-            label: "Deleted at",
+            label: t("DeletedAtTableHeader"),
             field: "deletedAt"
         },
-    ];
+    ]);
 
     onMounted(() => {
         onRefresh();
@@ -251,8 +249,7 @@
     });
 
     onBeforeUnmount(() => {
-        // TODO: manage this
-        //bus.off("reAuthSucess");
+        appBus.reset();
     });
 
 </script>
@@ -266,9 +263,9 @@
     <n-card :title="t('Manage users')">
         <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
             :total-results="users.length" />
-        <UsersTable :users="users" :columns="columns" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onAddUser"
-            @update="onUpdateUser" @delete="onDelete" @undelete="onUnDelete" :sort-field="sortField"
-            :sort-order="sortOrder" @toggle-sort="onToggleSort" />
+        <UsersTable :users="users" :columns="columns" :loading="state.ajaxRunning" @refresh="onRefresh"
+            @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @undelete="onUnDelete"
+            :sort-field="sortField" :sort-order="sortOrder" @toggle-sort="onToggleSort" />
     </n-card>
 </template>
 

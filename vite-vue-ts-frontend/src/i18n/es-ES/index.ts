@@ -34,8 +34,21 @@ export default {
   "This month": "Este mes",
   "This year": "Este año",
 
+  // user type filter
+  "All users": "Todos los usuarios",
+  "Only administrators": "Sólo administradores",
+  "Only users": "Sólo usuarios",
+
   // users
   "Manage users": "Gestión de usuarios",
+  UserTypeTableHeader: "Tipo",
+  UsernameTableHeader: "Nombre",
+  EmailTableHeader: "Email",
+  CreatedAtTableHeader: "Creado en",
+  UpdatedAtTableHeader: "Actualizado en",
+  DeletedAtTableHeader: "Eliminado en",
+  AdminTypeValue: "Administrador",
+  UserTypeValue: "Usuario",
   "Delete user": "Eliminar usuario",
   "Restore user": "Restaurar usuario",
   "No users found": "No se han encontrado usuarios",
@@ -43,6 +56,17 @@ export default {
     'Está a punto de eliminar el usuario "{name}" del sistema.',
   restoreUserConfirmation:
     'Está a punto de restaurar el usuario "{name}" del sistema.',
+  "There was a problem while refreshing the user list":
+    "Se ha producido un error durante la búsqueda de usuarios",
+  "We couldn’t find the specified user": "El usuario especificado no existe",
+  "There was a problem while deleting the user":
+    "Se ha producido un error al eliminar el usuario",
+  "There was a problem while restoring the user":
+    "Se ha producido un error al restaurar el usuario",
+  userAddedNotification: 'El usuario "{name}" se ha añadido',
+  userUpdatedNotification: 'El usuario "{name}" se ha actualizado',
+  userDeletedNotification: 'El usuario "{name}" se ha eliminado',
+  userRestoredNotification: 'El usuario "{name}" se ha restaurado',
 
   // project types
   "Add project type": "Añadir tipo de proyecto",
