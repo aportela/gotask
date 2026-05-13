@@ -31,9 +31,16 @@ export type UpdateRequest = {
   isSuperUser: boolean;
 };
 
+type SearchRequestFilter = {
+  type?: number;
+  name?: string;
+  email?: string;
+};
+
 export type SearchRequest = {
   pager: PagerRequest;
   order: Order;
+  filter?: SearchRequestFilter;
 };
 
 export type UserResponse = {

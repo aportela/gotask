@@ -16,3 +16,9 @@ type UserDTO struct {
 	DeletedAt    sql.NullInt64 `db:"deleted_at"`
 	IsSuperUser  bool          `db:"is_super_user"`
 }
+
+type SearchUsersFilterDTO struct {
+	Type  int
+	Name  string
+	Email string
+}

@@ -136,6 +136,17 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] invalid request payload: %w", err))
 		return
 	}
+	if request.Filter != nil {
+		if request.Filter.Type != nil {
+
+		}
+		if request.Filter.Name != nil {
+
+		}
+		if request.Filter.Email != nil {
+
+		}
+	}
 	users, pagerResult, err := h.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,

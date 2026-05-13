@@ -22,12 +22,15 @@ type patchRequest struct {
 }
 
 type FilterRequest struct {
+	Type  *int    `json:"type"`
+	Name  *string `json:"name"`
+	Email *string `json:"email"`
 }
 
 type searchRequest struct {
 	Pager  handlers.PagerRequest `json:"pager"`
 	Order  handlers.OrderRequest `json:"order"`
-	Filter FilterRequest         `json:"filter"`
+	Filter *FilterRequest        `json:"filter"`
 }
 
 type userResponse struct {

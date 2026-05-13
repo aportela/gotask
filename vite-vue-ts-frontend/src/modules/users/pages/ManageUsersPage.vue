@@ -48,11 +48,9 @@
         loadingStore.set(newValue.ajaxRunning);
     });
 
-    /*
     watch([nameFilter, emailFilter, typeFilter], () => {
         currentPage.value = 1;
     });
-    */
 
     watch(pageSize, () => {
         if (currentPage.value != 1) {
@@ -109,6 +107,11 @@
                 order: {
                     field: sort.value.field,
                     sort: sort.value.order,
+                },
+                filter: {
+                    type: typeFilter.value,
+                    name: nameFilter.value,
+                    email: emailFilter.value,
                 }
             };
             const response = await userService.search(payload);
