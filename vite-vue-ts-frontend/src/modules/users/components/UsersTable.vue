@@ -10,6 +10,7 @@
     import { type SortOrder } from '../../../shared/types/common';
     import { renderIcon } from '../../../shared/composables/naive-ui-icon';
     import ManageTable from '../../../shared/components/tables/ManageTable.vue';
+    import { type UserTypeFilter, UserTypeFilterValue } from '../types/filter-user-type';
     import FilterUserTypeSelector from '../components/FilterUserTypeSelector.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
     import DateFilter from '../../../shared/components/forms/DateFilter.vue';
@@ -57,6 +58,10 @@
             field: "deletedAt"
         },
     ]);
+
+    const userTypeFiter = defineModel<UserTypeFilter>("userTypeFilter", {
+        default: UserTypeFilterValue.None,
+    });
 
     const userNameFilter = defineModel<string>("userNameFilter", {
         default: "",
@@ -137,7 +142,7 @@
             </tr>
             <tr class="hide-mobile">
                 <th>
-                    <FilterUserTypeSelector clearable size="small" />
+                    <FilterUserTypeSelector size="small" v-model:value="userTypeFiter" />
                 </th>
                 <th>
                     <TextFilterInput clearable size="small" :placeholder="t('searchByNameDefaultPlaceholder')"

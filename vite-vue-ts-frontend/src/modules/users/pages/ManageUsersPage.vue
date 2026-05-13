@@ -12,6 +12,7 @@
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { UserResponse } from '../types/dto';
     import { User } from '../models/user';
+    import { type UserTypeFilter, UserTypeFilterValue } from '../types/filter-user-type';
     import UsersTable from '../components/UsersTable.vue';
     import UserForm from '../components/UserForm.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
@@ -29,9 +30,9 @@
 
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
-    const filterByUsername = ref<string | null>(null);
-    const filterByEmail = ref<string | null>(null);
-    const userFilterType = ref<number | null>(0);
+    const nameFilter = ref<string>("");
+    const emailFilter = ref<string>("");
+    const typeFilter = ref<UserTypeFilter>(UserTypeFilterValue.None);
 
     const currentPage = ref(1);
     const pageSize = ref(10);
@@ -47,9 +48,11 @@
         loadingStore.set(newValue.ajaxRunning);
     });
 
-    watch([filterByUsername, filterByEmail, userFilterType], () => {
+    /*
+    watch([nameFilter, emailFilter, typeFilter], () => {
         currentPage.value = 1;
     });
+    */
 
     watch(pageSize, () => {
         if (currentPage.value != 1) {
@@ -238,7 +241,8 @@
         </Pager>
         <UsersTable :users="users" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @undelete="onUnDelete" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:user-type-filter="typeFilter"
+            v-model:user-name-filter="nameFilter" v-model:email-filter="emailFilter" />
     </n-card>
 </template>
 
