@@ -106,6 +106,8 @@ export default {
 
   // auth
   "Login to your account": "Inicie sesión con su cuenta",
+  "Session lost... re-auth required":
+    "La sesión se ha perdido... se requiere re-autentificación",
   loginFormEmailLabel: "Email",
   loginFormPasswordLabel: "Contraseña",
   loginFormEmailFieldPlaceholder: "Introduzca su correo electrónico",
