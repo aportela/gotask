@@ -14,13 +14,20 @@
         clearable: false,
     });
 
+    const emit = defineEmits(['keydownEnter']);
+
     const model = defineModel<string>({
         default: "",
     });
+
+    function onKeyDownEnter() {
+        emit('keydownEnter');
+    }
 </script>
 
 <template>
-    <n-input :size="props.size" v-model:value="model" :placeholder="props.placeholder" :clearable="props.clearable">
+    <n-input :size="props.size" v-model:value="model" :placeholder="props.placeholder" :clearable="props.clearable"
+        @keydown.enter="onKeyDownEnter">
         <template #prefix>
             <n-icon>
                 <IconSearch />
