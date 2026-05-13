@@ -7,7 +7,7 @@
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { useLoadingStore } from '../../../stores/loading';
     import { useNotify } from '../../../shared/composables/notification';
-    import { useAppBus, type AppBusEvent } from '../../../shared/composables/bus';
+    import { appBus } from '../../../shared/composables/bus';
     import { userService } from '../services/user';
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { UserResponse } from '../types/dto';
@@ -16,8 +16,6 @@
     import UserForm from '../components/UserForm.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
     import { Sort } from '../../../shared/types/models/sort';
-
-    const appBus = useAppBus();
 
     const { notify } = useNotify();
 
@@ -122,7 +120,7 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
-                            appBus.emitReauthRequired("ManageUsersPage.onRefresh");
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageUsersPage.onRefresh" } });
                             break;
                         default:
                             state.ajaxErrorMessage = t("There was a problem while refreshing the user list");
@@ -152,7 +150,7 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
-                            appBus.emitReauthRequired("ManageUsersPage.onDelete");
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageUsersPage.onDelete" } });
                             break;
                         case 404:
                             state.ajaxErrorMessage = t("We couldn’t find the specified user");
@@ -184,7 +182,7 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
-                            appBus.emitReauthRequired("ManageUsersPage.onUnDelete");
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageUsersPage.onUnDelete" } });
                             break;
                         case 404:
                             state.ajaxErrorMessage = t("We couldn’t find the specified user");
@@ -203,17 +201,25 @@
         }
     };
 
+    let stopBusReauthListener: () => void;
+
     onMounted(() => {
         onRefresh();
-        appBus.on((event: AppBusEvent) => {
-            if (event.type == "reauthValidNotify" && event.to.includes("ManageUsersPage.onRefresh")) {
+        stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
+            if (payload.to.includes("ManageUsersPage.onRefresh")) {
                 onRefresh();
+            } else if (payload.to.includes("ManageUsersPage.onRefresh")) {
+                // TODO: missing user/index param at this point
+                //onDelete();
+            } else if (payload.to.includes("ManageUsersPage.onRefresh")) {
+                // TODO: missing user/index param at this point
+                //onUnDelete();
             }
         });
     });
 
     onBeforeUnmount(() => {
-        appBus.reset();
+        stopBusReauthListener();
     });
 </script>
 

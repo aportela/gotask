@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, reactive, computed, onMounted, type CSSProperties, nextTick, watch } from 'vue';
+    import { ref, reactive, computed, onMounted, type CSSProperties, nextTick, watch, onBeforeUnmount } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon, type InputInst, NTooltip } from 'naive-ui';
@@ -13,6 +13,7 @@
     import { isValidEmail } from '../../../shared/composables/form-validators';
     import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import type { FormMode } from '../types/form-mode';
+    import { appBus } from '../../../shared/composables/bus';
 
     interface UserFormProps {
         mode: FormMode;
@@ -146,15 +147,15 @@
             handleAPIError(error,
                 (apiError) => {
                     switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "UserForm.onGet" } });
+                            break;
                         case 404:
                             state.ajaxErrorMessage = t("userFormEmailNotFoundError");
                             break;
-                        case 401:
-                            state.ajaxErrors = false;
-                            //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-                            break;
                         default:
-                            state.ajaxErrorMessage = t("API Error: fatal error");
+                            state.ajaxErrorMessage = t("There was a problem while loading the user data");
                             break;
                     }
                     userFormRef.value?.restoreValidation();
@@ -184,16 +185,12 @@
             handleAPIError(error,
                 (apiError) => {
                     switch (apiError.response?.status) {
-                        /*
                         case 401:
-                        state.ajaxErrors = false;
-                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-                        break;
-                    case 409:
-                        // TODO: conflict (invalid id || name ?)
-                        state.ajaxErrorMessage = t("There was a problem adding the user data");
-                        break;
-                        */
+                            state.ajaxErrors = false;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "UserForm.onAdd" } });
+                            break;
+                        case 409:
+                        // conflict (invalid id || name ?)
                         default:
                             state.ajaxErrorMessage = t("There was a problem while adding the user data");
                             break;
@@ -228,16 +225,12 @@
             handleAPIError(error,
                 (apiError) => {
                     switch (apiError.response?.status) {
-                        /*
                         case 401:
-                        state.ajaxErrors = false;
-                        //bus.emit("reAuthRequired", { emitter: "DocumentPage.onRefresh" });
-                        break;
-                    case 409:
-                        // TODO: conflict (invalid id || name ?)
-                        state.ajaxErrorMessage = t("There was a problem adding the user data");
-                        break;
-                    */
+                            state.ajaxErrors = false;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "UserForm.onUpdate" } });
+                            break;
+                        case 409:
+                        // conflict (invalid id || name ?)
                         default:
                             state.ajaxErrorMessage = t("There was a problem while updating the user data");
                             break;
@@ -254,7 +247,23 @@
         }
     };
 
+    let stopBusReauthListener: () => void;
+
     onMounted(() => {
+
+        stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
+            if (payload.to.includes("UserForm.onGet")) {
+                if (props.userId) {
+                    onGet(props.userId);
+                } else {
+                    console.error(`TODO: missing userId property for ${props.mode} action`);
+                }
+            } else if (payload.to.includes("UserForm.onAdd")) {
+                onAdd();
+            } else if (payload.to.includes("UserForm.onUpdate")) {
+                onUpdate()
+            }
+        });
         if (props.mode === "update") {
             showPasswordField.value = false;
             if (props.userId) {
@@ -263,6 +272,10 @@
                 console.error(`TODO: missing userId property for ${props.mode} action`);
             }
         }
+    });
+
+    onBeforeUnmount(() => {
+        stopBusReauthListener();
     });
 </script>
 
