@@ -52,3 +52,11 @@ func ToUserArray(users []UserDTO) []domain.User {
 	}
 	return results
 }
+
+func SearchUsersFilterToDTO(filter domain.SearchUsersFilter) SearchUsersFilterDTO {
+	return SearchUsersFilterDTO{
+		Name:              filter.Name,
+		Email:             filter.Email,
+		AdministratorFlag: filter.AdministratorFlag,
+	}
+}

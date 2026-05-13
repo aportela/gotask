@@ -136,15 +136,20 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] invalid request payload: %w", err))
 		return
 	}
+	filter := domain.SearchUsersFilter{
+		Name:              nil,
+		Email:             nil,
+		AdministratorFlag: nil,
+	}
 	if request.Filter != nil {
-		if request.Filter.Type != nil {
-
-		}
 		if request.Filter.Name != nil {
-
+			filter.Name = request.Filter.Name
 		}
 		if request.Filter.Email != nil {
-
+			filter.Email = request.Filter.Email
+		}
+		if request.Filter.AdministratorFlag != nil {
+			filter.AdministratorFlag = request.Filter.AdministratorFlag
 		}
 	}
 	users, pagerResult, err := h.service.Search(r.Context(),
@@ -156,6 +161,7 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 			Field: request.Order.Field,
 			Sort:  string(request.Order.Sort),
 		},
+		filter,
 	)
 	if pagerResult.TotalResults > 0 {
 	}

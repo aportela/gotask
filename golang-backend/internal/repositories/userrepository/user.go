@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/aportela/doneo/internal/browser"
@@ -183,7 +184,8 @@ func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context
 }
 
 func (userRepository *userRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter SearchUsersFilterDTO) ([]UserDTO, browser.Result, error) {
-	var args []any
+	var filterArgs []any
+	var queryArgs []any
 	sqlQuery := `
 		SELECT
 			U.id, U.email, U.name, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
@@ -192,9 +194,9 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	var field string
 	switch order.Field {
 	case "name":
-		field = "U.name"
+		field = "U.name COLLATE NOCASE"
 	case "email":
-		field = "U.email"
+		field = "U.email COLLATE NOCASE"
 	case "createdAt":
 		field = "U.created_at"
 	case "updatedAt":
@@ -204,7 +206,7 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	case "isSuperUser":
 		field = "U.is_super_user"
 	default:
-		field = "U.name"
+		field = "U.name COLLATE NOCASE"
 	}
 	var sort string
 	switch order.Sort {
@@ -215,28 +217,49 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	default:
 		sort = "ASC"
 	}
-	sqlOrder := fmt.Sprintf(" ORDER BY %s COLLATE NOCASE %s ", field, sort)
+	sqlOrder := fmt.Sprintf(" ORDER BY %s %s ", field, sort)
+	sqlWhere := ""
+	var sqlWhereConditions []string
+	if filter.Name != nil {
+		sqlWhereConditions = append(sqlWhereConditions, "U.name LIKE ?")
+		filterArgs = append(filterArgs, "%"+*filter.Name+"%")
+	}
+	if filter.Email != nil {
+		sqlWhereConditions = append(sqlWhereConditions, "U.email LIKE ?")
+		filterArgs = append(filterArgs, "%"+*filter.Email+"%")
+	}
+	if filter.AdministratorFlag != nil {
+		sqlWhereConditions = append(sqlWhereConditions, "U.is_super_user = ?")
+		if *filter.AdministratorFlag {
+			filterArgs = append(filterArgs, 1)
+		} else {
+			filterArgs = append(filterArgs, 0)
+		}
+	}
+	if len(sqlWhereConditions) > 0 {
+		sqlWhere = " WHERE " + strings.Join(sqlWhereConditions, " AND ")
+	}
+	queryArgs = append(queryArgs, filterArgs...)
 	var sqlLimit string
 	if pager.Enabled() {
 		sqlLimit = " LIMIT ? OFFSET ? "
-		args = append(args, pager.Limit(), pager.Offset())
+		queryArgs = append(queryArgs, pager.Limit(), pager.Offset())
 	} else {
 		sqlLimit = ""
 	}
-	sqlQuery = fmt.Sprintf("%s %s %s ", sqlQuery, sqlOrder, sqlLimit)
-	rows, err := userRepository.database.QueryContext(ctx, sqlQuery, args...)
+	sqlQuery = fmt.Sprintf("%s %s %s %s ", sqlQuery, sqlWhere, sqlOrder, sqlLimit)
+	rows, err := userRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}
 	defer rows.Close()
-	var users []UserDTO
+	users := make([]UserDTO, 0)
 	for rows.Next() {
 		var user UserDTO
-		var isSuperUser byte
+		var isSuperUser bool
 		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &isSuperUser); err != nil {
 			return nil, browser.Result{}, err
 		}
-		user.IsSuperUser = isSuperUser == 1
 		users = append(users, user)
 	}
 	if err := rows.Err(); err != nil {
@@ -246,13 +269,16 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	var totalResults int
 
 	if pager.Enabled() {
+		sqlCountQuery := `
+			SELECT
+				COUNT(*) AS total_users
+			FROM users U
+		`
+		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
 		err = userRepository.database.QueryRowContext(
 			ctx,
-			`
-				SELECT
-					COUNT(*) AS total_users
-				FROM users
-			`,
+			sqlCountQuery,
+			filterArgs...,
 		).Scan(&totalResults)
 
 		if err != nil {

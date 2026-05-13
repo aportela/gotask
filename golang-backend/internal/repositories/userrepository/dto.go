@@ -18,7 +18,7 @@ type UserDTO struct {
 }
 
 type SearchUsersFilterDTO struct {
-	Type  int
-	Name  string
-	Email string
+	Name              *string
+	Email             *string
+	AdministratorFlag *bool
 }

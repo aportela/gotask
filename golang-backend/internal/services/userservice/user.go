@@ -20,7 +20,7 @@ type UserService interface {
 	UnDelete(ctx context.Context, id string) error
 	Purge(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (domain.User, error)
-	Search(ctx context.Context, pager browser.Params, order browser.Order) ([]domain.User, browser.Result, error)
+	Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchUsersFilter) ([]domain.User, browser.Result, error)
 }
 
 type userService struct {
@@ -95,8 +95,8 @@ func (s *userService) Get(ctx context.Context, id string) (domain.User, error) {
 	return userrepository.DTOToUser(user), nil
 }
 
-func (s *userService) Search(ctx context.Context, pager browser.Params, order browser.Order) ([]domain.User, browser.Result, error) {
-	users, pagerResult, err := s.repository.Search(ctx, pager, order)
+func (s *userService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchUsersFilter) ([]domain.User, browser.Result, error) {
+	users, pagerResult, err := s.repository.Search(ctx, pager, order, userrepository.SearchUsersFilterToDTO(filter))
 	if err != nil {
 		return nil, browser.Result{}, fmt.Errorf("[UserService] failed to search users: %w", err)
 	}

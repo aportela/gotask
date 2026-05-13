@@ -109,9 +109,9 @@
                     sort: sort.value.order,
                 },
                 filter: {
-                    type: typeFilter.value,
                     name: nameFilter.value,
                     email: emailFilter.value,
+                    administratorFlag: typeFilter.value == UserTypeFilterValue.None ? undefined : (typeFilter.value === UserTypeFilterValue.OnlyAdministrators ? true : false),
                 }
             };
             const response = await userService.search(payload);

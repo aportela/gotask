@@ -22,9 +22,9 @@ type patchRequest struct {
 }
 
 type FilterRequest struct {
-	Type  *int    `json:"type"`
-	Name  *string `json:"name"`
-	Email *string `json:"email"`
+	Name              *string `json:"name"`
+	Email             *string `json:"email"`
+	AdministratorFlag *bool   `json:"administratorFlag"`
 }
 
 type searchRequest struct {

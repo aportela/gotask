@@ -26,3 +26,9 @@ func (u *User) IsActive() bool {
 func (u *User) IsAdmin() bool {
 	return u.IsSuperUser
 }
+
+type SearchUsersFilter struct {
+	Name              *string
+	Email             *string
+	AdministratorFlag *bool
+}
