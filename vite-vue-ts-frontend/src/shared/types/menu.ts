@@ -39,6 +39,7 @@ const renderIcon = (icon: Component) => {
 
 export { menuOptionIconSize };
 
+// TODO: i18n
 export function useMenu() {
   const lightTheme = ref(true);
   const darkTheme = ref(false);
@@ -150,9 +151,18 @@ export function useMenu() {
             icon: renderIcon(IconUsers)(menuOptionIconSize),
           },
           {
-            label: "Roles",
+            label: () =>
+              h(
+                RouterLink,
+                {
+                  to: {
+                    name: "manageRoles",
+                    params: {},
+                  },
+                },
+                { default: () => "Roles" },
+              ),
             key: "roles",
-            disabled: true,
             icon: renderIcon(IconUserCheck)(menuOptionIconSize),
           },
           {

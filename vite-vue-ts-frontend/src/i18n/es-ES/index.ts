@@ -89,6 +89,9 @@ export default {
   userFormChangePasswordButtonLabel: "Modificar contraseña",
   userFormEmailNotFoundError: "El email no existe",
 
+  // user roles
+  "Manage roles": "Gestión de roles",
+
   // project types
   "Add project type": "Añadir tipo de proyecto",
   "Update project type": "Actualizar tipo de proyecto",
