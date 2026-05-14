@@ -73,9 +73,9 @@
         display: flex;
         align-items: center;
         padding: 4px;
-        background-color: rgba(250, 250, 252, 1);
-        border: 1px solid rgb(239, 239, 245);
-        border-radius: 3px;
+        background-color: var(--n-th-color);
+        border: 1px solid var(--n-border-color);
+        border-radius: var(--n-border-radius);
     }
 
     .doneo-pagination-total-results-label {
