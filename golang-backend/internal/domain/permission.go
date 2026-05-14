@@ -1,11 +1,12 @@
 package domain
 
-type Permission int
+type Permission uint8
 
 const (
-	Create Permission = 1 << iota
-	Update
-	Delete
-	View
-	// TODO: List, Execute, Admin/Full ?
+	PermissionCreate Permission = 1 << iota
+	PermissionUpdate
+	PermissionDelete
+	PermissionView
+	PermissionList
+	PermissionExecute
 )
