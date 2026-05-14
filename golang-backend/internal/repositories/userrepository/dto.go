@@ -17,8 +17,16 @@ type UserDTO struct {
 	IsSuperUser  bool          `db:"is_super_user"`
 }
 
+type TimestampFilter struct {
+	From *int
+	To   *int
+}
+
 type SearchUsersFilterDTO struct {
 	Name              *string
 	Email             *string
 	AdministratorFlag *bool
+	CreatedAt         *TimestampFilter
+	UpdatedAt         *TimestampFilter
+	DeletedAt         *TimestampFilter
 }

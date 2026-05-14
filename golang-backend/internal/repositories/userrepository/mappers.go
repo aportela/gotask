@@ -53,10 +53,28 @@ func ToUserArray(users []UserDTO) []domain.User {
 	return results
 }
 
+func TimestampFilterToDTO(filter *domain.TimestampFilter) *TimestampFilter {
+	if filter != nil {
+		f := TimestampFilter{}
+		if filter.From != nil {
+			f.From = filter.From
+		}
+		if filter.To != nil {
+			f.To = filter.To
+		}
+		return (&f)
+	} else {
+		return nil
+	}
+}
+
 func SearchUsersFilterToDTO(filter domain.SearchUsersFilter) SearchUsersFilterDTO {
 	return SearchUsersFilterDTO{
 		Name:              filter.Name,
 		Email:             filter.Email,
 		AdministratorFlag: filter.AdministratorFlag,
+		CreatedAt:         TimestampFilterToDTO(filter.CreatedAt),
+		UpdatedAt:         TimestampFilterToDTO(filter.UpdatedAt),
+		DeletedAt:         TimestampFilterToDTO(filter.DeletedAt),
 	}
 }
