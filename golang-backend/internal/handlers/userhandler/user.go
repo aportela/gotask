@@ -190,7 +190,5 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 		},
 		filter,
 	)
-	if pagerResult.TotalResults > 0 {
-	}
 	handlers.ToHandlerJSONResponse(w, ToSearchResponse(users, pagerResult), err)
 }
