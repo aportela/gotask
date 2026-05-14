@@ -54,24 +54,13 @@ func ToUserArray(users []UserDTO) []domain.User {
 	return results
 }
 
-func TimestampFilterToDTO(filter *domain.TimestampFilter) *repositories.TimestampFilter {
-	if filter == nil {
-		return nil
-	}
-
-	return &repositories.TimestampFilter{
-		From: filter.From,
-		To:   filter.To,
-	}
-}
-
 func SearchUsersFilterToDTO(filter domain.SearchUsersFilter) SearchUsersFilterDTO {
 	return SearchUsersFilterDTO{
 		Name:              filter.Name,
 		Email:             filter.Email,
 		AdministratorFlag: filter.AdministratorFlag,
-		CreatedAt:         TimestampFilterToDTO(filter.CreatedAt),
-		UpdatedAt:         TimestampFilterToDTO(filter.UpdatedAt),
-		DeletedAt:         TimestampFilterToDTO(filter.DeletedAt),
+		CreatedAt:         repositories.TimestampFilterToDTO(filter.CreatedAt),
+		UpdatedAt:         repositories.TimestampFilterToDTO(filter.UpdatedAt),
+		DeletedAt:         repositories.TimestampFilterToDTO(filter.DeletedAt),
 	}
 }
