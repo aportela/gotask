@@ -245,7 +245,7 @@
 
     <n-card :title="t('Manage users')">
         <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
-            :total-results="totalResults">
+            :total-results="totalResults" class="doneo-pager-container">
             <template #total-results-label="{ totalResults }">
                 {{ t("TotalUsersPagerLabel", { total: totalResults }) }}
             </template>
@@ -259,4 +259,8 @@
     </n-card>
 </template>
 
-<style lang="css"></style>
+<style lang="css">
+    .doneo-pager-container {
+        margin-bottom: 4px;
+    }
+</style>
