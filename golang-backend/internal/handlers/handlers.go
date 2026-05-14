@@ -48,3 +48,8 @@ func ToHandlerJSONResponse(w http.ResponseWriter, data any, err error, statusCod
 		}
 	}
 }
+
+type TimestampFilter struct {
+	From *int `json:"from"`
+	To   *int `json:"to"`
+}
