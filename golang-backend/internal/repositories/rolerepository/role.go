@@ -32,7 +32,7 @@ func (roleRepository *roleRepository) Add(ctx context.Context, role RoleDTO) err
 	_, err := roleRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO roles (id, email, name, permission_bitmask)
+            INSERT INTO roles (id, name, permission_bitmask)
 			VALUES (?, ?, ?)
         `,
 		role.ID,
