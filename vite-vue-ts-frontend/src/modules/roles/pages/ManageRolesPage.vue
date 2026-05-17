@@ -13,6 +13,7 @@
     import type { RoleResponse, SearchRequest } from '../types/dto';
     import { Role } from '../models/role';
     import RolesTable from '../components/RolesTable.vue';
+    import { type PermissionTypeFilter, PermissionTypeFilterValue } from '../types/filter-permission-type';
     import RoleForm from '../components/RoleForm.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
     import { Sort } from '../../../shared/types/models/sort';
@@ -30,6 +31,13 @@
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
     const nameFilter = ref<string>("");
+    const createPermissionFilter = ref<PermissionTypeFilter>(PermissionTypeFilterValue.All);
+    const updatePermissionFilter = ref<PermissionTypeFilter>(PermissionTypeFilterValue.All);
+    const deletePermissionFilter = ref<PermissionTypeFilter>(PermissionTypeFilterValue.All);
+    const viewPermissionFilter = ref<PermissionTypeFilter>(PermissionTypeFilterValue.All);
+    const listPermissionFilter = ref<PermissionTypeFilter>(PermissionTypeFilterValue.All);
+    const executePermissionFilter = ref<PermissionTypeFilter>(PermissionTypeFilterValue.All);
+
     const currentPage = ref(1);
     const pageSize = ref(10);
     const totalResults = ref(0);
@@ -103,12 +111,12 @@
                 filter: {
                     name: nameFilter.value,
                     permissions: {
-                        allowCreate: true,
-                        allowUpdate: undefined,
-                        allowDelete: undefined,
-                        allowView: undefined,
-                        allowList: undefined,
-                        allowExecute: undefined,
+                        allowCreate: createPermissionFilter.value == PermissionTypeFilterValue.All ? undefined : (createPermissionFilter.value === PermissionTypeFilterValue.Allowed ? true : false),
+                        allowUpdate: updatePermissionFilter.value == PermissionTypeFilterValue.All ? undefined : (updatePermissionFilter.value === PermissionTypeFilterValue.Allowed ? true : false),
+                        allowDelete: deletePermissionFilter.value == PermissionTypeFilterValue.All ? undefined : (deletePermissionFilter.value === PermissionTypeFilterValue.Allowed ? true : false),
+                        allowView: viewPermissionFilter.value == PermissionTypeFilterValue.All ? undefined : (viewPermissionFilter.value === PermissionTypeFilterValue.Allowed ? true : false),
+                        allowList: listPermissionFilter.value == PermissionTypeFilterValue.All ? undefined : (listPermissionFilter.value === PermissionTypeFilterValue.Allowed ? true : false),
+                        allowExecute: executePermissionFilter.value == PermissionTypeFilterValue.All ? undefined : (executePermissionFilter.value === PermissionTypeFilterValue.Allowed ? true : false),
                     }
                 }
             };
@@ -207,7 +215,12 @@
         </Pager>
         <RolesTable :roles="roles" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter"
+            v-model:create-permission-filter="createPermissionFilter"
+            v-model:update-permission-filter="updatePermissionFilter"
+            v-model:delete-permission-filter="deletePermissionFilter"
+            v-model:view-permission-filter="viewPermissionFilter" v-model:list-permission-filter="listPermissionFilter"
+            v-model:execute-permission-filter="executePermissionFilter" />
     </n-card>
 </template>
 

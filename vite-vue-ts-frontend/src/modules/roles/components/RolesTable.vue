@@ -11,6 +11,8 @@
     import { renderIcon } from '../../../shared/composables/naive-ui-icon';
     import ManageTable from '../../../shared/components/tables/ManageTable.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
+    import { type PermissionTypeFilter, PermissionTypeFilterValue } from '../types/filter-permission-type';
+    import FilterPermissionTypeSelector from '../components/FilterPermissionTypeSelector.vue';
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
 
     interface Props {
@@ -72,6 +74,30 @@
 
     const roleNameFilter = defineModel<string>("roleNameFilter", {
         default: "",
+    });
+
+    const createPermissionFilter = defineModel<PermissionTypeFilter>("createPermissionFilter", {
+        default: PermissionTypeFilterValue.All,
+    });
+
+    const updatePermissionFilter = defineModel<PermissionTypeFilter>("updatePermissionFilter", {
+        default: PermissionTypeFilterValue.All,
+    });
+
+    const deletePermissionFilter = defineModel<PermissionTypeFilter>("deletePermissionFilter", {
+        default: PermissionTypeFilterValue.All,
+    });
+
+    const viewPermissionFilter = defineModel<PermissionTypeFilter>("viewPermissionFilter", {
+        default: PermissionTypeFilterValue.All,
+    });
+
+    const listPermissionFilter = defineModel<PermissionTypeFilter>("listPermissionFilter", {
+        default: PermissionTypeFilterValue.All,
+    });
+
+    const executePermissionFilter = defineModel<PermissionTypeFilter>("executePermissionFilter", {
+        default: PermissionTypeFilterValue.All,
     });
 
     const dialog = useDialog();
@@ -137,12 +163,23 @@
                         v-model:value="roleNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th>
+                    <FilterPermissionTypeSelector v-model="createPermissionFilter" />
                 </th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th>
+                    <FilterPermissionTypeSelector v-model="updatePermissionFilter" />
+                </th>
+                <th>
+                    <FilterPermissionTypeSelector v-model="deletePermissionFilter" />
+                </th>
+                <th>
+                    <FilterPermissionTypeSelector v-model="viewPermissionFilter" />
+                </th>
+                <th>
+                    <FilterPermissionTypeSelector v-model="listPermissionFilter" />
+                </th>
+                <th>
+                    <FilterPermissionTypeSelector v-model="executePermissionFilter" />
+                </th>
                 <th class="doneo-text-center">
                     <n-button-group size="small">
                         <n-button @click="onRefresh">
