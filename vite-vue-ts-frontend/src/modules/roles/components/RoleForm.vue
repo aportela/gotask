@@ -2,7 +2,7 @@
     import { ref, reactive, computed, onMounted, type CSSProperties, watch, onBeforeUnmount } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon } from 'naive-ui';
+    import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon, NGrid, NGi, NSwitch } from 'naive-ui';
     import { IconCancel, IconDeviceFloppy, IconUser, IconUserEdit, IconUserPlus } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
@@ -32,12 +32,12 @@
                 "id": "",
                 name: "",
                 permissions: {
-                    allowCreate: true,
-                    allowUpdate: true,
-                    allowDelete: true,
-                    allowView: true,
-                    allowList: true,
-                    allowExecute: true,
+                    allowCreate: false,
+                    allowUpdate: false,
+                    allowDelete: false,
+                    allowView: false,
+                    allowList: false,
+                    allowExecute: false,
                 }
             }
         )
@@ -140,14 +140,7 @@
         try {
             const payload: AddRequest = {
                 name: role.value.name,
-                permissions: {
-                    allowCreate: true,
-                    allowUpdate: true,
-                    allowDelete: true,
-                    allowView: true,
-                    allowList: true,
-                    allowExecute: true,
-                }
+                permissions: role.value.permissions,
             };
             const addedRole: RoleResponse = await roleService.add(payload);
             emit('add', addedRole)
@@ -185,17 +178,10 @@
             const payload: UpdateRequest = {
                 id: role.value.id,
                 name: role.value.name,
-                permissions: {
-                    allowCreate: true,
-                    allowUpdate: true,
-                    allowDelete: true,
-                    allowView: true,
-                    allowList: true,
-                    allowExecute: true,
-                }
+                permissions: role.value.permissions,
             };
-            const updatedUser: RoleResponse = await roleService.update(payload);
-            emit('update', updatedUser)
+            const updatedRole: RoleResponse = await roleService.update(payload);
+            emit('update', updatedRole)
         } catch (error: unknown) {
             state.ajaxErrors = true;
             handleAPIError(error,
@@ -228,7 +214,7 @@
     onMounted(() => {
 
         stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
-            if (payload.to.includes("UserForm.onGet")) {
+            if (payload.to.includes("RoleForm.onGet")) {
                 if (props.roleId) {
                     onGet(props.roleId);
                 } else {
@@ -276,6 +262,70 @@
                     </template>
                 </n-input>
             </n-form-item>
+            <h4>Permissions</h4>
+
+            <n-grid :y-gap="8" :cols="2">
+                <n-gi>
+                    <n-switch v-model:value="role.permissions.allowCreate">
+                        <template #checked>
+                            Create allowed
+                        </template>
+                        <template #unchecked>
+                            Create not allowed
+                        </template>
+                    </n-switch>
+                </n-gi>
+                <n-gi>
+                    <n-switch v-model:value="role.permissions.allowUpdate">
+                        <template #checked>
+                            Update allowed
+                        </template>
+                        <template #unchecked>
+                            Update not allowed
+                        </template>
+                    </n-switch>
+                </n-gi>
+                <n-gi>
+                    <n-switch v-model:value="role.permissions.allowDelete">
+                        <template #checked>
+                            Delete allowed
+                        </template>
+                        <template #unchecked>
+                            Delete not allowed
+                        </template>
+                    </n-switch>
+                </n-gi>
+                <n-gi>
+                    <n-switch v-model:value="role.permissions.allowView">
+                        <template #checked>
+                            View allowed
+                        </template>
+                        <template #unchecked>
+                            View not allowed
+                        </template>
+                    </n-switch>
+                </n-gi>
+                <n-gi>
+                    <n-switch v-model:value="role.permissions.allowList">
+                        <template #checked>
+                            List allowed
+                        </template>
+                        <template #unchecked>
+                            List not allowed
+                        </template>
+                    </n-switch>
+                </n-gi>
+                <n-gi>
+                    <n-switch v-model:value="role.permissions.allowExecute">
+                        <template #checked>
+                            Execute allowed
+                        </template>
+                        <template #unchecked>
+                            Execute not allowed
+                        </template>
+                    </n-switch>
+                </n-gi>
+            </n-grid>
         </n-form>
         <template #footer v-if="state.ajaxErrorMessage">
             <RemoteAPIAlert type="error" :title="t('Error')" :message="state.ajaxErrorMessage" />
