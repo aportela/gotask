@@ -32,7 +32,7 @@ func (roleRepository *roleRepository) Add(ctx context.Context, role RoleDTO) err
 	_, err := roleRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO roles (id, name, permission_bitmask)
+            INSERT INTO roles (id, name, permissions_bitmask)
 			VALUES (?, ?, ?)
         `,
 		role.ID,
@@ -48,7 +48,7 @@ func (roleRepository *roleRepository) Update(ctx context.Context, role RoleDTO) 
 		`
             UPDATE roles SET
 				name = ?,
-				permission_bitmask = ?
+				permissions_bitmask = ?
 			WHERE id = ?
         `,
 		role.Name,
@@ -76,7 +76,7 @@ func (roleRepository *roleRepository) Get(ctx context.Context, id string) (RoleD
 		ctx,
 		`
             SELECT
-                R.id, R.name, R.permission_bitmask
+                R.id, R.name, R.permissions_bitmask
             FROM roles R
             WHERE R.id = ?
         `,
@@ -95,7 +95,7 @@ func (roleRepository *roleRepository) Search(ctx context.Context, pager browser.
 	var queryArgs []any
 	sqlQuery := `
 		SELECT
-			R.id, R.name, R.permission_bitmask
+			R.id, R.name, R.permissions_bitmask
 		FROM roles R
 	`
 	var field string
@@ -122,11 +122,11 @@ func (roleRepository *roleRepository) Search(ctx context.Context, pager browser.
 		filterArgs = append(filterArgs, "%"+*filter.Name+"%")
 	}
 	if filter.RequiredPermissionsBitmask != nil {
-		sqlWhereConditions = append(sqlWhereConditions, "(R.permission_bitmask & ?) = ?")
+		sqlWhereConditions = append(sqlWhereConditions, "(R.permissions_bitmask & ?) = ?")
 		filterArgs = append(filterArgs, filter.RequiredPermissionsBitmask, filter.RequiredPermissionsBitmask)
 	}
 	if filter.ForbiddenPermissionsBitmask != nil {
-		sqlWhereConditions = append(sqlWhereConditions, "(R.permission_bitmask & ?) = 0")
+		sqlWhereConditions = append(sqlWhereConditions, "(R.permissions_bitmask & ?) = 0")
 		filterArgs = append(filterArgs, filter.ForbiddenPermissionsBitmask)
 	}
 	if len(sqlWhereConditions) > 0 {

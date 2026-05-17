@@ -18,7 +18,7 @@ var installSchemaQueries = []string{
 		CREATE TABLE IF NOT EXISTS roles (
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			name TEXT NOT NULL UNIQUE CHECK(length(name) BETWEEN 1 AND 32),
-			permission_bitmask INTEGER NOT NULL DEFAULT 0 CHECK(permission_bitmask >= 0),
+			permissions_bitmask INTEGER NOT NULL DEFAULT 0 CHECK(permissions_bitmask >= 0),
 			PRIMARY KEY (id)
 		) STRICT;
 	`,
