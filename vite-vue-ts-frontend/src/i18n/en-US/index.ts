@@ -76,6 +76,7 @@ export default {
   userFormNameLabel: "Name",
   userFormEmailLabel: "Email",
   userFormPasswordLabel: "Password",
+  userFormPermissionsLabel: "Permissions",
   userFormNameFieldPlaceholder: "Enter name",
   userFormEmailFieldPlaceholder: "Enter email address",
   userFormPasswordFieldPlaceholder: "Enter password",
@@ -88,6 +89,8 @@ export default {
   userFormPasswordFieldTooShortError: "Password is too short",
   userFormChangePasswordButtonLabel: "Change password",
   userFormEmailNotFoundError: "Email not found",
+  superUserPermission: "Super user",
+  normalUserPermission: "Normal user",
 
   // user roles
   "Manage roles": "Manage roles",

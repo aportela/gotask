@@ -43,17 +43,19 @@ func generateRandomEmail(fullName string) string {
 
 func getRandomUser() domain.User {
 	name := getRandomUserName()
+	permissionsBitmask := domain.PermissionsBitmask(0)
+	//permissionsBitmask.AddPermission(domain.UserPermissionAdmin)
 	return domain.User{
 		UserBase: domain.UserBase{
 			ID:   utils.UUID(),
 			Name: name,
 		},
-		Email:       generateRandomEmail(name),
-		Password:    "secret",
-		CreatedAt:   time.Now(),
-		UpdatedAt:   nil,
-		DeletedAt:   nil,
-		IsSuperUser: false,
+		Email:              generateRandomEmail(name),
+		Password:           "secret",
+		CreatedAt:          time.Now(),
+		UpdatedAt:          nil,
+		DeletedAt:          nil,
+		PermissionsBitmask: permissionsBitmask,
 	}
 }
 

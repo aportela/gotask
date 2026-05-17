@@ -7,25 +7,39 @@ import (
 	"github.com/aportela/doneo/internal/utils"
 )
 
+func permissionsToDomainPermissionsBitmask(permissions userPermissions) domain.PermissionsBitmask {
+	var permissionsBitmask domain.PermissionsBitmask
+	if permissions.IsSuperUser {
+		permissionsBitmask.AddPermission(domain.UserPermissionAdmin)
+	}
+	return permissionsBitmask
+}
+
 func addRequestToUser(request addRequest) domain.User {
 	return domain.User{
-		UserBase:    domain.UserBase{Name: request.Name},
-		Email:       request.Email,
-		Password:    request.Password,
-		IsSuperUser: request.IsSuperUser,
+		UserBase:           domain.UserBase{Name: request.Name},
+		Email:              request.Email,
+		Password:           request.Password,
+		PermissionsBitmask: permissionsToDomainPermissionsBitmask(request.Permissions),
 	}
 }
 
 func updateRequestToUser(request updateRequest) domain.User {
 	user := domain.User{
-		UserBase:    domain.UserBase{Name: request.Name},
-		Email:       request.Email,
-		IsSuperUser: request.IsSuperUser,
+		UserBase:           domain.UserBase{Name: request.Name},
+		Email:              request.Email,
+		PermissionsBitmask: permissionsToDomainPermissionsBitmask(request.Permissions),
 	}
 	if request.Password != nil {
 		user.Password = *request.Password
 	}
 	return user
+}
+
+func domainPermissionsBitmaskToPermissions(permissionsBitmask domain.PermissionsBitmask) userPermissions {
+	return userPermissions{
+		IsSuperUser: permissionsBitmask.HasPermission(domain.UserPermissionAdmin),
+	}
 }
 
 func userToResponse(user domain.User) userResponse {
@@ -36,7 +50,7 @@ func userToResponse(user domain.User) userResponse {
 		CreatedAt:   user.CreatedAt.UnixMilli(),
 		UpdatedAt:   utils.TimePtrToInt64Ptr(user.UpdatedAt),
 		DeletedAt:   utils.TimePtrToInt64Ptr(user.DeletedAt),
-		IsSuperUser: user.IsSuperUser,
+		Permissions: domainPermissionsBitmaskToPermissions(user.PermissionsBitmask),
 		AvatarURL:   user.AvatarURL,
 	}
 }

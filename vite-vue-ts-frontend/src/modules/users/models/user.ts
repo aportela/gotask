@@ -14,12 +14,16 @@ class IDate {
   };
 }
 
+interface UserPermissions {
+  isSuperUser: boolean;
+}
+
 export class User {
   id: string;
   name: string;
   email: string;
   password: string | null;
-  isSuperUser: boolean;
+  permissions: UserPermissions;
   createdAt: IDate;
   updatedAt: IDate | null;
   deletedAt: IDate | null;
@@ -30,7 +34,9 @@ export class User {
     this.name = data.name;
     this.email = data.email;
     this.password = null;
-    this.isSuperUser = data.isSuperUser;
+    this.permissions = {
+      isSuperUser: data.permissions.isSuperUser,
+    };
     this.createdAt = new IDate(data.createdAt);
     this.updatedAt = data.updatedAt !== null ? new IDate(data.updatedAt) : null;
     this.deletedAt = data.deletedAt !== null ? new IDate(data.deletedAt) : null;
@@ -42,7 +48,9 @@ export class User {
       id: this.id,
       name: this.name,
       email: this.email,
-      isSuperUser: this.isSuperUser,
+      permissions: {
+        isSuperUser: this.permissions.isSuperUser,
+      },
       createdAt: this.createdAt.msTimestamp,
       updatedAt: this.updatedAt?.msTimestamp ?? null,
       deletedAt: this.deletedAt?.msTimestamp ?? null,

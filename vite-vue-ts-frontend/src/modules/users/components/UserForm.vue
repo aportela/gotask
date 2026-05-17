@@ -2,7 +2,7 @@
     import { ref, reactive, computed, onMounted, type CSSProperties, nextTick, watch, onBeforeUnmount } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NSpin, NCard, NInput, NFlex, NButton, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon, type InputInst, NTooltip } from 'naive-ui';
+    import { NSpin, NCard, NInput, NFlex, NButton, NRadio, NRadioGroup, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon, type InputInst, NTooltip } from 'naive-ui';
     import { IconCancel, IconDeviceFloppy, IconEye, IconEyeCancel, IconMail, IconUser, IconUserEdit, IconUserPlus, IconKey } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
@@ -28,7 +28,7 @@
     const { t } = useI18n();
 
     const user = ref<User>(
-        new User({ "id": "", name: "", email: "", isSuperUser: false, createdAt: 0, updatedAt: 0, deletedAt: 0, avatarUrl: "" })
+        new User({ "id": "", name: "", email: "", permissions: { isSuperUser: false }, createdAt: 0, updatedAt: 0, deletedAt: 0, avatarUrl: "" })
     );
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
@@ -176,7 +176,9 @@
             const payload: AddRequest = {
                 name: user.value.name,
                 email: user.value.email,
-                isSuperUser: user.value.isSuperUser,
+                permissions: {
+                    isSuperUser: user.value.permissions.isSuperUser,
+                }
             };
             const addedUser: UserResponse = await userService.add(payload);
             emit('add', addedUser)
@@ -216,7 +218,9 @@
                 name: user.value.name,
                 password: user.value.password || undefined,
                 email: user.value.email,
-                isSuperUser: user.value.isSuperUser,
+                permissions: {
+                    isSuperUser: user.value.permissions.isSuperUser,
+                }
             };
             const updatedUser: UserResponse = await userService.update(payload);
             emit('update', updatedUser)
@@ -332,7 +336,15 @@
                     </template>
                 </n-input>
                 <n-button v-else @click="onShowPasswordFormItem" block>{{ t("userFormChangePasswordButtonLabel")
-                    }}</n-button>
+                }}</n-button>
+            </n-form-item>
+            <n-form-item :label="t('userFormPermissionsLabel')">
+                <n-radio-group v-model:value="user.permissions.isSuperUser" name="radiogroup">
+                    <n-radio :value="true" name="aaa" :label="t('superUserPermission')">
+                    </n-radio>
+                    <n-radio :value="false" name="aaa" :label="t('normalUserPermission')">
+                    </n-radio>
+                </n-radio-group>
             </n-form-item>
         </n-form>
         <template #footer v-if="state.ajaxErrorMessage">

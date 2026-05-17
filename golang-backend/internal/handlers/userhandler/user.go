@@ -137,9 +137,10 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filter := domain.SearchUsersFilter{
-		Name:              nil,
-		Email:             nil,
-		AdministratorFlag: nil,
+		Name:                        nil,
+		Email:                       nil,
+		RequiredPermissionsBitmask:  nil,
+		ForbiddenPermissionsBitmask: nil,
 	}
 	if request.Filter != nil {
 		if request.Filter.Name != nil {
@@ -148,8 +149,18 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 		if request.Filter.Email != nil {
 			filter.Email = request.Filter.Email
 		}
-		if request.Filter.AdministratorFlag != nil {
-			filter.AdministratorFlag = request.Filter.AdministratorFlag
+		if request.Filter.Permissions != nil {
+			requiredPermissionsBitmask := domain.PermissionsBitmask(0)
+			forbiddenPermissionsBitmask := domain.PermissionsBitmask(0)
+			if request.Filter.Permissions.IsSuperUser != nil {
+				if *request.Filter.Permissions.IsSuperUser {
+					requiredPermissionsBitmask.AddPermission(domain.UserPermissionAdmin)
+					filter.RequiredPermissionsBitmask = &requiredPermissionsBitmask
+				} else {
+					forbiddenPermissionsBitmask.AddPermission(domain.UserPermissionAdmin)
+					filter.ForbiddenPermissionsBitmask = &forbiddenPermissionsBitmask
+				}
+			}
 		}
 		if request.Filter.CreatedAt != nil {
 			filter.CreatedAt = &domain.TimestampFilter{From: nil, To: nil}

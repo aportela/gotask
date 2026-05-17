@@ -34,14 +34,10 @@ func NewUserRepository(database database.Database) UserRepository {
 }
 
 func (userRepository *userRepository) Add(ctx context.Context, user UserDTO) error {
-	adminFlag := 0
-	if user.IsSuperUser {
-		adminFlag = 1
-	}
 	_, err := userRepository.database.ExecContext(
 		ctx,
 		`
-            INSERT INTO users (id, email, name, password_hash, created_at, updated_at, deleted_at, is_super_user)
+            INSERT INTO users (id, email, name, password_hash, created_at, updated_at, deleted_at, permissions_bitmask)
 			VALUES (?, ?, ?, ?, ?, NULL, NULL, ?)
         `,
 		user.ID,
@@ -49,7 +45,7 @@ func (userRepository *userRepository) Add(ctx context.Context, user UserDTO) err
 		user.Name,
 		user.PasswordHash,
 		user.CreatedAt,
-		adminFlag,
+		user.PermissionsBitmask,
 	)
 	return err
 }
@@ -57,10 +53,6 @@ func (userRepository *userRepository) Add(ctx context.Context, user UserDTO) err
 func (userRepository *userRepository) Update(ctx context.Context, user UserDTO) error {
 	var query string
 	var args []any
-	adminFlag := 0
-	if user.IsSuperUser {
-		adminFlag = 1
-	}
 	if user.PasswordHash != "" {
 		query = `
 			UPDATE users SET
@@ -68,18 +60,18 @@ func (userRepository *userRepository) Update(ctx context.Context, user UserDTO) 
 				name = ?,
 				password_hash = ?,
 				updated_at = ?,
-				is_super_user = ?
+				permissions_bitmask = ?
 			WHERE id = ?`
-		args = append(args, user.Email, user.Name, user.PasswordHash, user.UpdatedAt, adminFlag, user.ID)
+		args = append(args, user.Email, user.Name, user.PasswordHash, user.UpdatedAt, user.PermissionsBitmask, user.ID)
 	} else {
 		query = `
 			UPDATE users SET
 				email = ?,
 				name = ?,
 				updated_at = ?,
-				is_super_user = ?
+				permissions_bitmask = ?
 			WHERE id = ?`
-		args = append(args, user.Email, user.Name, user.UpdatedAt, adminFlag, user.ID)
+		args = append(args, user.Email, user.Name, user.UpdatedAt, user.PermissionsBitmask, user.ID)
 	}
 	_, err := userRepository.database.ExecContext(ctx, query, args...)
 	return err
@@ -141,45 +133,41 @@ func (userRepository *userRepository) Purge(ctx context.Context, id string) erro
 
 func (userRepository *userRepository) Get(ctx context.Context, id string) (UserDTO, error) {
 	var user UserDTO
-	var isSuperUser byte
 	err := userRepository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
-                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
+                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.deleted_at, U.permissions_bitmask
             FROM users U
             WHERE U.id = ?
         `,
-		id).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &isSuperUser)
+		id).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &user.PermissionsBitmask)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return UserDTO{}, domain.ErrNotFound
 		}
 		return UserDTO{}, err
 	}
-	user.IsSuperUser = isSuperUser == 1
 	return user, err
 }
 
 func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (UserDTO, error) {
 	var user UserDTO
-	var isSuperUser byte
 	err := userRepository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
-                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
+                U.id, U.email, U.name, U.password_hash, U.created_at, U.updated_at, U.deleted_at, U.permissions_bitmask
             FROM users U
             WHERE U.email = ?
         `,
-		email).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &isSuperUser)
+		email).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &user.PermissionsBitmask)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return UserDTO{}, domain.ErrNotFound
 		}
 		return UserDTO{}, err
 	}
-	user.IsSuperUser = isSuperUser == 1
 	return user, err
 }
 
@@ -188,7 +176,7 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	var queryArgs []any
 	sqlQuery := `
 		SELECT
-			U.id, U.email, U.name, U.created_at, U.updated_at, U.deleted_at, U.is_super_user
+			U.id, U.email, U.name, U.created_at, U.updated_at, U.deleted_at, U.permissions_bitmask
 		FROM users U
 	`
 	var field string
@@ -204,7 +192,7 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	case "deletedAt":
 		field = "U.deleted_at"
 	case "isSuperUser":
-		field = "U.is_super_user"
+		field = "U.permissions_bitmask"
 	default:
 		field = "U.name COLLATE NOCASE"
 	}
@@ -228,13 +216,13 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 		sqlWhereConditions = append(sqlWhereConditions, "U.email LIKE ?")
 		filterArgs = append(filterArgs, "%"+*filter.Email+"%")
 	}
-	if filter.AdministratorFlag != nil {
-		sqlWhereConditions = append(sqlWhereConditions, "U.is_super_user = ?")
-		if *filter.AdministratorFlag {
-			filterArgs = append(filterArgs, 1)
-		} else {
-			filterArgs = append(filterArgs, 0)
-		}
+	if filter.RequiredPermissionsBitmask != nil {
+		sqlWhereConditions = append(sqlWhereConditions, "(U.permissions_bitmask & ?) = ?")
+		filterArgs = append(filterArgs, filter.RequiredPermissionsBitmask, filter.RequiredPermissionsBitmask)
+	}
+	if filter.ForbiddenPermissionsBitmask != nil {
+		sqlWhereConditions = append(sqlWhereConditions, "(U.permissions_bitmask & ?) = 0")
+		filterArgs = append(filterArgs, filter.ForbiddenPermissionsBitmask)
 	}
 	if filter.CreatedAt != nil {
 		if filter.CreatedAt.From != nil {
@@ -286,8 +274,7 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	users := make([]UserDTO, 0)
 	for rows.Next() {
 		var user UserDTO
-		var isSuperUser bool
-		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &isSuperUser); err != nil {
+		if err := rows.Scan(&user.ID, &user.Email, &user.Name, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &user.PermissionsBitmask); err != nil {
 			return nil, browser.Result{}, err
 		}
 		users = append(users, user)

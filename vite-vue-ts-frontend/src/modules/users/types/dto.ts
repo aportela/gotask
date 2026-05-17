@@ -18,10 +18,14 @@ export type UserRequest = {
 };
 */
 
+interface UserPermissions {
+  isSuperUser: boolean;
+}
+
 export type AddRequest = {
   name: string;
   email: string;
-  isSuperUser: boolean;
+  permissions: UserPermissions;
 };
 
 export type UpdateRequest = {
@@ -29,13 +33,18 @@ export type UpdateRequest = {
   name: string;
   email: string;
   password?: string;
-  isSuperUser: boolean;
+  permissions: UserPermissions;
 };
+
+interface SearchRequestUserPermissions {
+  isSuperUser?: boolean;
+}
 
 type SearchRequestFilter = {
   type?: number;
   name?: string;
   email?: string;
+  permissions?: SearchRequestUserPermissions;
   createdAt?: TimestampRange;
   updatedAt?: TimestampRange;
   deletedAt?: TimestampRange;
@@ -51,7 +60,7 @@ export type UserResponse = {
   id: string;
   name: string;
   email: string;
-  isSuperUser: boolean;
+  permissions: UserPermissions;
   createdAt: number;
   updatedAt: number | null;
   deletedAt: number | null;

@@ -17,13 +17,13 @@ func UserBaseToDTO(user domain.UserBase) UserBaseDTO {
 
 func UserToDTO(user domain.User) UserDTO {
 	return UserDTO{
-		UserBaseDTO:  UserBaseToDTO(user.UserBase),
-		Email:        user.Email,
-		PasswordHash: user.PasswordHash,
-		CreatedAt:    user.CreatedAt.UnixMilli(),
-		UpdatedAt:    utils.TimePtrToSQLNullInt64(user.UpdatedAt),
-		DeletedAt:    utils.TimePtrToSQLNullInt64(user.DeletedAt),
-		IsSuperUser:  user.IsSuperUser,
+		UserBaseDTO:        UserBaseToDTO(user.UserBase),
+		Email:              user.Email,
+		PasswordHash:       user.PasswordHash,
+		CreatedAt:          user.CreatedAt.UnixMilli(),
+		UpdatedAt:          utils.TimePtrToSQLNullInt64(user.UpdatedAt),
+		DeletedAt:          utils.TimePtrToSQLNullInt64(user.DeletedAt),
+		PermissionsBitmask: uint8(user.PermissionsBitmask),
 	}
 }
 
@@ -37,12 +37,12 @@ func DTOToUserBase(user UserBaseDTO) domain.UserBase {
 
 func DTOToUser(user UserDTO) domain.User {
 	return domain.User{
-		UserBase:    DTOToUserBase(user.UserBaseDTO),
-		Email:       user.Email,
-		CreatedAt:   time.UnixMilli(user.CreatedAt),
-		UpdatedAt:   utils.SQLNullInt64ToTimePtr(user.UpdatedAt),
-		DeletedAt:   utils.SQLNullInt64ToTimePtr(user.DeletedAt),
-		IsSuperUser: user.IsSuperUser,
+		UserBase:           DTOToUserBase(user.UserBaseDTO),
+		Email:              user.Email,
+		CreatedAt:          time.UnixMilli(user.CreatedAt),
+		UpdatedAt:          utils.SQLNullInt64ToTimePtr(user.UpdatedAt),
+		DeletedAt:          utils.SQLNullInt64ToTimePtr(user.DeletedAt),
+		PermissionsBitmask: domain.PermissionsBitmask(user.PermissionsBitmask),
 	}
 }
 
@@ -56,11 +56,12 @@ func ToUserArray(users []UserDTO) []domain.User {
 
 func SearchUsersFilterToDTO(filter domain.SearchUsersFilter) SearchUsersFilterDTO {
 	return SearchUsersFilterDTO{
-		Name:              filter.Name,
-		Email:             filter.Email,
-		AdministratorFlag: filter.AdministratorFlag,
-		CreatedAt:         repositories.TimestampFilterToDTO(filter.CreatedAt),
-		UpdatedAt:         repositories.TimestampFilterToDTO(filter.UpdatedAt),
-		DeletedAt:         repositories.TimestampFilterToDTO(filter.DeletedAt),
+		Name:                        filter.Name,
+		Email:                       filter.Email,
+		RequiredPermissionsBitmask:  (*uint8)(filter.RequiredPermissionsBitmask),
+		ForbiddenPermissionsBitmask: (*uint8)(filter.ForbiddenPermissionsBitmask),
+		CreatedAt:                   repositories.TimestampFilterToDTO(filter.CreatedAt),
+		UpdatedAt:                   repositories.TimestampFilterToDTO(filter.UpdatedAt),
+		DeletedAt:                   repositories.TimestampFilterToDTO(filter.DeletedAt),
 	}
 }

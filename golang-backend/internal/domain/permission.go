@@ -2,18 +2,12 @@ package domain
 
 type PermissionsBitmask uint8
 
-// ProjectView|ProjectUpdate|ProjectDelete|TaskCreate|TaskUpdate|TaskDelete|TaskView
-const (
-	PermissionCreate PermissionsBitmask = 1 << iota
-	PermissionUpdate
-	PermissionDelete
-	PermissionView
-	PermissionList
-	PermissionExecute
-)
-
 func (p PermissionsBitmask) HasPermission(v PermissionsBitmask) bool {
 	return p&v == v
+}
+
+func (p PermissionsBitmask) HasAny(v PermissionsBitmask) bool {
+	return p&v != 0
 }
 
 func (p *PermissionsBitmask) AddPermission(v PermissionsBitmask) {
@@ -23,3 +17,26 @@ func (p *PermissionsBitmask) AddPermission(v PermissionsBitmask) {
 func (p *PermissionsBitmask) RemovePermission(v PermissionsBitmask) {
 	*p &^= v
 }
+
+func (p *PermissionsBitmask) TogglePermission(v PermissionsBitmask) {
+	*p ^= v
+}
+
+func (p *PermissionsBitmask) Clear() {
+	*p = 0
+}
+
+// user permissions
+const (
+	UserPermissionAdmin = 1 << iota
+)
+
+// app permissions
+const (
+	PermissionCreate PermissionsBitmask = 1 << iota
+	PermissionUpdate
+	PermissionDelete
+	PermissionView
+	PermissionList
+	PermissionExecute
+)

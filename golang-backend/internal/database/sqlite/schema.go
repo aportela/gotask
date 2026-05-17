@@ -10,7 +10,7 @@ var installSchemaQueries = []string{
 			created_at INTEGER NOT NULL,
 			updated_at INTEGER,
 			deleted_at INTEGER,
-			is_super_user INTEGER NOT NULL DEFAULT 0 CHECK(is_super_user IN (0, 1)),
+			permissions_bitmask INTEGER NOT NULL DEFAULT 0 CHECK(permissions_bitmask >= 0),
 			PRIMARY KEY (id)
 		) STRICT;
 	`,

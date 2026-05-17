@@ -2,32 +2,41 @@ package userhandler
 
 import "github.com/aportela/doneo/internal/handlers"
 
+// TODO: this struct is duplicated on auth handler
+type userPermissions struct {
+	IsSuperUser bool `json:"isSuperUser"`
+}
+
 type addRequest struct {
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	Password    string `json:"password"`
-	IsSuperUser bool   `json:"isSuperUser"`
+	Name        string          `json:"name"`
+	Email       string          `json:"email"`
+	Password    string          `json:"password"`
+	Permissions userPermissions `json:"permissions"`
 }
 
 type updateRequest struct {
-	Id          string  `json:"id"`
-	Name        string  `json:"name"`
-	Email       string  `json:"email"`
-	Password    *string `json:"password,omitempty"`
-	IsSuperUser bool    `json:"isSuperUser"`
+	Id          string          `json:"id"`
+	Name        string          `json:"name"`
+	Email       string          `json:"email"`
+	Password    *string         `json:"password,omitempty"`
+	Permissions userPermissions `json:"permissions"`
 }
 
 type patchRequest struct {
 	DeletedAt *int64 `json:"deletedAt"`
 }
 
+type filterUserPermissions struct {
+	IsSuperUser *bool `json:"isSuperUser"`
+}
+
 type FilterRequest struct {
-	Name              *string                   `json:"name"`
-	Email             *string                   `json:"email"`
-	AdministratorFlag *bool                     `json:"administratorFlag"`
-	CreatedAt         *handlers.TimestampFilter `json:"createdAt"`
-	UpdatedAt         *handlers.TimestampFilter `json:"updatedAt"`
-	DeletedAt         *handlers.TimestampFilter `json:"deletedAt"`
+	Name        *string                   `json:"name"`
+	Email       *string                   `json:"email"`
+	Permissions *filterUserPermissions    `json:"permissions"`
+	CreatedAt   *handlers.TimestampFilter `json:"createdAt"`
+	UpdatedAt   *handlers.TimestampFilter `json:"updatedAt"`
+	DeletedAt   *handlers.TimestampFilter `json:"deletedAt"`
 }
 
 type searchRequest struct {
@@ -37,14 +46,14 @@ type searchRequest struct {
 }
 
 type userResponse struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	CreatedAt   int64  `json:"createdAt"`
-	UpdatedAt   *int64 `json:"updatedAt"`
-	DeletedAt   *int64 `json:"deletedAt"`
-	IsSuperUser bool   `json:"isSuperUser"`
-	AvatarURL   string `json:"avatarUrl"`
+	ID          string          `json:"id"`
+	Name        string          `json:"name"`
+	Email       string          `json:"email"`
+	CreatedAt   int64           `json:"createdAt"`
+	UpdatedAt   *int64          `json:"updatedAt"`
+	DeletedAt   *int64          `json:"deletedAt"`
+	Permissions userPermissions `json:"permissions"`
+	AvatarURL   string          `json:"avatarUrl"`
 }
 
 type searchResponse struct {

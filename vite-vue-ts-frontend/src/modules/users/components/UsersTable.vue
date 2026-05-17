@@ -222,10 +222,10 @@
                     <!-- TODO: hide icon /label on small screens ? -->
                     <span class="doneo-flex-center-align">
                         <n-icon :size="16" style="margin-right: 6px;"
-                            :component="user.isSuperUser ? IconUserKey : IconUser"
-                            :color="user.isSuperUser ? 'red' : undefined">
+                            :component="user.permissions.isSuperUser ? IconUserKey : IconUser"
+                            :color="user.permissions.isSuperUser ? 'red' : undefined">
                         </n-icon>
-                        {{ t(user.isSuperUser ? "AdminTypeValue" : "UserTypeValue") }}
+                        {{ t(user.permissions.isSuperUser ? "AdminTypeValue" : "UserTypeValue") }}
                     </span>
                 </td>
                 <td>

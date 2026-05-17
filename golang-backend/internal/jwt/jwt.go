@@ -15,7 +15,7 @@ type Token struct {
 
 func GenerateToken(user domain.User, expiresAt time.Time, secretKey string) (Token, error) {
 	role := "user"
-	if user.IsSuperUser {
+	if user.PermissionsBitmask.HasPermission(domain.UserPermissionAdmin) {
 		role = "administrator"
 	}
 	claims := jwt.MapClaims{

@@ -13,19 +13,20 @@ type UserBaseDTO struct {
 
 type UserDTO struct {
 	UserBaseDTO
-	Email        string        `db:"email"`
-	PasswordHash string        `db:"password_hash"`
-	CreatedAt    int64         `db:"created_at"`
-	UpdatedAt    sql.NullInt64 `db:"updated_at"`
-	DeletedAt    sql.NullInt64 `db:"deleted_at"`
-	IsSuperUser  bool          `db:"is_super_user"`
+	Email              string        `db:"email"`
+	PasswordHash       string        `db:"password_hash"`
+	CreatedAt          int64         `db:"created_at"`
+	UpdatedAt          sql.NullInt64 `db:"updated_at"`
+	DeletedAt          sql.NullInt64 `db:"deleted_at"`
+	PermissionsBitmask uint8         `db:"permissions_bitmask"`
 }
 
 type SearchUsersFilterDTO struct {
-	Name              *string
-	Email             *string
-	AdministratorFlag *bool
-	CreatedAt         *repositories.TimestampFilter
-	UpdatedAt         *repositories.TimestampFilter
-	DeletedAt         *repositories.TimestampFilter
+	Name                        *string
+	Email                       *string
+	RequiredPermissionsBitmask  *uint8
+	ForbiddenPermissionsBitmask *uint8
+	CreatedAt                   *repositories.TimestampFilter
+	UpdatedAt                   *repositories.TimestampFilter
+	DeletedAt                   *repositories.TimestampFilter
 }

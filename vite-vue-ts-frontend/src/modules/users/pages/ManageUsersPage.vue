@@ -10,7 +10,7 @@
     import { appBus } from '../../../shared/composables/bus';
     import { userService } from '../services/user';
     import { handleAPIError } from '../../../api/client/errorHandler';
-    import type { UserResponse } from '../types/dto';
+    import type { SearchRequest, UserResponse } from '../types/dto';
     import { User } from '../models/user';
     import { type UserTypeFilter, UserTypeFilterValue } from '../types/filter-user-type';
     import UsersTable from '../components/UsersTable.vue';
@@ -104,7 +104,7 @@
     const onRefresh = async () => {
         Object.assign(state, defaultAjaxStateRunning);
         try {
-            const payload = {
+            const payload: SearchRequest = {
                 pager: {
                     currentPage: currentPage.value,
                     resultsPage: pageSize.value,
@@ -116,7 +116,9 @@
                 filter: {
                     name: nameFilter.value,
                     email: emailFilter.value,
-                    administratorFlag: typeFilter.value == UserTypeFilterValue.None ? undefined : (typeFilter.value === UserTypeFilterValue.OnlyAdministrators ? true : false),
+                    permissions: {
+                        isSuperUser: typeFilter.value == UserTypeFilterValue.None ? undefined : (typeFilter.value === UserTypeFilterValue.OnlyAdministrators ? true : false),
+                    },
                     createdAt: createdAtFilter.value,
                     updatedAt: updatedAtFilter.value,
                     deletedAt: deletedAtFilter.value

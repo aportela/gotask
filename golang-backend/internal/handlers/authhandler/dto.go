@@ -1,14 +1,19 @@
 package authhandler
 
+// TODO: this struct is duplicated on user handler
+type userPermissions struct {
+	IsSuperUser bool `json:"isSuperUser"`
+}
+
 type userResponse struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	CreatedAt   int64  `json:"createdAt"`
-	UpdatedAt   *int64 `json:"updatedAt"`
-	DeletedAt   *int64 `json:"deletedAt"`
-	IsSuperUser bool   `json:"isSuperUser"`
-	AvatarURL   string `json:"avatarUrl"`
+	ID          string          `json:"id"`
+	Name        string          `json:"name"`
+	Email       string          `json:"email"`
+	CreatedAt   int64           `json:"createdAt"`
+	UpdatedAt   *int64          `json:"updatedAt"`
+	DeletedAt   *int64          `json:"deletedAt"`
+	Permissions userPermissions `json:"permissions"`
+	AvatarURL   string          `json:"avatarUrl"`
 }
 
 type signInRequest struct {

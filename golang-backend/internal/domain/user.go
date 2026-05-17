@@ -1,6 +1,8 @@
 package domain
 
-import "time"
+import (
+	"time"
+)
 
 type UserBase struct {
 	ID        string
@@ -10,13 +12,13 @@ type UserBase struct {
 
 type User struct {
 	UserBase
-	Email        string
-	Password     string
-	PasswordHash string
-	CreatedAt    time.Time
-	UpdatedAt    *time.Time
-	DeletedAt    *time.Time
-	IsSuperUser  bool
+	Email              string
+	Password           string
+	PasswordHash       string
+	CreatedAt          time.Time
+	UpdatedAt          *time.Time
+	DeletedAt          *time.Time
+	PermissionsBitmask PermissionsBitmask
 }
 
 func (u *User) IsActive() bool {
@@ -24,14 +26,15 @@ func (u *User) IsActive() bool {
 }
 
 func (u *User) IsAdmin() bool {
-	return u.IsSuperUser
+	return u.PermissionsBitmask.HasPermission(UserPermissionAdmin)
 }
 
 type SearchUsersFilter struct {
-	Name              *string
-	Email             *string
-	AdministratorFlag *bool
-	CreatedAt         *TimestampFilter
-	UpdatedAt         *TimestampFilter
-	DeletedAt         *TimestampFilter
+	Name                        *string
+	Email                       *string
+	RequiredPermissionsBitmask  *PermissionsBitmask
+	ForbiddenPermissionsBitmask *PermissionsBitmask
+	CreatedAt                   *TimestampFilter
+	UpdatedAt                   *TimestampFilter
+	DeletedAt                   *TimestampFilter
 }
