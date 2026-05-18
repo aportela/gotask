@@ -49,7 +49,9 @@
     const userDialogFormMode = ref<FormMode>("add");
 
     const selectedUserId = ref<string>("");
-    const currentUser = ref<User | null>(null);
+    const currentUser = ref<User>(
+        new User({ "id": "", name: "", email: "", permissions: { isSuperUser: false }, createdAt: 0, updatedAt: 0, deletedAt: 0, avatarUrl: "" })
+    );
     const currentIndex = ref<number>(0);
 
     watch(state, (newValue: AjaxStateInterface) => {
@@ -231,12 +233,10 @@
         stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
             if (payload.to.includes("ManageUsersPage.onRefresh")) {
                 onRefresh();
-            } else if (payload.to.includes("ManageUsersPage.onRefresh")) {
-                // TODO: missing user/index param at this point
-                onDelete(currentUser, currentIndex.value)
-            } else if (payload.to.includes("ManageUsersPage.onRefresh")) {
-                // TODO: missing user/index param at this point
-                onUnDelete(currentUser, currentIndex.value);
+            } else if (payload.to.includes("ManageUsersPage.onDelete")) {
+                onDelete(currentUser.value, currentIndex.value)
+            } else if (payload.to.includes("ManageUsersPage.onUnDelete")) {
+                onUnDelete(currentUser.value, currentIndex.value);
             }
         });
     });
