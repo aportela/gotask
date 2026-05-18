@@ -38,7 +38,7 @@ func (s *userService) Add(ctx context.Context, user domain.User) error {
 	}
 	user.PasswordHash = string(hashedPasswordBytes)
 	user.CreatedAt = time.Now()
-	if err := s.repository.Add(ctx, userrepository.UserToDTO(user)); err != nil {
+	if err := s.repository.Add(ctx, userrepository.DomainToDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to add user with ID %s: %w", user.ID, err)
 	}
 	return nil
@@ -53,14 +53,14 @@ func (s *userService) Update(ctx context.Context, user domain.User) error {
 		user.PasswordHash = string(hashedPasswordBytes)
 	}
 	user.UpdatedAt = utils.NowToTimePtr()
-	if err := s.repository.Update(ctx, userrepository.UserToDTO(user)); err != nil {
+	if err := s.repository.Update(ctx, userrepository.DomainToDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to update user with ID %s: %w", user.ID, err)
 	}
 	return nil
 }
 
 func (s *userService) Patch(ctx context.Context, user domain.User) error {
-	if err := s.repository.Patch(ctx, userrepository.UserToDTO(user)); err != nil {
+	if err := s.repository.Patch(ctx, userrepository.DomainToDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to patch user with ID %s: %w", user.ID, err)
 	}
 	return nil
@@ -92,13 +92,13 @@ func (s *userService) Get(ctx context.Context, id string) (domain.User, error) {
 	if err != nil {
 		return domain.User{}, fmt.Errorf("[UserService] failed to get user with ID %s: %w", id, err)
 	}
-	return userrepository.DTOToUser(user), nil
+	return userrepository.DTOToDomain(user), nil
 }
 
 func (s *userService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchUsersFilter) ([]domain.User, browser.Result, error) {
-	users, pagerResult, err := s.repository.Search(ctx, pager, order, userrepository.SearchUsersFilterToDTO(filter))
+	users, pagerResult, err := s.repository.Search(ctx, pager, order, userrepository.DomainFilterToDTO(filter))
 	if err != nil {
 		return nil, browser.Result{}, fmt.Errorf("[UserService] failed to search users: %w", err)
 	}
-	return userrepository.ToUserArray(users), pagerResult, nil
+	return userrepository.DTOArrayToDomainArray(users), pagerResult, nil
 }

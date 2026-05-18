@@ -35,7 +35,7 @@ func (s *authService) SignIn(ctx context.Context, user domain.User) (domain.User
 	if err != nil {
 		return domain.User{}, domain.ErrInvalidCredentials
 	}
-	return userrepository.DTOToUser(credentialUser), nil
+	return userrepository.DTOToDomain(credentialUser), nil
 }
 
 func (s *authService) GetUserInfo(ctx context.Context, userId string) (domain.User, error) {
@@ -47,5 +47,5 @@ func (s *authService) GetUserInfo(ctx context.Context, userId string) (domain.Us
 		// TODO: FAIL
 		//return domain.User{}, domain.ErrDeleted
 	}
-	return userrepository.DTOToUser(user), nil
+	return userrepository.DTOToDomain(user), nil
 }

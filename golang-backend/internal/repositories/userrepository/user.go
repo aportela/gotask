@@ -22,7 +22,7 @@ type UserRepository interface {
 	Purge(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (UserDTO, error)
 	GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (UserDTO, error)
-	Search(ctx context.Context, pager browser.Params, order browser.Order, filter SearchUsersFilterDTO) ([]UserDTO, browser.Result, error)
+	Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]UserDTO, browser.Result, error)
 }
 
 type userRepository struct {
@@ -171,7 +171,7 @@ func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context
 	return user, err
 }
 
-func (userRepository *userRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter SearchUsersFilterDTO) ([]UserDTO, browser.Result, error) {
+func (userRepository *userRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]UserDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `

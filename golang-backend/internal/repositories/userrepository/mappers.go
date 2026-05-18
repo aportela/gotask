@@ -8,16 +8,16 @@ import (
 	"github.com/aportela/doneo/internal/utils"
 )
 
-func UserBaseToDTO(user domain.UserBase) UserBaseDTO {
+func BaseDomainToDTO(user domain.UserBase) UserBaseDTO {
 	return UserBaseDTO{
 		ID:   user.ID,
 		Name: user.Name,
 	}
 }
 
-func UserToDTO(user domain.User) UserDTO {
+func DomainToDTO(user domain.User) UserDTO {
 	return UserDTO{
-		UserBaseDTO:        UserBaseToDTO(user.UserBase),
+		UserBaseDTO:        BaseDomainToDTO(user.UserBase),
 		Email:              user.Email,
 		PasswordHash:       user.PasswordHash,
 		CreatedAt:          user.CreatedAt.UnixMilli(),
@@ -27,7 +27,7 @@ func UserToDTO(user domain.User) UserDTO {
 	}
 }
 
-func DTOToUserBase(user UserBaseDTO) domain.UserBase {
+func DTOToBaseDomain(user UserBaseDTO) domain.UserBase {
 	return domain.UserBase{
 		ID:        user.ID,
 		Name:      user.Name,
@@ -35,9 +35,9 @@ func DTOToUserBase(user UserBaseDTO) domain.UserBase {
 	}
 }
 
-func DTOToUser(user UserDTO) domain.User {
+func DTOToDomain(user UserDTO) domain.User {
 	return domain.User{
-		UserBase:           DTOToUserBase(user.UserBaseDTO),
+		UserBase:           DTOToBaseDomain(user.UserBaseDTO),
 		Email:              user.Email,
 		CreatedAt:          time.UnixMilli(user.CreatedAt),
 		UpdatedAt:          utils.SQLNullInt64ToTimePtr(user.UpdatedAt),
@@ -46,16 +46,16 @@ func DTOToUser(user UserDTO) domain.User {
 	}
 }
 
-func ToUserArray(users []UserDTO) []domain.User {
+func DTOArrayToDomainArray(users []UserDTO) []domain.User {
 	results := make([]domain.User, 0, len(users))
 	for _, user := range users {
-		results = append(results, DTOToUser(user))
+		results = append(results, DTOToDomain(user))
 	}
 	return results
 }
 
-func SearchUsersFilterToDTO(filter domain.SearchUsersFilter) SearchUsersFilterDTO {
-	return SearchUsersFilterDTO{
+func DomainFilterToDTO(filter domain.SearchUsersFilter) searchFilterDTO {
+	return searchFilterDTO{
 		Name:                        filter.Name,
 		Email:                       filter.Email,
 		RequiredPermissionsBitmask:  (*uint64)(filter.RequiredPermissionsBitmask),

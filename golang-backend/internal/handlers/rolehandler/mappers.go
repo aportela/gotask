@@ -6,7 +6,7 @@ import (
 	"github.com/aportela/doneo/internal/handlers"
 )
 
-func requestPermissionsToDomain(permissions permissionsFlags) domain.PermissionsBitmask {
+func requestPermissionsToDomainPermissionsBitmask(permissions permissionsFlags) domain.PermissionsBitmask {
 	bitmaskPermission := domain.PermissionsBitmask(0)
 	if permissions.AllowUpdateProject {
 		bitmaskPermission.AddPermission(domain.PermissionUpdateProject)
@@ -35,7 +35,7 @@ func requestPermissionsToDomain(permissions permissionsFlags) domain.Permissions
 func addRequestToDomain(request addRequest) domain.Role {
 	return domain.Role{
 		Name:               request.Name,
-		PermissionsBitmask: requestPermissionsToDomain(request.Permissions),
+		PermissionsBitmask: requestPermissionsToDomainPermissionsBitmask(request.Permissions),
 	}
 }
 
@@ -43,7 +43,7 @@ func updateRequestToDomain(request updateRequest) domain.Role {
 	return domain.Role{
 		ID:                 request.Id,
 		Name:               request.Name,
-		PermissionsBitmask: requestPermissionsToDomain(request.Permissions),
+		PermissionsBitmask: requestPermissionsToDomainPermissionsBitmask(request.Permissions),
 	}
 }
 
@@ -67,7 +67,7 @@ func domainToResponse(role domain.Role) roleResponse {
 	}
 }
 
-func domainArrayToResponse(roles []domain.Role) []roleResponse {
+func domainArrayToResponseArray(roles []domain.Role) []roleResponse {
 	roleResponses := []roleResponse{}
 	for _, role := range roles {
 		roleResponses = append(roleResponses, domainToResponse(role))
@@ -75,9 +75,9 @@ func domainArrayToResponse(roles []domain.Role) []roleResponse {
 	return roleResponses
 }
 
-func ToSearchResponse(roles []domain.Role, pager browser.Result) searchResponse {
+func toSearchResponse(roles []domain.Role, pager browser.Result) searchResponse {
 	return searchResponse{
-		Roles: domainArrayToResponse(roles),
+		Roles: domainArrayToResponseArray(roles),
 		Pager: handlers.PagerResponse{
 			Enabled:      pager.ResultsPage > 0,
 			CurrentPage:  pager.CurrentPage,

@@ -3,23 +3,23 @@ package userhandler
 import "github.com/aportela/doneo/internal/handlers"
 
 // TODO: this struct is duplicated on auth handler
-type userPermissions struct {
+type permissionsFlags struct {
 	IsSuperUser bool `json:"isSuperUser"`
 }
 
 type addRequest struct {
-	Name        string          `json:"name"`
-	Email       string          `json:"email"`
-	Password    string          `json:"password"`
-	Permissions userPermissions `json:"permissions"`
+	Name        string           `json:"name"`
+	Email       string           `json:"email"`
+	Password    string           `json:"password"`
+	Permissions permissionsFlags `json:"permissions"`
 }
 
 type updateRequest struct {
-	Id          string          `json:"id"`
-	Name        string          `json:"name"`
-	Email       string          `json:"email"`
-	Password    *string         `json:"password,omitempty"`
-	Permissions userPermissions `json:"permissions"`
+	Id          string           `json:"id"`
+	Name        string           `json:"name"`
+	Email       string           `json:"email"`
+	Password    *string          `json:"password,omitempty"`
+	Permissions permissionsFlags `json:"permissions"`
 }
 
 type patchRequest struct {
@@ -46,14 +46,14 @@ type searchRequest struct {
 }
 
 type userResponse struct {
-	ID          string          `json:"id"`
-	Name        string          `json:"name"`
-	Email       string          `json:"email"`
-	CreatedAt   int64           `json:"createdAt"`
-	UpdatedAt   *int64          `json:"updatedAt"`
-	DeletedAt   *int64          `json:"deletedAt"`
-	Permissions userPermissions `json:"permissions"`
-	AvatarURL   string          `json:"avatarUrl"`
+	ID          string           `json:"id"`
+	Name        string           `json:"name"`
+	Email       string           `json:"email"`
+	CreatedAt   int64            `json:"createdAt"`
+	UpdatedAt   *int64           `json:"updatedAt"`
+	DeletedAt   *int64           `json:"deletedAt"`
+	Permissions permissionsFlags `json:"permissions"`
+	AvatarURL   string           `json:"avatarUrl"`
 }
 
 type searchResponse struct {

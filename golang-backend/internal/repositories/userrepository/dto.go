@@ -21,7 +21,7 @@ type UserDTO struct {
 	PermissionsBitmask uint64        `db:"permissions_bitmask"`
 }
 
-type SearchUsersFilterDTO struct {
+type searchFilterDTO struct {
 	Name                        *string
 	Email                       *string
 	RequiredPermissionsBitmask  *uint64
