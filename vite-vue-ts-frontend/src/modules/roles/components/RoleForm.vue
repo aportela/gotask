@@ -213,7 +213,6 @@
     let stopBusReauthListener: () => void;
 
     onMounted(() => {
-
         stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
             if (payload.to.includes("RoleForm.onGet")) {
                 if (props.roleId) {

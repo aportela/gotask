@@ -35,7 +35,7 @@
         },
     ]);
 
-    const projectTypeNameFilter = defineModel<string>("roleNameFilter", {
+    const projectTypeNameFilter = defineModel<string>("projectTypeNameFilter", {
         default: "",
     });
 
@@ -59,7 +59,7 @@
 
     const onConfirmDelete = (projectType: ProjectType, index: number) => {
         dialog.warning({
-            title: t("Delete role"),
+            title: t("Delete project type"),
             icon: renderIcon(IconTrash)(24),
             content: () =>
                 h('div', [
@@ -151,7 +151,7 @@
             </tr>
             <tr>
                 <td :colspan="columns.length + 1" v-if="projectTypes.length < 1 && !props.loading">
-                    <n-empty :description="t('No roles found')">
+                    <n-empty :description="t('No project types found')">
                     </n-empty>
                 </td>
             </tr>

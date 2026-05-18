@@ -1,8 +1,8 @@
 import type {
-  //PagerRequest,
+  PagerRequest,
   PagerResponse,
 } from "../../../shared/types/dto/pager";
-//import type { Order } from "../../../shared/types/dto/order";
+import type { Order } from "../../../shared/types/dto/order";
 
 export type AddRequest = {
   name: string;
@@ -20,6 +20,8 @@ type SearchRequestFilter = {
 };
 
 export type SearchRequest = {
+  pager: PagerRequest;
+  order: Order;
   filter?: SearchRequestFilter;
 };
 
