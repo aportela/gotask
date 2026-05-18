@@ -114,6 +114,7 @@ export default {
   "Update role": "Modificar rol",
   "Delete role": "Eliminar rol",
   "No roles found": "Non se atoparon roles",
+  "Role permissions": "Permisos do rol",
   deleteRoleConfirmation: 'Está a punto de elimina-lo rol "{name}" do sistema.',
   "There was a problem while refreshing the role list":
     "Producíuse un erro durante a procura de roles",

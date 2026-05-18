@@ -263,76 +263,77 @@
                     </template>
                 </n-input>
             </n-form-item>
-            <h4>Permissions</h4>
+            <h4>{{ t("Role permissions") }}</h4>
 
-            <n-grid :y-gap="8" :cols="2">
+            <n-grid :x-gap="8" :y-gap="8" :cols="2">
                 <n-gi>
                     <n-switch v-model:value="role.permissions.allowUpdateProject">
                         <template #checked>
-                            Update project allowed
+                            {{ t("Update project allowed") }}
                         </template>
                         <template #unchecked>
-                            Update project not allowed
+                            {{ t("Update project allowed") }}
                         </template>
                     </n-switch>
                 </n-gi>
                 <n-gi>
                     <n-switch v-model:value="role.permissions.allowDeleteProject">
                         <template #checked>
-                            Delete project allowed
+                            {{ t("Delete project allowed") }}
                         </template>
                         <template #unchecked>
-                            Delete project not allowed
+                            {{ t("Delete project allowed") }}
                         </template>
                     </n-switch>
                 </n-gi>
                 <n-gi>
                     <n-switch v-model:value="role.permissions.allowViewProject">
                         <template #checked>
-                            View project allowed
+                            {{ t("View project allowed") }}
                         </template>
                         <template #unchecked>
-                            View project not allowed
+                            {{ t("View project allowed") }}
                         </template>
                     </n-switch>
                 </n-gi>
+                <n-gi></n-gi>
                 <n-gi>
                     <n-switch v-model:value="role.permissions.allowAddTask">
                         <template #checked>
-                            Add task allowed
+                            {{ t("Add task allowed") }}
                         </template>
                         <template #unchecked>
-                            Add task not allowed
+                            {{ t("Add task allowed") }}
                         </template>
                     </n-switch>
                 </n-gi>
                 <n-gi>
                     <n-switch v-model:value="role.permissions.allowUpdateTask">
                         <template #checked>
-                            Update task allowed
+                            {{ t("Update task allowed") }}
                         </template>
                         <template #unchecked>
-                            Update task not allowed
+                            {{ t("Update task allowed") }}
                         </template>
                     </n-switch>
                 </n-gi>
                 <n-gi>
                     <n-switch v-model:value="role.permissions.allowDeleteTask">
                         <template #checked>
-                            Delete task allowed
+                            {{ t("Delete task allowed") }}
                         </template>
                         <template #unchecked>
-                            Delete task not allowed
+                            {{ t("Delete task allowed") }}
                         </template>
                     </n-switch>
                 </n-gi>
                 <n-gi>
                     <n-switch v-model:value="role.permissions.allowViewTask">
                         <template #checked>
-                            View task allowed
+                            {{ t("View task allowed") }}
                         </template>
                         <template #unchecked>
-                            View task not allowed
+                            {{ t("View task allowed") }}
                         </template>
                     </n-switch>
                 </n-gi>
