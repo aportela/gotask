@@ -33,7 +33,7 @@
     const nameFilter = ref<string>("");
 
     const currentPage = ref(1);
-    const pageSize = ref(10);
+    const pageSize = ref(0);
     const totalResults = ref(0);
     const totalPages = ref(0);
 
