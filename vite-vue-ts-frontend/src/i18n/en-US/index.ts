@@ -100,7 +100,7 @@ export default {
   // user roles
   "Manage roles": "Manage roles",
   TotalRolesPagerLabel: "Total roles: {total}",
-  RolenameTableHeader: "Name",
+  RoleNameTableHeader: "Name",
   RoleProjectPermissionsTableHeader: "Project permissions",
   RoleTasksPermissionsTableHeader: "Task permissions",
   "Update project allowed": "Update project allowed",
