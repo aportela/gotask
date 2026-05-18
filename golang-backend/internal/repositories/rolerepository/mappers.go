@@ -8,7 +8,7 @@ func RoleToDTO(role domain.Role) RoleDTO {
 	return RoleDTO{
 		ID:                 role.ID,
 		Name:               role.Name,
-		PermissionsBitmask: uint8(role.PermissionsBitmask),
+		PermissionsBitmask: uint64(role.PermissionsBitmask),
 	}
 }
 
@@ -31,7 +31,7 @@ func ToRoleArray(roles []RoleDTO) []domain.Role {
 func SearchRolesFilterToDTO(filter domain.SearchRolesFilter) SearchRolesFilterDTO {
 	return SearchRolesFilterDTO{
 		Name:                        filter.Name,
-		RequiredPermissionsBitmask:  (*uint8)(filter.RequiredPermissionsBitmask),
-		ForbiddenPermissionsBitmask: (*uint8)(filter.ForbiddenPermissionsBitmask),
+		RequiredPermissionsBitmask:  (*uint64)(filter.RequiredPermissionsBitmask),
+		ForbiddenPermissionsBitmask: (*uint64)(filter.ForbiddenPermissionsBitmask),
 	}
 }

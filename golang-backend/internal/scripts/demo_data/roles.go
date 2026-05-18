@@ -16,8 +16,7 @@ func createRoles(database database.Database) []string {
 	roleRepository := rolerepository.NewRoleRepository(database)
 	roleService := roleservice.NewRoleService(roleRepository)
 	roleID := utils.UUID()
-	var permissionBitMask domain.PermissionsBitmask
-	permissionBitMask = 0
+	permissionBitMask := domain.PermissionsBitmask(0)
 	permissionBitMask.AddPermission(domain.PermissionCreate | domain.PermissionUpdate | domain.PermissionDelete | domain.PermissionView | domain.PermissionList | domain.PermissionExecute)
 	err := roleService.Add(context.Background(), domain.Role{
 		ID:                 roleID,
@@ -30,7 +29,7 @@ func createRoles(database database.Database) []string {
 		newRoleIds = append(newRoleIds, roleID)
 	}
 	roleID = utils.UUID()
-	permissionBitMask = 0
+	permissionBitMask.Clear()
 	permissionBitMask.AddPermission(domain.PermissionView | domain.PermissionList)
 	err = roleService.Add(context.Background(), domain.Role{
 		ID:                 roleID,

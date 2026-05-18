@@ -23,7 +23,7 @@ func UserToDTO(user domain.User) UserDTO {
 		CreatedAt:          user.CreatedAt.UnixMilli(),
 		UpdatedAt:          utils.TimePtrToSQLNullInt64(user.UpdatedAt),
 		DeletedAt:          utils.TimePtrToSQLNullInt64(user.DeletedAt),
-		PermissionsBitmask: uint8(user.PermissionsBitmask),
+		PermissionsBitmask: uint64(user.PermissionsBitmask),
 	}
 }
 
@@ -58,8 +58,8 @@ func SearchUsersFilterToDTO(filter domain.SearchUsersFilter) SearchUsersFilterDT
 	return SearchUsersFilterDTO{
 		Name:                        filter.Name,
 		Email:                       filter.Email,
-		RequiredPermissionsBitmask:  (*uint8)(filter.RequiredPermissionsBitmask),
-		ForbiddenPermissionsBitmask: (*uint8)(filter.ForbiddenPermissionsBitmask),
+		RequiredPermissionsBitmask:  (*uint64)(filter.RequiredPermissionsBitmask),
+		ForbiddenPermissionsBitmask: (*uint64)(filter.ForbiddenPermissionsBitmask),
 		CreatedAt:                   repositories.TimestampFilterToDTO(filter.CreatedAt),
 		UpdatedAt:                   repositories.TimestampFilterToDTO(filter.UpdatedAt),
 		DeletedAt:                   repositories.TimestampFilterToDTO(filter.DeletedAt),

@@ -1,6 +1,6 @@
 package domain
 
-type PermissionsBitmask uint8
+type PermissionsBitmask uint64
 
 func (p PermissionsBitmask) HasPermission(v PermissionsBitmask) bool {
 	return p&v == v
@@ -30,6 +30,16 @@ func (p *PermissionsBitmask) Clear() {
 const (
 	UserPermissionAdmin = 1 << iota
 )
+
+// TODO: new
+// PermissionUpdateProject
+// PermissionDeleteProject
+// PermissionViewProject
+// PermissionAddTask
+// PermissionUpdateTask
+// PermissionDeleteTask
+// PermissionViewTask
+// PermissionExecuteReport
 
 // app permissions
 const (
