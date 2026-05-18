@@ -114,7 +114,5 @@ func (h *RoleHandler) Search(w http.ResponseWriter, r *http.Request) {
 		},
 		filter,
 	)
-	if pagerResult.TotalResults > 0 {
-	}
 	handlers.ToHandlerJSONResponse(w, toSearchResponse(roles, pagerResult), err)
 }
