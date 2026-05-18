@@ -6,5 +6,6 @@ type ProjectType struct {
 	HexColor string
 }
 
-type ProjectTypeFilter struct {
+type SearchProjectTypesFilter struct {
+	Name *string
 }

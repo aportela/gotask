@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/repositories/projecttyperepository"
 )
@@ -13,7 +14,7 @@ type ProjectTypeService interface {
 	Update(ctx context.Context, projectType domain.ProjectType) error
 	Delete(ctx context.Context, id string) error
 	Get(ctx context.Context, id string) (domain.ProjectType, error)
-	Search(ctx context.Context) ([]domain.ProjectType, error)
+	Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchProjectTypesFilter) ([]domain.ProjectType, browser.Result, error)
 }
 
 type projectTypeService struct {
@@ -44,10 +45,10 @@ func (s *projectTypeService) Get(ctx context.Context, id string) (domain.Project
 	return projecttyperepository.DTOToDomain(projectType), nil
 }
 
-func (s *projectTypeService) Search(ctx context.Context) ([]domain.ProjectType, error) {
-	projectTypes, err := s.repository.Search(ctx)
+func (s *projectTypeService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchProjectTypesFilter) ([]domain.ProjectType, browser.Result, error) {
+	projectTypes, pagerResult, err := s.repository.Search(ctx, pager, order, projecttyperepository.DomainFilterToDTO(filter))
 	if err != nil {
-		return nil, fmt.Errorf("[ProjectTypeService] failed to search project types: %w", err)
+		return nil, browser.Result{}, fmt.Errorf("[ProjectTypeService] failed to search project types: %w", err)
 	}
-	return projecttyperepository.DTOArrayToDomainArray(projectTypes), nil
+	return projecttyperepository.DTOArrayToDomainArray(projectTypes), pagerResult, nil
 }

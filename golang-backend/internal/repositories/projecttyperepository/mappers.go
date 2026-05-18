@@ -27,3 +27,9 @@ func DTOArrayToDomainArray(projectTypes []projectTypeDTO) []domain.ProjectType {
 	}
 	return results
 }
+
+func DomainFilterToDTO(filter domain.SearchProjectTypesFilter) searchFilterDTO {
+	return searchFilterDTO{
+		Name: filter.Name,
+	}
+}

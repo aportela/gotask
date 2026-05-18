@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/handlers"
@@ -87,6 +88,29 @@ func (h *ProjectTypeHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 func (h *ProjectTypeHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	projectTypes, err := h.service.Search(r.Context())
-	handlers.ToHandlerJSONResponse(w, toSearchResponse(projectTypes), err)
+	var request searchRequest
+	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[RoleHandler] invalid request payload: %w", err))
+		return
+	}
+	filter := domain.SearchProjectTypesFilter{
+		Name: nil,
+	}
+	if request.Filter != nil {
+		if request.Filter.Name != nil {
+			filter.Name = request.Filter.Name
+		}
+	}
+	projectTypes, pagerResult, err := h.service.Search(r.Context(),
+		browser.Params{
+			CurrentPage: request.Pager.CurrentPage,
+			ResultsPage: request.Pager.ResultsPage,
+		},
+		browser.Order{
+			Field: request.Order.Field,
+			Sort:  string(request.Order.Sort),
+		},
+		filter,
+	)
+	handlers.ToHandlerJSONResponse(w, toSearchResponse(projectTypes, pagerResult), err)
 }
