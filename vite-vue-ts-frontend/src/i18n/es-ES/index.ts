@@ -115,6 +115,8 @@ export default {
   "Delete role": "Eliminar rol",
   "No roles found": "No se han encontrado roles",
   "Role permissions": "Permisos del rol",
+  "Project permissions": "Permisos del proyecto",
+  "Task permissions": "Permisos de la tarea",
   deleteRoleConfirmation:
     'Está a punto de eliminar el rol "{name}" del sistema.',
   "There was a problem while refreshing the role list":

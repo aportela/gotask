@@ -267,7 +267,8 @@
 
             <n-grid :x-gap="8" :y-gap="8" :cols="2">
                 <n-gi>
-                    <n-switch v-model:value="role.permissions.allowUpdateProject">
+                    <h4 class="doneo-permission-group-header">{{ t("Project permissions") }}</h4>
+                    <n-switch v-model:value="role.permissions.allowUpdateProject" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("Update project allowed") }}
                         </template>
@@ -275,9 +276,7 @@
                             {{ t("Update project allowed") }}
                         </template>
                     </n-switch>
-                </n-gi>
-                <n-gi>
-                    <n-switch v-model:value="role.permissions.allowDeleteProject">
+                    <n-switch v-model:value="role.permissions.allowDeleteProject" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("Delete project allowed") }}
                         </template>
@@ -285,9 +284,7 @@
                             {{ t("Delete project allowed") }}
                         </template>
                     </n-switch>
-                </n-gi>
-                <n-gi>
-                    <n-switch v-model:value="role.permissions.allowViewProject">
+                    <n-switch v-model:value="role.permissions.allowViewProject" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("View project allowed") }}
                         </template>
@@ -296,9 +293,9 @@
                         </template>
                     </n-switch>
                 </n-gi>
-                <n-gi></n-gi>
                 <n-gi>
-                    <n-switch v-model:value="role.permissions.allowAddTask">
+                    <h4 class="doneo-permission-group-header">{{ t("Task permissions") }}</h4>
+                    <n-switch v-model:value="role.permissions.allowAddTask" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("Add task allowed") }}
                         </template>
@@ -306,9 +303,7 @@
                             {{ t("Add task allowed") }}
                         </template>
                     </n-switch>
-                </n-gi>
-                <n-gi>
-                    <n-switch v-model:value="role.permissions.allowUpdateTask">
+                    <n-switch v-model:value="role.permissions.allowUpdateTask" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("Update task allowed") }}
                         </template>
@@ -316,9 +311,7 @@
                             {{ t("Update task allowed") }}
                         </template>
                     </n-switch>
-                </n-gi>
-                <n-gi>
-                    <n-switch v-model:value="role.permissions.allowDeleteTask">
+                    <n-switch v-model:value="role.permissions.allowDeleteTask" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("Delete task allowed") }}
                         </template>
@@ -326,9 +319,7 @@
                             {{ t("Delete task allowed") }}
                         </template>
                     </n-switch>
-                </n-gi>
-                <n-gi>
-                    <n-switch v-model:value="role.permissions.allowViewTask">
+                    <n-switch v-model:value="role.permissions.allowViewTask" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("View task allowed") }}
                         </template>
@@ -365,5 +356,14 @@
 <style lang="css" scoped>
     .doneo-flex-center-align .n-icon {
         margin-right: 4px;
+    }
+
+    .doneo-permission-group-header {
+        margin: 0px;
+    }
+
+    .doneo-permission-switch {
+        display: block;
+        margin: 8px 0px;
     }
 </style>

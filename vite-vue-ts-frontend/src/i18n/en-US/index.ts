@@ -115,6 +115,8 @@ export default {
   "Delete role": "Delete role",
   "No roles found": "No roles found",
   "Role permissions": "Role permissions",
+  "Project permissions": "Project permissions",
+  "Task permissions": "Task permissions",
   deleteRoleConfirmation:
     'You are about to delete the role "{name}" from the system.',
   "There was a problem while refreshing the role list":
