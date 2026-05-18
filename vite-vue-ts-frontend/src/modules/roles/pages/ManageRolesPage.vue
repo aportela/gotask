@@ -189,7 +189,7 @@
 <template>
     <n-modal v-model:show="showRoleDialogForm">
         <RoleForm :mode="roleDialogFormMode == 'add' ? 'add' : 'update'" :roleId="selectedRoleId" style="width: 40%;"
-            @add="onAdd" @update="onUpdate" @delete="onDelete" @cancel="onCancel" />
+            @add="onAdd" @update="onUpdate" @cancel="onCancel" />
     </n-modal>
 
     <n-card :title="t('Manage roles')">

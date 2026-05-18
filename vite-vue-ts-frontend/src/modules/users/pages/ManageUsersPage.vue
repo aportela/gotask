@@ -49,6 +49,8 @@
     const userDialogFormMode = ref<FormMode>("add");
 
     const selectedUserId = ref<string>("");
+    const currentUser = ref<User | null>(null);
+    const currentIndex = ref<number>(0);
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -155,6 +157,8 @@
     };
 
     const onDelete = async (user: User, _index: number) => {
+        currentUser.value = user;
+        currentIndex.value = _index;
         Object.assign(state, defaultAjaxStateRunning);
         try {
             await userService.delete(user.id);
@@ -187,6 +191,8 @@
     };
 
     const onUnDelete = async (user: User, _index: number) => {
+        currentUser.value = user;
+        currentIndex.value = _index;
         Object.assign(state, defaultAjaxStateRunning);
         try {
             await userService.unDelete(user.id);
@@ -227,10 +233,10 @@
                 onRefresh();
             } else if (payload.to.includes("ManageUsersPage.onRefresh")) {
                 // TODO: missing user/index param at this point
-                //onDelete();
+                onDelete(currentUser, currentIndex.value)
             } else if (payload.to.includes("ManageUsersPage.onRefresh")) {
                 // TODO: missing user/index param at this point
-                //onUnDelete();
+                onUnDelete(currentUser, currentIndex.value);
             }
         });
     });
@@ -243,7 +249,7 @@
 <template>
     <n-modal v-model:show="showUserDialogForm">
         <UserForm :mode="userDialogFormMode == 'add' ? 'add' : 'update'" :user-id="selectedUserId" style="width: 40%;"
-            @add="onAdd" @update="onUpdate" @delete="onDelete" @cancel="onCancel" @undelete="onUnDelete" />
+            @add="onAdd" @update="onUpdate" @cancel="onCancel" />
     </n-modal>
 
     <n-card :title="t('Manage users')">
