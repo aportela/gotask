@@ -29,7 +29,7 @@
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
-            label: t("ProjectTypenameTableHeader"),
+            label: t("ProjectTypeNameTableHeader"),
             field: "name",
             sortable: true,
         },
