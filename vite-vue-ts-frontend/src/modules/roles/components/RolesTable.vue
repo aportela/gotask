@@ -146,19 +146,25 @@
                 <td class="doneo-text-center">
                     <n-tooltip trigger="hover" v-if="role.permissions.allowUpdateProject">
                         <template #trigger>
-                            <IconEdit class="doneo-cursor-help" />
+                            <n-icon :size="22">
+                                <IconEdit class="doneo-cursor-help" />
+                            </n-icon>
                         </template>
                         {{ t("Update project allowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowDeleteProject">
                         <template #trigger>
-                            <IconTrash class="doneo-cursor-help" />
+                            <n-icon :size="22">
+                                <IconTrash class="doneo-cursor-help" />
+                            </n-icon>
                         </template>
                         {{ t("Delete project allowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowViewProject">
                         <template #trigger>
-                            <IconEyeCheck class="doneo-cursor-help" />
+                            <n-icon :size="22">
+                                <IconEyeCheck class="doneo-cursor-help" />
+                            </n-icon>
                         </template>
                         {{ t("View project allowed") }}
                     </n-tooltip>
@@ -166,25 +172,33 @@
                 <td class="doneo-text-center">
                     <n-tooltip trigger="hover" v-if="role.permissions.allowAddTask">
                         <template #trigger>
-                            <IconSquarePlus class="doneo-cursor-help" />
+                            <n-icon :size="22">
+                                <IconSquarePlus class="doneo-cursor-help" />
+                            </n-icon>
                         </template>
                         {{ t("Add task allowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowUpdateTask">
                         <template #trigger>
-                            <IconEdit class="doneo-cursor-help" />
+                            <n-icon :size="22">
+                                <IconEdit class="doneo-cursor-help" />
+                            </n-icon>
                         </template>
                         {{ t("Update task allowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowDeleteTask">
                         <template #trigger>
-                            <IconTrash class="doneo-cursor-help" />
+                            <n-icon :size="22">
+                                <IconTrash class="doneo-cursor-help" />
+                            </n-icon>
                         </template>
                         {{ t("Delete task allowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowViewTask">
                         <template #trigger>
-                            <IconEyeCheck class="doneo-cursor-help" />
+                            <n-icon :size="22">
+                                <IconEyeCheck class="doneo-cursor-help" />
+                            </n-icon>
                         </template>
                         {{ t("View task allowed") }}
                     </n-tooltip>
