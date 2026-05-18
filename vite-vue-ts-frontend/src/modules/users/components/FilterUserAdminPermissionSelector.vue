@@ -6,7 +6,7 @@
     import type { SelectMixedOption } from "naive-ui/es/select/src/interface";
     import type { SelectSize } from "naive-ui";
 
-    import { UserTypeFilterValue, type UserTypeFilter } from "../types/filter-user-type";
+    import { UserAdminPermissionFilterValue, type UserAdminPermissionFilter } from "../types/user-admin-permission-filter";
 
     interface Props {
         size?: SelectSize,
@@ -22,14 +22,14 @@
     });
 
     const options = computed<SelectMixedOption[]>(() => [
-        { label: t("All users"), value: UserTypeFilterValue.None },
-        { label: t("Only administrators"), value: UserTypeFilterValue.OnlyAdministrators },
-        { label: t("Only users"), value: UserTypeFilterValue.OnlyUsers }
+        { label: t("userAdminPermissionSelectorValueAll"), value: UserAdminPermissionFilterValue.All },
+        { label: t("userAdminPermissionSelectorValueOnlyAdministrators"), value: UserAdminPermissionFilterValue.OnlyAdministrators },
+        { label: t("userAdminPermissionSelectorValueOnlyUsers"), value: UserAdminPermissionFilterValue.OnlyUsers }
     ]);
 
 
-    const model = defineModel<UserTypeFilter>({
-        default: UserTypeFilterValue.None,
+    const model = defineModel<UserAdminPermissionFilter>({
+        default: UserAdminPermissionFilterValue.All,
     });
 </script>
 

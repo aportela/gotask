@@ -12,7 +12,7 @@
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { SearchRequest, UserResponse } from '../types/dto';
     import { User } from '../models/user';
-    import { type UserTypeFilter, UserTypeFilterValue } from '../types/filter-user-type';
+    import { type UserAdminPermissionFilter, UserAdminPermissionFilterValue } from '../types/user-admin-permission-filter';
     import UsersTable from '../components/UsersTable.vue';
     import UserForm from '../components/UserForm.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
@@ -33,7 +33,7 @@
 
     const nameFilter = ref<string>("");
     const emailFilter = ref<string>("");
-    const typeFilter = ref<UserTypeFilter>(UserTypeFilterValue.None);
+    const typeFilter = ref<UserAdminPermissionFilter>(UserAdminPermissionFilterValue.All);
 
     const createdAtFilter = ref<TimestampRange>({ from: null, to: null });
     const updatedAtFilter = ref<TimestampRange>({ from: null, to: null });
@@ -117,7 +117,7 @@
                     name: nameFilter.value,
                     email: emailFilter.value,
                     permissions: {
-                        isSuperUser: typeFilter.value == UserTypeFilterValue.None ? undefined : (typeFilter.value === UserTypeFilterValue.OnlyAdministrators ? true : false),
+                        isSuperUser: typeFilter.value == UserAdminPermissionFilterValue.All ? undefined : (typeFilter.value === UserAdminPermissionFilterValue.OnlyAdministrators ? true : false),
                     },
                     createdAt: createdAtFilter.value,
                     updatedAt: updatedAtFilter.value,

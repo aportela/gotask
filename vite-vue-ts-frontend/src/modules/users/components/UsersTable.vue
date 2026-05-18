@@ -10,8 +10,8 @@
     import { type SortOrder } from '../../../shared/types/common';
     import { renderIcon } from '../../../shared/composables/naive-ui-icon';
     import ManageTable from '../../../shared/components/tables/ManageTable.vue';
-    import { type UserTypeFilter, UserTypeFilterValue } from '../types/filter-user-type';
-    import FilterUserTypeSelector from '../components/FilterUserTypeSelector.vue';
+    import { type UserAdminPermissionFilter, UserAdminPermissionFilterValue } from '../types/user-admin-permission-filter';
+    import FilterUserAdminPermissionSelector from '../components/FilterUserAdminPermissionSelector.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
     import DateFilter from '../../../shared/components/forms/DateFilter.vue';
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
@@ -35,7 +35,7 @@
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
-            label: t("UserTypeTableHeader"),
+            label: t("UserAdminPermissionTableHeader"),
             field: "isSuperUser",
             sortable: true,
         },
@@ -66,8 +66,8 @@
         },
     ]);
 
-    const userTypeFiter = defineModel<UserTypeFilter>("userTypeFilter", {
-        default: UserTypeFilterValue.None,
+    const userTypeFiter = defineModel<UserAdminPermissionFilter>("userTypeFilter", {
+        default: UserAdminPermissionFilterValue.All,
     });
 
     const userNameFilter = defineModel<string>("userNameFilter", {
@@ -175,7 +175,7 @@
             </tr>
             <tr class="hide-mobile">
                 <th>
-                    <FilterUserTypeSelector size="small" v-model:value="userTypeFiter" />
+                    <FilterUserAdminPermissionSelector size="small" v-model:value="userTypeFiter" />
                 </th>
                 <th>
                     <TextFilterInput clearable size="small" :placeholder="t('searchByNameDefaultPlaceholder')"

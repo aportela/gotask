@@ -37,15 +37,15 @@ export default {
   "This year": "This year",
   "Next year": "Next year",
 
-  // user type filter
-  "All users": "All users",
-  "Only administrators": "Only administrators",
-  "Only users": "Only users",
+  // user admin permission filter
+  userAdminPermissionSelectorValueAll: "All",
+  userAdminPermissionSelectorValueOnlyAdministrators: "Only administrators",
+  userAdminPermissionSelectorValueOnlyUsers: "Only users",
 
   // users
   "Manage users": "Manage users",
   TotalUsersPagerLabel: "Total users: {total}",
-  UserTypeTableHeader: "Type",
+  UserAdminPermissionTableHeader: "Permissions",
   UsernameTableHeader: "Name",
   EmailTableHeader: "Email",
   CreatedAtTableHeader: "Created at",
