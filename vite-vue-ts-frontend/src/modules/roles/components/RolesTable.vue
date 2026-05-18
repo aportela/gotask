@@ -3,7 +3,7 @@
     import { useI18n } from "vue-i18n";
 
     import { useDialog, NButtonGroup, NButton, NFlex, NEmpty, NIcon, NTooltip } from 'naive-ui';
-    import { IconEdit, IconPlus, IconRefresh, IconEyeCheck, IconSquarePlus, IconTrash, IconCopyX } from '@tabler/icons-vue';
+    import { IconEdit, IconPlus, IconRefresh, IconEyeCheck, IconSquarePlus, IconTrash } from '@tabler/icons-vue';
 
     import { Role } from '../models/role';
     import type { TableHeaderColumn } from '../../../shared/types/table-header-column';
@@ -152,7 +152,7 @@
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowDeleteProject">
                         <template #trigger>
-                            <IconCopyX class="doneo-cursor-help" />
+                            <IconTrash class="doneo-cursor-help" />
                         </template>
                         {{ t("Delete project allowed") }}
                     </n-tooltip>
