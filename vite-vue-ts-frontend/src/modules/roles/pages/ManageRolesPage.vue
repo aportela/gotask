@@ -16,6 +16,7 @@
     import RoleForm from '../components/RoleForm.vue';
     import Pager from '../../../shared/components/tables/Pager.vue';
     import { Sort } from '../../../shared/types/models/sort';
+    import type { FormMode } from '../types/form-mode';
 
     const { notify } = useNotify();
 
@@ -36,8 +37,8 @@
     const totalResults = ref(0);
     const totalPages = ref(0);
 
-    const showUserDialog = ref<boolean>(false);
-    const roleDialogMode = ref<string>("add");
+    const showRoleDialogForm = ref<boolean>(false);
+    const roleDialogFormMode = ref<FormMode>("add");
 
     const selectedRoleId = ref<string>("");
 
@@ -63,30 +64,30 @@
     };
 
     const onShowAddForm = () => {
-        roleDialogMode.value = "add";
-        showUserDialog.value = true;
+        roleDialogFormMode.value = "add";
+        showRoleDialogForm.value = true;
     };
 
     const onShowUpdateForm = (role: Role, _index: number) => {
         selectedRoleId.value = role.id;
-        roleDialogMode.value = "update";
-        showUserDialog.value = true;
+        roleDialogFormMode.value = "update";
+        showRoleDialogForm.value = true;
     };
 
     const onAdd = (role: Role) => {
-        showUserDialog.value = false;
+        showRoleDialogForm.value = false;
         notify('success', t("roleAddedNotification", { name: role.name }));
         onRefresh();
     };
 
     const onUpdate = (role: Role) => {
-        showUserDialog.value = false;
+        showRoleDialogForm.value = false;
         notify('success', t("roleUpdatedNotification", { name: role.name }));
         onRefresh();
     };
 
     const onCancel = () => {
-        showUserDialog.value = false;
+        showRoleDialogForm.value = false;
     };
 
     const onRefresh = async () => {
@@ -186,8 +187,8 @@
 </script>
 
 <template>
-    <n-modal v-model:show="showUserDialog">
-        <RoleForm :mode="roleDialogMode == 'add' ? 'add' : 'update'" :roleId="selectedRoleId" style="width: 40%;"
+    <n-modal v-model:show="showRoleDialogForm">
+        <RoleForm :mode="roleDialogFormMode == 'add' ? 'add' : 'update'" :roleId="selectedRoleId" style="width: 40%;"
             @add="onAdd" @update="onUpdate" @delete="onDelete" @cancel="onCancel" />
     </n-modal>
 

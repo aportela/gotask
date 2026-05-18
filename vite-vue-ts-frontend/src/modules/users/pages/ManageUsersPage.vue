@@ -18,6 +18,7 @@
     import Pager from '../../../shared/components/tables/Pager.vue';
     import { Sort } from '../../../shared/types/models/sort';
     import type { TimestampRange } from '../../../shared/composables/timestamps';
+    import type { FormMode } from '../types/form-mode';
 
     const { notify } = useNotify();
 
@@ -44,8 +45,8 @@
     const totalResults = ref(0);
     const totalPages = ref(0);
 
-    const showUserDialog = ref<boolean>(false);
-    const userDialogMode = ref<string>("add");
+    const showUserDialogForm = ref<boolean>(false);
+    const userDialogFormMode = ref<FormMode>("add");
 
     const selectedUserId = ref<string>("");
 
@@ -75,30 +76,30 @@
     };
 
     const onShowAddForm = () => {
-        userDialogMode.value = "add";
-        showUserDialog.value = true;
+        userDialogFormMode.value = "add";
+        showUserDialogForm.value = true;
     };
 
     const onShowUpdateForm = (user: User, _index: number) => {
         selectedUserId.value = user.id;
-        userDialogMode.value = "update";
-        showUserDialog.value = true;
+        userDialogFormMode.value = "update";
+        showUserDialogForm.value = true;
     };
 
     const onAdd = (user: User) => {
-        showUserDialog.value = false;
+        showUserDialogForm.value = false;
         notify('success', t("userAddedNotification", { name: user.name }));
         onRefresh();
     };
 
     const onUpdate = (user: User) => {
-        showUserDialog.value = false;
+        showUserDialogForm.value = false;
         notify('success', t("userUpdatedNotification", { name: user.name }));
         onRefresh();
     };
 
     const onCancel = () => {
-        showUserDialog.value = false;
+        showUserDialogForm.value = false;
     };
 
     const onRefresh = async () => {
@@ -240,8 +241,8 @@
 </script>
 
 <template>
-    <n-modal v-model:show="showUserDialog">
-        <UserForm :mode="userDialogMode == 'add' ? 'add' : 'update'" :user-id="selectedUserId" style="width: 40%;"
+    <n-modal v-model:show="showUserDialogForm">
+        <UserForm :mode="userDialogFormMode == 'add' ? 'add' : 'update'" :user-id="selectedUserId" style="width: 40%;"
             @add="onAdd" @update="onUpdate" @delete="onDelete" @cancel="onCancel" @undelete="onUnDelete" />
     </n-modal>
 
