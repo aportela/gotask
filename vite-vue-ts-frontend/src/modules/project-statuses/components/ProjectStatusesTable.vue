@@ -40,6 +40,19 @@
         },
     ]);
 
+    const minMax = computed(() => {
+        if (!props.projectStatuses.length) {
+            return { min: null, max: null }
+        }
+        let min = props.projectStatuses[0].index
+        let max = props.projectStatuses[0].index
+        for (const item of props.projectStatuses) {
+            if (item.index < min) min = item.index
+            if (item.index > max) max = item.index
+        }
+        return { min, max }
+    });
+
     const projectTypeNameFilter = defineModel<string>("projectTypeNameFilter", {
         default: "",
     });
@@ -145,16 +158,18 @@
                 <td>{{ projectStatus.index }}</td>
                 <td class="doneo-text-center">
                     <n-button-group size="small">
-                        <n-button @click="onMoveIndexUp(projectStatus, index)" :disabled="props.loading">
-                            {{ t("Up") }}
+                        <n-button @click="onMoveIndexUp(projectStatus, index)"
+                            :disabled="props.loading || projectStatus.index == minMax.min">
+                            {{ t("Move up") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconArrowBigUp />
                                 </n-icon>
                             </template>
                         </n-button>
-                        <n-button @click="onMoveIndexDown(projectStatus, index)" :disabled="props.loading">
-                            {{ t("Down") }}
+                        <n-button @click="onMoveIndexDown(projectStatus, index)"
+                            :disabled="props.loading || projectStatus.index == minMax.max">
+                            {{ t("Move down") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconArrowBigDown />

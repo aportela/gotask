@@ -10,6 +10,8 @@ export default {
   Restore: "Restaurar",
   Cancel: "Cancelar",
   Refresh: "Recargar",
+  "Move up": "Subir",
+  "Move down": "Baixar",
   "Do you want to continue ?": "¿ Desexa continuar ?",
 
   // errors
