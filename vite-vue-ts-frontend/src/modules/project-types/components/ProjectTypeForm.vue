@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, type CSSProperties } from 'vue';
+    import { ref, reactive, computed, onMounted, onBeforeUnmount, watch, type CSSProperties, nextTick } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NSpin, NCard, NInput, NFlex, NButton, NColorPicker, NTag, NForm, NFormItem, type FormItemRule, type FormInst, type FormRules, NIcon } from 'naive-ui';
@@ -120,6 +120,7 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
+                await nextTick();
                 projectTypeFormRef.value?.restoreValidation();
                 projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
             }
