@@ -122,6 +122,7 @@
             } finally {
                 state.ajaxRunning = false;
                 if (state.ajaxErrors) {
+                    await nextTick();
                     signInFormRef.value?.restoreValidation();
                     signInFormRef.value?.validate().then(() => { }).catch(() => { });
                 }
@@ -193,7 +194,7 @@
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                }}</n-button>
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
