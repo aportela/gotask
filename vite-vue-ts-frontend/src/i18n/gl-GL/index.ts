@@ -167,6 +167,8 @@ export default {
     "Produciuse un problema ó engadi-los datos do tipo de proxecto",
   "There was a problem while updating the project type data":
     "Produciuse un problema ó modifica-los datos do tipo de proxecto",
+  "There was a problem while loading the project type data":
+    "Produciuse un problema ó carga-los datos do tipo de proxecto",
   "We couldn’t find the specified project type":
     "O tipo de proxecto especificado non existe",
   projectTypeFormNameFieldPlaceholder: "Introduzca o nome do tipo de proxecto",

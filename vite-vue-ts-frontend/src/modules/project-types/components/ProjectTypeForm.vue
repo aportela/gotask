@@ -106,7 +106,7 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectTypeForm.onGet" } });
                             break;
                         case 404:
-                            state.ajaxErrorMessage = t("projectTypeFormIdNotFoundError");
+                            state.ajaxErrorMessage = t("We couldn’t find the specified project type");
                             break;
                         default:
                             state.ajaxErrorMessage = t("There was a problem while loading the project type data");
@@ -146,13 +146,16 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectTypeForm.onAdd" } });
                             break;
                         case 409:
-                        // conflict (invalid id || name ?)
+                            if (apiError.details?.field === "name") {
+                                serverErrors.value.name = "projectTypeFormNameFieldAlreadyExists";
+                            } else {
+                                state.ajaxErrorMessage = t("There was a problem while adding the project type data");
+                            }
+                            break;
                         default:
                             state.ajaxErrorMessage = t("There was a problem while adding the project type data");
                             break;
                     }
-                    projectTypeFormRef.value?.restoreValidation();
-                    projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while adding the project type data");
@@ -160,6 +163,11 @@
                 });
         } finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrors) {
+                await nextTick();
+                projectTypeFormRef.value?.restoreValidation();
+                projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
+            }
         }
     };
 
@@ -184,13 +192,16 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectTypeForm.onUpdate" } });
                             break;
                         case 409:
-                        // conflict (invalid id || name ?)
+                            if (apiError.details?.field === "name") {
+                                serverErrors.value.name = "projectTypeFormNameFieldAlreadyExists";
+                            } else {
+                                state.ajaxErrorMessage = t("There was a problem while updating the project type data");
+                            }
+                            break;
                         default:
                             state.ajaxErrorMessage = t("There was a problem while updating the project type data");
                             break;
                     }
-                    projectTypeFormRef.value?.restoreValidation();
-                    projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while updating the project type data");
@@ -198,6 +209,11 @@
                 });
         } finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrors) {
+                await nextTick();
+                projectTypeFormRef.value?.restoreValidation();
+                projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
+            }
         }
     };
 

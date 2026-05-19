@@ -168,6 +168,8 @@ export default {
     "There was a problem while adding the project type data",
   "There was a problem while updating the project type data":
     "There was a problem while updating the project type data",
+  "There was a problem while loading the project type data":
+    "There was a problem while loading the project type data",
   "We couldn’t find the specified project type":
     "We couldn’t find the specified project type",
   projectTypeFormNameFieldEmptyError: "",
