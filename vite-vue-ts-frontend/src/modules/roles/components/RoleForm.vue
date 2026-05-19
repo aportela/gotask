@@ -157,7 +157,7 @@
                         case 409:
                         // conflict (invalid id || name ?)
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while adding the rpñe data");
+                            state.ajaxErrorMessage = t("There was a problem while adding the role data");
                             break;
                     }
                     roleFormRef.value?.restoreValidation();
