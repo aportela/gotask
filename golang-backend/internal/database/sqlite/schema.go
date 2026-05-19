@@ -5,7 +5,7 @@ var installSchemaQueries = []string{
 		CREATE TABLE IF NOT EXISTS users (
 			id TEXT NOT NULL CHECK(length(id) == 36),
 			email TEXT NOT NULL COLLATE NOCASE UNIQUE CHECK(length(email) <= 255),
-			name TEXT NOT NULL CHECK(length(name) BETWEEN 1 AND 32),
+			name TEXT NOT NULL UNIQUE CHECK(length(name) BETWEEN 1 AND 32),
 			password_hash TEXT NOT NULL CHECK(length(password_hash) <= 60),
 			created_at INTEGER NOT NULL,
 			updated_at INTEGER,
