@@ -109,7 +109,6 @@
             const response: RoleResponse = await roleService.get(id);
             if (response.id === id) {
                 role.value = new Role(response);
-                roleFormRef.value?.restoreValidation();
             } else {
                 state.ajaxErrorMessage = t("There was a problem while loading the role data");
             }
@@ -138,7 +137,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                roleFormRef.value?.restoreValidation();
                 roleFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -184,7 +182,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                roleFormRef.value?.restoreValidation();
                 roleFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -231,7 +228,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                roleFormRef.value?.restoreValidation();
                 roleFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }

@@ -165,7 +165,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                projectTypeFormRef.value?.restoreValidation();
                 projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -212,7 +211,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                projectTypeFormRef.value?.restoreValidation();
                 projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }

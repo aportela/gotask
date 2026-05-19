@@ -96,7 +96,6 @@
             const response: ProjectStatusResponse = await projectStatusService.get(id);
             if (response.id === id) {
                 projectStatus.value = new ProjectStatus(response);
-                projectStatusFormRef.value?.restoreValidation();
             } else {
                 state.ajaxErrorMessage = t("There was a problem while loading the project status data");
             }
@@ -125,7 +124,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                projectStatusFormRef.value?.restoreValidation();
                 projectStatusFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -171,7 +169,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                projectStatusFormRef.value?.restoreValidation();
                 projectStatusFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -218,7 +215,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                projectStatusFormRef.value?.restoreValidation();
                 projectStatusFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }

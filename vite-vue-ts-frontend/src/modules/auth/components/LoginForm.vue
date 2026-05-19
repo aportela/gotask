@@ -91,6 +91,7 @@
     const onSubmit = async () => {
         if (signinFormValues.value.email && signinFormValues.value.password) {
             serverErrors.value = {};
+            signInFormRef.value?.restoreValidation();
             Object.assign(state, defaultAjaxStateRunning);
             try {
                 const payload: SignInRequest = {
@@ -126,7 +127,6 @@
                 state.ajaxRunning = false;
                 if (state.ajaxErrors) {
                     await nextTick();
-                    signInFormRef.value?.restoreValidation();
                     signInFormRef.value?.validate().then(() => { }).catch(() => { });
                 }
             }
@@ -138,6 +138,7 @@
     const onSignIn = async (e: MouseEvent | KeyboardEvent) => {
         e.preventDefault()
         serverErrors.value = {};
+        signInFormRef.value?.restoreValidation();
         try {
             await signInFormRef.value?.validate();
             onSubmit();
@@ -197,7 +198,7 @@
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                }}</n-button>
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>

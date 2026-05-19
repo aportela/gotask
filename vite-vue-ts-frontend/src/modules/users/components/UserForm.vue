@@ -149,7 +149,6 @@
             const response: UserResponse = await userService.get(id);
             if (response.id === id) {
                 user.value = new User(response);
-                userFormRef.value?.restoreValidation();
             } else {
                 state.ajaxErrorMessage = t("There was a problem while loading the user data");
             }
@@ -178,7 +177,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                userFormRef.value?.restoreValidation();
                 userFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -229,7 +227,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                userFormRef.value?.restoreValidation();
                 userFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -282,7 +279,6 @@
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
                 await nextTick();
-                userFormRef.value?.restoreValidation();
                 userFormRef.value?.validate().then(() => { }).catch(() => { });
             }
         }
@@ -371,7 +367,8 @@
                         </n-tooltip>
                     </template>
                 </n-input>
-                <n-button v-else @click="onShowPasswordFormItem" block>{{ t("userFormChangePasswordButtonLabel")
+                <n-button v-else @click="onShowPasswordFormItem" block :disabled="state.ajaxRunning">{{
+                    t("userFormChangePasswordButtonLabel")
                     }}</n-button>
             </n-form-item>
             <n-form-item :label="t('userFormPermissionsLabel')">
