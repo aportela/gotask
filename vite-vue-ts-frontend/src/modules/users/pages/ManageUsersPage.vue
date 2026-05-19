@@ -82,7 +82,7 @@
         showUserDialogForm.value = true;
     };
 
-    const onShowUpdateForm = (user: User, _index: number) => {
+    const onShowUpdateForm = (user: User, _index?: number) => {
         selectedUser.value = user;
         userDialogFormMode.value = "update";
         showUserDialogForm.value = true;
