@@ -108,6 +108,8 @@
                 }
             };
             const response = await projectTypeService.search(payload);
+            totalPages.value = response.pager.totalPages;
+            totalResults.value = response.pager.totalResults;
             projectTypes.value = response.projectTypes.map((projectType: ProjectTypeResponse) => new ProjectType(projectType))
         } catch (error: unknown) {
             projectTypes.value.length = 0;
