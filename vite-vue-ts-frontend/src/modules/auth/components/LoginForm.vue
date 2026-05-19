@@ -48,7 +48,10 @@
         email: {
             required: true,
             validator: (_rule: FormItemRule, value: string) => {
-                if (!value) {
+                if (state.ajaxRunning) {
+                    return true;
+                }
+                if (!value?.trim()) {
                     return new Error(t("loginFormEmailFieldEmptyError"));
                 }
                 else if (!isValidEmail(value)) {
@@ -67,7 +70,7 @@
         password: {
             required: true,
             validator: (_rule: FormItemRule, value: string) => {
-                if (!value) {
+                if (!value?.trim()) {
                     return new Error(t("loginFormPasswordFieldEmptyError"));
                 }
                 else if (value.length < minPasswordLength) {
@@ -194,7 +197,7 @@
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
