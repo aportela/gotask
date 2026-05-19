@@ -158,7 +158,7 @@
             </tr>
             <tr>
                 <td :colspan="columns.length + 1" v-if="projectStatuses.length < 1 && !props.loading">
-                    <n-empty :description="t('No project types found')">
+                    <n-empty :description="t('No project statuses found')">
                     </n-empty>
                 </td>
             </tr>
