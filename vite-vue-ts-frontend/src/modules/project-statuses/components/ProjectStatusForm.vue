@@ -112,8 +112,6 @@
                             state.ajaxErrorMessage = t("There was a problem while loading the project status data");
                             break;
                     }
-                    projectStatusFormRef.value?.restoreValidation();
-                    projectStatusFormRef.value?.validate().then(() => { }).catch(() => { });
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while loading the project status data");
@@ -121,6 +119,10 @@
                 });
         } finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrors) {
+                projectStatusFormRef.value?.restoreValidation();
+                projectStatusFormRef.value?.validate().then(() => { }).catch(() => { });
+            }
         }
     };
 

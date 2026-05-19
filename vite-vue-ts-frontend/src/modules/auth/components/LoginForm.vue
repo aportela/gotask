@@ -114,8 +114,6 @@
                                 state.ajaxErrorMessage = t("Invalid API response code");
                                 break;
                         }
-                        signInFormRef.value?.restoreValidation();
-                        signInFormRef.value?.validate().then(() => { }).catch(() => { });
                     },
                     (fatalError) => {
                         state.ajaxErrorMessage = t("Uncaught exception");
@@ -123,6 +121,10 @@
                     });
             } finally {
                 state.ajaxRunning = false;
+                if (state.ajaxErrors) {
+                    signInFormRef.value?.restoreValidation();
+                    signInFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         } else {
             console.error("Fatal error", { file: "LoginForm.vue", method: "onSubmit", details: "missing email/password values" });
@@ -191,7 +193,7 @@
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
                     t("Sign in")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
