@@ -41,7 +41,11 @@
     const showProjectTypeDialogForm = ref<boolean>(false);
     const projectTypeDialogFormMode = ref<FormMode>("add");
 
-    const selectedProjectTypeId = ref<string>("");
+    const selectedProjectType = ref<ProjectType>(new ProjectType({
+        id: "",
+        name: "",
+        hexColor: "",
+    }));
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -70,7 +74,7 @@
     };
 
     const onShowUpdateForm = (projectType: ProjectType, _index: number) => {
-        selectedProjectTypeId.value = projectType.id;
+        selectedProjectType.value = projectType;
         projectTypeDialogFormMode.value = "update";
         showProjectTypeDialogForm.value = true;
     };
@@ -136,7 +140,7 @@
         }
     };
 
-    const onDelete = async (projectType: ProjectType, _index: number) => {
+    const onDelete = async (projectType: ProjectType, _index?: number) => {
         Object.assign(state, defaultAjaxStateRunning);
         try {
             await projectTypeService.delete(projectType.id);
@@ -149,6 +153,7 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
+                            selectedProjectType.value = projectType;
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectTypesPage.onDelete" } });
                             break;
                         case 404:
@@ -176,8 +181,7 @@
             if (payload.to.includes("ManageProjectTypesPage.onRefresh")) {
                 onRefresh();
             } else if (payload.to.includes("ManageProjectTypesPage.onDelete")) {
-                // TODO: missing role/index param at this point
-                //onDelete();
+                onDelete(selectedProjectType.value);
             }
         });
     });
@@ -190,7 +194,7 @@
 <template>
     <n-modal v-model:show="showProjectTypeDialogForm">
         <ProjectTypeForm :mode="projectTypeDialogFormMode == 'add' ? 'add' : 'update'"
-            :project-type-id="selectedProjectTypeId" style="width: 40%;" @add="onAdd" @update="onUpdate"
+            :project-type-id="selectedProjectType.id" style="width: 40%;" @add="onAdd" @update="onUpdate"
             @cancel="onCancel" />
     </n-modal>
 
