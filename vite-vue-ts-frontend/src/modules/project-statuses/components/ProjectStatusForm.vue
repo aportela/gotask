@@ -62,7 +62,6 @@
 
     watch(() => projectStatus.value.name, () => { delete serverErrors.value.name });
 
-
     const serverErrors = ref<Record<string, string>>({});
 
     const isSaveDisabled = computed<boolean>(() => {
@@ -71,6 +70,7 @@
 
     const onSave = async () => {
         serverErrors.value = {};
+        projectStatusFormRef.value?.restoreValidation();
         try {
             await projectStatusFormRef.value?.validate();
             if (props.mode === "add") {
@@ -90,6 +90,7 @@
 
     const onGet = async (id: string) => {
         serverErrors.value = {};
+        projectStatusFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const response: ProjectStatusResponse = await projectStatusService.get(id);
@@ -131,6 +132,8 @@
     };
 
     const onAdd = async () => {
+        serverErrors.value = {};
+        projectStatusFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
@@ -176,6 +179,7 @@
 
     const onUpdate = async () => {
         serverErrors.value = {};
+        projectStatusFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {

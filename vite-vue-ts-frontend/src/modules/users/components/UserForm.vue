@@ -123,6 +123,7 @@
 
     const onSave = async () => {
         serverErrors.value = {};
+        userFormRef.value?.restoreValidation();
         try {
             await userFormRef.value?.validate();
             if (props.mode === "add") {
@@ -142,6 +143,7 @@
 
     const onGet = async (id: string) => {
         serverErrors.value = {};
+        userFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const response: UserResponse = await userService.get(id);
@@ -183,6 +185,8 @@
     };
 
     const onAdd = async () => {
+        serverErrors.value = {};
+        userFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
@@ -233,6 +237,7 @@
 
     const onUpdate = async () => {
         serverErrors.value = {};
+        userFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {

@@ -70,6 +70,7 @@
 
     const onSave = async () => {
         serverErrors.value = {};
+        projectTypeFormRef.value?.restoreValidation();
         try {
             await projectTypeFormRef.value?.validate();
             if (props.mode === "add") {
@@ -126,6 +127,7 @@
 
     const onAdd = async () => {
         serverErrors.value = {};
+        projectTypeFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
@@ -171,6 +173,7 @@
 
     const onUpdate = async () => {
         serverErrors.value = {};
+        projectTypeFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {

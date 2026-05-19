@@ -83,6 +83,7 @@
 
     const onSave = async () => {
         serverErrors.value = {};
+        roleFormRef.value?.restoreValidation();
         try {
             await roleFormRef.value?.validate();
             if (props.mode === "add") {
@@ -102,6 +103,7 @@
 
     const onGet = async (id: string) => {
         serverErrors.value = {};
+        roleFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const response: RoleResponse = await roleService.get(id);
@@ -143,6 +145,8 @@
     };
 
     const onAdd = async () => {
+        serverErrors.value = {};
+        roleFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
@@ -187,6 +191,8 @@
     };
 
     const onUpdate = async () => {
+        serverErrors.value = {};
+        roleFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
