@@ -66,11 +66,12 @@ export const setupInterceptors = (
         ...error,
         isAPIError: Boolean(
           contentType?.toLowerCase().includes("application/json") &&
-          responseData?.APIError === true,
+            responseData?.APIError === true,
         ),
         code: responseData?.code || error.code || "",
         message: responseData?.message || error.message,
         debug: responseData?.debug || "",
+        details: responseData?.details || null,
       };
 
       return Promise.reject(apiError);

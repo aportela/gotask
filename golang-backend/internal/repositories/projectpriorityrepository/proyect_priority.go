@@ -82,7 +82,7 @@ func (projectPriorityRepository *projectPriorityRepository) Get(ctx context.Cont
 		id).Scan(&projectPriority.ID, &projectPriority.Name, &projectPriority.HexColor, &projectPriority.Index)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return projectPriorityDTO{}, domain.ErrNotFound
+			return projectPriorityDTO{}, domain.NotFoundError
 		}
 		return projectPriorityDTO{}, err
 	}

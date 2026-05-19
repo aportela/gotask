@@ -1,23 +1,26 @@
 package domain
 
 import (
-	"fmt"
+	"errors"
 )
 
-type DatabaseError struct {
-	Message string
+var InvalidCredentialsError = errors.New("invalid credentials")
+var NotFoundError = errors.New("entity not found")
+var DeletedError = errors.New("entity deleted")
+var UncaughtDatabaseError = errors.New("database error")
+
+type AlreadyExistsError struct {
+	Field string
 }
 
-func (e *DatabaseError) Error() string {
-	return e.Message
+func (e *AlreadyExistsError) Error() string {
+	return "field already exists: " + e.Field
 }
 
-func NewDatabaseError(msg string) error {
-	return &DatabaseError{Message: msg}
+type ValidationError struct {
+	Field string
 }
 
-var (
-	ErrInvalidCredentials = fmt.Errorf("invalid credentials")
-	ErrNotFound           = fmt.Errorf("entity not found")
-	ErrDeleted            = fmt.Errorf("entity deleted")
-)
+func (e *ValidationError) Error() string {
+	return "field not valid: " + e.Field
+}

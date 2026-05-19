@@ -124,6 +124,8 @@ export default {
   "We couldn’t find the specified role": "We couldn’t find the specified role",
   "There was a problem while deleting the role":
     "There was a problem while deleting the role",
+  "There was a problem while adding the role data":
+    "There was a problem while adding the role data",
   roleAddedNotification: 'Role "{name}" has been added',
   roleUpdatedNotification: 'Role "{name}" has been updated',
   roleDeletedNotification: 'Role "{name}" has been deleted',
@@ -131,6 +133,7 @@ export default {
   roleFormNameFieldPlaceholder: "Enter role name",
   roleFormNameFieldEmptyError: "Name is empty",
   roleFormNameFieldTooLargeError: "Name is too large",
+  roleFormNameFieldAlreadyExists: "Name already exists",
 
   // project types
   "Manage project types": "Manage project types",

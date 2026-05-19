@@ -74,7 +74,7 @@ func (h *ProjectPriorityHandler) Get(w http.ResponseWriter, r *http.Request) {
 	projectPriorityId := chi.URLParam(r, "id")
 	projectPriority, err := h.service.Get(r.Context(), projectPriorityId)
 	if err != nil {
-		if err == domain.ErrNotFound {
+		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityService] failed to get non existent project priority: %w", err))
 			return
 		} else {

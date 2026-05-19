@@ -124,6 +124,8 @@ export default {
   "We couldn’t find the specified role": "El rol especificado no existe",
   "There was a problem while deleting the role":
     "Se ha producido un error al eliminar el rol",
+  "There was a problem while adding the role data":
+    "Se ha producido un error al añadir el rol",
   roleAddedNotification: 'El rol "{name}" se ha añadido',
   roleUpdatedNotification: 'El rol "{name}" se ha modificado',
   roleDeletedNotification: 'El rol "{name}" se ha eliminado',
@@ -131,6 +133,7 @@ export default {
   roleFormNameFieldPlaceholder: "Introduzca el nombre",
   roleFormNameFieldEmptyError: "El nombre está vacío",
   roleFormNameFieldTooLargeError: "El nombre es muy largo",
+  roleFormNameFieldAlreadyExists: "El nombre ya existe",
 
   // project types
   "Manage project types": "Gestión de tipos de proyectos",

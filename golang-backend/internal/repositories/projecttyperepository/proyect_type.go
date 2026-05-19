@@ -83,7 +83,7 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
 		id).Scan(&projectType.ID, &projectType.Name, &projectType.HexColor)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return projectTypeDTO{}, domain.ErrNotFound
+			return projectTypeDTO{}, domain.NotFoundError
 		}
 		return projectTypeDTO{}, err
 	}

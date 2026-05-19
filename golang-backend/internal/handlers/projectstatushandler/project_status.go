@@ -75,7 +75,7 @@ func (h *ProjectStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
 	projectStatusId := chi.URLParam(r, "id")
 	projectStatus, err := h.service.Get(r.Context(), projectStatusId)
 	if err != nil {
-		if err == domain.ErrNotFound {
+		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to get non existent project status: %w", err))
 			return
 		} else {

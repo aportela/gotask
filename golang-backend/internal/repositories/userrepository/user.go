@@ -144,7 +144,7 @@ func (userRepository *userRepository) Get(ctx context.Context, id string) (UserD
 		id).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &user.PermissionsBitmask)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return UserDTO{}, domain.ErrNotFound
+			return UserDTO{}, domain.NotFoundError
 		}
 		return UserDTO{}, err
 	}
@@ -164,7 +164,7 @@ func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context
 		email).Scan(&user.ID, &user.Email, &user.Name, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt, &user.DeletedAt, &user.PermissionsBitmask)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return UserDTO{}, domain.ErrNotFound
+			return UserDTO{}, domain.NotFoundError
 		}
 		return UserDTO{}, err
 	}

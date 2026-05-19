@@ -123,6 +123,8 @@ export default {
   "We couldn’t find the specified role": "O rol especificado non existe",
   "There was a problem while deleting the role":
     "Producíuse un erro ó elimina-lo rol",
+  "There was a problem while adding the role data":
+    "Producíuse un erro ó engadi-lo rol",
   roleAddedNotification: 'O rol "{name}" engadiuse',
   roleUpdatedNotification: 'O rol "{name}" modificouse',
   roleDeletedNotification: 'O rol "{name}" eliminouse',
@@ -130,6 +132,7 @@ export default {
   roleFormNameFieldPlaceholder: "Introduzca o nome",
   roleFormNameFieldEmptyError: "O nome está vacío",
   roleFormNameFieldTooLargeError: "O nome é moi longo",
+  roleFormNameFieldAlreadyExists: "O nombre xa existe",
 
   // project types
   "Manage project types": "Xestión de tipos de proxectos",

@@ -71,7 +71,7 @@ func (h *ProjectHandler) GetProject(w http.ResponseWriter, r *http.Request) {
 	projectId := chi.URLParam(r, "id")
 	project, err := h.service.GetProject(r.Context(), projectId)
 	if err != nil {
-		if err == domain.ErrNotFound {
+		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectService] not found project with ID %s: %w", projectId, err))
 			return
 		} else {

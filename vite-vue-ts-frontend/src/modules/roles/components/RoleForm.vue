@@ -57,6 +57,7 @@
         name: {
             required: true,
             validator: (_rule: FormItemRule, value: string) => {
+                console.log("validator", serverErrors.value.name);
                 if (!value) {
                     return new Error(t("roleFormNameFieldEmptyError"));
                 }
@@ -155,13 +156,21 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "RoleForm.onAdd" } });
                             break;
                         case 409:
-                        // conflict (invalid id || name ?)
+                            if (apiError.details?.field === "name") {
+                                serverErrors.value.name = "roleFormNameFieldAlreadyExists";
+                                console.log(409);
+                                roleFormRef.value?.validate().catch(() => { });
+                            } else {
+                                state.ajaxErrorMessage = t("There was a problem while adding the role data");
+                            }
+                            break;
                         default:
                             state.ajaxErrorMessage = t("There was a problem while adding the role data");
                             break;
                     }
-                    roleFormRef.value?.restoreValidation();
-                    roleFormRef.value?.validate().then(() => { }).catch(() => { });
+                    //roleFormRef.value?.restoreValidation();
+                    //roleFormRef.value?.validate().then(() => { }).catch(() => { });
+
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while adding the role data");
@@ -173,7 +182,6 @@
     };
 
     const onUpdate = async () => {
-        serverErrors.value = {};
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {

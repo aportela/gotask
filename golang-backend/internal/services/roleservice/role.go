@@ -27,7 +27,7 @@ func NewRoleService(role rolerepository.RoleRepository) RoleService {
 
 func (r *roleService) Add(ctx context.Context, role domain.Role) error {
 	if err := r.repository.Add(ctx, rolerepository.DomainToDTO(role)); err != nil {
-		return fmt.Errorf("[RoleService] failed to add role with ID %s: %w", role.ID, err)
+		return fmt.Errorf("[RoleService] failed to add role with ID %s\n%w", role.ID, err)
 	}
 	return nil
 }

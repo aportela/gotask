@@ -5,6 +5,7 @@ export type APIErrorResponse = {
   code?: string;
   message?: string;
   debug?: string;
+  details?: any;
 };
 
 export type APIError = AxiosError & {
@@ -12,4 +13,5 @@ export type APIError = AxiosError & {
   code: string;
   message: string;
   debug: string;
+  details?: any;
 };

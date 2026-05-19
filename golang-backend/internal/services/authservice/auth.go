@@ -29,11 +29,11 @@ func (s *authService) SignIn(ctx context.Context, user domain.User) (domain.User
 		return domain.User{}, err
 	}
 	if user.DeletedAt != nil {
-		return domain.User{}, domain.ErrDeleted
+		return domain.User{}, domain.DeletedError
 	}
 	err = bcrypt.CompareHashAndPassword([]byte(credentialUser.PasswordHash), []byte(user.Password))
 	if err != nil {
-		return domain.User{}, domain.ErrInvalidCredentials
+		return domain.User{}, domain.InvalidCredentialsError
 	}
 	return userrepository.DTOToDomain(credentialUser), nil
 }

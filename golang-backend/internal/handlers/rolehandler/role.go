@@ -75,7 +75,7 @@ func (h *RoleHandler) Get(w http.ResponseWriter, r *http.Request) {
 	roleId := chi.URLParam(r, "id")
 	user, err := h.role.Get(r.Context(), roleId)
 	if err != nil {
-		if err == domain.ErrNotFound {
+		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to get non existent role: %w", err))
 			return
 		} else {
