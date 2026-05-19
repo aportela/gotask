@@ -166,6 +166,7 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
+                await nextTick();
                 userFormRef.value?.restoreValidation();
                 userFormRef.value?.validate().then(() => { }).catch(() => { });
             }
@@ -194,13 +195,16 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "UserForm.onAdd" } });
                             break;
                         case 409:
-                        // conflict (invalid id || name ?)
+                            if (apiError.details?.field === "name") {
+                                serverErrors.value.name = "userFormNameFieldAlreadyExists";
+                            } else {
+                                state.ajaxErrorMessage = t("There was a problem while adding the user data");
+                            }
+                            break;
                         default:
                             state.ajaxErrorMessage = t("There was a problem while adding the user data");
                             break;
                     }
-                    userFormRef.value?.restoreValidation();
-                    userFormRef.value?.validate().then(() => { }).catch(() => { });
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while adding the user data");
@@ -208,6 +212,11 @@
                 });
         } finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrors) {
+                await nextTick();
+                userFormRef.value?.restoreValidation();
+                userFormRef.value?.validate().then(() => { }).catch(() => { });
+            }
         }
     };
 
@@ -236,13 +245,16 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "UserForm.onUpdate" } });
                             break;
                         case 409:
-                        // conflict (invalid id || name ?)
+                            if (apiError.details?.field === "name") {
+                                serverErrors.value.name = "userFormNameFieldAlreadyExists";
+                            } else {
+                                state.ajaxErrorMessage = t("There was a problem while updating the user data");
+                            }
+                            break;
                         default:
                             state.ajaxErrorMessage = t("There was a problem while updating the user data");
                             break;
                     }
-                    userFormRef.value?.restoreValidation();
-                    userFormRef.value?.validate().then(() => { }).catch(() => { });
                 },
                 (fatalError) => {
                     state.ajaxErrorMessage = t("There was a problem while updating the user data");
@@ -250,13 +262,17 @@
                 });
         } finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrors) {
+                await nextTick();
+                userFormRef.value?.restoreValidation();
+                userFormRef.value?.validate().then(() => { }).catch(() => { });
+            }
         }
     };
 
     let stopBusReauthListener: () => void;
 
     onMounted(() => {
-
         stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
             if (payload.to.includes("UserForm.onGet")) {
                 if (props.userId) {

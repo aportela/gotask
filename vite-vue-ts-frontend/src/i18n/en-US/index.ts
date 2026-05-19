@@ -69,6 +69,10 @@ export default {
     "There was a problem while deleting the user",
   "There was a problem while restoring the user":
     "There was a problem while restoring the user",
+  "There was a problem while adding the user data":
+    "There was a problem while adding the user data",
+  "There was a problem while updating the user data":
+    "There was a problem while updating the user data",
   userAddedNotification: 'User "{name}" has been added',
   userUpdatedNotification: 'User "{name}" has been updated',
   userDeletedNotification: 'User "{name}" has been deleted',

@@ -69,6 +69,10 @@ export default {
     "Producíuse un erro o elimina-lo usuario",
   "There was a problem while restoring the user":
     "Producíuse un erro o restaura-lo usuario",
+  "There was a problem while adding the user data":
+    "Producíuse un erro o engadi-lo usuario",
+  "There was a problem while updating the user data":
+    "Producíuse un erro o modifica-lo usuario",
   userAddedNotification: 'O usuario "{name}" engadiuse',
   userUpdatedNotification: 'O usuario "{name}" modificouse',
   userDeletedNotification: 'O usuario "{name}" eliminouse',

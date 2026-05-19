@@ -69,6 +69,10 @@ export default {
     "Se ha producido un error al eliminar el usuario",
   "There was a problem while restoring the user":
     "Se ha producido un error al restaurar el usuario",
+  "There was a problem while adding the user data":
+    "Se ha producido un error al añadir el usuario",
+  "There was a problem while updating the user data":
+    "Se ha producido un error al modificar el usuario",
   userAddedNotification: 'El usuario "{name}" se ha añadido',
   userUpdatedNotification: 'El usuario "{name}" se ha modificado',
   userDeletedNotification: 'El usuario "{name}" se ha eliminado',
