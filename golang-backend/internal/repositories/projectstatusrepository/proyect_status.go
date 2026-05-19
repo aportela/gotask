@@ -10,6 +10,8 @@ import (
 	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
+	"modernc.org/sqlite"
+	sqlite3 "modernc.org/sqlite/lib"
 )
 
 type ProjectStatusRepository interface {
@@ -39,6 +41,29 @@ func (projectStatusRepository *projectStatusRepository) Add(ctx context.Context,
 		projectStatus.Name,
 		projectStatus.HexColor,
 	)
+	if err != nil {
+		fmt.Println(err.Error())
+		var sqlErr *sqlite.Error
+		if !errors.As(err, &sqlErr) {
+			return err
+		}
+		switch sqlErr.Code() {
+		case sqlite3.SQLITE_CONSTRAINT_UNIQUE:
+			if strings.Contains(sqlErr.Error(), "project_statuses.name") {
+				return &domain.AlreadyExistsError{Field: "name"}
+			} else if strings.Contains(sqlErr.Error(), "project_statuses.id") {
+				return &domain.AlreadyExistsError{Field: "id"}
+			}
+		case sqlite3.SQLITE_CONSTRAINT_PRIMARYKEY:
+			return &domain.ValidationError{Field: "id"}
+		case sqlite3.SQLITE_CONSTRAINT_CHECK:
+			if strings.Contains(sqlErr.Error(), "length(name)") {
+				return &domain.ValidationError{Field: "name"}
+			} else if strings.Contains(sqlErr.Error(), "length(id)") {
+				return &domain.ValidationError{Field: "id"}
+			}
+		}
+	}
 	return err
 }
 
@@ -76,6 +101,29 @@ func (projectStatusRepository *projectStatusRepository) Update(ctx context.Conte
 		projectStatus.Index,
 		projectStatus.ID,
 	)
+	if err != nil {
+		fmt.Println(err.Error())
+		var sqlErr *sqlite.Error
+		if !errors.As(err, &sqlErr) {
+			return err
+		}
+		switch sqlErr.Code() {
+		case sqlite3.SQLITE_CONSTRAINT_UNIQUE:
+			if strings.Contains(sqlErr.Error(), "project_statuses.name") {
+				return &domain.AlreadyExistsError{Field: "name"}
+			} else if strings.Contains(sqlErr.Error(), "project_statuses.id") {
+				return &domain.AlreadyExistsError{Field: "id"}
+			}
+		case sqlite3.SQLITE_CONSTRAINT_PRIMARYKEY:
+			return &domain.ValidationError{Field: "id"}
+		case sqlite3.SQLITE_CONSTRAINT_CHECK:
+			if strings.Contains(sqlErr.Error(), "length(name)") {
+				return &domain.ValidationError{Field: "name"}
+			} else if strings.Contains(sqlErr.Error(), "length(id)") {
+				return &domain.ValidationError{Field: "id"}
+			}
+		}
+	}
 	return err
 }
 
