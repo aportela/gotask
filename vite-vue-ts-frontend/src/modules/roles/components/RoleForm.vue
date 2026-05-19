@@ -57,7 +57,10 @@
         name: {
             required: true,
             validator: (_rule: FormItemRule, value: string) => {
-                if (!value) {
+                if (state.ajaxRunning) {
+                    return true;
+                }
+                if (!value?.trim()) {
                     return new Error(t("roleFormNameFieldEmptyError"));
                 }
                 else if (value.length > maxNameLength) {

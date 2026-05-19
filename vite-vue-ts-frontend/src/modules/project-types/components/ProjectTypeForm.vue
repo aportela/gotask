@@ -42,7 +42,10 @@
         name: {
             required: true,
             validator: (_rule: FormItemRule, value: string) => {
-                if (!value) {
+                if (state.ajaxRunning) {
+                    return true;
+                }
+                if (!value?.trim()) {
                     return new Error(t("projectTypeFormNameFieldEmptyError"));
                 }
                 else if (value.length > maxNameLength) {
@@ -58,7 +61,6 @@
     };
 
     watch(() => projectType.value.name, () => { delete serverErrors.value.name });
-
 
     const serverErrors = ref<Record<string, string>>({});
 
@@ -87,12 +89,12 @@
 
     const onGet = async (id: string) => {
         serverErrors.value = {};
+        projectTypeFormRef.value?.restoreValidation();
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const response: ProjectTypeResponse = await projectTypeService.get(id);
             if (response.id === id) {
                 projectType.value = new ProjectType(response);
-                projectTypeFormRef.value?.restoreValidation();
             } else {
                 state.ajaxErrorMessage = t("There was a problem while loading the project type data");
             }
@@ -119,15 +121,11 @@
                 });
         } finally {
             state.ajaxRunning = false;
-            if (state.ajaxErrors) {
-                await nextTick();
-                projectTypeFormRef.value?.restoreValidation();
-                projectTypeFormRef.value?.validate().then(() => { }).catch(() => { });
-            }
         }
     };
 
     const onAdd = async () => {
+        serverErrors.value = {};
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
