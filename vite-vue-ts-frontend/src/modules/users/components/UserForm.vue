@@ -46,7 +46,10 @@
         name: {
             required: true,
             validator: (_rule: FormItemRule, value: string) => {
-                if (!value) {
+                if (state.ajaxRunning) {
+                    return true;
+                }
+                if (!value?.trim()) {
                     return new Error(t("userFormNameFieldEmptyError"));
                 }
                 else if (value.length > maxNameLength) {
@@ -62,7 +65,10 @@
         email: {
             required: true,
             validator: (_rule: FormItemRule, value: string) => {
-                if (!value) {
+                if (state.ajaxRunning) {
+                    return true;
+                }
+                if (!value?.trim()) {
                     return new Error(t("userFormEmailFieldEmptyError"));
                 }
                 else if (!isValidEmail(value)) {
@@ -80,10 +86,13 @@
         password: {
             required: showPasswordField.value,
             validator: (_rule: FormItemRule, value: string) => {
+                if (state.ajaxRunning) {
+                    return true;
+                }
                 if (!showPasswordField.value) {
                     return true;
                 }
-                if (!value) {
+                if (!value?.trim()) {
                     return new Error(t("userFormPasswordFieldEmptyError"));
                 }
                 else if (value.length < minPasswordLength) {
