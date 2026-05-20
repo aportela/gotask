@@ -14,33 +14,27 @@
     import { Role } from '../models/role';
     import RolesTable from '../components/RolesTable.vue';
     import RoleForm from '../components/RoleForm.vue';
-    import Pager from '../../../shared/components/tables/Pager.vue';
     import { Sort } from '../../../shared/types/models/sort';
     import type { FormMode } from '../../../shared/types/form-mode';
 
-    const { notify } = useNotify();
 
     const { t } = useI18n();
+    const { notify } = useNotify();
 
     const loadingStore = useLoadingStore();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-    const roles = shallowRef<Role[]>([]);
+    const items = shallowRef<Role[]>([]);
 
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
     const nameFilter = ref<string>("");
 
-    const currentPage = ref(1);
-    const pageSize = ref(10);
-    const totalResults = ref(0);
-    const totalPages = ref(0);
+    const showForm = ref<boolean>(false);
+    const formMode = ref<FormMode>("add");
 
-    const showRoleDialogForm = ref<boolean>(false);
-    const roleDialogFormMode = ref<FormMode>("add");
-
-    const selectedRole = ref<Role>(
+    const selectedItem = ref<Role>(
         new Role(
             {
                 id: "",
@@ -62,48 +56,36 @@
         loadingStore.set(newValue.ajaxRunning);
     });
 
-    watch(pageSize, () => {
-        if (currentPage.value != 1) {
-            currentPage.value = 1;
-        } else {
-            onRefresh();
-        }
-    });
-
-    watch(currentPage, () => {
-        onRefresh();
-    });
-
     const onToggleSort = (field: string) => {
         sort.value.toggleSort(field);
         onRefresh();
     };
 
     const onShowAddForm = () => {
-        roleDialogFormMode.value = "add";
-        showRoleDialogForm.value = true;
+        formMode.value = "add";
+        showForm.value = true;
     };
 
     const onShowUpdateForm = (role: Role, _index?: number) => {
-        selectedRole.value = role;
-        roleDialogFormMode.value = "update";
-        showRoleDialogForm.value = true;
+        selectedItem.value = role;
+        formMode.value = "update";
+        showForm.value = true;
     };
 
     const onAdd = (role: Role) => {
-        showRoleDialogForm.value = false;
+        showForm.value = false;
         notify('success', t("roleAddedNotification", { name: role.name }));
         onRefresh();
     };
 
     const onUpdate = (role: Role) => {
-        showRoleDialogForm.value = false;
+        showForm.value = false;
         notify('success', t("roleUpdatedNotification", { name: role.name }));
         onRefresh();
     };
 
     const onCancel = () => {
-        showRoleDialogForm.value = false;
+        showForm.value = false;
     };
 
     const onRefresh = async () => {
@@ -111,8 +93,8 @@
         try {
             const payload: SearchRequest = {
                 pager: {
-                    currentPage: currentPage.value,
-                    resultsPage: pageSize.value,
+                    currentPage: 1,
+                    resultsPage: 0,
                 },
                 order: {
                     field: sort.value.field,
@@ -123,11 +105,9 @@
                 }
             };
             const response = await roleService.search(payload);
-            totalPages.value = response.pager.totalPages;
-            totalResults.value = response.pager.totalResults;
-            roles.value = response.roles.map((role: RoleResponse) => new Role(role));
+            items.value = response.roles.map((role: RoleResponse) => new Role(role));
         } catch (error: unknown) {
-            roles.value.length = 0;
+            items.value.length = 0;
             state.ajaxErrors = true;
             handleAPIError(error,
                 (apiError) => {
@@ -164,7 +144,7 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
-                            selectedRole.value = role;
+                            selectedItem.value = role;
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageRolesPage.onDelete" } });
                             break;
                         case 404:
@@ -192,7 +172,7 @@
             if (payload.to.includes("ManageRolesPage.onRefresh")) {
                 onRefresh();
             } else if (payload.to.includes("ManageRolesPage.onDelete")) {
-                onDelete(selectedRole.value);
+                onDelete(selectedItem.value);
             }
         });
     });
@@ -203,26 +183,16 @@
 </script>
 
 <template>
-    <n-modal v-model:show="showRoleDialogForm">
-        <RoleForm :mode="roleDialogFormMode == 'add' ? 'add' : 'update'" :role-id="selectedRole.id" style="width: 40%;"
+    <n-modal v-model:show="showForm">
+        <RoleForm :mode="formMode == 'add' ? 'add' : 'update'" :role-id="selectedItem.id" style="width: 40%;"
             @add="onAdd" @update="onUpdate" @cancel="onCancel" />
     </n-modal>
 
     <n-card :title="t('Manage roles')">
-        <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
-            :total-results="totalResults" class="doneo-pager-container">
-            <template #total-results-label="{ totalResults }">
-                {{ t("TotalRolesPagerLabel", { total: totalResults }) }}
-            </template>
-        </Pager>
-        <RolesTable :roles="roles" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
+        <RolesTable :roles="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
             :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter" />
     </n-card>
 </template>
 
-<style lang="css">
-    .doneo-pager-container {
-        margin-bottom: 4px;
-    }
-</style>
+<style lang="css"></style>
