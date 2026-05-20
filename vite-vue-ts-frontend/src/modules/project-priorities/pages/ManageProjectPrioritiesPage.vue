@@ -115,7 +115,7 @@
             const response = await projectPriorityService.search(payload);
             totalPages.value = response.pager.totalPages;
             totalResults.value = response.pager.totalResults;
-            projectPriorities.value = response.projectStatuses.map((projectPriority: ProjectPriorityResponse) => new ProjectPriority(projectPriority))
+            projectPriorities.value = response.projectPriorities.map((projectPriority: ProjectPriorityResponse) => new ProjectPriority(projectPriority))
         } catch (error: unknown) {
             projectPriorities.value.length = 0;
             state.ajaxErrors = true;

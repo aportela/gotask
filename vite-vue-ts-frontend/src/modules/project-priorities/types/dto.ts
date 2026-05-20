@@ -33,6 +33,6 @@ export type ProjectPriorityResponse = {
 };
 
 export type SearchResponse = {
-  projectStatuses: ProjectPriorityResponse[];
+  projectPriorities: ProjectPriorityResponse[];
   pager: PagerResponse;
 };
