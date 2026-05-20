@@ -273,7 +273,7 @@
         <ProjectStatusesTable :projectStatuses="projectStatuses" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
             @move-index-up="onMoveIndexUp" @move-index-down="onMoveIndexDown" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:project-type-name-filter="nameFilter" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:project-status-name-filter="nameFilter" />
     </n-card>
 </template>
 

@@ -53,7 +53,7 @@
         return { min, max }
     });
 
-    const projectTypeNameFilter = defineModel<string>("projectTypeNameFilter", {
+    const projectStatusNameFilter = defineModel<string>("projectStatusNameFilter", {
         default: "",
     });
 
@@ -125,7 +125,7 @@
             <tr class="hide-mobile">
                 <th>
                     <TextFilterInput clearable size="small" :placeholder="t('searchByNameDefaultPlaceholder')"
-                        v-model:value="projectTypeNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
+                        v-model:value="projectStatusNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th></th>
                 <th class="doneo-text-center">
