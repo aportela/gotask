@@ -1,8 +1,10 @@
 <script setup lang="ts">
     import { useRouter } from 'vue-router'
+    import { useI18n } from "vue-i18n";
 
     import { NResult, NSpace, NButton } from 'naive-ui'
 
+    const { t } = useI18n();
     const router = useRouter()
 
     const goHome = () => {
@@ -16,14 +18,15 @@
 
 <template>
     <div class="not-found">
-        <n-result status="404" title="404 Not Found" description="We can't find what you're looking for." size="huge">
+        <n-result status="404" :title="t('layouts.errorNotFound.title')"
+            :description="t('layouts.errorNotFound.description')" size="huge">
             <template #footer>
                 <n-space justify="space-around">
                     <n-button type="primary" @click="goHome">
-                        Go home
+                        {{ t("layouts.errorNotFound.buttons.goHome") }}
                     </n-button>
                     <n-button tertiary @click="goBack">
-                        Go back
+                        {{ t("layouts.errorNotFound.buttons.goBack") }}
                     </n-button>
                 </n-space>
             </template>

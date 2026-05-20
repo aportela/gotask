@@ -1,4 +1,14 @@
 export default {
+  layouts: {
+    errorNotFound: {
+      title: "404 Not Found",
+      description: "We can't find what you're looking for.",
+      buttons: {
+        goHome: "Go home",
+        goBack: "Go back",
+      },
+    },
+  },
   shared: {
     errorMessages: {
       uncaugthException: "Uncaught exception",
