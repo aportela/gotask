@@ -1,11 +1,9 @@
 <script setup lang="ts">
-    import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
-    import { useI18n } from "vue-i18n";
+    import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-    import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent, NSpin, NDialogProvider, NButton, NDrawer, NDrawerContent, NModal } from 'naive-ui'
+    import { NLayout, NLayoutHeader, NLayoutSider, NLayoutContent, NSpin, NDialogProvider, NButton, NDrawer, NDrawerContent } from 'naive-ui'
 
     import { useBreakpoints } from '@vueuse/core';
-    import { appBus } from '../shared/composables/bus';
     import { TokenManager } from '../modules/auth/services/tokenManager';
     import { useUserSettingsStore } from '../stores/userSettings';
     import { useLoadingStore } from '../stores/loading';
@@ -13,12 +11,10 @@
     import TopHeader from './TopHeader.vue';
     import TopMenu from './TopMenu.vue';
     import SearchModal from '../shared/components/modals/SearchModal.vue';
-    import LoginForm from '../modules/auth/components/LoginForm.vue';
     import SidebarMenu from './SidebarMenu.vue';
+    import ReAuthModal from '../modules/auth/components/ReAuthModal.vue';
 
-    const { t } = useI18n();
 
-    const reAuthEmitters = reactive<Array<string>>([]);
 
     const sessionStore = useSessionStore();
 
@@ -59,31 +55,10 @@
     };
 
 
-    const onSuccessReauth = () => {
-        visibleReauthDialog.value = false;
-        appBus.emit({ type: "reauthValidNotify", payload: { to: reAuthEmitters } });
-        reAuthEmitters.length = 0;
-    };
-
-    let stopBusReauthListener: () => void;
     let refreshInterval: number;
 
     onMounted(async () => {
         window.addEventListener('keydown', onGlobalKeydown);
-        stopBusReauthListener = appBus.on("reauthRequired", async (payload) => {
-            reAuthEmitters.push(payload.emitter);
-            try {
-                const success = await TokenManager.refreshAccessToken(sessionStore);
-                if (success) {
-                    onSuccessReauth();
-                } else {
-                    visibleReauthDialog.value = true;
-                }
-            } catch (error: unknown) {
-                console.error("An unhandled exception occurred during access token refresh", error);
-                visibleReauthDialog.value = true;
-            };
-        });
 
         refreshInterval = setInterval(() => {
             refreshAccessTokenIfNeeded()
@@ -99,19 +74,14 @@
 
     onBeforeUnmount(() => {
         clearInterval(refreshInterval);
-        stopBusReauthListener();
         window.removeEventListener('keydown', onGlobalKeydown);
     });
-    const visibleReauthDialog = ref(false);
 </script>
 
 <template>
     <n-dialog-provider>
         <n-spin style="height: 100vh;" :show="loadingStore.isLoading">
-            <n-modal :title="t('modules.auth.components.MainLayout.reauthModal.title')"
-                v-model:show="visibleReauthDialog" preset="card" style="width: 400px;">
-                <LoginForm @success="onSuccessReauth" />
-            </n-modal>
+            <ReAuthModal />
             <n-layout>
                 <n-drawer v-model:show="mobileMenuOpen" placement="left" :width="220">
                     <n-drawer-content closable>

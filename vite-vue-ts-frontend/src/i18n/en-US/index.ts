@@ -45,10 +45,8 @@ export default {
           headerMessage: "Login to your account",
           headerSlogan: "Turn chaos into progress.",
         },
-        MainLayout: {
-          reauthModal: {
-            title: "Session lost... re-auth required",
-          },
+        reauthModal: {
+          title: "Session lost... re-auth required",
         },
       },
     },
