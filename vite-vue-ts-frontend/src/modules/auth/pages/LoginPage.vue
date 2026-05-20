@@ -27,7 +27,7 @@
     <div class="login-page">
         <div class="left">
             <n-card class="login-card">
-                <h2 class="title">{{ t("Login to your account") }}</h2>
+                <h2 class="title">{{ t("modules.auth.components.LoginPage.headerMessage") }}</h2>
                 <LoginForm @success="onSuccessLogin" />
                 <template #action>
                     <n-flex justify="space-around">
@@ -43,7 +43,7 @@
                 <h1>
                     <IconDatabaseStar :size="72" />Doneo
                 </h1>
-                <h2>Turn chaos into progress.</h2>
+                <h2>{{ t("modules.auth.components.LoginPage.headerSlogan") }}</h2>
             </div>
         </div>
     </div>

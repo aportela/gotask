@@ -108,8 +108,8 @@
 <template>
     <n-dialog-provider>
         <n-spin style="height: 100vh;" :show="loadingStore.isLoading">
-            <n-modal :title="t('Session lost... re-auth required')" v-model:show="visibleReauthDialog" preset="card"
-                style="width: 400px;">
+            <n-modal :title="t('modules.auth.components.MainLayout.reauthModal.title')"
+                v-model:show="visibleReauthDialog" preset="card" style="width: 400px;">
                 <LoginForm @success="onSuccessReauth" />
             </n-modal>
             <n-layout>

@@ -24,19 +24,35 @@ export default {
             password: {
               label: "Password",
               placeholder: "Enter your password",
+              hidePasswordTooltipIcon: "hide password",
+              showPasswordTooltipIcon: "show passwword",
+            },
+          },
+          buttons: {
+            signIn: {
+              label: "Sign in",
             },
           },
           warnings: {
             noAccountFoundForThisEmail: "No account found for this email",
             incorrectPassword: "Incorrect password",
           },
-          errors: {},
+          errors: {
+            signInError: "Sign in error",
+          },
+        },
+        LoginPage: {
+          headerMessage: "Login to your account",
+          headerSlogan: "Turn chaos into progress.",
+        },
+        MainLayout: {
+          reauthModal: {
+            title: "Session lost... re-auth required",
+          },
         },
       },
     },
   },
-
-  "Sign in": "Sign in",
 
   // common actions/operations
   Actions: "Actions",
@@ -281,22 +297,6 @@ export default {
     'Project priority "{name}" has been updated',
   projectPriorityDeletedNotification:
     'Project priority "{name}" has been deleted',
-
-  // auth
-  "Login to your account": "Login to your account",
-  "Session lost... re-auth required": "Session lost... re-auth required",
-  loginFormEmailLabel: "Email",
-  loginFormPasswordLabel: "Password",
-  loginFormEmailFieldPlaceholder: "Enter your email address",
-  loginFormPasswordFieldPlaceholder: "Enter your password",
-  loginFormEmailFieldEmptyError: "Email is empty",
-  loginFormEmailFieldInvalidError: "Email is invalid",
-  loginFormEmailFieldTooLargeError: "Email is too large",
-  loginFormPasswordFieldEmptyError: "Password is empty",
-  loginFormPasswordFieldTooShortError: "Password is too short",
-  loginFormEmailFieldAPINotFound: "Email not found",
-  loginFormPasswordFieldIncorrect: "Invalid password",
-  "Sign in error": "Sign in error",
 
   // other
   Error: "Error",

@@ -184,7 +184,7 @@
                             <template #trigger>
                                 <n-icon :size="16" :component="IconEyeCancel" />
                             </template>
-                            {{ t("hide password") }}
+                            {{ t("modules.auth.components.LoginForm.inputs.password.hidePasswordTooltipIcon") }}
                         </n-tooltip>
                     </template>
                     <template #password-invisible-icon>
@@ -192,20 +192,20 @@
                             <template #trigger>
                                 <n-icon :size="16" :component="IconEye" />
                             </template>
-                            {{ t("show password") }}
+                            {{ t("modules.auth.components.LoginForm.inputs.password.showPasswordTooltipIcon") }}
                         </n-tooltip>
                     </template>
                 </n-input>
             </n-form-item>
             <n-form-item>
                 <n-button secondary @click="onSignIn" block :disabled="state.ajaxRunning">{{
-                    t("Sign in")
-                }}</n-button>
+                    t("modules.auth.components.LoginForm.buttons.signIn.label")
+                    }}</n-button>
             </n-form-item>
         </n-form>
     </n-spin>
-    <RemoteAPIAlert v-if="state.ajaxErrorMessage" type="error" :title="t('Sign in error')"
-        :message="state.ajaxErrorMessage" />
+    <RemoteAPIAlert v-if="state.ajaxErrorMessage" type="error"
+        :title="t('modules.auth.components.LoginForm.errors.signInError')" :message="state.ajaxErrorMessage" />
 </template>
 
 <style lang="css" scoped></style>
