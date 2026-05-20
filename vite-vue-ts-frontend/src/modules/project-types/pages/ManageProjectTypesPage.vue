@@ -14,7 +14,6 @@
     import { ProjectType } from '../models/project-type';
     import ProjectTypesTable from '../components/ProjectTypesTable.vue';
     import ProjectTypeForm from '../components/ProjectTypeForm.vue';
-    import Pager from '../../../shared/components/tables/Pager.vue';
     import { Sort } from '../../../shared/types/models/sort';
     import type { FormMode } from '../types/form-mode';
 
@@ -32,12 +31,6 @@
 
     const nameFilter = ref<string>("");
 
-    const currentPage = ref(1);
-    const pageSize = ref(0);
-    const totalResults = ref(0);
-    const totalPages = ref(0);
-
-
     const showProjectTypeDialogForm = ref<boolean>(false);
     const projectTypeDialogFormMode = ref<FormMode>("add");
 
@@ -51,17 +44,6 @@
         loadingStore.set(newValue.ajaxRunning);
     });
 
-    watch(pageSize, () => {
-        if (currentPage.value != 1) {
-            currentPage.value = 1;
-        } else {
-            onRefresh();
-        }
-    });
-
-    watch(currentPage, () => {
-        onRefresh();
-    });
 
     const onToggleSort = (field: string) => {
         sort.value.toggleSort(field);
@@ -100,8 +82,8 @@
         try {
             const payload: SearchRequest = {
                 pager: {
-                    currentPage: currentPage.value,
-                    resultsPage: pageSize.value,
+                    currentPage: 1,
+                    resultsPage: 0,
                 },
                 order: {
                     field: sort.value.field,
@@ -112,8 +94,6 @@
                 }
             };
             const response = await projectTypeService.search(payload);
-            totalPages.value = response.pager.totalPages;
-            totalResults.value = response.pager.totalResults;
             projectTypes.value = response.projectTypes.map((projectType: ProjectTypeResponse) => new ProjectType(projectType))
         } catch (error: unknown) {
             projectTypes.value.length = 0;
@@ -199,12 +179,6 @@
     </n-modal>
 
     <n-card :title="t('Manage project types')">
-        <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
-            :total-results="totalResults" class="doneo-pager-container">
-            <template #total-results-label="{ totalResults }">
-                {{ t("TotalProjectTypesPagerLabel", { total: totalResults }) }}
-            </template>
-        </Pager>
         <ProjectTypesTable :project-types="projectTypes" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
