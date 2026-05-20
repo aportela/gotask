@@ -64,7 +64,7 @@ func (h *ProjectTypeHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	projectTypeId := chi.URLParam(r, "id")
 	err := h.service.Delete(r.Context(), projectTypeId)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to delete project type: %w", err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to delete project type: %w", err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
@@ -76,10 +76,10 @@ func (h *ProjectTypeHandler) Get(w http.ResponseWriter, r *http.Request) {
 	projectType, err := h.service.Get(r.Context(), projectTypeId)
 	if err != nil {
 		if err == domain.NotFoundError {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to get non existent project type: %w", err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to get non existent project type: %w", err))
 			return
 		} else {
-			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeService] failed to get project type: %w", err))
+			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to get project type: %w", err))
 			return
 		}
 	}
@@ -90,7 +90,7 @@ func (h *ProjectTypeHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[RoleHandler] invalid request payload: %w", err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] invalid request payload: %w", err))
 		return
 	}
 	filter := domain.SearchProjectTypesFilter{
