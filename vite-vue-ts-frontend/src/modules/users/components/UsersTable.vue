@@ -11,7 +11,7 @@
     import { renderIcon } from '../../../shared/composables/naive-ui-icon';
     import ManageTable from '../../../shared/components/tables/ManageTable.vue';
     import { type UserAdminPermissionFilter, UserAdminPermissionFilterValue } from '../types/user-admin-permission-filter';
-    import FilterUserAdminPermissionSelector from '../components/FilterUserAdminPermissionSelector.vue';
+    import UserPermissionsFilterSelector from '../components/UserPermissionsFilterSelector.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
     import DateFilter from '../../../shared/components/forms/DateFilter.vue';
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
@@ -175,7 +175,7 @@
             </tr>
             <tr class="hide-mobile">
                 <th>
-                    <FilterUserAdminPermissionSelector size="small" v-model:value="userTypeFiter" />
+                    <UserPermissionsFilterSelector size="small" v-model:value="userTypeFiter" />
                 </th>
                 <th>
                     <TextFilterInput clearable size="small"
