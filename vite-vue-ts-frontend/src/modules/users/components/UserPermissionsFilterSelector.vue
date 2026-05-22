@@ -22,9 +22,9 @@
     });
 
     const options = computed<SelectMixedOption[]>(() => [
-        { label: t("userAdminPermissionSelectorValueAll"), value: UserPermissionFilterValue.Any },
-        { label: t("userAdminPermissionSelectorValueOnlyAdministrators"), value: UserPermissionFilterValue.OnlyAdministrators },
-        { label: t("userAdminPermissionSelectorValueOnlyUsers"), value: UserPermissionFilterValue.OnlyUsers }
+        { label: t("modules.user.components.UserPermissionsFilterSelector.options.any"), value: UserPermissionFilterValue.Any },
+        { label: t("modules.user.components.UserPermissionsFilterSelector.options.onlyAdministrators"), value: UserPermissionFilterValue.OnlyAdministrators },
+        { label: t("modules.user.components.UserPermissionsFilterSelector.options.onlyUsers"), value: UserPermissionFilterValue.OnlyUsers }
     ]);
 
 

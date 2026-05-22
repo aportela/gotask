@@ -187,6 +187,13 @@ export default {
             noItemsFound: "No users found",
           },
         },
+        UserPermissionsFilterSelector: {
+          options: {
+            any: "Any",
+            onlyAdministrators: "Only administrators",
+            onlyUsers: "Only users",
+          },
+        },
       },
     },
     role: {},
