@@ -10,7 +10,7 @@
     import { type SortOrder } from '../../../shared/types/common';
     import { renderIcon } from '../../../shared/composables/naive-ui-icon';
     import ManageTable from '../../../shared/components/tables/ManageTable.vue';
-    import { type UserAdminPermissionFilter, UserAdminPermissionFilterValue } from '../types/user-admin-permission-filter';
+    import { type UserPermissionFilter, UserPermissionFilterValue } from '../types/user-admin-permission-filter';
     import UserPermissionsFilterSelector from '../components/UserPermissionsFilterSelector.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
     import DateFilter from '../../../shared/components/forms/DateFilter.vue';
@@ -66,8 +66,8 @@
         },
     ]);
 
-    const userTypeFiter = defineModel<UserAdminPermissionFilter>("userTypeFilter", {
-        default: UserAdminPermissionFilterValue.All,
+    const userPermissionsFilter = defineModel<UserPermissionFilter>("userTypeFilter", {
+        default: UserPermissionFilterValue.Any,
     });
 
     const userNameFilter = defineModel<string>("userNameFilter", {
@@ -175,7 +175,7 @@
             </tr>
             <tr class="hide-mobile">
                 <th>
-                    <UserPermissionsFilterSelector size="small" v-model:value="userTypeFiter" />
+                    <UserPermissionsFilterSelector size="small" v-model:value="userPermissionsFilter" />
                 </th>
                 <th>
                     <TextFilterInput clearable size="small"
