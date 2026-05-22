@@ -35,32 +35,32 @@
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
-            label: t("UserAdminPermissionTableHeader"),
+            label: t("modules.user.components.UsersTable.header.columns.permissions"),
             field: "isSuperUser",
             sortable: true,
         },
         {
-            label: t("UsernameTableHeader"),
+            label: t("modules.user.components.UsersTable.header.columns.name"),
             field: "name",
             sortable: true,
         },
         {
-            label: t("EmailTableHeader"),
+            label: t("modules.user.components.UsersTable.header.columns.email"),
             field: "email",
             sortable: true,
         },
         {
-            label: t("CreatedAtTableHeader"),
+            label: t("modules.user.components.UsersTable.header.columns.createdAt"),
             field: "createdAt",
             sortable: true,
         },
         {
-            label: t("UpdatedAtTableHeader"),
+            label: t("modules.user.components.UsersTable.header.columns.updatedAt"),
             field: "updatedAt",
             sortable: true,
         },
         {
-            label: t("DeletedAtTableHeader"),
+            label: t("modules.user.components.UsersTable.header.columns.deletedAt"),
             field: "deletedAt",
             sortable: true,
         },
@@ -119,17 +119,17 @@
 
     const onConfirmDelete = (user: User, index: number) => {
         dialog.warning({
-            title: t("Delete user"),
+            title: t("modules.user.components.UsersTable.dialogs.deleteConfirmation.title"),
             icon: renderIcon(IconTrash)(24),
             content: () =>
                 h('div', [
-                    t("deleteUserConfirmation", { name: user.name }),
+                    t("modules.user.components.UsersTable.dialogs.deleteConfirmation.message", { name: user.name }),
                     h('br'),
                     h('br'),
-                    t("Do you want to continue ?"),
+                    t("shared.components.dialogs.confirmation.continueMessage"),
                 ]),
-            positiveText: t("Delete"),
-            negativeText: t("Cancel"),
+            positiveText: t("shared.buttons.Delete.label"),
+            negativeText: t("shared.buttons.Cancel.label"),
             onPositiveClick: () => {
                 emit("delete", user, index)
             },
@@ -138,17 +138,17 @@
 
     const onConfirmUnDelete = (user: User, index: number) => {
         dialog.warning({
-            title: t("Restore user"),
+            title: t("modules.user.components.UsersTable.dialogs.undeleteConfirmation.title"),
             icon: renderIcon(IconTrashOff)(24),
             content: () =>
                 h('div', [
-                    t("restoreUserConfirmation", { name: user.name }),
+                    t("modules.user.components.UsersTable.dialogs.undeleteConfirmation.message", { name: user.name }),
                     h('br'),
                     h('br'),
-                    t("Do you want to continue ?"),
+                    t("shared.components.dialogs.confirmation.continueMessage"),
                 ]),
-            positiveText: t("Restore"),
-            negativeText: t("Cancel"),
+            positiveText: t("shared.buttons.Restore.label"),
+            negativeText: t("shared.buttons.Cancel.label"),
             onPositiveClick: () => {
                 emit("undelete", user, index)
             },
@@ -171,18 +171,20 @@
                         <TableCellHeaderSortIcon v-if="props.sortField === column.field" :order="props.sortOrder" />
                     </n-flex>
                 </th>
-                <th class="doneo-table-actions-column">{{ t("Actions") }}</th>
+                <th class="doneo-table-actions-column">{{ t("shared.components.table.header.columns.actions") }}</th>
             </tr>
             <tr class="hide-mobile">
                 <th>
                     <FilterUserAdminPermissionSelector size="small" v-model:value="userTypeFiter" />
                 </th>
                 <th>
-                    <TextFilterInput clearable size="small" :placeholder="t('searchByNameDefaultPlaceholder')"
+                    <TextFilterInput clearable size="small"
+                        :placeholder="t('modules.user.components.UsersTable.header.filters.name.placeholder')"
                         v-model:value="userNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th>
-                    <TextFilterInput clearable size="small" :placeholder="t('searchByEmailDefaultPlaceholder')"
+                    <TextFilterInput clearable size="small"
+                        :placeholder="t('modules.user.components.UsersTable.header.filters.email.placeholder')"
                         v-model:value="emailFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th>
@@ -202,7 +204,7 @@
                                     <IconRefresh />
                                 </n-icon>
                             </template>
-                            {{ t("Refresh") }}
+                            {{ t("shared.buttons.Refresh.label") }}
                         </n-button>
                         <n-button @click="onAdd">
                             <template #icon>
@@ -210,7 +212,7 @@
                                     <IconPlus />
                                 </n-icon>
                             </template>
-                            {{ t("Add") }}
+                            {{ t("shared.buttons.Add.label") }}
                         </n-button>
                     </n-button-group>
                 </th>
@@ -241,7 +243,7 @@
                 <td class="doneo-text-center">
                     <n-button-group v-if="!user.deletedAt" size="small">
                         <n-button @click="onUpdate(user, index)" :disabled="props.loading">
-                            {{ t("Update") }}
+                            {{ t("shared.buttons.Update.label") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconEdit />
@@ -250,7 +252,7 @@
                         </n-button>
                         <n-button @click="onConfirmDelete(user, index)"
                             :disabled="user.id === sessionStore.sessionUserId || props.loading">
-                            {{ t("Delete") }}
+                            {{ t("shared.buttons.Delete.label") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconTrash />
@@ -259,7 +261,7 @@
                         </n-button>
                     </n-button-group>
                     <n-button size="small" @click="onConfirmUnDelete(user, index)" :disabled="props.loading" v-else>
-                        {{ t("Restore") }}
+                        {{ t("shared.buttons.Restore.label") }}
                         <template #icon>
                             <n-icon :size="22">
                                 <IconTrashOff />
@@ -270,7 +272,7 @@
             </tr>
             <tr>
                 <td :colspan="columns.length + 1" v-if="users.length < 1 && !props.loading">
-                    <n-empty :description="t('No users found')">
+                    <n-empty :description="t('modules.user.components.UsersTable.warnings.noItemsFound')">
                     </n-empty>
                 </td>
             </tr>

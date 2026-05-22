@@ -10,12 +10,41 @@ export default {
     },
   },
   shared: {
+    components: {
+      dialogs: {
+        confirmation: {
+          continueMessage: "Do you want to continue ?",
+        },
+      },
+      table: {
+        header: {
+          columns: {
+            actions: "Actions",
+          },
+        },
+      },
+    },
     buttons: {
       Save: {
         label: "Save",
       },
       Cancel: {
         label: "Cancel",
+      },
+      Delete: {
+        label: "Delete",
+      },
+      Restore: {
+        label: "Restore",
+      },
+      Refresh: {
+        label: "Refresh",
+      },
+      Add: {
+        label: "Add",
+      },
+      Update: {
+        label: "Update",
       },
     },
     errorMessages: {
@@ -121,6 +150,41 @@ export default {
             notFoundError: "We couldn’t find the specified user",
             addError: "There was a problem while adding the user data",
             updateError: "There was a problem while updating the user data",
+          },
+        },
+        UsersTable: {
+          header: {
+            columns: {
+              permissions: "Permissions",
+              name: "Name",
+              email: "Email",
+              createdAt: "Created at",
+              updatedAt: "Updated at",
+              deletedAt: "Deleted at",
+            },
+            filters: {
+              name: {
+                placeholder: "search by name",
+              },
+              email: {
+                placeholder: "search by email",
+              },
+            },
+          },
+          dialogs: {
+            deleteConfirmation: {
+              title: "Delete user",
+              message:
+                'You are about to delete the user "{name}" from the system.',
+            },
+            undeleteConfirmation: {
+              title: "Restore user",
+              message:
+                'You are about to restore the user "{name}" from the system.',
+            },
+          },
+          warnings: {
+            noItemsFound: "No users found",
           },
         },
       },
