@@ -16,6 +16,7 @@ import (
 	"github.com/aportela/doneo/internal/handlers/projectstatushandler"
 	"github.com/aportela/doneo/internal/handlers/projecttypehandler"
 	"github.com/aportela/doneo/internal/handlers/rolehandler"
+	"github.com/aportela/doneo/internal/handlers/taskstatushandler"
 	"github.com/aportela/doneo/internal/handlers/userhandler"
 	"github.com/aportela/doneo/internal/middlewares"
 
@@ -90,6 +91,17 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Get("/{id}", projectTypeHandler.Get)
 		r.Put("/{id}", projectTypeHandler.Update)
 		r.Delete("/{id}", projectTypeHandler.Delete)
+	})
+
+	apiRouter.Route("/task-statuses", func(r chi.Router) {
+		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
+		r.Use(middlewares.RequireSuperUser)
+		taskStatusHandler := taskstatushandler.NewTaskStatusHandler(db)
+		r.Post("/", taskStatusHandler.Add)
+		r.Post("/search", taskStatusHandler.Search)
+		r.Get("/{id}", taskStatusHandler.Get)
+		r.Put("/{id}", taskStatusHandler.Update)
+		r.Delete("/{id}", taskStatusHandler.Delete)
 	})
 
 	apiRouter.Route("/projects", func(r chi.Router) {

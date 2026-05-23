@@ -5,7 +5,7 @@
     import { useDialog, NFlex, NEmpty, NTag } from 'naive-ui';
     import { IconTrash } from '@tabler/icons-vue';
 
-    import { ProjectStatus } from '../models/project-status';
+    import { TaskStatus } from '../models/task-status';
     import type { TableHeaderColumn } from '../../../shared/types/table-header-column';
     import { type SortOrder } from '../../../shared/types/common';
     import { renderIcon } from '../../../shared/composables/naive-ui-icon';
@@ -18,7 +18,7 @@
 
     interface Props {
         loading: boolean;
-        projectStatuses: ProjectStatus[];
+        taskStatuses: TaskStatus[];
         sortField: string;
         sortOrder: SortOrder;
     }
@@ -31,13 +31,13 @@
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
-            label: t("modules.projectStatus.components.ProjectStatusesTable.header.columns.name"),
+            label: t("modules.taskStatus.components.TaskStatusesTable.header.columns.name"),
             field: "name",
             sortable: true,
         }
     ]);
 
-    const projectStatusNameFilter = defineModel<string>("projectStatusNameFilter", {
+    const taskStatusNameFilter = defineModel<string>("taskStatusNameFilter", {
         default: "",
     });
 
@@ -55,17 +55,17 @@
         emit("add");
     };
 
-    const onUpdate = (projectStatus: ProjectStatus, index: number) => {
-        emit("update", projectStatus, index);
+    const onUpdate = (taskStatus: TaskStatus, index: number) => {
+        emit("update", taskStatus, index);
     };
 
-    const onConfirmDelete = (projectStatus: ProjectStatus, index: number) => {
+    const onConfirmDelete = (taskStatus: TaskStatus, index: number) => {
         dialog.warning({
-            title: t("modules.projectStatus.components.ProjectStatusesTable.dialogs.deleteConfirmation.title"),
+            title: t("modules.taskStatus.components.TaskStatusesTable.dialogs.deleteConfirmation.title"),
             icon: renderIcon(IconTrash)(24),
             content: () =>
                 h('div', [
-                    t("modules.projectStatus.components.ProjectStatusesTable.dialogs.deleteConfirmation.message", { name: projectStatus.name }),
+                    t("modules.taskStatus.components.TaskStatusesTable.dialogs.deleteConfirmation.message", { name: taskStatus.name }),
                     h('br'),
                     h('br'),
                     t("shared.components.dialogs.confirmation.continueMessage"),
@@ -73,7 +73,7 @@
             positiveText: t("shared.buttons.Delete.label"),
             negativeText: t("shared.buttons.Cancel.label"),
             onPositiveClick: () => {
-                emit("delete", projectStatus, index)
+                emit("delete", taskStatus, index)
             },
         });
     };
@@ -101,8 +101,8 @@
             <tr class="hide-mobile">
                 <th>
                     <TextFilterInput clearable size="small"
-                        :placeholder="t('modules.projectStatus.components.ProjectStatusesTable.filters.name.placeholder')"
-                        v-model:value="projectStatusNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
+                        :placeholder="t('modules.taskStatus.components.TaskStatusesTable.filters.name.placeholder')"
+                        v-model:value="taskStatusNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th class="doneo-text-center">
                     <RefreshAddActionsColumn @refresh="onRefresh" @add="onAdd" />
@@ -110,19 +110,18 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="projectStatus, index in projectStatuses" :key="projectStatus.id">
+            <tr v-for="taskStatus, index in taskStatuses" :key="taskStatus.id">
                 <td>
-                    <n-tag :color="getNaiveUITagColorProperty(projectStatus.hexColor)">{{ projectStatus.name }}</n-tag>
+                    <n-tag :color="getNaiveUITagColorProperty(taskStatus.hexColor)">{{ taskStatus.name }}</n-tag>
                 </td>
                 <td class="doneo-text-center">
-                    <UpdateDeleteActionsColumn @update="onUpdate(projectStatus, index)"
-                        @delete="onConfirmDelete(projectStatus, index)" />
+                    <UpdateDeleteActionsColumn @update="onUpdate(taskStatus, index)"
+                        @delete="onConfirmDelete(taskStatus, index)" />
                 </td>
             </tr>
             <tr>
-                <td :colspan="columns.length + 1" v-if="projectStatuses.length < 1 && !props.loading">
-                    <n-empty
-                        :description="t('modules.projectStatus.components.ProjectStatusesTable.warnings.noItemsFound')">
+                <td :colspan="columns.length + 1" v-if="taskStatuses.length < 1 && !props.loading">
+                    <n-empty :description="t('modules.taskStatus.components.TaskStatusesTable.warnings.noItemsFound')">
                     </n-empty>
                 </td>
             </tr>

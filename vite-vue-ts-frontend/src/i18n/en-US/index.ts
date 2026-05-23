@@ -11,9 +11,12 @@ export default {
         settings: "Settings",
         manageUsers: "Users",
         manageRoles: "Roles",
+        projectSettings: "Project",
         manageProjectTypes: "Type",
         manageProjectPriorities: "Priority",
         manageProjectStatuses: "Status",
+        taskSettings: "Task",
+        manageTaskStatuses: "Status",
         disableNotifications: "Disable notifications",
         enableNotifications: "Enable notifications",
         switchToLightTheme: "Light theme",
@@ -634,6 +637,81 @@ export default {
           },
           warnings: {
             noItemsFound: "No project types found",
+          },
+        },
+      },
+    },
+    taskStatus: {
+      components: {
+        TaskStatusForm: {
+          headers: {
+            addTaskStatus: "Add task status",
+            updateTaskStatus: "Update task status",
+          },
+          inputs: {
+            name: {
+              label: "Name",
+              placeholder: "Enter task status name",
+              errors: {
+                alreadyExists: "Name already exists",
+              },
+            },
+            preview: {
+              label: "Preview",
+            },
+          },
+          errors: {
+            loadError: "There was a problem while loading the task status data",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified task status",
+            addError: "There was a problem while adding the task status data",
+            updateError:
+              "There was a problem while updating the task status data",
+          },
+          warnings: {
+            nameAlreadyExists: "Name already exists",
+          },
+        },
+        ManageTaskStatusesPage: {
+          header: {
+            title: "Manage task statuses",
+          },
+          pager: {
+            totalItemsLabel: "Total task statuses: {total}",
+          },
+          notifications: {
+            taskStatusAdded: 'Task status "{name}" has been added',
+            taskStatusUpdated: 'Task status "{name}" has been updated',
+            taskStatusDeleted: 'Task status "{name}" has been deleted',
+          },
+          errors: {
+            refreshError:
+              "There was a problem while refreshing the task status list",
+            deleteError: "There was a problem while deleting the task status",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified task status",
+          },
+        },
+        TaskStatusesTable: {
+          header: {
+            columns: {
+              name: "Name",
+            },
+          },
+          filters: {
+            name: {
+              placeholder: "search by name",
+            },
+          },
+          dialogs: {
+            deleteConfirmation: {
+              title: "Delete task status",
+              message:
+                'You are about to delete the task status "{name}" from the system.',
+            },
+          },
+          warnings: {
+            noItemsFound: "No task statuses found",
           },
         },
       },

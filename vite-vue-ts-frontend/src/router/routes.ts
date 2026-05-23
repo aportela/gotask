@@ -77,6 +77,12 @@ const routes: RouteRecordRaw[] = [
           import("../modules/project-priorities/pages/ManageProjectPrioritiesPage.vue"),
       },
       {
+        name: "manageTaskStatuses",
+        path: "manage/task-statuses",
+        component: () =>
+          import("../modules/task-statuses/pages/ManageTasktStatusesPage.vue"),
+      },
+      {
         name: "profile",
         path: "profile",
         component: () => import("../pages/ProfilePage.vue"),

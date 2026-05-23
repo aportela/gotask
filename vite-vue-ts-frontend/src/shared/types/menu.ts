@@ -156,7 +156,7 @@ export function useMenu() {
             icon: renderIcon(IconUserCheck)(menuOptionIconSize),
           },
           {
-            label: "Project",
+            label: t("layouts.sidebarMenu.options.projectSettings"),
             key: "projectSettings",
             icon: renderIcon(IconSettings)(menuOptionIconSize),
             children: [
@@ -214,6 +214,31 @@ export function useMenu() {
                     },
                   ),
                 key: "manageProjectStatuses",
+                icon: renderIcon(IconAdjustmentsBolt)(menuOptionIconSize),
+              },
+            ],
+          },
+          {
+            label: t("layouts.sidebarMenu.options.taskSettings"),
+            key: "taskSettings",
+            icon: renderIcon(IconSettings)(menuOptionIconSize),
+            children: [
+              {
+                label: () =>
+                  h(
+                    RouterLink,
+                    {
+                      to: {
+                        name: "manageTaskStatuses",
+                        params: {},
+                      },
+                    },
+                    {
+                      default: () =>
+                        t("layouts.sidebarMenu.options.manageTaskStatuses"),
+                    },
+                  ),
+                key: "manageTaskStatuses",
                 icon: renderIcon(IconAdjustmentsBolt)(menuOptionIconSize),
               },
             ],
