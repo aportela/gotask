@@ -16,6 +16,27 @@ export default {
           continueMessage: "Do you want to continue ?",
         },
       },
+      selectors: {
+        dateFilter: {
+          options: {
+            anyDate: "Any date",
+            customDate: "Custom date",
+            yesterday: "Yesterday",
+            today: "Today",
+            tomorrow: "Tomorrow",
+            lastWeek: "Last week",
+            thisWeek: "This week",
+            nextWeek: "Next week",
+            lastMonth: "Last month",
+            thisMonth: "This month",
+            nextMonth: "Next month",
+            lastYear: "Last year",
+            thisYear: "This year",
+            nextYear: "Next year",
+          },
+          placeholder: "select date",
+        },
+      },
       table: {
         header: {
           columns: {
@@ -341,37 +362,6 @@ export default {
   // errors
   "Uncaught exception": "Uncaught exception",
   "Invalid API response code": "Invalid API response code",
-
-  // text filter
-  searchByNameDefaultPlaceholder: "search by name",
-  searchByEmailDefaultPlaceholder: "search by email",
-
-  // date filter
-  "select date": "select date",
-  "Any date": "Any date",
-  "Custom date": "Custom date",
-  Yesterday: "Yesterday",
-  Today: "Today",
-  Tomorrow: "Tomorrow",
-  "Last week": "Last week",
-  "This week": "This week",
-  "Next week": "Next week",
-  "Last month": "Last month",
-  "This month": "This month",
-  "Next month": "Next month",
-  "Last year": "Last year",
-  "This year": "This year",
-  "Next year": "Next year",
-
-  // user admin permission filter
-  userAdminPermissionSelectorValueAll: "All",
-  userAdminPermissionSelectorValueOnlyAdministrators: "Only administrators",
-  userAdminPermissionSelectorValueOnlyUsers: "Only users",
-
-  // role permission typefilter
-  rolePermissionTypeSelectorValueAll: "All",
-  rolePermissionTypeSelectorValueAllowed: "Only allowed",
-  rolePermissionTypeSelectorValueNotAllowed: "Only not allowed",
 
   // project types
   "Manage project types": "Manage project types",

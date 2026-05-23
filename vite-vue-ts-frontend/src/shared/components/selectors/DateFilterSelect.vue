@@ -10,20 +10,20 @@
     const { t } = useI18n();
 
     const options = computed<SelectMixedOption[]>(() => [
-        { label: t("Any date"), value: 0 },
-        { label: t("Custom date"), value: 1 },
-        { label: t("Yesterday"), value: 2 },
-        { label: t("Today"), value: 3 },
-        { label: t("Tomorrow"), value: 4 },
-        { label: t("Last week"), value: 5 },
-        { label: t("This week"), value: 6 },
-        { label: t("Next week"), value: 7 },
-        { label: t("Last month"), value: 8 },
-        { label: t("This month"), value: 9 },
-        { label: t("Next month"), value: 10 },
-        { label: t("Last year"), value: 11 },
-        { label: t("This year"), value: 12 },
-        { label: t("Next year"), value: 13 },
+        { label: t("shared.components.selectors.dateFilter.options.anyDate"), value: 0 },
+        { label: t("shared.components.selectors.dateFilter.options.customDate"), value: 1 },
+        { label: t("shared.components.selectors.dateFilter.options.yesterday"), value: 2 },
+        { label: t("shared.components.selectors.dateFilter.options.today"), value: 3 },
+        { label: t("shared.components.selectors.dateFilter.options.tomorrow"), value: 4 },
+        { label: t("shared.components.selectors.dateFilter.options.lastWeek"), value: 5 },
+        { label: t("shared.components.selectors.dateFilter.options.thisWeek"), value: 6 },
+        { label: t("shared.components.selectors.dateFilter.options.nextWeek"), value: 7 },
+        { label: t("shared.components.selectors.dateFilter.options.lastMonth"), value: 8 },
+        { label: t("shared.components.selectors.dateFilter.options.thisMonth"), value: 9 },
+        { label: t("shared.components.selectors.dateFilter.options.nextMonth"), value: 10 },
+        { label: t("shared.components.selectors.dateFilter.options.lastYear"), value: 11 },
+        { label: t("shared.components.selectors.dateFilter.options.thisYear"), value: 12 },
+        { label: t("shared.components.selectors.dateFilter.options.nextYear"), value: 13 },
     ]);
 
     const range = defineModel<TimestampRange>("range", {
@@ -179,8 +179,9 @@
 
 <template>
     <n-select v-if="isSelectorVisible" v-model:value="selectorValue" :options="options" size="small" />
-    <n-date-picker :placeholder="t('select date')" v-else v-model:value="datepickerValue" type="date" clearable
-        size="small" v-model:show="isDatePickerVisible" @clear="onClearDate" :actions="['clear']" />
+    <n-date-picker :placeholder="t('shared.components.selectors.dateFilter.placeholder')" v-else
+        v-model:value="datepickerValue" type="date" clearable size="small" v-model:show="isDatePickerVisible"
+        @clear="onClearDate" :actions="['clear']" />
 </template>
 
 <style lang="css" scoped></style>
