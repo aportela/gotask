@@ -28,18 +28,18 @@
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
-            label: t("RoleNameTableHeader"),
+            label: t("modules.role.components.RolesTable.header.columns.name"),
             field: "name",
             sortable: true,
         },
         {
-            label: t("RoleProjectPermissionsTableHeader"),
+            label: t("modules.role.components.RolesTable.header.columns.projectPermissions"),
             field: "projectPermissions",
             sortable: false,
             align: "center",
         },
         {
-            label: t("RoleTasksPermissionsTableHeader"),
+            label: t("modules.role.components.RolesTable.header.columns.taskPermissions"),
             field: "taskPermissions",
             sortable: false,
             align: "center",
@@ -70,17 +70,17 @@
 
     const onConfirmDelete = (role: Role, index: number) => {
         dialog.warning({
-            title: t("Delete role"),
+            title: t("modules.role.components.RolesTable.dialogs.deleteConfirmation.title"),
             icon: renderIcon(IconTrash)(24),
             content: () =>
                 h('div', [
-                    t("deleteRoleConfirmation", { name: role.name }),
+                    t("modules.role.components.RolesTable.dialogs.deleteConfirmation.message", { name: role.name }),
                     h('br'),
                     h('br'),
-                    t("Do you want to continue ?"),
+                    t("shared.components.dialogs.confirmation.continueMessage"),
                 ]),
-            positiveText: t("Delete"),
-            negativeText: t("Cancel"),
+            positiveText: t("shared.buttons.Delete.label"),
+            negativeText: t("shared.buttons.Cancel.label"),
             onPositiveClick: () => {
                 emit("delete", role, index)
             },
@@ -105,11 +105,12 @@
                     </n-flex>
                     <span v-else>{{ column.label }}</span>
                 </th>
-                <th class="doneo-table-actions-column">{{ t("Actions") }}</th>
+                <th class="doneo-table-actions-column">{{ t("shared.components.table.header.columns.actions") }}</th>
             </tr>
             <tr class="hide-mobile">
                 <th>
-                    <TextFilterInput clearable size="small" :placeholder="t('searchByNameDefaultPlaceholder')"
+                    <TextFilterInput clearable size="small"
+                        :placeholder="t('modules.role.components.RolesTable.filters.name.placeholder')"
                         v-model:value="roleNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th></th>
@@ -122,7 +123,7 @@
                                     <IconRefresh />
                                 </n-icon>
                             </template>
-                            {{ t("Refresh") }}
+                            {{ t("shared.buttons.Refresh.label") }}
                         </n-button>
                         <n-button @click="onAdd">
                             <template #icon>
@@ -130,7 +131,7 @@
                                     <IconPlus />
                                 </n-icon>
                             </template>
-                            {{ t("Add") }}
+                            {{ t("shared.buttons.Add.label") }}
                         </n-button>
                     </n-button-group>
                 </th>
@@ -150,7 +151,7 @@
                                 <IconEdit class="doneo-cursor-help" />
                             </n-icon>
                         </template>
-                        {{ t("Update project allowed") }}
+                        {{ t("modules.role.components.RolesTable.body.columns.permissionsHints.updateProjectAllowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowDeleteProject">
                         <template #trigger>
@@ -158,7 +159,7 @@
                                 <IconTrash class="doneo-cursor-help" />
                             </n-icon>
                         </template>
-                        {{ t("Delete project allowed") }}
+                        {{ t("modules.role.components.RolesTable.body.columns.permissionsHints.deleteProjectAllowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowViewProject">
                         <template #trigger>
@@ -166,7 +167,7 @@
                                 <IconEyeCheck class="doneo-cursor-help" />
                             </n-icon>
                         </template>
-                        {{ t("View project allowed") }}
+                        {{ t("modules.role.components.RolesTable.body.columns.permissionsHints.viewProjectAllowed") }}
                     </n-tooltip>
                 </td>
                 <td class="doneo-text-center">
@@ -176,7 +177,7 @@
                                 <IconSquarePlus class="doneo-cursor-help" />
                             </n-icon>
                         </template>
-                        {{ t("Add task allowed") }}
+                        {{ t("modules.role.components.RolesTable.body.columns.permissionsHints.addTaskAllowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowUpdateTask">
                         <template #trigger>
@@ -184,7 +185,7 @@
                                 <IconEdit class="doneo-cursor-help" />
                             </n-icon>
                         </template>
-                        {{ t("Update task allowed") }}
+                        {{ t("modules.role.components.RolesTable.body.columns.permissionsHints.updateTaskAllowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowDeleteTask">
                         <template #trigger>
@@ -192,7 +193,7 @@
                                 <IconTrash class="doneo-cursor-help" />
                             </n-icon>
                         </template>
-                        {{ t("Delete task allowed") }}
+                        {{ t("modules.role.components.RolesTable.body.columns.permissionsHints.deleteTaskAllowed") }}
                     </n-tooltip>
                     <n-tooltip trigger="hover" v-if="role.permissions.allowViewTask">
                         <template #trigger>
@@ -200,13 +201,13 @@
                                 <IconEyeCheck class="doneo-cursor-help" />
                             </n-icon>
                         </template>
-                        {{ t("View task allowed") }}
+                        {{ t("modules.role.components.RolesTable.body.columns.permissionsHints.viewTaskAllowed") }}
                     </n-tooltip>
                 </td>
                 <td class="doneo-text-center">
                     <n-button-group size="small">
                         <n-button @click="onUpdate(role, index)" :disabled="props.loading">
-                            {{ t("Update") }}
+                            {{ t("shared.buttons.Update.label") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconEdit />
@@ -214,7 +215,7 @@
                             </template>
                         </n-button>
                         <n-button @click="onConfirmDelete(role, index)" :disabled="props.loading">
-                            {{ t("Delete") }}
+                            {{ t("shared.buttons.Delete.label") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconTrash />
@@ -226,7 +227,7 @@
             </tr>
             <tr>
                 <td :colspan="columns.length + 1" v-if="roles.length < 1 && !props.loading">
-                    <n-empty :description="t('No roles found')">
+                    <n-empty :description="t('modules.role.components.RolesTable.warnings.noItemsFound')">
                     </n-empty>
                 </td>
             </tr>

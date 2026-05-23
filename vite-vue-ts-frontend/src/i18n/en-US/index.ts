@@ -227,41 +227,81 @@ export default {
       },
     },
     role: {
-      RoleForm: {
-        headers: {
-          addRole: "Add role",
-          updateRole: "Update role",
-          rolePermissions: "Role permissions",
-          projectPermissions: "Project permissions",
-          taskPermissions: "Task permissions",
-        },
-        inputs: {
-          name: {
-            label: "Name",
-            placeholder: "Enter role name",
-            errors: {
-              alreadyExists: "Name already exists",
+      components: {
+        RoleForm: {
+          headers: {
+            addRole: "Add role",
+            updateRole: "Update role",
+            rolePermissions: "Role permissions",
+            projectPermissions: "Project permissions",
+            taskPermissions: "Task permissions",
+          },
+          inputs: {
+            name: {
+              label: "Name",
+              placeholder: "Enter role name",
+              errors: {
+                alreadyExists: "Name already exists",
+              },
             },
           },
+          permissionSwitches: {
+            updateProjectAllowed: "Update project allowed",
+            deleteProjectAllowed: "Delete project allowed",
+            viewProjectAllowed: "View project allowed",
+            addTaskAllowed: "Add task allowed",
+            updateTaskAllowed: "UpdateTaskAllowed",
+            deleteTaskAllowed: "Delete task allowed",
+            viewTaskAllowed: "View task allowed",
+          },
+          errors: {
+            loadError: "There was a problem while loading the role data",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified role",
+            addError: "There was a problem while adding the role data",
+            updateError: "There was a problem while updating the role data",
+          },
+          warnings: {
+            nameAlreadyExists: "Name already exists",
+          },
         },
-        permissionSwitches: {
-          updateProjectAllowed: "Update project allowed",
-          deleteProjectAllowed: "Delete project allowed",
-          viewProjectAllowed: "View project allowed",
-          addTaskAllowed: "Add task allowed",
-          updateTaskAllowed: "UpdateTaskAllowed",
-          deleteTaskAllowed: "Delete task allowed",
-          viewTaskAllowed: "View task allowed",
-        },
-        errors: {
-          loadError: "There was a problem while loading the role data",
-          // TODO: deduplicate
-          notFoundError: "We couldn’t find the specified role",
-          addError: "There was a problem while adding the role data",
-          updateError: "There was a problem while updating the role data",
-        },
-        warnings: {
-          nameAlreadyExists: "Name already exists",
+        ManageRolesPage: {},
+        RolesTable: {
+          header: {
+            columns: {
+              name: "Name",
+              projectPermissions: "Project permissions",
+              taskPermissions: "Task permissions",
+            },
+          },
+          filters: {
+            name: {
+              placeholder: "search by name",
+            },
+          },
+          body: {
+            columns: {
+              permissionsHints: {
+                updateProjectAllowed: "Update project allowed",
+                deleteProjectAllowed: "Delete project allowed",
+                viewProjectAllowed: "View project allowed",
+                addTaskAllowed: "Add task allowed",
+                updateTaskAllowed: "Update task allowed",
+                deleteTaskAllowed: "Delete task allowed",
+                viewTaskAllowed: "View task allowed",
+              },
+            },
+          },
+          dialogs: {
+            deleteConfirmation: {
+              title: "Delete role",
+              message:
+                'You are about to delete the role "{name}" from the system.',
+            },
+          },
+          warnings: {
+            noItemsFound: "No roles found",
+          },
         },
       },
     },
