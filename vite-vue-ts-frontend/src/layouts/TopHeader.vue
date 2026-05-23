@@ -1,10 +1,8 @@
 <script setup lang="ts">
-    import { h } from 'vue'
-    import type { Component } from 'vue'
     import { useRouter } from "vue-router";
 
     import { NButton, NDropdown } from 'naive-ui'
-    import { NIcon, NFlex, NInput } from 'naive-ui'
+    import { NFlex, NInput } from 'naive-ui'
     import { IconUserCircle, IconDatabaseStar, IconId, IconLogout, IconSearch } from '@tabler/icons-vue';
 
     import SwitchNotificationsButton from '../shared/components/buttons/SwitchNotificationsButton.vue';
@@ -15,6 +13,7 @@
     import { api } from '../shared/composables/api';
     import { useSessionStore } from "../stores/session";
     import { useLoadingStore } from '../stores/loading';
+    import { renderIcon } from '../shared/composables/naive-ui-icon';
 
 
     const router = useRouter();
@@ -23,14 +22,6 @@
     const loadingStore = useLoadingStore();
 
     const commonIconSize = 18;
-
-    function renderIcon(icon: Component) {
-        return (size = commonIconSize) =>
-            () =>
-                h(NIcon, { size }, {
-                    default: () => h(icon)
-                })
-    }
 
     const userDropdownOptions = [
         {
