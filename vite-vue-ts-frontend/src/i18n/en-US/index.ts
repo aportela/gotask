@@ -44,6 +44,18 @@ export default {
           },
         },
       },
+      pager: {
+        selector: {
+          options: {
+            allResults: "All results",
+            nnnResultsPage: "{number} results/page",
+          },
+        },
+        labels: {
+          totalResults: "Total results:",
+          currentPageOfTotal: "Page {currentPage} of {totalPages}",
+        },
+      },
     },
     buttons: {
       Save: {
@@ -479,10 +491,4 @@ export default {
   "Switch to light mode": "Switch to light mode",
   "Switch to top navigation": "Switch to top navigation",
   "Switch to side navigation": "Switch to side navigation",
-
-  // pager
-  labelPageOfTotalPages: "Page {currentPage} of {totalPages}",
-  "Total results:": "Total results:",
-  "All results": "All results",
-  labelSelectorResultsPage: "{number} results/page",
 };

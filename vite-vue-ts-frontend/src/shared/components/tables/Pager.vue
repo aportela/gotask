@@ -16,31 +16,31 @@
 
     const pageSizes = computed<PaginationSizeOption[]>(() => [
         {
-            label: t("All results"),
+            label: t("shared.components.pager.selector.options.allResults"),
             value: 0
         },
         {
-            label: t("labelSelectorResultsPage", { number: 5 }),
+            label: t("shared.components.pager.selector.options.nnnResultsPage", { number: 5 }),
             value: 5
         },
         {
-            label: t("labelSelectorResultsPage", { number: 10 }),
+            label: t("shared.components.pager.selector.options.nnnResultsPage", { number: 10 }),
             value: 10
         },
         {
-            label: t("labelSelectorResultsPage", { number: 20 }),
+            label: t("shared.components.pager.selector.options.nnnResultsPage", { number: 20 }),
             value: 20
         },
         {
-            label: t("labelSelectorResultsPage", { number: 50 }),
+            label: t("shared.components.pager.selector.options.nnnResultsPage", { number: 50 }),
             value: 50
         },
         {
-            label: t("labelSelectorResultsPage", { number: 100 }),
+            label: t("shared.components.pager.selector.options.nnnResultsPage", { number: 100 }),
             value: 100
         },
         {
-            label: t("labelSelectorResultsPage", { number: 200 }),
+            label: t("shared.components.pager.selector.options.nnnResultsPage", { number: 200 }),
             value: 200
         },
     ]);
@@ -54,14 +54,15 @@
     <div class="doneo-pagination-container">
         <div class="doneo-pagination-total-results-label">
             <slot name="total-results-label" :total-results="props.totalResults">
-                {{ t("Total results:") }} {{ props.totalResults }}
+                {{ t("shared.components.pager.labels.totalResults") }} {{ props.totalResults }}
             </slot>
         </div>
         <!-- TODO: simple property on small screens ? -->
         <n-pagination v-model:page="currentPage" v-model:page-size="pageSize" :page-count="totalPages"
             :page-sizes="pageSizes" show-size-picker :page-slot="8">
             <template #prefix="{ page, pageCount }">
-                {{ t("labelPageOfTotalPages", { currentPage: page, totalPages: pageCount }) }}
+                {{ t("shared.components.pager.labels.currentPageOfTotal", { currentPage: page, totalPages: pageCount })
+                }}
             </template>
         </n-pagination>
     </div>
