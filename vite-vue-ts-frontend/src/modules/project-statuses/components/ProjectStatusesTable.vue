@@ -29,7 +29,7 @@
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
-            label: t("ProjectStatusNameTableHeader"),
+            label: t("modules.projectStatus.components.ProjectStatusesTable.header.columns.name"),
             field: "name",
             sortable: true,
         }
@@ -59,17 +59,17 @@
 
     const onConfirmDelete = (projectType: ProjectStatus, index: number) => {
         dialog.warning({
-            title: t("Delete project type"),
+            title: t("modules.projectStatus.components.ProjectStatusesTable.dialogs.deleteConfirmation.title"),
             icon: renderIcon(IconTrash)(24),
             content: () =>
                 h('div', [
-                    t("deleteProjectStatusConfirmation", { name: projectType.name }),
+                    t("modules.projectStatus.components.ProjectStatusesTable.dialogs.deleteConfirmation.message", { name: projectType.name }),
                     h('br'),
                     h('br'),
-                    t("Do you want to continue ?"),
+                    t("shared.components.dialogs.confirmation.continueMessage"),
                 ]),
-            positiveText: t("Delete"),
-            negativeText: t("Cancel"),
+            positiveText: t("shared.buttons.Delete.label"),
+            negativeText: t("shared.buttons.Cancel.label"),
             onPositiveClick: () => {
                 emit("delete", projectType, index)
             },
@@ -94,11 +94,12 @@
                     </n-flex>
                     <span v-else>{{ column.label }}</span>
                 </th>
-                <th class="doneo-table-actions-column">{{ t("Actions") }}</th>
+                <th class="doneo-table-actions-column">{{ t("shared.components.table.header.columns.actions") }}</th>
             </tr>
             <tr class="hide-mobile">
                 <th>
-                    <TextFilterInput clearable size="small" :placeholder="t('searchByNameDefaultPlaceholder')"
+                    <TextFilterInput clearable size="small"
+                        :placeholder="t('modules.projectStatus.components.ProjectStatusesTable.filters.name.placeholder')"
                         v-model:value="projectStatusNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th class="doneo-text-center">
@@ -109,7 +110,7 @@
                                     <IconRefresh />
                                 </n-icon>
                             </template>
-                            {{ t("Refresh") }}
+                            {{ t("shared.buttons.Refresh.label") }}
                         </n-button>
                         <n-button @click="onAdd">
                             <template #icon>
@@ -117,7 +118,7 @@
                                     <IconPlus />
                                 </n-icon>
                             </template>
-                            {{ t("Add") }}
+                            {{ t("shared.buttons.Add.label") }}
                         </n-button>
                     </n-button-group>
                 </th>
@@ -131,7 +132,7 @@
                 <td class="doneo-text-center">
                     <n-button-group size="small">
                         <n-button @click="onUpdate(projectStatus, index)" :disabled="props.loading">
-                            {{ t("Update") }}
+                            {{ t("shared.buttons.Update.label") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconEdit />
@@ -139,7 +140,7 @@
                             </template>
                         </n-button>
                         <n-button @click="onConfirmDelete(projectStatus, index)" :disabled="props.loading">
-                            {{ t("Delete") }}
+                            {{ t("shared.buttons.Delete.label") }}
                             <template #icon>
                                 <n-icon :size="22">
                                     <IconTrash />
@@ -151,7 +152,8 @@
             </tr>
             <tr>
                 <td :colspan="columns.length + 1" v-if="projectStatuses.length < 1 && !props.loading">
-                    <n-empty :description="t('No project statuses found')">
+                    <n-empty
+                        :description="t('modules.projectStatus.components.ProjectStatusesTable.warnings.noItemsFound')">
                     </n-empty>
                 </td>
             </tr>

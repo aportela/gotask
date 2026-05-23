@@ -46,10 +46,10 @@
                     return true;
                 }
                 if (!value?.trim()) {
-                    return new Error(t("projectStatusFormNameFieldEmptyError"));
+                    return new Error(t("shared.warningMessages.fieldIsRequired"));
                 }
                 else if (value.length > maxNameLength) {
-                    return new Error(t("projectStatusFormNameFieldTooLargeError"));
+                    return new Error(t("shared.warningMessages.fieldExceedsMaxLength"));
                 } else if (serverErrors.value.name) {
                     return new Error(t(serverErrors.value.name));
                 } else {
@@ -97,7 +97,7 @@
             if (response.id === id) {
                 projectStatus.value = new ProjectStatus(response);
             } else {
-                state.ajaxErrorMessage = t("There was a problem while loading the project status data");
+                state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.loadError");
             }
         } catch (error: unknown) {
             state.ajaxErrors = true;
@@ -109,15 +109,15 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectStatusForm.onGet" } });
                             break;
                         case 404:
-                            state.ajaxErrorMessage = t("We couldn’t find the specified project status");
+                            state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.notFoundError");
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while loading the project status data");
+                            state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.loadError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while loading the project status data");
+                    state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.loadError");
                     console.error("Unhandled API error", { file: "ProjectStatusForm.vue", method: "onGet" }, { err: fatalError });
                 });
         } finally {
@@ -147,18 +147,18 @@
                             break;
                         case 409:
                             if (apiError.details?.field === "name") {
-                                serverErrors.value.name = "projectStatusormNameFieldAlreadyExists";
+                                serverErrors.value.name = "modules.projectPriority.components.ProjectStatusForm.warnings.nameAlreadyExists";
                             } else {
-                                state.ajaxErrorMessage = t("There was a problem while adding the project status data");
+                                state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.addError");
                             }
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while adding the project status data");
+                            state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.addError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while adding the project status data");
+                    state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.addError");
                     console.error("Unhandled API error", { file: "ProjectStatusForm.vue", method: "onAdd" }, { err: fatalError });
                 });
         } finally {
@@ -193,18 +193,18 @@
                             break;
                         case 409:
                             if (apiError.details?.field === "name") {
-                                serverErrors.value.name = "projectStatusormNameFieldAlreadyExists";
+                                serverErrors.value.name = "modules.projectPriority.components.ProjectStatusForm.warnings.nameAlreadyExists";
                             } else {
-                                state.ajaxErrorMessage = t("There was a problem while updating the project status data");
+                                state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.updateError");
                             }
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while updating the project status data");
+                            state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.updateError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while updating the project status data");
+                    state.ajaxErrorMessage = t("modules.projectStatus.components.ProjectStatusForm.errors.updateError");
                     console.error("Unhandled API error", { file: "ProjectStatusForm.vue", method: "onUpdate" }, { err: fatalError });
                 });
         } finally {
@@ -251,7 +251,8 @@
         <template #header>
             <div class="doneo-flex-center-align">
                 <n-icon :component="props.mode == 'add' ? IconPlus : IconEdit" />
-                {{ t(props.mode == "add" ? "Add project status" : "Update project status") }}
+                {{ t(props.mode == "add" ? "modules.projectStatus.components.ProjectStatusForm.headers.addProjectStatus"
+                    : "modules.projectStatus.components.ProjectStatusForm.headers.updateProjectStatus") }}
             </div>
         </template>
         <template #header-extra>
@@ -259,8 +260,10 @@
         </template>
         <n-form ref="projectStatusFormRef" :model="projectStatus" :rules="projectStatusFormRules"
             :disabled="state.ajaxRunning">
-            <n-form-item :label="t('Name')" path="name" show-feedback>
-                <n-input type="text" :placeholder="t('projectStatusFormNameFieldPlaceholder')"
+            <n-form-item :label="t('modules.projectStatus.components.ProjectStatusForm.inputs.name.label')" path="name"
+                show-feedback>
+                <n-input type="text"
+                    :placeholder="t('modules.projectStatus.components.ProjectStatusForm.inputs.name.placeholder')"
                     v-model:value="projectStatus.name" :maxlength="maxNameLength" :show-count="true" clearable required
                     autofocus>
                     <template #prefix>
@@ -268,7 +271,7 @@
                     </template>
                 </n-input>
             </n-form-item>
-            <n-form-item :label="t('Preview')">
+            <n-form-item :label="t('modules.projectStatus.components.ProjectStatusForm.inputs.preview.label')">
                 <n-flex style="width: 100%" align="center" :wrap="false">
                     <n-tag :color="getNaiveUITagColorProperty(projectStatus.hexColor)" style="width: 100%;">
                         {{ projectStatus.name }}
@@ -286,7 +289,7 @@
             </n-form-item>
         </n-form>
         <template #footer v-if="state.ajaxErrorMessage">
-            <RemoteAPIAlert type="error" :title="t('Error')" :message="state.ajaxErrorMessage" />
+            <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')" :message="state.ajaxErrorMessage" />
         </template>
         <template #action>
             <n-flex>
@@ -294,13 +297,13 @@
                     <template #icon>
                         <n-icon :component="IconDeviceFloppy" />
                     </template>
-                    {{ t("Save") }}
+                    {{ t("shared.buttons.Save.label") }}
                 </n-button>
                 <n-button @click="onCancel" :disabled="state.ajaxRunning">
                     <template #icon>
                         <n-icon :component="IconCancel" />
                     </template>
-                    {{ t("Cancel") }}
+                    {{ t("shared.buttons.Cancel.label") }}
                 </n-button>
             </n-flex>
         </template>

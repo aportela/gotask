@@ -462,18 +462,164 @@ export default {
         },
       },
     },
-    /*
     projectStatus: {
       components: {
-
-      }
+        ProjectStatusForm: {
+          headers: {
+            addProjectStatus: "Add project status",
+            updateProjectStatus: "Update project status",
+          },
+          inputs: {
+            name: {
+              label: "Name",
+              placeholder: "Enter project status name",
+              errors: {
+                alreadyExists: "Name already exists",
+              },
+            },
+            preview: {
+              label: "Preview",
+            },
+          },
+          errors: {
+            loadError:
+              "There was a problem while loading the project status data",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified project status",
+            addError:
+              "There was a problem while adding the project status data",
+            updateError:
+              "There was a problem while updating the project status data",
+          },
+          warnings: {
+            nameAlreadyExists: "Name already exists",
+          },
+        },
+        ManageProjectStatusesPage: {
+          header: {
+            title: "Manage project statuses",
+          },
+          pager: {
+            totalItemsLabel: "Total project statuses: {total}",
+          },
+          notifications: {
+            projectStatusAdded: 'Project status "{name}" has been added',
+            projectStatusUpdated: 'Project status "{name}" has been updated',
+            projectStatusDeleted: 'Project status "{name}" has been deleted',
+          },
+          errors: {
+            refreshError:
+              "There was a problem while refreshing the project status list",
+            deleteError:
+              "There was a problem while deleting the project status",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified project status",
+          },
+        },
+        ProjectStatusesTable: {
+          header: {
+            columns: {
+              name: "Name",
+            },
+          },
+          filters: {
+            name: {
+              placeholder: "search by name",
+            },
+          },
+          dialogs: {
+            deleteConfirmation: {
+              title: "Delete project status",
+              message:
+                'You are about to delete the project status "{name}" from the system.',
+            },
+          },
+          warnings: {
+            noItemsFound: "No project statuses found",
+          },
+        },
+      },
     },
     projectType: {
       components: {
-
-      }
+        ProjectPriorityForm: {
+          headers: {
+            addProjectPriority: "Add project priority",
+            updateProjectPriority: "Update project priority",
+          },
+          inputs: {
+            name: {
+              label: "Name",
+              placeholder: "Enter project priority name",
+              errors: {
+                alreadyExists: "Name already exists",
+              },
+            },
+            preview: {
+              label: "Preview",
+            },
+          },
+          errors: {
+            loadError:
+              "There was a problem while loading the project priority data",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified project priority",
+            addError:
+              "There was a problem while adding the project priority data",
+            updateError:
+              "There was a problem while updating the project priority data",
+          },
+          warnings: {
+            nameAlreadyExists: "Name already exists",
+          },
+        },
+        ManageProjectPrioritiesPage: {
+          header: {
+            title: "Manage project priorities",
+          },
+          pager: {
+            totalItemsLabel: "Total project priorities: {total}",
+          },
+          notifications: {
+            projectPriorityAdded: 'Project priority "{name}" has been added',
+            projectPriorityUpdated:
+              'Project priority "{name}" has been updated',
+            projectPriorityDeleted:
+              'Project priority "{name}" has been deleted',
+          },
+          errors: {
+            refreshError:
+              "There was a problem while refreshing the project priority list",
+            deleteError:
+              "There was a problem while deleting the project priority",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified project priority",
+          },
+        },
+        ProjectPrioritiesTable: {
+          header: {
+            columns: {
+              name: "Name",
+            },
+          },
+          filters: {
+            name: {
+              placeholder: "search by name",
+            },
+          },
+          dialogs: {
+            deleteConfirmation: {
+              title: "Delete project priority",
+              message:
+                'You are about to delete the project priority "{name}" from the system.',
+            },
+          },
+          warnings: {
+            noItemsFound: "No project priorities found",
+          },
+        },
+      },
     },
-    */
   },
 
   // common actions/operations
@@ -526,36 +672,6 @@ export default {
   projectTypeAddedNotification: 'Project type "{name}" has been added',
   projectTypeUpdatedNotification: 'Project type "{name}" has been updated',
   projectTypeDeletedNotification: 'Project type "{name}" has been deleted',
-
-  // project statuses
-  "Manage project statuses": "Manage project statuses",
-  TotalProjectStatusesPagerLabel: "Total project statuses: {total}",
-  ProjectStatusNameTableHeader: "Name",
-  "Add project status": "Add project status",
-  "Update project status": "Update project status",
-  "Delete project status": "Delete project status",
-  "No project statuses found": "No project statuses found",
-  deleteProjectStatusConfirmation:
-    'You are about to delete the project status "{name}" from the system.',
-  "There was a problem loading the project status data":
-    "There was a problem loading the project status data",
-  "There was a problem adding the project status data":
-    "There was a problem adding the project status data",
-  "There was a problem updating the project status data":
-    "There was a problem updating the project status data",
-  "There was a problem deleting the project status data":
-    "There was a problem deleting the project status data",
-  "There was a problem while loading the project status data":
-    "There was a problem while loading the project status data",
-  "We couldn’t find the specified project status":
-    "We couldn’t find the specified project status",
-  projectStatusFormNameFieldEmptyError: "Name is empty",
-  projectStatusFormNameFieldTooLargeError: "Name is too large",
-  projectStatusFormNameFieldAlreadyExists: "Name already exists",
-  projectStatusFormNameFieldPlaceholder: "Enter project status name",
-  projectStatusAddedNotification: 'Project status "{name}" has been added',
-  projectStatusUpdatedNotification: 'Project status "{name}" has been updated',
-  projectStatusDeletedNotification: 'Project status "{name}" has been deleted',
 
   // other
   Error: "Error",

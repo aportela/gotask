@@ -61,13 +61,13 @@
 
     const onAdd = (projectStatus: ProjectStatus) => {
         showForm.value = false;
-        notify('success', t("projectStatusAddedNotification", { name: projectStatus.name }));
+        notify('success', t("modules.projectStatus.components.ManageProjectStatusesPage.notifications.projectStatusAdded", { name: projectStatus.name }));
         onRefresh();
     };
 
     const onUpdate = (projectStatus: ProjectStatus) => {
         showForm.value = false;
-        notify('success', t("projectStatusUpdatedNotification", { name: projectStatus.name }));
+        notify('success', t("modules.projectStatus.components.ManageProjectStatusesPage.notifications.projectStatusUpdated", { name: projectStatus.name }));
         onRefresh();
     };
 
@@ -104,12 +104,12 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectStatusesPage.onRefresh" } });
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while refreshing the project type list");
+                            state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectStatusesPage.errors.refreshError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while refreshing the project type list");
+                    state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectStatusesPage.errors.refreshError");
                     console.error("Unhandled API error", { file: "ManageProjectStatusesPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
@@ -122,7 +122,7 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             await projectStatusService.delete(projectStatus.id);
-            notify('success', t("projectStatusIndexMovedNotification", { name: projectStatus.name }));
+            notify('success', t("modules.projectStatus.components.ManageProjectStatusesPage.notifications.projectStatusUpdated", { name: projectStatus.name }));
             onRefresh();
         } catch (error: unknown) {
             state.ajaxErrors = true;
@@ -135,15 +135,15 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectStatusesPage.onDelete" } });
                             break;
                         case 404:
-                            state.ajaxErrorMessage = t("We couldn’t find the specified project type");
+                            state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectStatusesPage.errors.notFoundError");
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while deleting the project type");
+                            state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectStatusesPage.errors.deleteError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while deleting the project type");
+                    state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectStatusesPage.errors.deleteError");
                     console.error("Unhandled API error", { file: "ManageProjectStatusesPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         } finally {
@@ -175,7 +175,7 @@
             style="width: 40%;" @add="onAdd" @update="onUpdate" @cancel="onCancel" />
     </n-modal>
 
-    <n-card :title="t('Manage project statuses')">
+    <n-card :title="t('modules.projectStatus.components.ManageProjectStatusesPage.header.title')">
         <ProjectStatusesTable :projectStatuses="items" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
