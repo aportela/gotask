@@ -74,13 +74,13 @@
 
     const onAdd = (role: Role) => {
         showForm.value = false;
-        notify('success', t("roleAddedNotification", { name: role.name }));
+        notify('success', t("modules.role.components.ManageRolesPage.notifications.roleAdded", { name: role.name }));
         onRefresh();
     };
 
     const onUpdate = (role: Role) => {
         showForm.value = false;
-        notify('success', t("roleUpdatedNotification", { name: role.name }));
+        notify('success', t("modules.role.components.ManageRolesPage.notifications.roleUpdated", { name: role.name }));
         onRefresh();
     };
 
@@ -117,12 +117,12 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageRolesPage.onRefresh" } });
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while refreshing the role list");
+                            state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.refreshError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while refreshing the role list");
+                    state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.refreshError");
                     console.error("Unhandled API error", { file: "ManageRolesPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
@@ -135,7 +135,7 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             await roleService.delete(role.id);
-            notify('success', t("roleDeletedNotification", { name: role.name }));
+            notify('success', t("modules.role.components.ManageRolesPage.notifications.roleDeleted", { name: role.name }));
             onRefresh();
         } catch (error: unknown) {
             state.ajaxErrors = true;
@@ -148,15 +148,15 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageRolesPage.onDelete" } });
                             break;
                         case 404:
-                            state.ajaxErrorMessage = t("We couldn’t find the specified role");
+                            state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.notFoundError");
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while deleting the role");
+                            state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.deleteError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while deleting the role");
+                    state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.deleteError");
                     console.error("Unhandled API error", { file: "ManageRolesPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         } finally {
@@ -188,7 +188,7 @@
             @add="onAdd" @update="onUpdate" @cancel="onCancel" />
     </n-modal>
 
-    <n-card :title="t('Manage roles')">
+    <n-card :title="t('modules.role.components.ManageRolesPage.header.title')">
         <RolesTable :roles="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
             :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter" />

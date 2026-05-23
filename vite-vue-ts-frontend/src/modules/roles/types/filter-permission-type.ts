@@ -1,8 +1,8 @@
-export const PermissionTypeFilterValue = {
-  All: 0,
+export const RolePermissionFilterValue = {
+  Any: 0,
   Allowed: 1,
   NotAllowed: 2,
 } as const;
 
-export type PermissionTypeFilter =
-  (typeof PermissionTypeFilterValue)[keyof typeof PermissionTypeFilterValue];
+export type RolePermissionFilter =
+  (typeof RolePermissionFilterValue)[keyof typeof RolePermissionFilterValue];

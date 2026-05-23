@@ -265,7 +265,25 @@ export default {
             nameAlreadyExists: "Name already exists",
           },
         },
-        ManageRolesPage: {},
+        ManageRolesPage: {
+          header: {
+            title: "Manage roles",
+          },
+          pager: {
+            totalItemsLabel: "Total roles: {total}",
+          },
+          notifications: {
+            roleAdded: 'Role "{name}" has been added',
+            roleUpdated: 'Role "{name}" has been updated',
+            roleDeleted: 'Role "{name}" has been deleted',
+          },
+          errors: {
+            refreshError: "There was a problem while refreshing the role list",
+            deleteError: "There was a problem while deleting the role",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified role",
+          },
+        },
         RolesTable: {
           header: {
             columns: {
@@ -354,48 +372,6 @@ export default {
   rolePermissionTypeSelectorValueAll: "All",
   rolePermissionTypeSelectorValueAllowed: "Only allowed",
   rolePermissionTypeSelectorValueNotAllowed: "Only not allowed",
-
-  // user roles
-  "Manage roles": "Manage roles",
-  TotalRolesPagerLabel: "Total roles: {total}",
-  RoleNameTableHeader: "Name",
-  RoleProjectPermissionsTableHeader: "Project permissions",
-  RoleTasksPermissionsTableHeader: "Task permissions",
-  "Update project allowed": "Update project allowed",
-  "Delete project allowed": "Delete project allowed",
-  "View project allowed": "View project allowed",
-  "Add task allowed": "Add task allowed",
-  "Update task allowed": "Update task allowed",
-  "Delete task allowed": "Delete task allowed",
-  "View task allowed": "View task allowed",
-  "Add role": "Add role",
-  "Update role": "Update role",
-  "Delete role": "Delete role",
-  "No roles found": "No roles found",
-  "Role permissions": "Role permissions",
-  "Project permissions": "Project permissions",
-  "Task permissions": "Task permissions",
-  deleteRoleConfirmation:
-    'You are about to delete the role "{name}" from the system.',
-  "There was a problem while refreshing the role list":
-    "There was a problem while refreshing the role list",
-  "We couldn’t find the specified role": "We couldn’t find the specified role",
-  "There was a problem while deleting the role":
-    "There was a problem while deleting the role",
-  "There was a problem while adding the role data":
-    "There was a problem while adding the role data",
-  "There was a problem while updating the role data":
-    "There was a problem while updating the role data",
-  "There was a problem while loading the role data":
-    "There was a problem while loading the role data",
-  roleAddedNotification: 'Role "{name}" has been added',
-  roleUpdatedNotification: 'Role "{name}" has been updated',
-  roleDeletedNotification: 'Role "{name}" has been deleted',
-  roleFormNameLabel: "Name",
-  roleFormNameFieldPlaceholder: "Enter role name",
-  roleFormNameFieldEmptyError: "Name is empty",
-  roleFormNameFieldTooLargeError: "Name is too large",
-  roleFormNameFieldAlreadyExists: "Name already exists",
 
   // project types
   "Manage project types": "Manage project types",
