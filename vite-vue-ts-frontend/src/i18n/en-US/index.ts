@@ -542,15 +542,15 @@ export default {
     },
     projectType: {
       components: {
-        ProjectPriorityForm: {
+        ProjectTypeForm: {
           headers: {
-            addProjectPriority: "Add project priority",
-            updateProjectPriority: "Update project priority",
+            addProjectType: "Add project type",
+            updateProjectType: "Update project type",
           },
           inputs: {
             name: {
               label: "Name",
-              placeholder: "Enter project priority name",
+              placeholder: "Enter project type name",
               errors: {
                 alreadyExists: "Name already exists",
               },
@@ -561,42 +561,38 @@ export default {
           },
           errors: {
             loadError:
-              "There was a problem while loading the project priority data",
+              "There was a problem while loading the project type data",
             // TODO: deduplicate
-            notFoundError: "We couldn’t find the specified project priority",
-            addError:
-              "There was a problem while adding the project priority data",
+            notFoundError: "We couldn’t find the specified project type",
+            addError: "There was a problem while adding the project type data",
             updateError:
-              "There was a problem while updating the project priority data",
+              "There was a problem while updating the project type data",
           },
           warnings: {
             nameAlreadyExists: "Name already exists",
           },
         },
-        ManageProjectPrioritiesPage: {
+        ManageProjectTypesPage: {
           header: {
-            title: "Manage project priorities",
+            title: "Manage project types",
           },
           pager: {
-            totalItemsLabel: "Total project priorities: {total}",
+            totalItemsLabel: "Total project types: {total}",
           },
           notifications: {
-            projectPriorityAdded: 'Project priority "{name}" has been added',
-            projectPriorityUpdated:
-              'Project priority "{name}" has been updated',
-            projectPriorityDeleted:
-              'Project priority "{name}" has been deleted',
+            projectTypeAdded: 'Project type "{name}" has been added',
+            projectTypeUpdated: 'Project type "{name}" has been updated',
+            projectTypeDeleted: 'Project type "{name}" has been deleted',
           },
           errors: {
             refreshError:
-              "There was a problem while refreshing the project priority list",
-            deleteError:
-              "There was a problem while deleting the project priority",
+              "There was a problem while refreshing the project type list",
+            deleteError: "There was a problem while deleting the project type",
             // TODO: deduplicate
-            notFoundError: "We couldn’t find the specified project priority",
+            notFoundError: "We couldn’t find the specified project type",
           },
         },
-        ProjectPrioritiesTable: {
+        ProjectTypesTable: {
           header: {
             columns: {
               name: "Name",
@@ -609,13 +605,13 @@ export default {
           },
           dialogs: {
             deleteConfirmation: {
-              title: "Delete project priority",
+              title: "Delete project type",
               message:
-                'You are about to delete the project priority "{name}" from the system.',
+                'You are about to delete the project type "{name}" from the system.',
             },
           },
           warnings: {
-            noItemsFound: "No project priorities found",
+            noItemsFound: "No project types found",
           },
         },
       },
@@ -638,40 +634,6 @@ export default {
   // errors
   "Uncaught exception": "Uncaught exception",
   "Invalid API response code": "Invalid API response code",
-
-  // project types
-  "Manage project types": "Manage project types",
-  TotalProjectTypesPagerLabel: "Total project types: {total}",
-  ProjectTypeNameTableHeader: "Name",
-  "Add project type": "Add project type",
-  "Update project type": "Update project type",
-  "Delete project type": "Delete project type",
-  "No project types found": "No project types found",
-  deleteProjectTypeConfirmation:
-    'You are about to delete the project type "{name}" from the system.',
-  "There was a problem loading the project type data":
-    "There was a problem loading the project type data",
-  "There was a problem adding the project type data":
-    "There was a problem adding the project type data",
-  "There was a problem updating the project type data":
-    "There was a problem updating the project type data",
-  "There was a problem deleting the project type data":
-    "There was a problem deleting the project type data",
-  "There was a problem while adding the project type data":
-    "There was a problem while adding the project type data",
-  "There was a problem while updating the project type data":
-    "There was a problem while updating the project type data",
-  "There was a problem while loading the project type data":
-    "There was a problem while loading the project type data",
-  "We couldn’t find the specified project type":
-    "We couldn’t find the specified project type",
-  projectTypeFormNameFieldEmptyError: "Name is empty",
-  projectTypeFormNameFieldTooLargeError: "Name is too large",
-  projectTypeFormNameFieldAlreadyExists: "Name already exists",
-  projectTypeFormNameFieldPlaceholder: "Enter project type name",
-  projectTypeAddedNotification: 'Project type "{name}" has been added',
-  projectTypeUpdatedNotification: 'Project type "{name}" has been updated',
-  projectTypeDeletedNotification: 'Project type "{name}" has been deleted',
 
   // other
   Error: "Error",

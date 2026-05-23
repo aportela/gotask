@@ -46,10 +46,10 @@
                     return true;
                 }
                 if (!value?.trim()) {
-                    return new Error(t("projectTypeFormNameFieldEmptyError"));
+                    return new Error(t("shared.warningMessages.fieldIsRequired"));
                 }
                 else if (value.length > maxNameLength) {
-                    return new Error(t("projectTypeFormNameFieldTooLargeError"));
+                    return new Error(t("shared.warningMessages.fieldExceedsMaxLength"));
                 } else if (serverErrors.value.name) {
                     return new Error(t(serverErrors.value.name));
                 } else {
@@ -97,7 +97,7 @@
             if (response.id === id) {
                 projectType.value = new ProjectType(response);
             } else {
-                state.ajaxErrorMessage = t("There was a problem while loading the project type data");
+                state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.loadError");
             }
         } catch (error: unknown) {
             state.ajaxErrors = true;
@@ -109,15 +109,15 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectTypeForm.onGet" } });
                             break;
                         case 404:
-                            state.ajaxErrorMessage = t("We couldn’t find the specified project type");
+                            state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.notFoundError");
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while loading the project type data");
+                            state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.loadError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while loading the project type data");
+                    state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.loadError");
                     console.error("Unhandled API error", { file: "ProjectTypeForm.vue", method: "onGet" }, { err: fatalError });
                 });
         } finally {
@@ -147,18 +147,18 @@
                             break;
                         case 409:
                             if (apiError.details?.field === "name") {
-                                serverErrors.value.name = "projectTypeFormNameFieldAlreadyExists";
+                                serverErrors.value.name = "modules.projectType.components.ProjectTypeForm.warnings.nameAlreadyExists";
                             } else {
-                                state.ajaxErrorMessage = t("There was a problem while adding the project type data");
+                                state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.addError");
                             }
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while adding the project type data");
+                            state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.addError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while adding the project type data");
+                    state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.addError");
                     console.error("Unhandled API error", { file: "ProjectTypeForm.vue", method: "onAdd" }, { err: fatalError });
                 });
         } finally {
@@ -193,18 +193,18 @@
                             break;
                         case 409:
                             if (apiError.details?.field === "name") {
-                                serverErrors.value.name = "projectTypeFormNameFieldAlreadyExists";
+                                serverErrors.value.name = "modules.projectType.components.ProjectTypeForm.warnings.nameAlreadyExists";
                             } else {
-                                state.ajaxErrorMessage = t("There was a problem while updating the project type data");
+                                state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.updateError");
                             }
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while updating the project type data");
+                            state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.updateError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while updating the project type data");
+                    state.ajaxErrorMessage = t("modules.projectType.components.ProjectTypeForm.errors.updateError");
                     console.error("Unhandled API error", { file: "ProjectTypeForm.vue", method: "onUpdate" }, { err: fatalError });
                 });
         } finally {
@@ -251,7 +251,8 @@
         <template #header>
             <div class="doneo-flex-center-align">
                 <n-icon :component="props.mode == 'add' ? IconPlus : IconEdit" />
-                {{ t(props.mode == "add" ? "Add project type" : "Update project type") }}
+                {{ t(props.mode == "add" ? "modules.projectType.components.ProjectTypeForm.headers.addProjectType" :
+                    "modules.projectType.components.ProjectTypeForm.headers.updateProjectType") }}
             </div>
         </template>
         <template #header-extra>
@@ -259,8 +260,10 @@
         </template>
         <n-form ref="projectTypeFormRef" :model="projectType" :rules="projectTypeFormRules"
             :disabled="state.ajaxRunning">
-            <n-form-item :label="t('Name')" path="name" show-feedback>
-                <n-input type="text" :placeholder="t('projectTypeFormNameFieldPlaceholder')"
+            <n-form-item :label="t('modules.projectType.components.ProjectTypeForm.inputs.name.label')" path="name"
+                show-feedback>
+                <n-input type="text"
+                    :placeholder="t('modules.projectType.components.ProjectTypeForm.inputs.name.placeholder')"
                     v-model:value="projectType.name" :maxlength="maxNameLength" :show-count="true" clearable required
                     autofocus>
                     <template #prefix>
@@ -286,7 +289,7 @@
             </n-form-item>
         </n-form>
         <template #footer v-if="state.ajaxErrorMessage">
-            <RemoteAPIAlert type="error" :title="t('Error')" :message="state.ajaxErrorMessage" />
+            <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')" :message="state.ajaxErrorMessage" />
         </template>
         <template #action>
             <n-flex>
@@ -294,13 +297,13 @@
                     <template #icon>
                         <n-icon :component="IconDeviceFloppy" />
                     </template>
-                    {{ t("Save") }}
+                    {{ t("shared.buttons.Save.label") }}
                 </n-button>
                 <n-button @click="onCancel" :disabled="state.ajaxRunning">
                     <template #icon>
                         <n-icon :component="IconCancel" />
                     </template>
-                    {{ t("Cancel") }}
+                    {{ t("shared.buttons.Cancel.label") }}
                 </n-button>
             </n-flex>
         </template>

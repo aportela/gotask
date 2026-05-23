@@ -61,13 +61,13 @@
 
     const onAdd = (projectType: ProjectType) => {
         showForm.value = false;
-        notify('success', t("projectTypeAddedNotification", { name: projectType.name }));
+        notify('success', t("modules.projectType.components.ManageProjectTypesPage.notifications.projectTypeAdded", { name: projectType.name }));
         onRefresh();
     };
 
     const onUpdate = (projectType: ProjectType) => {
         showForm.value = false;
-        notify('success', t("projectTypeUpdatedNotification", { name: projectType.name }));
+        notify('success', t("modules.projectType.components.ManageProjectTypesPage.notifications.projectTypeUpdated", { name: projectType.name }));
         onRefresh();
     };
 
@@ -104,12 +104,12 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectTypesPage.onRefresh" } });
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while refreshing the project type list");
+                            state.ajaxErrorMessage = t("modules.projectType.components.ManageProjectTypesPage.errors.refreshError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while refreshing the project type list");
+                    state.ajaxErrorMessage = t("modules.projectType.components.ManageProjectTypesPage.errors.refreshError");
                     console.error("Unhandled API error", { file: "ManageProjectTypesPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
@@ -122,7 +122,7 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             await projectTypeService.delete(projectType.id);
-            notify('success', t("projectTypeDeletedNotification", { name: projectType.name }));
+            notify('success', t("modules.projectType.components.ManageProjectTypesPage.notifications.projectTypeDeleted", { name: projectType.name }));
             onRefresh();
         } catch (error: unknown) {
             state.ajaxErrors = true;
@@ -135,15 +135,15 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectTypesPage.onDelete" } });
                             break;
                         case 404:
-                            state.ajaxErrorMessage = t("We couldn’t find the specified project type");
+                            state.ajaxErrorMessage = t("modules.projectType.components.ManageProjectTypesPage.errors.notFoundError");
                             break;
                         default:
-                            state.ajaxErrorMessage = t("There was a problem while deleting the project type");
+                            state.ajaxErrorMessage = t("modules.projectType.components.ManageProjectTypesPage.errors.deleteError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("There was a problem while deleting the project type");
+                    state.ajaxErrorMessage = t("modules.projectType.components.ManageProjectTypesPage.errors.deleteError");
                     console.error("Unhandled API error", { file: "ManageProjectTypesPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         } finally {
@@ -175,7 +175,7 @@
             style="width: 40%;" @add="onAdd" @update="onUpdate" @cancel="onCancel" />
     </n-modal>
 
-    <n-card :title="t('Manage project types')">
+    <n-card :title="t('modules.projectType.components.ManageProjectTypesPage.header.title')">
         <ProjectTypesTable :project-types="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
             :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:project-type-name-filter="nameFilter" />
