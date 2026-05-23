@@ -1,5 +1,27 @@
 export default {
   layouts: {
+    sidebarMenu: {
+      options: {
+        search: "Search...",
+        home: "Overview",
+        projects: "Projects",
+        tasks: "Tasks",
+        reports: "Reports",
+        charts: "Charts",
+        settings: "Settings",
+        manageUsers: "Users",
+        manageRoles: "Roles",
+        manageProjectTypes: "Type",
+        manageProjectPriorities: "Priority",
+        manageProjectStatuses: "Status",
+        disableNotifications: "Disable notifications",
+        enableNotifications: "Enable notifications",
+        switchToLightTheme: "Light theme",
+        switchToDarkTheme: "Dark theme",
+        profile: "Profile",
+        signOut: "Logout",
+      },
+    },
     errorNotFound: {
       title: "404 Not Found",
       description: "We can't find what you're looking for.",
