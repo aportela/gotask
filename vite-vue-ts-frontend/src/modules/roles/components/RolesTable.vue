@@ -12,6 +12,7 @@
     import ManageTable from '../../../shared/components/tables/ManageTable.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
+    import UpdateDeleteActionsColumn from '../../../shared/components/tables/UpdateDeleteActionsColumn.vue';
 
     interface Props {
         loading: boolean;
@@ -205,24 +206,7 @@
                     </n-tooltip>
                 </td>
                 <td class="doneo-text-center">
-                    <n-button-group size="small">
-                        <n-button @click="onUpdate(role, index)" :disabled="props.loading">
-                            {{ t("shared.buttons.Update.label") }}
-                            <template #icon>
-                                <n-icon :size="22">
-                                    <IconEdit />
-                                </n-icon>
-                            </template>
-                        </n-button>
-                        <n-button @click="onConfirmDelete(role, index)" :disabled="props.loading">
-                            {{ t("shared.buttons.Delete.label") }}
-                            <template #icon>
-                                <n-icon :size="22">
-                                    <IconTrash />
-                                </n-icon>
-                            </template>
-                        </n-button>
-                    </n-button-group>
+                    <UpdateDeleteActionsColumn @update="onUpdate(role, index)" @delete="onConfirmDelete(role, index)" />
                 </td>
             </tr>
             <tr>
