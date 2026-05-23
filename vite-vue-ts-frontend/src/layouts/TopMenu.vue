@@ -1,11 +1,10 @@
 <script setup lang="ts">
-    import { NMenu, NIcon, type MenuOption } from 'naive-ui'
+    import { NMenu, type MenuOption } from 'naive-ui'
     import { IconUserCheck, IconBug, IconSitemap, IconFileAnalytics, IconSettings, IconUserCircle, IconPresentation, IconChartHistogram, IconUsers, IconBookmark, IconFlagBolt, IconAdjustmentsBolt, IconLogout, IconId } from '@tabler/icons-vue';
     import { ref, watch, h } from 'vue'
-    import type { Component } from 'vue'
     import { useRouter } from "vue-router";
     import { RouterLink } from 'vue-router'
-
+    import { renderIcon } from '../shared/composables/naive-ui-icon';
 
     const router = useRouter();
     const currentTab = ref<string | number>("home");
@@ -19,14 +18,6 @@
             console.error(e);
         });
     });
-
-    function renderIcon(icon: Component) {
-        return (size = commonIconSize) =>
-            () =>
-                h(NIcon, { size }, {
-                    default: () => h(icon)
-                })
-    }
 
     function handleUpdateValue(_key: string, _item: MenuOption) {
     }
