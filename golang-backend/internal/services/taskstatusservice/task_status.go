@@ -40,7 +40,7 @@ func (s *taskStatusService) Delete(ctx context.Context, id string) error {
 func (s *taskStatusService) Get(ctx context.Context, id string) (domain.TaskStatus, error) {
 	projectStatus, err := s.repository.Get(ctx, id)
 	if err != nil {
-		return taskstatusrepository.DTOToDomain(projectStatus), fmt.Errorf("[TaskStatusService] failed to get project status with ID %s: %w", id, err)
+		return taskstatusrepository.DTOToDomain(projectStatus), fmt.Errorf("[TaskStatusService] failed to get task status with ID %s: %w", id, err)
 	}
 	return taskstatusrepository.DTOToDomain(projectStatus), nil
 }
@@ -48,7 +48,7 @@ func (s *taskStatusService) Get(ctx context.Context, id string) (domain.TaskStat
 func (s *taskStatusService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchTaskStatusesFilter) ([]domain.TaskStatus, browser.Result, error) {
 	projectStatuses, pagerResult, err := s.repository.Search(ctx, pager, order, taskstatusrepository.DomainFilterToDTO(filter))
 	if err != nil {
-		return nil, browser.Result{}, fmt.Errorf("[TaskStatusService] failed to search project statuses: %w", err)
+		return nil, browser.Result{}, fmt.Errorf("[TaskStatusService] failed to search task statuses: %w", err)
 	}
 	return taskstatusrepository.DTOArrayToDomainArray(projectStatuses), pagerResult, nil
 }
