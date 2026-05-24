@@ -61,7 +61,7 @@ export function useMenu() {
                 params: {},
               },
             },
-            { default: () => t("home") },
+            { default: () => t("layouts.sidebarMenu.options.home") },
           ),
         key: "home",
         icon: renderIcon(IconPresentation)(menuOptionIconSize),
