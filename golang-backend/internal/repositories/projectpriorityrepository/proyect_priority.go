@@ -206,7 +206,7 @@ func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.C
 	if pager.Enabled() {
 		sqlCountQuery := `
 			SELECT
-				COUNT(*) AS project_priorities
+				COUNT(*) AS total_project_priorities
 			FROM project_priorities PP
 		`
 		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
