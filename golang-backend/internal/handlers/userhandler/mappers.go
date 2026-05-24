@@ -55,6 +55,14 @@ func domainToResponse(user domain.User) userResponse {
 	}
 }
 
+func BaseDomainToBaseResponse(user domain.UserBase) UserBaseResponse {
+	return UserBaseResponse{
+		ID:        user.ID,
+		Name:      user.Name,
+		AvatarURL: user.AvatarURL,
+	}
+}
+
 func domainArrayToResponseArray(users []domain.User) []userResponse {
 	userResponses := []userResponse{}
 	for _, user := range users {

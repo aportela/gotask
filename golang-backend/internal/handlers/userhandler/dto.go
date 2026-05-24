@@ -45,6 +45,12 @@ type searchRequest struct {
 	Filter *FilterRequest        `json:"filter"`
 }
 
+type UserBaseResponse struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	AvatarURL string `json:"avatarUrl"`
+}
+
 type userResponse struct {
 	ID          string           `json:"id"`
 	Name        string           `json:"name"`
