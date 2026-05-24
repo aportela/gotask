@@ -56,6 +56,12 @@ export type SearchRequest = {
   filter?: SearchRequestFilter;
 };
 
+export type UserBaseResponse = {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+};
+
 export type UserResponse = {
   id: string;
   name: string;

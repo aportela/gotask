@@ -17,10 +17,12 @@ type projectDTO struct {
 	TypeHexColor     string  `db:"type_hex_color"`
 	StatusId         string  `db:"status_id"`
 	StatusName       string  `db:"status_name"`
-	StatusIndex      int     `db:"status_index"`
 	StatusHexColor   string  `db:"status_hex_color"`
 	PriorityId       string  `db:"priority_id"`
 	PriorityName     string  `db:"priority_name"`
-	PriorityIndex    int     `db:"priority_index"`
 	PriorityHexColor string  `db:"priority_hex_color"`
+}
+
+type searchFilterDTO struct {
+	Key *string
 }

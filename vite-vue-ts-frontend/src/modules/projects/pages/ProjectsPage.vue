@@ -1,284 +1,204 @@
 <script setup lang="ts">
-    import { onMounted, h, ref, shallowRef } from 'vue';
-    import { api } from '../../../shared/composables/api';
-    import { NDataTable, NTag, NTable, NAvatar } from 'naive-ui';
-    import type { DataTableColumns } from 'naive-ui'
-    import { getNaiveUITagColorProperty } from '../../../shared/composables/color';
+    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch } from 'vue';
+    import { useI18n } from "vue-i18n";
 
-    interface ProjectTypeInterface {
-        id: string;
-        name: string;
-        index: number;
-        hexColor: string;
-    }
+    import { NCard } from 'naive-ui';
 
-    class ProjectType implements ProjectTypeInterface {
-        id: string;
-        name: string;
-        index: number;
-        hexColor: string;
-        constructor(item: ProjectTypeInterface) {
-            this.id = item.id;
-            this.name = item.name;
-            this.index = item.index;
-            this.hexColor = item.hexColor;
-        }
-    }
+    import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
+    import { useLoadingStore } from '../../../stores/loading';
+    import { useNotify } from '../../../shared/composables/notification';
+    import { appBus } from '../../../shared/composables/bus';
+    import { projectService } from '../services/project';
+    import { handleAPIError } from '../../../api/client/errorHandler';
+    import type { ProjectResponse, SearchRequest } from '../types/dto';
+    import { Project } from '../models/project';
+    import ProjectsTable from '../components/ProjectsTable.vue';
+    import Pager from '../../../shared/components/tables/Pager.vue';
+    import { Sort } from '../../../shared/types/models/sort';
+    import type { FormMode } from '../../../shared/types/form-mode';
+    import { ProjectType } from '../../project-types/models/project-type';
+    import { ProjectPriority } from '../../project-priorities/models/project-priority';
+    import { ProjectStatus } from '../../project-statuses/models/project-status';
+    import { UserBase } from '../../users/models/user';
 
-    interface ProjectStatusInterface {
-        id: string;
-        name: string;
-        index: number;
-        hexColor: string;
-    }
+    const { t } = useI18n();
+    const { notify } = useNotify();
 
-    class ProjectStatus implements ProjectStatusInterface {
-        id: string;
-        name: string;
-        index: number;
-        hexColor: string;
-        constructor(item: ProjectStatusInterface) {
-            this.id = item.id;
-            this.name = item.name;
-            this.index = item.index;
-            this.hexColor = item.hexColor;
-        }
-    }
+    const loadingStore = useLoadingStore();
 
-    interface ProjectPriorityInterface {
-        id: string;
-        name: string;
-        index: number;
-        hexColor: string;
-    }
+    const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-    class ProjectPriority implements ProjectPriorityInterface {
-        id: string;
-        name: string;
-        index: number;
-        hexColor: string;
-        constructor(item: ProjectPriority) {
-            this.id = item.id;
-            this.name = item.name;
-            this.index = item.index;
-            this.hexColor = item.hexColor;
-        }
-    }
+    const items = shallowRef<Project[]>([]);
 
-    interface UserBaseInterface {
-        id: string;
-        name: string;
-    }
+    const sort = ref<Sort>(new Sort("name", "ASC"));
 
-    class UserBase implements UserBaseInterface {
-        id: string;
-        name: string;
-        constructor(item: UserBaseInterface) {
-            this.id = item.id;
-            this.name = item.name;
-        }
-    }
+    const keyFilter = ref<string>("");
 
-    interface ProjectInterface {
-        id: string;
-        key: string;
-        type: ProjectType;
-        status: ProjectStatus;
-        priority: ProjectPriority;
-        summary: string;
-        taskCount: number;
-        createdBy: UserBase;
-        createdAt: number;
-    };
+    const showForm = ref<boolean>(false);
+    const formMode = ref<FormMode>("add");
 
-    class Project implements ProjectInterface {
-        id: string;
-        key: string;
-        type: ProjectType;
-        status: ProjectStatus;
-        priority: ProjectPriority;
-        summary: string;
-        taskCount: number;
-        createdBy: UserBase;
-        createdAt: number;
+    const selectedItem = ref<Project>(new Project({
+        id: "",
+        key: "",
+        summary: "",
+        type: new ProjectType({ id: "", name: "", hexColor: "" }),
+        priority: new ProjectPriority({ id: "", name: "", hexColor: "" }),
+        status: new ProjectStatus({ id: "", name: "", hexColor: "" }),
+        createdAt: new Date().getTime(),
+        createdBy: new UserBase({ id: "", name: "", avatarUrl: "" }),
+    }));
 
-        constructor(item: ProjectInterface) {
-            this.id = item.id;
-            this.key = item.key;
-            this.summary = item.summary;
-            this.type = item.type;
-            this.status = item.status;
-            this.priority = item.priority;
-            this.taskCount = item.taskCount;
-            this.createdBy = item.createdBy;
-            this.createdAt = item.createdAt;
-        }
-    }
-
-    const columns: DataTableColumns<ProjectInterface> = [
-        {
-            title: 'Key',
-            key: 'key',
-            width: 100,
-            minWidth: 100,
-        },
-        {
-            title: 'Type',
-            key: 'type',
-            render(row) {
-                return h(
-                    NTag,
-                    {
-                        style: {
-                            marginRight: '6px'
-                        },
-                        type: 'info',
-                        bordered: false
-                    },
-                    {
-                        default: () => row.priority.name
-                    }
-                )
-            }
-        },
-        {
-            title: 'Priority',
-            key: 'priority',
-            align: 'center',
-            render(row) {
-                return h(
-                    NTag,
-                    {
-                        style: {
-                            marginRight: '6px'
-                        },
-                        type: 'info',
-                        bordered: false
-                    },
-                    {
-                        default: () => row.priority.name
-                    }
-                )
-            }
-        },
-        {
-            title: 'Status',
-            key: 'status',
-            render(row) {
-                return h(
-                    NTag,
-                    {
-                        style: {
-                            marginRight: '6px'
-                        },
-                        type: 'success',
-                        bordered: false
-                    },
-                    {
-                        default: () => row.status.name
-                    }
-                )
-            }
-        },
-        {
-            title: 'Summary',
-            key: 'summary',
-            /*
-            width: 1200,
-            ellipsis: {
-                tooltip: true
-            }
-            */
-        },
-        {
-            title: 'Created At',
-            key: 'createdAt',
-            render(row) {
-                return new Date(row.createdAt).toLocaleString()
-            }
-        },
-        {
-            title: 'Creator',
-            key: 'createdBy',
-            render(row) {
-                return row.createdBy.name
-            }
-        },
-    ];
-
-    const projects = shallowRef<Project[]>([]);
-
-    const loading = ref<boolean>(false);
-
-    onMounted(() => {
-        loading.value = true;
-        api.project.search().then((successResponse: any) => {
-            projects.value = successResponse.data.projects;
-        }).catch((errorResponse: any) => {
-            console.log(errorResponse);
-        }).finally(() => { loading.value = false; })
+    watch(state, (newValue: AjaxStateInterface) => {
+        loadingStore.set(newValue.ajaxRunning);
     });
 
-    const pagination = false as const
+    const onToggleSort = (field: string) => {
+        sort.value.toggleSort(field);
+        onRefresh();
+    };
 
-    const simpleTable = true;
+    const onShowAddForm = () => {
+        formMode.value = "add";
+        showForm.value = true;
+    };
 
+    const currentPage = ref(1);
+    const pageSize = ref(10);
+    const totalResults = ref(0);
+    const totalPages = ref(0);
+
+    watch([keyFilter], () => {
+        currentPage.value = 1;
+    });
+
+    watch(pageSize, () => {
+        if (currentPage.value != 1) {
+            currentPage.value = 1;
+        } else {
+            onRefresh();
+        }
+    });
+
+    watch(currentPage, () => {
+        onRefresh();
+    });
+
+    const onShowUpdateForm = (project: Project, _index: number) => {
+        selectedItem.value = project;
+        formMode.value = "update";
+        showForm.value = true;
+    };
+
+
+    const onRefresh = async () => {
+        Object.assign(state, defaultAjaxStateRunning);
+        try {
+            const payload: SearchRequest = {
+                pager: {
+                    currentPage: currentPage.value,
+                    resultsPage: pageSize.value,
+                },
+                order: {
+                    field: sort.value.field,
+                    sort: sort.value.order,
+                },
+                filter: {
+                    key: keyFilter.value,
+                }
+            };
+            const response = await projectService.search(payload);
+            totalPages.value = response.pager.totalPages;
+            totalResults.value = response.pager.totalResults;
+            items.value = response.projects.map((project: ProjectResponse) => new Project(project))
+        } catch (error: unknown) {
+            items.value.length = 0;
+            state.ajaxErrors = true;
+            handleAPIError(error,
+                (apiError) => {
+                    switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskPrioritiesPage.onRefresh" } });
+                            break;
+                        default:
+                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.refreshError");
+                            break;
+                    }
+                },
+                (fatalError) => {
+                    state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.refreshError");
+                    console.error("Unhandled API error", { file: "ManageTaskPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
+                });
+        }
+        finally {
+            state.ajaxRunning = false;
+        }
+    };
+
+    const onDelete = async (project: Project, _index?: number) => {
+        Object.assign(state, defaultAjaxStateRunning);
+        try {
+            await projectService.delete(project.id);
+            notify('success', t("modules.taskPriority.components.ManageTaskPrioritiesPage.notifications.taskPriorityDeleted", { name: project.summary }));
+            onRefresh();
+        } catch (error: unknown) {
+            state.ajaxErrors = true;
+            handleAPIError(error,
+                (apiError) => {
+                    switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            selectedItem.value = project;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskPrioritiesPage.onDelete" } });
+                            break;
+                        case 404:
+                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.notFoundError");
+                            break;
+                        default:
+                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
+                            break;
+                    }
+                },
+                (fatalError) => {
+                    state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
+                    console.error("Unhandled API error", { file: "ManageTaskPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
+                });
+        } finally {
+            state.ajaxRunning = false;
+        }
+    };
+
+    let stopBusReauthListener: () => void;
+
+    onMounted(() => {
+        onRefresh();
+        stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
+            if (payload.to.includes("ManageTaskPrioritiesPage.onRefresh")) {
+                onRefresh();
+            } else if (payload.to.includes("ManageTaskPrioritiesPage.onDelete")) {
+                onDelete(selectedItem.value);
+            }
+        });
+    });
+
+    onBeforeUnmount(() => {
+        stopBusReauthListener();
+    });
 </script>
 
 <template>
-    <h1>Manage projects</h1>
 
-    <n-table :bordered="true" size="small" :striped="false" v-if="simpleTable">
-        <thead>
-            <tr>
-                <th style="text-align: center">Task Key</th>
-                <th>Summary</th>
-                <th>Type</th>
-                <th>Creator</th>
-                <th>Created at</th>
-                <th>Priority</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr v-for="project in projects" :key="project.id">
-                <td style="text-align: center"><router-link :to="{ name: 'project', params: { id: project.id } }">{{
-                    project.key }}</router-link>
-                </td>
-                <td><router-link :to="{ name: 'project', params: { id: project.id } }">{{ project.summary
-                }}</router-link></td>
-                <td><n-tag :color="getNaiveUITagColorProperty(project.type.hexColor)" class="clickable_tag"
-                        title="Filter by this value">{{
-                            project.type.name
-                        }}</n-tag>
-                </td>
-                <td><n-avatar :src="'https://i.pravatar.cc/32?u=' + project.createdBy.id"></n-avatar><span
-                        class="creator-name">{{
-                            project.createdBy.name }}</span></td>
-                <td>{{ new Date(project.createdAt).toLocaleString() }}</td>
-                <td><n-tag :color="getNaiveUITagColorProperty(project.priority.hexColor)" class="clickable_tag"
-                        title="Filter by this value">{{
-                            project.priority.name
-                        }}</n-tag>
-                </td>
-                <td><n-tag :color="getNaiveUITagColorProperty(project.status.hexColor)" class="clickable_tag"
-                        title="Filter by this value">{{ project.status.name
-                        }}</n-tag></td>
-            </tr>
-        </tbody>
-    </n-table>
-    <n-data-table size="small" :columns="columns" :data="projects" :pagination="pagination" :bordered="false"
-        :loading="loading" :style="{ height: `80vh` }" flex-height v-else />
+    <n-card :title="t('modules.taskPriority.components.ManageTaskPrioritiesPage.header.title')">
+        <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
+            :total-results="totalResults" class="doneo-pager-container">
+            <template #total-results-label="{ totalResults }">
+                {{ t("modules.user.components.ManageUsersPage.pager.totalItemsLabel", { total: totalResults }) }}
+            </template>
+        </Pager>
+        <ProjectsTable :projects="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
+            @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:task-priority-name-filter="keyFilter" />
+    </n-card>
 </template>
 
-<style lang="css" scoped>
-
-    .creator-name {
-        margin-left: 8px;
-        vertical-align: bottom;
-    }
-
-    .clickable_tag {
-        cursor: pointer;
-    }
-</style>
+<style lang="css" scoped></style>

@@ -3,9 +3,16 @@ package projectrepository
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
+	"strings"
 
+	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/database"
+	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/utils"
+	"modernc.org/sqlite"
+	sqlite3 "modernc.org/sqlite/lib"
 )
 
 type ProjectRepository interface {
@@ -13,7 +20,7 @@ type ProjectRepository interface {
 	Update(ctx context.Context, project projectDTO) error
 	Get(ctx context.Context, id string) (projectDTO, error)
 	Delete(ctx context.Context, id string) error
-	Search(ctx context.Context) ([]projectDTO, error)
+	Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]projectDTO, browser.Result, error)
 }
 
 type projectRepository struct {
@@ -46,6 +53,31 @@ func (projectRepository *projectRepository) Add(ctx context.Context, project pro
 		project.StatusId,
 		project.TypeId,
 	)
+	if err != nil {
+		fmt.Println(err.Error())
+		var sqlErr *sqlite.Error
+		if !errors.As(err, &sqlErr) {
+			return err
+		}
+		switch sqlErr.Code() {
+		case sqlite3.SQLITE_CONSTRAINT_UNIQUE:
+			if strings.Contains(sqlErr.Error(), "projects.key") {
+				return &domain.AlreadyExistsError{Field: "key"}
+			} else if strings.Contains(sqlErr.Error(), "projects.id") {
+				return &domain.AlreadyExistsError{Field: "id"}
+			}
+		case sqlite3.SQLITE_CONSTRAINT_PRIMARYKEY:
+			return &domain.ValidationError{Field: "id"}
+		case sqlite3.SQLITE_CONSTRAINT_CHECK:
+			if strings.Contains(sqlErr.Error(), "length(key)") {
+				return &domain.ValidationError{Field: "key"}
+			} else if strings.Contains(sqlErr.Error(), "length(id)") {
+				return &domain.ValidationError{Field: "id"}
+			} else if strings.Contains(sqlErr.Error(), "length(summary)") {
+				return &domain.ValidationError{Field: "summary"}
+			}
+		}
+	}
 	return err
 }
 
@@ -78,6 +110,31 @@ func (projectRepository *projectRepository) Update(ctx context.Context, project 
 		project.TypeId,
 		project.ID,
 	)
+	if err != nil {
+		fmt.Println(err.Error())
+		var sqlErr *sqlite.Error
+		if !errors.As(err, &sqlErr) {
+			return err
+		}
+		switch sqlErr.Code() {
+		case sqlite3.SQLITE_CONSTRAINT_UNIQUE:
+			if strings.Contains(sqlErr.Error(), "projects.key") {
+				return &domain.AlreadyExistsError{Field: "key"}
+			} else if strings.Contains(sqlErr.Error(), "projects.id") {
+				return &domain.AlreadyExistsError{Field: "id"}
+			}
+		case sqlite3.SQLITE_CONSTRAINT_PRIMARYKEY:
+			return &domain.ValidationError{Field: "id"}
+		case sqlite3.SQLITE_CONSTRAINT_CHECK:
+			if strings.Contains(sqlErr.Error(), "length(key)") {
+				return &domain.ValidationError{Field: "key"}
+			} else if strings.Contains(sqlErr.Error(), "length(id)") {
+				return &domain.ValidationError{Field: "id"}
+			} else if strings.Contains(sqlErr.Error(), "length(summary)") {
+				return &domain.ValidationError{Field: "summary"}
+			}
+		}
+	}
 	return err
 }
 
@@ -150,6 +207,12 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 		&project.CreatorId,
 		&project.CreatorName,
 	)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return projectDTO{}, domain.NotFoundError
+		}
+		return projectDTO{}, err
+	}
 	project.Description = utils.SQLStrPtr(description)
 	project.UpdatedAt = utils.SQLInt64Ptr(updated_at)
 	project.StartedAt = utils.SQLInt64Ptr(started_at)
@@ -158,11 +221,11 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 	return project, err
 }
 
-func (projectRepository *projectRepository) Search(ctx context.Context) ([]projectDTO, error) {
-	rows, err := projectRepository.database.QueryContext(
-		ctx,
-		`
-            SELECT
+func (projectRepository *projectRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]projectDTO, browser.Result, error) {
+	var filterArgs []any
+	var queryArgs []any
+	sqlQuery := `
+		SELECT
                 P.id,
 				P.key,
 				P.summary,
@@ -184,17 +247,66 @@ func (projectRepository *projectRepository) Search(ctx context.Context) ([]proje
 				P.creator_id,
 				U.name AS creator_name
             FROM projects P
-			INNER JOIN project_priorities PP ON PP.id = P.priority_id
-			INNER JOIN project_statuses PS ON PS.id = P.status_id
-			INNER JOIN project_types PT ON PT.id = P.type_id
-			INNER JOIN users U ON U.ID = P.creator_id
-        `,
-	)
+	`
+	sqlQueryInnerJoins := `
+		INNER JOIN project_priorities PP ON PP.id = P.priority_id
+		INNER JOIN project_statuses PS ON PS.id = P.status_id
+		INNER JOIN project_types PT ON PT.id = P.type_id
+		INNER JOIN users U ON U.ID = P.creator_id
+	`
+	var field string
+	switch order.Field {
+	case "key":
+		field = "P.key COLLATE NOCASE"
+	case "type":
+		field = "PT.name COLLATE NOCASE"
+	case "priority":
+		field = "PP.name COLLATE NOCASE"
+	case "status":
+		field = "PS.name COLLATE NOCASE"
+	case "summary":
+		field = "P.summary COLLATE NOCASE"
+	case "createdAt":
+		field = "P.created_at"
+	case "createdBy":
+		field = "U.name COLLATE NOCASE"
+	default:
+		field = "P.key COLLATE NOCASE"
+	}
+	var sort string
+	switch order.Sort {
+	case "DESC":
+		sort = "DESC"
+	case "ASC":
+		sort = "ASC"
+	default:
+		sort = "ASC"
+	}
+	sqlOrder := fmt.Sprintf(" ORDER BY %s %s ", field, sort)
+	sqlWhere := ""
+	var sqlWhereConditions []string
+	if filter.Key != nil {
+		sqlWhereConditions = append(sqlWhereConditions, "P.key LIKE ?")
+		filterArgs = append(filterArgs, "%"+*filter.Key+"%")
+	}
+	if len(sqlWhereConditions) > 0 {
+		sqlWhere = " WHERE " + strings.Join(sqlWhereConditions, " AND ")
+	}
+	queryArgs = append(queryArgs, filterArgs...)
+	var sqlLimit string
+	if pager.Enabled() {
+		sqlLimit = " LIMIT ? OFFSET ? "
+		queryArgs = append(queryArgs, pager.Limit(), pager.Offset())
+	} else {
+		sqlLimit = ""
+	}
+	sqlQuery = fmt.Sprintf("%s %s %s %s %s ", sqlQuery, sqlQueryInnerJoins, sqlWhere, sqlOrder, sqlLimit)
+	rows, err := projectRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
-		return nil, err
+		return nil, browser.Result{}, err
 	}
 	defer rows.Close()
-	var projects []projectDTO
+	projects := make([]projectDTO, 0)
 	for rows.Next() {
 		var project projectDTO
 		var description sql.NullString
@@ -221,7 +333,7 @@ func (projectRepository *projectRepository) Search(ctx context.Context) ([]proje
 			&project.CreatorId,
 			&project.CreatorName,
 		); err != nil {
-			return nil, err
+			return nil, browser.Result{}, err
 		}
 		project.Description = utils.SQLStrPtr(description)
 		project.UpdatedAt = utils.SQLInt64Ptr(updated_at)
@@ -230,5 +342,27 @@ func (projectRepository *projectRepository) Search(ctx context.Context) ([]proje
 		project.DueAt = utils.SQLInt64Ptr(due_at)
 		projects = append(projects, project)
 	}
-	return projects, nil
+	var totalResults int
+
+	if pager.Enabled() {
+		sqlCountQuery := `
+			SELECT
+				COUNT(*) AS total_projects
+			FROM projects P
+		`
+		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
+		err = projectRepository.database.QueryRowContext(
+			ctx,
+			sqlCountQuery,
+			filterArgs...,
+		).Scan(&totalResults)
+
+		if err != nil {
+			return nil, browser.Result{}, err
+		}
+	} else {
+		totalResults = len(projects)
+	}
+
+	return projects, browser.NewResult(pager, totalResults), nil
 }

@@ -16,3 +16,7 @@ type Project struct {
 	Status      ProjectStatus
 	//lead, asignee
 }
+
+type SearchProjectFilter struct {
+	Key *string
+}

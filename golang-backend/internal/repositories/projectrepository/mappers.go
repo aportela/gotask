@@ -4,7 +4,7 @@ import (
 	"github.com/aportela/doneo/internal/domain"
 )
 
-func MapProjectDomainToProjectDTO(project domain.Project) projectDTO {
+func DomainToDTO(project domain.Project) projectDTO {
 	return projectDTO{
 		ID:           project.ID,
 		Key:          project.Key,
@@ -27,13 +27,13 @@ func MapProjectDomainToProjectDTO(project domain.Project) projectDTO {
 	}
 }
 
-func MapProjectDTOToProjectDomain(project projectDTO) domain.Project {
+func DTOToDomain(project projectDTO) domain.Project {
 	return domain.Project{
 		ID:          project.ID,
 		Key:         project.Key,
 		Summary:     project.Summary,
 		Description: project.Description,
-		CreatedBy:   domain.UserBase{ID: project.CreatorId, Name: project.CreatorName},
+		CreatedBy:   domain.UserBase{ID: project.CreatorId, Name: project.CreatorName, AvatarURL: "https://i.pravatar.cc/32?u=" + project.CreatorId},
 		CreatedAt:   project.CreatedAt,
 		UpdatedAt:   project.UpdatedAt,
 		StartedAt:   project.StartedAt,
@@ -45,10 +45,16 @@ func MapProjectDTOToProjectDomain(project projectDTO) domain.Project {
 	}
 }
 
-func MapProjectArrayDTOToProjectArrayDomain(projects []projectDTO) []domain.Project {
+func DTOArrayToDomainArray(projects []projectDTO) []domain.Project {
 	results := []domain.Project{}
 	for _, project := range projects {
-		results = append(results, MapProjectDTOToProjectDomain(project))
+		results = append(results, DTOToDomain(project))
 	}
 	return results
+}
+
+func DomainFilterToDTO(filter domain.SearchProjectFilter) searchFilterDTO {
+	return searchFilterDTO{
+		Key: filter.Key,
+	}
 }

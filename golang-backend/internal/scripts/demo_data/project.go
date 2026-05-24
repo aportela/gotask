@@ -146,7 +146,7 @@ func createProjects(database database.Database, projectTypeIds []string, project
 	projectService := projectservice.NewProjectService(projectRepository)
 	for i := 1; i <= count; i++ {
 		newProject := getRandomProject(userIds, projectTypeIds, projectPriorityIds, projectStatusIds)
-		err := projectService.AddProject(context.Background(), newProject)
+		err := projectService.Add(context.Background(), newProject)
 		if err != nil {
 			fmt.Printf("Error creating project %s\n", err.Error())
 		}

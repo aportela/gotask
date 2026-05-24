@@ -4,16 +4,17 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/repositories/projectrepository"
 )
 
 type ProjectService interface {
-	AddProject(ctx context.Context, Project domain.Project) error
-	UpdateProject(ctx context.Context, Project domain.Project) error
-	DeleteProject(ctx context.Context, id string) error
-	GetProject(ctx context.Context, id string) (domain.Project, error)
-	SearchProjects(ctx context.Context) ([]domain.Project, error)
+	Add(ctx context.Context, Project domain.Project) error
+	Update(ctx context.Context, Project domain.Project) error
+	Delete(ctx context.Context, id string) error
+	Get(ctx context.Context, id string) (domain.Project, error)
+	Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchProjectFilter) ([]domain.Project, browser.Result, error)
 }
 
 type projectService struct {
@@ -24,30 +25,30 @@ func NewProjectService(repository projectrepository.ProjectRepository) ProjectSe
 	return &projectService{repository: repository}
 }
 
-func (s *projectService) AddProject(ctx context.Context, project domain.Project) error {
-	return s.repository.Add(ctx, projectrepository.MapProjectDomainToProjectDTO(project))
+func (s *projectService) Add(ctx context.Context, project domain.Project) error {
+	return s.repository.Add(ctx, projectrepository.DomainToDTO(project))
 }
 
-func (s *projectService) UpdateProject(ctx context.Context, project domain.Project) error {
-	return s.repository.Update(ctx, projectrepository.MapProjectDomainToProjectDTO(project))
+func (s *projectService) Update(ctx context.Context, project domain.Project) error {
+	return s.repository.Update(ctx, projectrepository.DomainToDTO(project))
 }
 
-func (s *projectService) DeleteProject(ctx context.Context, id string) error {
+func (s *projectService) Delete(ctx context.Context, id string) error {
 	return s.repository.Delete(ctx, id)
 }
 
-func (s *projectService) GetProject(ctx context.Context, id string) (domain.Project, error) {
+func (s *projectService) Get(ctx context.Context, id string) (domain.Project, error) {
 	project, err := s.repository.Get(ctx, id)
 	if err != nil {
-		return projectrepository.MapProjectDTOToProjectDomain(project), fmt.Errorf("[ProjectService] failed to get project with ID %s: %w", id, err)
+		return projectrepository.DTOToDomain(project), fmt.Errorf("[ProjectService] failed to get project with ID %s: %w", id, err)
 	}
-	return projectrepository.MapProjectDTOToProjectDomain(project), nil
+	return projectrepository.DTOToDomain(project), nil
 }
 
-func (s *projectService) SearchProjects(ctx context.Context) ([]domain.Project, error) {
-	projects, err := s.repository.Search(ctx)
+func (s *projectService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchProjectFilter) ([]domain.Project, browser.Result, error) {
+	projects, pagerResult, err := s.repository.Search(ctx, pager, order, projectrepository.DomainFilterToDTO(filter))
 	if err != nil {
-		return nil, fmt.Errorf("[ProjectService] failed to search projects: %w", err)
+		return nil, browser.Result{}, fmt.Errorf("[ProjectService] failed to search projects: %w", err)
 	}
-	return projectrepository.MapProjectArrayDTOToProjectArrayDomain(projects), nil
+	return projectrepository.DTOArrayToDomainArray(projects), pagerResult, nil
 }

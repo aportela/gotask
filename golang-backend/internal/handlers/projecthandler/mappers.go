@@ -1,10 +1,16 @@
 package projecthandler
 
 import (
+	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/domain"
+	"github.com/aportela/doneo/internal/handlers"
+	"github.com/aportela/doneo/internal/handlers/projectpriorityhandler"
+	"github.com/aportela/doneo/internal/handlers/projectstatushandler"
+	"github.com/aportela/doneo/internal/handlers/projecttypehandler"
+	"github.com/aportela/doneo/internal/handlers/userhandler"
 )
 
-func mapAddProjectRequestToProjectDomain(request addProjectRequest) domain.Project {
+func addRequestToDomain(request addRequest) domain.Project {
 	return domain.Project{
 		ID:      request.ID,
 		Key:     request.Key,
@@ -12,7 +18,7 @@ func mapAddProjectRequestToProjectDomain(request addProjectRequest) domain.Proje
 	}
 }
 
-func mapUpdateProjectRequestToProjectDomain(request updateProjectRequest) domain.Project {
+func updateRequestToDomain(request updateRequest) domain.Project {
 	return domain.Project{
 		ID:      request.ID,
 		Key:     request.Key,
@@ -20,48 +26,37 @@ func mapUpdateProjectRequestToProjectDomain(request updateProjectRequest) domain
 	}
 }
 
-func mapProjectDomainToProjectResponse(project domain.Project) projectResponse {
+func DomainToResponse(project domain.Project) projectResponse {
 	return projectResponse{
 		ID:          project.ID,
 		Key:         project.Key,
 		Summary:     project.Summary,
 		Description: *project.Description,
-		CreatedBy:   creatorResponse{ID: project.CreatedBy.ID, Name: project.CreatedBy.Name},
+		CreatedBy:   userhandler.BaseDomainToBaseResponse(project.CreatedBy),
 		CreatedAt:   project.CreatedAt,
-		//Type:        projecttypehandler.ProjectTypeResponse{ID: project.Type.ID, Name: project.Type.Name, HexColor: project.Type.HexColor},
-		//Priority:    projectpriorityhandler.ProjectPriorityResponse{ID: project.Priority.ID, Name: project.Priority.Name, Index: project.Priority.Index, HexColor: project.Priority.HexColor},
-		//Status:      projectstatushandler.ProjectStatusResponse{ID: project.Status.ID, Name: project.Status.Name, Index: project.Status.Index, HexColor: project.Status.HexColor},
+		Type:        projecttypehandler.DomainToResponse(project.Type),
+		Priority:    projectpriorityhandler.DomainToResponse(project.Priority),
+		Status:      projectstatushandler.DomainToResponse(project.Status),
 	}
 }
 
-func mapProjectDomainToAddProjectResponse(project domain.Project) addProjectResponse {
-	return addProjectResponse{
-		Project: mapProjectDomainToProjectResponse(project),
-	}
-}
-
-func mapProjectDomainToUpdateProjectResponse(project domain.Project) updateProjectResponse {
-	return updateProjectResponse{
-		Project: mapProjectDomainToProjectResponse(project),
-	}
-}
-
-func mapProjectDomainToGetProjectResponse(project domain.Project) getProjectResponse {
-	return getProjectResponse{
-		Project: mapProjectDomainToProjectResponse(project),
-	}
-}
-
-func mapProjectArrayDomainToProjectArrayResponse(projects []domain.Project) []projectResponse {
+func domainArrayToResponseArray(projects []domain.Project) []projectResponse {
 	projectResponses := []projectResponse{}
 	for _, project := range projects {
-		projectResponses = append(projectResponses, mapProjectDomainToProjectResponse(project))
+		projectResponses = append(projectResponses, DomainToResponse(project))
 	}
 	return projectResponses
 }
 
-func mapProjectArrayDomainToSearchProjectsResponse(users []domain.Project) searchProjectsResponse {
+func toSearchResponse(users []domain.Project, pager browser.Result) searchProjectsResponse {
 	return searchProjectsResponse{
-		Projects: mapProjectArrayDomainToProjectArrayResponse(users),
+		Projects: domainArrayToResponseArray(users),
+		Pager: handlers.PagerResponse{
+			Enabled:      pager.ResultsPage > 0,
+			CurrentPage:  pager.CurrentPage,
+			ResultsPage:  pager.ResultsPage,
+			TotalPages:   pager.TotalPages,
+			TotalResults: pager.TotalResults,
+		},
 	}
 }

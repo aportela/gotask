@@ -1,8 +1,31 @@
-import type { UserResponse as UserDTO } from "../types/dto";
+import type {
+  UserResponse as UserDTO,
+  UserBaseResponse as UserBaseDTO,
+} from "../types/dto";
 import { IDate } from "../../../shared/types/idate";
 
 interface UserPermissions {
   isSuperUser: boolean;
+}
+
+export class UserBase {
+  id: string;
+  name: string;
+  avatarUrl: string | null;
+
+  constructor(data: UserBaseDTO) {
+    this.id = data.id;
+    this.name = data.name;
+    this.avatarUrl = data.avatarUrl;
+  }
+
+  toDTO(): UserBaseDTO {
+    return {
+      id: this.id,
+      name: this.name,
+      avatarUrl: this.avatarUrl,
+    };
+  }
 }
 
 export class User {

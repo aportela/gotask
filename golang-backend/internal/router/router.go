@@ -117,14 +117,13 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	})
 
 	apiRouter.Route("/projects", func(r chi.Router) {
+		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		projectHandler := projecthandler.NewProjectHandler(db)
-		r.Post("/", projectHandler.AddProject)
-		r.Get("/", projectHandler.SearchProjects)
-		r.Route("/{id}", func(r chi.Router) {
-			r.Get("/", projectHandler.GetProject)
-			r.Put("/", projectHandler.UpdateProject)
-			r.Delete("/", projectHandler.DeleteProject)
-		})
+		r.Post("/", projectHandler.Add)
+		r.Post("/search", projectHandler.Search)
+		r.Get("/{id}", projectHandler.Get)
+		r.Put("/{id}", projectHandler.Update)
+		r.Delete("/{id}", projectHandler.Delete)
 	})
 
 	baseRouter.Mount("/api", apiRouter)
