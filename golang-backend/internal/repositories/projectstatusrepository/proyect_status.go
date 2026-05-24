@@ -15,11 +15,11 @@ import (
 )
 
 type ProjectStatusRepository interface {
-	Add(ctx context.Context, projectStatus projectStatusDTO) error
-	Update(ctx context.Context, projectStatus projectStatusDTO) error
+	Add(ctx context.Context, projectStatus ProjectStatusDTO) error
+	Update(ctx context.Context, projectStatus ProjectStatusDTO) error
 	Delete(ctx context.Context, id string) error
-	Get(ctx context.Context, id string) (projectStatusDTO, error)
-	Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]projectStatusDTO, browser.Result, error)
+	Get(ctx context.Context, id string) (ProjectStatusDTO, error)
+	Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]ProjectStatusDTO, browser.Result, error)
 }
 
 type projectStatusRepository struct {
@@ -30,7 +30,7 @@ func NewProjectStatusRepository(database database.Database) ProjectStatusReposit
 	return &projectStatusRepository{database: database}
 }
 
-func (projectStatusRepository *projectStatusRepository) Add(ctx context.Context, projectStatus projectStatusDTO) error {
+func (projectStatusRepository *projectStatusRepository) Add(ctx context.Context, projectStatus ProjectStatusDTO) error {
 	_, err := projectStatusRepository.database.ExecContext(
 		ctx,
 		`
@@ -67,7 +67,7 @@ func (projectStatusRepository *projectStatusRepository) Add(ctx context.Context,
 	return err
 }
 
-func (projectStatusRepository *projectStatusRepository) Update(ctx context.Context, projectStatus projectStatusDTO) error {
+func (projectStatusRepository *projectStatusRepository) Update(ctx context.Context, projectStatus ProjectStatusDTO) error {
 	_, err := projectStatusRepository.database.ExecContext(
 		ctx,
 		`
@@ -118,8 +118,8 @@ func (projectStatusRepository *projectStatusRepository) Delete(ctx context.Conte
 	return err
 }
 
-func (projectStatusRepository *projectStatusRepository) Get(ctx context.Context, id string) (projectStatusDTO, error) {
-	var projectStatus projectStatusDTO
+func (projectStatusRepository *projectStatusRepository) Get(ctx context.Context, id string) (ProjectStatusDTO, error) {
+	var projectStatus ProjectStatusDTO
 	err := projectStatusRepository.database.QueryRowContext(
 		ctx,
 		`
@@ -131,14 +131,14 @@ func (projectStatusRepository *projectStatusRepository) Get(ctx context.Context,
 		id).Scan(&projectStatus.ID, &projectStatus.Name, &projectStatus.HexColor)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return projectStatusDTO{}, domain.NotFoundError
+			return ProjectStatusDTO{}, domain.NotFoundError
 		}
-		return projectStatusDTO{}, err
+		return ProjectStatusDTO{}, err
 	}
 	return projectStatus, err
 }
 
-func (projectStatusRepository *projectStatusRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]projectStatusDTO, browser.Result, error) {
+func (projectStatusRepository *projectStatusRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]ProjectStatusDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `
@@ -187,9 +187,9 @@ func (projectStatusRepository *projectStatusRepository) Search(ctx context.Conte
 		return nil, browser.Result{}, err
 	}
 	defer rows.Close()
-	projectStatuses := make([]projectStatusDTO, 0)
+	projectStatuses := make([]ProjectStatusDTO, 0)
 	for rows.Next() {
-		var projectStatus projectStatusDTO
+		var projectStatus ProjectStatusDTO
 		if err := rows.Scan(
 			&projectStatus.ID, &projectStatus.Name, &projectStatus.HexColor,
 		); err != nil {
