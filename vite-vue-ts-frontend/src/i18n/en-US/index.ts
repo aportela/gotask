@@ -642,6 +642,70 @@ export default {
         },
       },
     },
+    project: {
+      components: {
+        ProjectsPage: {
+          header: {
+            title: "Manage projects",
+          },
+          pager: {
+            totalItemsLabel: "Total projects: {total}",
+          },
+          notifications: {
+            projectAdded: 'Project "{summary}" has been added',
+            projectUpdated: 'Project "{summary}" has been updated',
+            projectDeleted: 'Project "{summary}" has been deleted',
+          },
+          errors: {
+            refreshError:
+              "There was a problem while refreshing the project list",
+            deleteError: "There was a problem while deleting the project",
+            restoreError: "There was a problem while restoring the project",
+            // TODO: deduplicate
+            notFoundError: "We couldn’t find the specified project",
+          },
+        },
+        ProjectsTable: {
+          header: {
+            columns: {
+              key: "Key",
+              type: "Type",
+              priority: "Priority",
+              status: "Status",
+              summary: "Summary",
+              createdAt: "Created at",
+              createdBy: "Created by",
+            },
+            filters: {
+              key: {
+                placeholder: "search by key",
+              },
+              summary: {
+                placeholder: "search by summary",
+              },
+            },
+          },
+          body: {
+            columns: {},
+          },
+          dialogs: {
+            deleteConfirmation: {
+              title: "Delete project",
+              message:
+                'You are about to delete the project "{summary}" from the system.',
+            },
+            undeleteConfirmation: {
+              title: "Restore user",
+              message:
+                'You are about to restore the user "{name}" from the system.',
+            },
+          },
+          warnings: {
+            noItemsFound: "No projects found",
+          },
+        },
+      },
+    },
     taskStatus: {
       components: {
         TaskStatusForm: {

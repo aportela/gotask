@@ -33,37 +33,37 @@
 
     const columns = computed<TableHeaderColumn[]>(() => [
         {
-            label: "Key",
+            label: t("modules.project.components.ProjectsTable.header.columns.key"),
             field: "key",
             sortable: true,
         },
         {
-            label: "Type",
+            label: t("modules.project.components.ProjectsTable.header.columns.type"),
             field: "type",
             sortable: true,
         },
         {
-            label: "Priority",
+            label: t("modules.project.components.ProjectsTable.header.columns.priority"),
             field: "priority",
             sortable: true,
         },
         {
-            label: "Status",
+            label: t("modules.project.components.ProjectsTable.header.columns.status"),
             field: "status",
             sortable: true,
         },
         {
-            label: "Summary",
+            label: t("modules.project.components.ProjectsTable.header.columns.summary"),
             field: "summary",
             sortable: true,
         },
         {
-            label: "Created At",
+            label: t("modules.project.components.ProjectsTable.header.columns.createdAt"),
             field: "createdAt",
             sortable: true,
         },
         {
-            label: "Created by",
+            label: t("modules.project.components.ProjectsTable.header.columns.createdBy"),
             field: "createdBy",
             sortable: true,
         },
@@ -98,11 +98,11 @@
 
     const onConfirmDelete = (project: Project, index: number) => {
         dialog.warning({
-            title: t("modules.projectPriority.components.ProjectPrioritiesTable.dialogs.deleteConfirmation.title"),
+            title: t("modules.project.components.ProjectsTable.dialogs.deleteConfirmation.title"),
             icon: renderIcon(IconTrash)(24),
             content: () =>
                 h('div', [
-                    t("modules.projectPriority.components.ProjectPrioritiesTable.dialogs.deleteConfirmation.message", { name: project.summary }),
+                    t("modules.project.components.ProjectsTable.dialogs.deleteConfirmation.message", { summary: project.summary }),
                     h('br'),
                     h('br'),
                     t("shared.components.dialogs.confirmation.continueMessage"),
@@ -138,7 +138,7 @@
             <tr class="hide-mobile">
                 <th>
                     <TextFilterInput clearable size="small"
-                        :placeholder="t('modules.projectPriority.components.ProjectPrioritiesTable.filters.name.placeholder')"
+                        :placeholder="t('modules.project.components.ProjectsTable.header.filters.key.placeholder')"
                         v-model:value="projectKeyFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th>
@@ -152,7 +152,7 @@
                 </th>
                 <th>
                     <TextFilterInput clearable size="small"
-                        :placeholder="t('modules.projectPriority.components.ProjectPrioritiesTable.filters.name.placeholder')"
+                        :placeholder="t('modules.project.components.ProjectsTable.header.filters.summary.placeholder')"
                         v-model:value="projectSummaryFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th>
@@ -191,8 +191,7 @@
             </tr>
             <tr>
                 <td :colspan="columns.length + 1" v-if="projects.length < 1 && !props.loading">
-                    <n-empty
-                        :description="t('modules.projectPriority.components.ProjectPrioritiesTable.warnings.noItemsFound')">
+                    <n-empty :description="t('modules.project.components.ProjectsTable.warnings.noItemsFound')">
                     </n-empty>
                 </td>
             </tr>

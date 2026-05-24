@@ -118,16 +118,16 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskPrioritiesPage.onRefresh" } });
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectsPage.onRefresh" } });
                             break;
                         default:
-                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.refreshError");
+                            state.ajaxErrorMessage = t("modules.project.components.ProjectsPage.errors.refreshError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.refreshError");
-                    console.error("Unhandled API error", { file: "ManageTaskPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
+                    state.ajaxErrorMessage = t("modules.project.components.ProjectsPage.errors.refreshError");
+                    console.error("Unhandled API error", { file: "ProjectsPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
         finally {
@@ -139,7 +139,7 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             await projectService.delete(project.id);
-            notify('success', t("modules.taskPriority.components.ManageTaskPrioritiesPage.notifications.taskPriorityDeleted", { name: project.summary }));
+            notify('success', t("modules.project.components.ProjectsPage.notifications.projectDeleted", { summary: project.summary }));
             onRefresh();
         } catch (error: unknown) {
             state.ajaxErrors = true;
@@ -149,19 +149,19 @@
                         case 401:
                             state.ajaxErrors = false;
                             selectedItem.value = project;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskPrioritiesPage.onDelete" } });
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectsPage.onDelete" } });
                             break;
                         case 404:
-                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.notFoundError");
+                            state.ajaxErrorMessage = t("modules.project.components.ProjectsPage.errors.notFoundError");
                             break;
                         default:
-                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
+                            state.ajaxErrorMessage = t("modules.project.components.ProjectsPage.errors.deleteError");
                             break;
                     }
                 },
                 (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ManageTaskPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
+                    state.ajaxErrorMessage = t("modules.project.components.ProjectsPage.errors.deleteError");
+                    console.error("Unhandled API error", { file: "ProjectsPage.vue", method: "onRefresh" }, { err: fatalError });
                 });
         } finally {
             state.ajaxRunning = false;
@@ -173,9 +173,9 @@
     onMounted(() => {
         onRefresh();
         stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
-            if (payload.to.includes("ManageTaskPrioritiesPage.onRefresh")) {
+            if (payload.to.includes("ProjectsPage.onRefresh")) {
                 onRefresh();
-            } else if (payload.to.includes("ManageTaskPrioritiesPage.onDelete")) {
+            } else if (payload.to.includes("ProjectsPage.onDelete")) {
                 onDelete(selectedItem.value);
             }
         });
@@ -187,17 +187,16 @@
 </script>
 
 <template>
-
-    <n-card :title="t('modules.taskPriority.components.ManageTaskPrioritiesPage.header.title')">
+    <n-card :title="t('modules.project.components.ProjectsPage.header.title')">
         <Pager v-model:current-page="currentPage" v-model:page-size="pageSize" :total-pages="totalPages"
             :total-results="totalResults" class="doneo-pager-container">
             <template #total-results-label="{ totalResults }">
-                {{ t("modules.user.components.ManageUsersPage.pager.totalItemsLabel", { total: totalResults }) }}
+                {{ t("modules.project.components.ProjectsPage.pager.totalItemsLabel", { total: totalResults }) }}
             </template>
         </Pager>
         <ProjectsTable :projects="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:task-priority-name-filter="keyFilter" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" />
     </n-card>
 </template>
 
