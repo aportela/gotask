@@ -11,11 +11,15 @@
 }
 
 .doneo-cursor-pointer {
-    cursor: pointer;
+    cursor: pointer !important;
 }
 
 .doneo-cursor-help {
-    cursor: help;
+    cursor: help !important;
+}
+
+.doneo-cursor-default {
+    cursor: default !important;
 }
 
 /* deny select text (clicking at element) */
