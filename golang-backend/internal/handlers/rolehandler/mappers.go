@@ -59,16 +59,16 @@ func permissionDomainToResponsePermissionsFlags(bitmaskPermission domain.Permiss
 	}
 }
 
-func domainToResponse(role domain.Role) roleResponse {
-	return roleResponse{
+func domainToResponse(role domain.Role) RoleResponse {
+	return RoleResponse{
 		ID:          role.ID,
 		Name:        role.Name,
 		Permissions: permissionDomainToResponsePermissionsFlags(role.PermissionsBitmask),
 	}
 }
 
-func domainArrayToResponseArray(roles []domain.Role) []roleResponse {
-	roleResponses := []roleResponse{}
+func domainArrayToResponseArray(roles []domain.Role) []RoleResponse {
+	roleResponses := []RoleResponse{}
 	for _, role := range roles {
 		roleResponses = append(roleResponses, domainToResponse(role))
 	}

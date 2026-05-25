@@ -33,13 +33,13 @@ type searchRequest struct {
 	Filter *filterRequest        `json:"filter"`
 }
 
-type roleResponse struct {
+type RoleResponse struct {
 	ID          string           `json:"id"`
 	Name        string           `json:"name"`
 	Permissions permissionsFlags `json:"permissions"`
 }
 
 type searchResponse struct {
-	Roles []roleResponse         `json:"roles"`
+	Roles []RoleResponse         `json:"roles"`
 	Pager handlers.PagerResponse `json:"pager"`
 }
