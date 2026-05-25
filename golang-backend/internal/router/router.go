@@ -12,6 +12,7 @@ import (
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/handlers/authhandler"
 	"github.com/aportela/doneo/internal/handlers/projecthandler"
+	"github.com/aportela/doneo/internal/handlers/projectpermissionhandler"
 	"github.com/aportela/doneo/internal/handlers/projectpriorityhandler"
 	"github.com/aportela/doneo/internal/handlers/projectstatushandler"
 	"github.com/aportela/doneo/internal/handlers/projecttypehandler"
@@ -119,9 +120,11 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/projects", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		projectHandler := projecthandler.NewProjectHandler(db)
+		projectPermissionHandler := projectpermissionhandler.NewProjectPermissionHandler(db)
 		r.Post("/", projectHandler.Add)
 		r.Post("/search", projectHandler.Search)
 		r.Get("/{id}", projectHandler.Get)
+		r.Get("/{id}/permissions", projectPermissionHandler.Search)
 		r.Put("/{id}", projectHandler.Update)
 		r.Delete("/{id}", projectHandler.Delete)
 	})

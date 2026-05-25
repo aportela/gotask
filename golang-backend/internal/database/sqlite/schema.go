@@ -94,22 +94,22 @@ var installSchemaQueries = []string{
 	`,
 	`
 		CREATE TABLE IF NOT EXISTS project_user_role (
+			id TEXT NOT NULL CHECK(length(id) == 36),
 			project_id TEXT NOT NULL CHECK(length(project_id) == 36),
 			user_id TEXT NOT NULL CHECK(length(user_id) == 36),
 			role_id TEXT NOT NULL CHECK(length(role_id) == 36),
-			PRIMARY KEY (project_id, user_id),
+			PRIMARY KEY (id),
+			UNIQUE(project_id,user_id,role_id),
 			FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE,
 			FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
 			FOREIGN KEY(role_id) REFERENCES roles(id) ON DELETE CASCADE
 		) STRICT;
 	`,
-	/*
-		`
-		CREATE INDEX IF NOT EXISTS idx_project_user_roles_project_id ON project_user_roles(project_id);
-		CREATE INDEX IF NOT EXISTS idx_project_user_roles_user_id ON project_user_roles(user_id);
-		CREATE INDEX IF NOT EXISTS idx_project_user_roles_role_id ON project_user_roles(role_id);
-		`,
-	*/
+	`
+		CREATE INDEX IF NOT EXISTS idx_project_user_role_project_id ON project_user_role(project_id);
+		CREATE INDEX IF NOT EXISTS idx_project_user_role_user_id ON project_user_role(user_id);
+		CREATE INDEX IF NOT EXISTS idx_project_user_role_role_id ON project_user_role(role_id);
+	`,
 	/*
 		`
 			CREATE TABLE IF NOT EXISTS project_task_status (

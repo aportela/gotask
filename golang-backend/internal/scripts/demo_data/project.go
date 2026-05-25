@@ -8,7 +8,9 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
+	"github.com/aportela/doneo/internal/repositories/projectpermissionrepository"
 	"github.com/aportela/doneo/internal/repositories/projectrepository"
+	"github.com/aportela/doneo/internal/services/projectpermissionservice"
 	"github.com/aportela/doneo/internal/services/projectservice"
 	"github.com/aportela/doneo/internal/utils"
 )
@@ -139,17 +141,26 @@ func getRandomProject(userIds []string, projectTypeIds []string, projectPriority
 	}
 }
 
-func createProjects(database database.Database, projectTypeIds []string, projectPriorityIds []string, projectStatusIds []string, userIds []string, count int) []string {
+func createProjects(database database.Database, projectTypeIds []string, projectPriorityIds []string, projectStatusIds []string, userIds []string, roleIds []string, count int) []string {
 	var newProjectIds []string
 	projectRepository := projectrepository.NewProjectRepository(database)
-
 	projectService := projectservice.NewProjectService(projectRepository)
+
+	projectPermissionRepository := projectpermissionrepository.NewProjectPermissionRepository(database)
+	projectPermissionService := projectpermissionservice.NewProjectPermissionService(projectPermissionRepository)
 	for i := 1; i <= count; i++ {
 		newProject := getRandomProject(userIds, projectTypeIds, projectPriorityIds, projectStatusIds)
 		err := projectService.Add(context.Background(), newProject)
 		if err != nil {
 			fmt.Printf("Error creating project %s\n", err.Error())
 		}
+		rand.Shuffle(len(userIds), func(i, j int) {
+			userIds[i], userIds[j] = userIds[j], userIds[i]
+		})
+		projectPermissionService.Add(context.Background(), utils.UUID(), newProject.ID, userIds[0], roleIds[0])
+		projectPermissionService.Add(context.Background(), utils.UUID(), newProject.ID, userIds[1], roleIds[1])
+		projectPermissionService.Add(context.Background(), utils.UUID(), newProject.ID, userIds[2], roleIds[1])
+		projectPermissionService.Add(context.Background(), utils.UUID(), newProject.ID, userIds[3], roleIds[1])
 		newProjectIds = append(newProjectIds, newProject.ID)
 	}
 	return newProjectIds
