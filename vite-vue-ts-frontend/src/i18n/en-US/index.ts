@@ -137,6 +137,9 @@ export default {
       Open: {
         label: "Open",
       },
+      Download: {
+        label: "Download",
+      },
     },
     errorMessages: {
       Error: "Error",
