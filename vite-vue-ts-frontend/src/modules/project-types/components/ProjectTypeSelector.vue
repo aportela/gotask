@@ -6,14 +6,13 @@
     import { IconSquare, IconSquareFilled } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
-    import { projectPriorityService } from '../services/project-priority';
-    import type { SearchRequest, ProjectPriorityResponse } from '../types/dto';
+    import { projectTypeService } from '../services/project-type';
+    import type { SearchRequest, ProjectTypeResponse } from '../types/dto';
     import { Sort } from '../../../shared/types/models/sort';
     import { appBus } from '../../../shared/composables/bus';
     import { handleAPIError } from '../../../api/client/errorHandler';
 
-
-    interface ProjectPrioritySelectorProps {
+    interface ProjectTypeSelectorProps {
         placeholder?: string;
         size?: SelectSize;
         hidePrefix?: boolean;
@@ -23,11 +22,11 @@
 
     const isDisabled = computed(() => state.ajaxRunning);
 
-    const projectPriorityId = defineModel<string | null>('id');
+    const projectTypeId = defineModel<string | null>('id');
 
-    const projectPriorities = ref<ProjectPriorityResponse[]>([]);
+    const projectTypes = ref<ProjectTypeResponse[]>([]);
 
-    const props = defineProps<ProjectPrioritySelectorProps>();
+    const props = defineProps<ProjectTypeSelectorProps>();
 
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
@@ -49,9 +48,9 @@
                     name: undefined,
                 }
             };
-            const response = await projectPriorityService.search(payload);
-            projectPriorities.value = response.projectPriorities;
-            options.value = response.projectPriorities.map((projectPriority: ProjectPriorityResponse) => ({ label: projectPriority.name, value: projectPriority.id }));
+            const response = await projectTypeService.search(payload);
+            projectTypes.value = response.projectTypes;
+            options.value = response.projectTypes.map((projectType: ProjectTypeResponse) => ({ label: projectType.name, value: projectType.id }));
         } catch (error: unknown) {
             options.value.length = 0;
             state.ajaxErrors = true;
@@ -60,16 +59,16 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPrioritySelector.onRefresh" } });
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectTypeSelector.onRefresh" } });
                             break;
                         default:
-                            //state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.refreshError");
+                            //state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectPrioritiesPage.errors.refreshError");
                             break;
                     }
                 },
                 (fatalError) => {
                     //state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.refreshError");
-                    console.error("Unhandled API error", { file: "ProjectPrioritySelector.vue", method: "onRefresh" }, { err: fatalError });
+                    console.error("Unhandled API error", { file: "ProjectTypeSelector.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
         finally {
@@ -79,15 +78,15 @@
 
     const selectedColor = ref<string | undefined>();
 
-    watch(projectPriorityId, (newValue) => {
-        selectedColor.value = projectPriorities.value.find((projectPriority) => projectPriority.id === newValue)?.hexColor
+    watch(projectTypeId, (newValue) => {
+        selectedColor.value = projectTypes.value.find((projectType) => projectType.id === newValue)?.hexColor
     });
 
     let stopBusReauthListener: () => void;
 
     onMounted(() => {
         stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
-            if (payload.to.includes("ProjectPrioritySelector.onRefresh")) {
+            if (payload.to.includes("ProjectTypeSelector.onRefresh")) {
                 onRefresh();
             }
         });
@@ -109,10 +108,9 @@
                 </n-icon>
             </template>
         </n-button>
-        <n-select v-model:value="projectPriorityId" :options="options" :placeholder="props.placeholder"
-            :size="props.size" :disabled="isDisabled" />
+        <n-select v-model:value="projectTypeId" :options="options" :placeholder="props.placeholder" :size="props.size"
+            :disabled="isDisabled" />
     </n-input-group>
-
 </template>
 
 <style lang="css" scoped></style>

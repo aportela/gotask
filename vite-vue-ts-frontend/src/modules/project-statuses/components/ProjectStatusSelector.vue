@@ -6,14 +6,13 @@
     import { IconSquare, IconSquareFilled } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
-    import { projectPriorityService } from '../services/project-priority';
-    import type { SearchRequest, ProjectPriorityResponse } from '../types/dto';
+    import { projectStatusService } from '../services/project-status';
+    import type { SearchRequest, ProjectStatusResponse } from '../types/dto';
     import { Sort } from '../../../shared/types/models/sort';
     import { appBus } from '../../../shared/composables/bus';
     import { handleAPIError } from '../../../api/client/errorHandler';
 
-
-    interface ProjectPrioritySelectorProps {
+    interface ProjectStatusSelector {
         placeholder?: string;
         size?: SelectSize;
         hidePrefix?: boolean;
@@ -23,11 +22,11 @@
 
     const isDisabled = computed(() => state.ajaxRunning);
 
-    const projectPriorityId = defineModel<string | null>('id');
+    const projectStatusId = defineModel<string | null>('id');
 
-    const projectPriorities = ref<ProjectPriorityResponse[]>([]);
+    const projectStatuses = ref<ProjectStatusResponse[]>([]);
 
-    const props = defineProps<ProjectPrioritySelectorProps>();
+    const props = defineProps<ProjectStatusSelector>();
 
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
@@ -49,9 +48,9 @@
                     name: undefined,
                 }
             };
-            const response = await projectPriorityService.search(payload);
-            projectPriorities.value = response.projectPriorities;
-            options.value = response.projectPriorities.map((projectPriority: ProjectPriorityResponse) => ({ label: projectPriority.name, value: projectPriority.id }));
+            const response = await projectStatusService.search(payload);
+            projectStatuses.value = response.projectStatuses;
+            options.value = response.projectStatuses.map((projectStatus: ProjectStatusResponse) => ({ label: projectStatus.name, value: projectStatus.id }));
         } catch (error: unknown) {
             options.value.length = 0;
             state.ajaxErrors = true;
@@ -60,16 +59,16 @@
                     switch (apiError.response?.status) {
                         case 401:
                             state.ajaxErrors = false;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPrioritySelector.onRefresh" } });
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectStatusSelector.onRefresh" } });
                             break;
                         default:
-                            //state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.refreshError");
+                            //state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectPrioritiesPage.errors.refreshError");
                             break;
                     }
                 },
                 (fatalError) => {
                     //state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.refreshError");
-                    console.error("Unhandled API error", { file: "ProjectPrioritySelector.vue", method: "onRefresh" }, { err: fatalError });
+                    console.error("Unhandled API error", { file: "ProjectStatusSelector.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
         finally {
@@ -79,15 +78,15 @@
 
     const selectedColor = ref<string | undefined>();
 
-    watch(projectPriorityId, (newValue) => {
-        selectedColor.value = projectPriorities.value.find((projectPriority) => projectPriority.id === newValue)?.hexColor
+    watch(projectStatusId, (newValue) => {
+        selectedColor.value = projectStatuses.value.find((projectStatus) => projectStatus.id === newValue)?.hexColor
     });
 
     let stopBusReauthListener: () => void;
 
     onMounted(() => {
         stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
-            if (payload.to.includes("ProjectPrioritySelector.onRefresh")) {
+            if (payload.to.includes("ProjectStatusSelector.onRefresh")) {
                 onRefresh();
             }
         });
@@ -109,10 +108,9 @@
                 </n-icon>
             </template>
         </n-button>
-        <n-select v-model:value="projectPriorityId" :options="options" :placeholder="props.placeholder"
-            :size="props.size" :disabled="isDisabled" />
+        <n-select v-model:value="projectStatusId" :options="options" :placeholder="props.placeholder" :size="props.size"
+            :disabled="isDisabled" />
     </n-input-group>
-
 </template>
 
 <style lang="css" scoped></style>
