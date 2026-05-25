@@ -12,7 +12,7 @@
     import { appBus } from '../../../shared/composables/bus';
     import { handleAPIError } from '../../../api/client/errorHandler';
 
-    interface ProjectStatusSelector {
+    interface ProjectStatusSelectorProps {
         placeholder?: string;
         size?: SelectSize;
         hidePrefix?: boolean;
@@ -26,7 +26,7 @@
 
     const projectStatuses = ref<ProjectStatusResponse[]>([]);
 
-    const props = defineProps<ProjectStatusSelector>();
+    const props = defineProps<ProjectStatusSelectorProps>();
 
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
