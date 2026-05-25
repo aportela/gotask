@@ -13,6 +13,8 @@
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
     import RefreshAddActionsColumn from '../../../shared/components/tables/RefreshAddActionsColumn.vue';
     import ProjectPrioritySelector from '../../project-priorities/components/ProjectPrioritySelector.vue';
+    import ProjectTypeSelector from '../../project-types/components/ProjectTypeSelector.vue';
+    import ProjectStatusSelector from '../../project-statuses/components/ProjectStatusSelector.vue';
     import DateFilterSelect from '../../../shared/components/selectors/DateFilterSelect.vue';
     import { getNaiveUITagColorProperty } from '../../../shared/composables/color';
 
@@ -115,13 +117,13 @@
                         v-model:value="projectKeyFilter" @keydown-enter="onTextFilterKeyDownEnter" />
                 </th>
                 <th>
-                    <ProjectPrioritySelector />
+                    <ProjectTypeSelector :hide-prefix="true" />
                 </th>
                 <th>
-                    <ProjectPrioritySelector />
+                    <ProjectPrioritySelector :hide-prefix="true" />
                 </th>
                 <th>
-                    <ProjectPrioritySelector />
+                    <ProjectStatusSelector :hide-prefix="true" />
                 </th>
                 <th>
                     <TextFilterInput clearable size="small"
