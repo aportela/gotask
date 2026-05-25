@@ -14,6 +14,11 @@ export class Project {
   status: ProjectStatus;
   createdAt: IDate;
   createdBy: UserBase;
+  tasksCount: number;
+  permissionsCount: number;
+  attachmentsCount: number;
+  notesCount: number;
+  historyOperationsCount: number;
 
   constructor(data: ProjectDTO) {
     this.id = data.id;
@@ -24,6 +29,11 @@ export class Project {
     this.status = new ProjectStatus(data.status);
     this.createdAt = new IDate(data.createdAt);
     this.createdBy = new UserBase(data.createdBy);
+    this.tasksCount = data.tasksCount;
+    this.permissionsCount = data.permissionsCount;
+    this.attachmentsCount = data.attachmentsCount;
+    this.notesCount = data.notesCount;
+    this.historyOperationsCount = data.historyOperationsCount;
   }
 
   toDTO(): ProjectDTO {
@@ -36,6 +46,11 @@ export class Project {
       status: this.status.toDTO(),
       createdAt: this.createdAt.msTimestamp,
       createdBy: this.createdBy.toDTO(),
+      tasksCount: this.tasksCount,
+      permissionsCount: this.permissionsCount,
+      attachmentsCount: this.attachmentsCount,
+      notesCount: this.notesCount,
+      historyOperationsCount: this.historyOperationsCount,
     };
   }
 }

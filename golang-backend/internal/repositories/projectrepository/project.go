@@ -177,7 +177,12 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 				PT.name AS type_name,
 				PT.item_hex_color AS type_hex_color,
 				P.creator_id,
-				U.name AS creator_name
+				U.name AS creator_name,
+				abs(random() % 4) + 1 AS tasks_count,
+				abs(random() % 2) + 1 AS permissions_count,
+				abs(random() % 4) + 1 AS attachments_count,
+				abs(random() % 4) + 1 AS notes_count,
+				abs(random() % 4) + 1 AS history_operations_count
             FROM projects P
 			INNER JOIN project_priorities PP ON PP.id = P.priority_id
 			INNER JOIN project_statuses PS ON PS.id = P.status_id
@@ -206,6 +211,11 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 		&project.TypeHexColor,
 		&project.CreatorId,
 		&project.CreatorName,
+		&project.TasksCount,
+		&project.PermissionsCount,
+		&project.AttachmentsCount,
+		&project.NotesCount,
+		&project.HistoryOperationsCount,
 	)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

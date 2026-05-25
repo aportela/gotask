@@ -28,15 +28,20 @@ func updateRequestToDomain(request updateRequest) domain.Project {
 
 func DomainToResponse(project domain.Project) projectResponse {
 	return projectResponse{
-		ID:          project.ID,
-		Key:         project.Key,
-		Summary:     project.Summary,
-		Description: *project.Description,
-		CreatedBy:   userhandler.BaseDomainToBaseResponse(project.CreatedBy),
-		CreatedAt:   project.CreatedAt,
-		Type:        projecttypehandler.DomainToResponse(project.Type),
-		Priority:    projectpriorityhandler.DomainToResponse(project.Priority),
-		Status:      projectstatushandler.DomainToResponse(project.Status),
+		ID:                     project.ID,
+		Key:                    project.Key,
+		Summary:                project.Summary,
+		Description:            *project.Description,
+		CreatedBy:              userhandler.BaseDomainToBaseResponse(project.CreatedBy),
+		CreatedAt:              project.CreatedAt,
+		Type:                   projecttypehandler.DomainToResponse(project.Type),
+		Priority:               projectpriorityhandler.DomainToResponse(project.Priority),
+		Status:                 projectstatushandler.DomainToResponse(project.Status),
+		TasksCount:             project.TasksCount,
+		PermissionsCount:       project.PermissionsCount,
+		AttachmentsCount:       project.AttachmentsCount,
+		NotesCount:             project.NotesCount,
+		HistoryOperationsCount: project.HistoryOperationsCount,
 	}
 }
 

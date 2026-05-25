@@ -46,6 +46,11 @@
         status: new ProjectStatus({ id: "", name: "", hexColor: "" }),
         createdAt: new Date().getTime(),
         createdBy: new UserBase({ id: "", name: "", avatarUrl: "" }),
+        tasksCount: 0,
+        permissionsCount: 0,
+        attachmentsCount: 0,
+        notesCount: 0,
+        historyOperationsCount: 0,
     }));
 
     watch(state, (newValue: AjaxStateInterface) => {

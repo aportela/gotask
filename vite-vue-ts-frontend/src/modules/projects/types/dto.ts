@@ -39,6 +39,11 @@ export type ProjectResponse = {
   status: ProjectStatusResponse;
   createdAt: number;
   createdBy: UserBaseResponse;
+  tasksCount: number;
+  permissionsCount: number;
+  attachmentsCount: number;
+  notesCount: number;
+  historyOperationsCount: number;
 };
 
 export type SearchResponse = {

@@ -31,15 +31,20 @@ type searchRequest struct {
 }
 
 type projectResponse struct {
-	ID          string                                         `json:"id"`
-	Key         string                                         `json:"key"`
-	Summary     string                                         `json:"summary"`
-	Description string                                         `json:"description"`
-	CreatedBy   userhandler.UserBaseResponse                   `json:"createdBy"`
-	CreatedAt   int64                                          `json:"createdAt"`
-	Type        projecttypehandler.ProjectTypeResponse         `json:"type"`
-	Priority    projectpriorityhandler.ProjectPriorityResponse `json:"priority"`
-	Status      projectstatushandler.ProjectStatusResponse     `json:"status"`
+	ID                     string                                         `json:"id"`
+	Key                    string                                         `json:"key"`
+	Summary                string                                         `json:"summary"`
+	Description            string                                         `json:"description"`
+	CreatedBy              userhandler.UserBaseResponse                   `json:"createdBy"`
+	CreatedAt              int64                                          `json:"createdAt"`
+	Type                   projecttypehandler.ProjectTypeResponse         `json:"type"`
+	Priority               projectpriorityhandler.ProjectPriorityResponse `json:"priority"`
+	Status                 projectstatushandler.ProjectStatusResponse     `json:"status"`
+	TasksCount             uint                                           `json:"tasksCount"`
+	PermissionsCount       uint                                           `json:"permissionsCount"`
+	AttachmentsCount       uint                                           `json:"attachmentsCount"`
+	NotesCount             uint                                           `json:"notesCount"`
+	HistoryOperationsCount uint                                           `json:"historyOperationsCount"`
 }
 
 type searchProjectsResponse struct {
