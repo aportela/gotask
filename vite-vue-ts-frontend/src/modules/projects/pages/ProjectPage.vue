@@ -125,7 +125,7 @@
 </script>
 
 <template>
-    <n-tabs placement="left" type="line" animated v-model:value="currentTab">
+    <n-tabs placement="top" type="line" animated v-model:value="currentTab">
         <n-tab-pane name="project_metadata" tab="Metadata">
             <ProjectMetadataForm mode="add" :project-id="projectId" v-model:project="project" />
         </n-tab-pane>
