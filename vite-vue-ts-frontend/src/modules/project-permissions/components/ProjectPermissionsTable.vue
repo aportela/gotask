@@ -128,9 +128,12 @@
                             </n-icon>
                         </template>
                         {{
-                            t("modules.role.components.ProjectPermissionsTable.body.columns.permissionsHints.updateProjectAllowed")
+                            t("modules.projectPermission.components.projectPermissionsTable.body.columns.permissionsHints.updateProjectAllowed")
                         }}
                     </n-tooltip>
+                    <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
+                        <IconEdit />
+                    </n-icon>
                     <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowDeleteProject">
                         <template #trigger>
                             <n-icon :size="22">
@@ -138,9 +141,12 @@
                             </n-icon>
                         </template>
                         {{
-                            t("modules.role.components.ProjectPermissionsTable.body.columns.permissionsHints.deleteProjectAllowed")
+                            t("modules.projectPermission.components.projectPermissionsTable.body.columns.permissionsHints.deleteProjectAllowed")
                         }}
                     </n-tooltip>
+                    <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
+                        <IconTrash />
+                    </n-icon>
                     <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowViewProject">
                         <template #trigger>
                             <n-icon :size="22">
@@ -148,9 +154,12 @@
                             </n-icon>
                         </template>
                         {{
-                            t("modules.role.components.ProjectPermissionsTable.body.columns.permissionsHints.viewProjectAllowed")
+                            t("modules.projectPermission.components.projectPermissionsTable.body.columns.permissionsHints.viewProjectAllowed")
                         }}
                     </n-tooltip>
+                    <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
+                        <IconEyeCheck />
+                    </n-icon>
                 </td>
                 <td class="doneo-text-center">
                     <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowAddTask">
@@ -160,9 +169,12 @@
                             </n-icon>
                         </template>
                         {{
-                            t("modules.role.components.ProjectPermissionsTable.body.columns.permissionsHints.addTaskAllowed")
+                            t("modules.projectPermission.components.projectPermissionsTable.body.columns.permissionsHints.addTaskAllowed")
                         }}
                     </n-tooltip>
+                    <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
+                        <IconSquarePlus />
+                    </n-icon>
                     <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowUpdateTask">
                         <template #trigger>
                             <n-icon :size="22">
@@ -170,9 +182,12 @@
                             </n-icon>
                         </template>
                         {{
-                            t("modules.role.components.ProjectPermissionsTable.body.columns.permissionsHints.updateTaskAllowed")
+                            t("modules.projectPermission.components.projectPermissionsTable.body.columns.permissionsHints.updateTaskAllowed")
                         }}
                     </n-tooltip>
+                    <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
+                        <IconEdit />
+                    </n-icon>
                     <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowDeleteTask">
                         <template #trigger>
                             <n-icon :size="22">
@@ -180,9 +195,12 @@
                             </n-icon>
                         </template>
                         {{
-                            t("modules.role.components.ProjectPermissionsTable.body.columns.permissionsHints.deleteTaskAllowed")
+                            t("modules.projectPermission.components.projectPermissionsTable.body.columns.permissionsHints.deleteTaskAllowed")
                         }}
                     </n-tooltip>
+                    <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
+                        <IconTrash />
+                    </n-icon>
                     <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowViewTask">
                         <template #trigger>
                             <n-icon :size="22">
@@ -190,9 +208,12 @@
                             </n-icon>
                         </template>
                         {{
-                            t("modules.role.components.ProjectPermissionsTable.body.columns.permissionsHints.viewTaskAllowed")
+                            t("modules.projectPermission.components.projectPermissionsTable.body.columns.permissionsHints.viewTaskAllowed")
                         }}
                     </n-tooltip>
+                    <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
+                        <IconEyeCheck />
+                    </n-icon>
                 </td>
                 <td class="doneo-text-center">
                     <ManageTableActionButtons show-delete @delete="onConfirmDelete(projectPermission, index)" />
@@ -214,5 +235,9 @@
         .hide-mobile {
             display: none;
         }
+    }
+
+    .doneo-disabled-permission-icon {
+        opacity: 0.1;
     }
 </style>
