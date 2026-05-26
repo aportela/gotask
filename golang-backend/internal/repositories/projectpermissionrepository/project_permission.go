@@ -82,7 +82,7 @@ func (projectPermissionRepository *projectPermissionRepository) Search(ctx conte
             FROM project_user_role PUR
 			INNER JOIN users U ON U.id = PUR.user_id
 			INNER JOIN roles R ON R.id = PUR.role_id
-            WHERE PUR.projectId = ?
+            WHERE PUR.project_id = ?
 			ORDER BY U.name
         `,
 		projectId)
@@ -94,7 +94,7 @@ func (projectPermissionRepository *projectPermissionRepository) Search(ctx conte
 	for rows.Next() {
 		var projectPermission projectPermissionDTO
 		if err := rows.Scan(
-			&projectPermission.UserId, &projectPermission.UserName, &projectPermission.RoleId, &projectPermission.RoleName,
+			&projectPermission.ID, &projectPermission.UserId, &projectPermission.UserName, &projectPermission.RoleId, &projectPermission.RoleName,
 		); err != nil {
 			return nil, err
 		}
