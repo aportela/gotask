@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, h, computed } from 'vue';
+    import { h, computed } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { useDialog, NEmpty } from 'naive-ui';
@@ -20,6 +20,7 @@
     }
 
     const { t } = useI18n();
+    const dialog = useDialog();
 
     const emit = defineEmits(['refresh', 'add', 'delete']);
 
@@ -43,30 +44,12 @@
         },
     ]);
 
-    const filterByUser = ref<string>("");
-    const filterByRole = ref<string>("");
-
-    const userFilter = computed(() =>
-        filterByUser.value?.toLowerCase() ?? ''
-    );
-
-    const roleFilter = computed(() =>
-        filterByRole.value?.toLowerCase() ?? ''
-    );
-
-    const filteredPermissions = computed(() => {
-        return props.projectPermissions.filter((permission) => {
-            const userName = permission.user.name.toLowerCase();
-            const roleName = permission.role.name.toLowerCase();
-
-            return (
-                (!userFilter.value || userName.includes(userFilter.value)) &&
-                (!roleFilter.value || roleName.includes(roleFilter.value))
-            );
-        });
+    const userFilter = defineModel<string>("userFilter", {
+        default: "",
     });
-
-    const dialog = useDialog();
+    const roleFilter = defineModel<string>("roleFilter", {
+        default: "",
+    });
 
     const onRefresh = () => {
         emit("refresh");
@@ -110,12 +93,12 @@
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.projectPermission.components.projectPermissionsTable.filters.user.placeholder')"
-                        v-model:value="filterByUser" />
+                        v-model:value="userFilter" />
                 </th>
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.projectPermission.components.projectPermissionsTable.filters.role.placeholder')"
-                        v-model:value="filterByRole" />
+                        v-model:value="roleFilter" />
                 </th>
                 <th>
                 </th>
@@ -125,7 +108,7 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="projectPermission, index in filteredPermissions" :key="projectPermission.id">
+            <tr v-for="projectPermission, index in projectPermissions" :key="projectPermission.id">
                 <td>
                     <AvatarUserName :user-id="projectPermission.user.id" :user-name="projectPermission.user.name" />
                 </td>
@@ -147,11 +130,6 @@
 </template>
 
 <style lang="css" scoped>
-
-    .table-header-click-action th:not(:last-of-type) .n-icon {
-        margin-top: 4px;
-    }
-
     @media (max-width: 768px) {
         .hide-mobile {
             display: none;

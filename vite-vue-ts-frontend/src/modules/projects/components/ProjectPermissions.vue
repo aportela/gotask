@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, shallowRef, reactive, onMounted, onBeforeUnmount, watch, type CSSProperties } from "vue";
+    import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, watch, type CSSProperties } from "vue";
     import { useI18n } from "vue-i18n";
 
     import { NCard, NModal } from "naive-ui";
@@ -39,6 +39,29 @@
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
     const items = shallowRef<ProjectPermission[]>([]);
+
+    const filterByUser = ref<string>("");
+    const filterByRole = ref<string>("");
+
+    const userFilter = computed(() =>
+        filterByUser.value?.toLowerCase() ?? ''
+    );
+
+    const roleFilter = computed(() =>
+        filterByRole.value?.toLowerCase() ?? ''
+    );
+
+    const filteredPermissions = computed(() => {
+        return items.value.filter((permission) => {
+            const userName = permission.user.name.toLowerCase();
+            const roleName = permission.role.name.toLowerCase();
+
+            return (
+                (!userFilter.value || userName.includes(userFilter.value)) &&
+                (!roleFilter.value || roleName.includes(roleFilter.value))
+            );
+        });
+    });
 
     const showForm = ref<boolean>(false);
 
@@ -162,8 +185,9 @@
         TODO: add permission dialog
     </n-modal>
     <n-card bordered :style="props.style">
-        <ProjectPermissionsTable :project-permissions="items" :loading="state.ajaxRunning" @refresh="onRefresh"
-            @add="onShowAddForm" @delete="onDelete" />
+        <ProjectPermissionsTable :project-permissions="filteredPermissions" :loading="state.ajaxRunning"
+            @refresh="onRefresh" @add="onShowAddForm" @delete="onDelete" v-model:user-filter="filterByUser"
+            v-model:role-filter="filterByRole" />
     </n-card>
 </template>
 
