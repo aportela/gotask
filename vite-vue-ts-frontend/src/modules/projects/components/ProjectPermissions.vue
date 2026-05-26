@@ -1,13 +1,16 @@
 <script setup lang="ts">
-    import { ref, reactive, onMounted, onBeforeUnmount, watch, type CSSProperties } from "vue";
+    import { ref, reactive, h, onMounted, onBeforeUnmount, watch, type CSSProperties } from "vue";
     import { useI18n } from "vue-i18n";
 
-    import { NCard } from "naive-ui";
+    import { NCard, useDialog } from "naive-ui";
+    import { IconTrash } from "@tabler/icons-vue";
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { useLoadingStore } from '../../../stores/loading';
 
     import { appBus } from '../../../shared/composables/bus';
+
+    import { renderIcon } from "../../../shared/composables/naive-ui-icon.ts";
 
     import { projectPermissionService } from "../../project-permissions/services/project-permission.ts";
     import { handleAPIError } from '../../../api/client/errorHandler';
@@ -28,6 +31,8 @@
 
     const props = defineProps<ProjectPermissionsProps>();
 
+    const emit = defineEmits(['delete']);
+
     const { t } = useI18n();
 
     const loadingStore = useLoadingStore();
@@ -39,6 +44,8 @@
     });
 
     const projectPermissions = ref<ProjectPermission[]>();
+
+    const dialog = useDialog();
 
     const onRefresh = async () => {
         Object.assign(state, defaultAjaxStateRunning);
@@ -71,6 +78,24 @@
         }
     };
 
+    const onConfirmDelete = (projectPermission: ProjectPermission, index: number) => {
+        dialog.warning({
+            title: t("modules.projectPriority.components.ProjectPrioritiesTable.dialogs.deleteConfirmation.title"),
+            icon: renderIcon(IconTrash)(24),
+            content: () =>
+                h('div', [
+                    t("modules.projectPriority.components.ProjectPrioritiesTable.dialogs.deleteConfirmation.message", { name: projectPermission.user.name }),
+                    h('br'),
+                    h('br'),
+                    t("shared.components.dialogs.confirmation.continueMessage"),
+                ]),
+            positiveText: t("shared.buttons.Delete.label"),
+            negativeText: t("shared.buttons.Cancel.label"),
+            onPositiveClick: () => {
+                emit("delete", projectPermission, index)
+            },
+        });
+    };
     let stopBusReauthListener: () => void;
 
     onMounted(() => {
@@ -101,14 +126,14 @@
                 </tr>
             </template>
             <template #tbody>
-                <tr v-for="projectPermission in projectPermissions" :key="projectPermission.id">
+                <tr v-for="projectPermission, index in projectPermissions" :key="projectPermission.id">
                     <td>
                         <AvatarUserName :user-id="projectPermission.user.id" :user-name="projectPermission.user.name" />
                     </td>
                     <td>{{ projectPermission.role.name }}</td>
                     <td>[1][2][3][4]</td>
                     <td class="doneo-text-center">
-                        <ManageTableActionButtons show-update show-delete />
+                        <ManageTableActionButtons show-delete @delete="onConfirmDelete(projectPermission, index)" />
                     </td>
                 </tr>
             </template>
