@@ -1,9 +1,8 @@
 <script setup lang="ts">
-
     import { ref, shallowRef, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 
     import { NInputGroup, NButton, NSelect, NIcon, type SelectOption, type SelectSize } from 'naive-ui';
-    import { IconSquare, IconSquareFilled } from '@tabler/icons-vue';
+    import { IconSquare, IconSquareFilled, IconAlertCircle } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { projectPriorityService } from '../services/project-priority';
@@ -11,7 +10,6 @@
     import { Sort } from '../../../shared/types/models/sort';
     import { appBus } from '../../../shared/composables/bus';
     import { handleAPIError } from '../../../api/client/errorHandler';
-
 
     interface ProjectPrioritySelectorProps {
         placeholder?: string;
@@ -66,12 +64,11 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPrioritySelector.onRefresh" } });
                             break;
                         default:
-                            //state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.refreshError");
+                            console.error("Unhandled API error", { file: "ProjectPrioritySelector.vue", method: "onRefresh" });
                             break;
                     }
                 },
                 (fatalError) => {
-                    //state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.refreshError");
                     console.error("Unhandled API error", { file: "ProjectPrioritySelector.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
@@ -100,22 +97,26 @@
     onBeforeUnmount(() => {
         stopBusReauthListener();
     });
-
 </script>
 
 <template>
     <n-input-group>
         <n-button secondary :disabled="true" class="doneo-cursor-default doneo-disable-opacity"
             v-if="!props.hidePrefix">
-            <template #icon>
+            <template #icon v-if="!state.ajaxErrors">
                 <n-icon :color="selectedColor" :component="selectedColor ? IconSquareFilled : IconSquare">
                 </n-icon>
             </template>
         </n-button>
         <n-select v-model:value="projectPriorityId" :options="options" :placeholder="props.placeholder"
             :size="props.size" :disabled="isDisabled" />
+        <n-button secondary :disabled="true" class="doneo-cursor-default doneo-disable-opacity" v-if="state.ajaxErrors">
+            <template #icon>
+                <n-icon color="red" :component="IconAlertCircle">
+                </n-icon>
+            </template>
+        </n-button>
     </n-input-group>
-
 </template>
 
 <style lang="css" scoped></style>

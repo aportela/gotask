@@ -1,9 +1,8 @@
 <script setup lang="ts">
-
     import { ref, shallowRef, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 
     import { NInputGroup, NButton, NSelect, NIcon, type SelectOption, type SelectSize } from 'naive-ui';
-    import { IconSquare, IconSquareFilled } from '@tabler/icons-vue';
+    import { IconSquare, IconSquareFilled, IconAlertCircle } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { projectTypeService } from '../services/project-type';
@@ -65,12 +64,11 @@
                             appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectTypeSelector.onRefresh" } });
                             break;
                         default:
-                            //state.ajaxErrorMessage = t("modules.projectStatus.components.ManageProjectPrioritiesPage.errors.refreshError");
+                            console.error("Unhandled API error", { file: "ProjectTypeSelector.vue", method: "onRefresh" });
                             break;
                     }
                 },
                 (fatalError) => {
-                    //state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.refreshError");
                     console.error("Unhandled API error", { file: "ProjectTypeSelector.vue", method: "onRefresh" }, { err: fatalError });
                 });
         }
@@ -99,7 +97,6 @@
     onBeforeUnmount(() => {
         stopBusReauthListener();
     });
-
 </script>
 
 <template>
@@ -113,6 +110,12 @@
         </n-button>
         <n-select v-model:value="projectTypeId" :options="options" :placeholder="props.placeholder" :size="props.size"
             :disabled="isDisabled" />
+        <n-button secondary :disabled="true" class="doneo-cursor-default doneo-disable-opacity" v-if="state.ajaxErrors">
+            <template #icon>
+                <n-icon color="red" :component="IconAlertCircle">
+                </n-icon>
+            </template>
+        </n-button>
     </n-input-group>
 </template>
 
