@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import { computed } from 'vue';
     import { NAvatar } from 'naive-ui';
     import type { UserBase } from '../../modules/users/models/user';
 
@@ -11,7 +12,7 @@
         avatarSize: 32,
     });
 
-    const avatarURL = `/api/avatars/${props.avatarSize}/user/${props.user.id}`;
+    const avatarURL = computed(() => `/api/avatars/${props.avatarSize}/user/${props.user.id}`);
 </script>
 
 <template>
