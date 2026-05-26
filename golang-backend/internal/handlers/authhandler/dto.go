@@ -13,7 +13,6 @@ type userResponse struct {
 	UpdatedAt   *int64          `json:"updatedAt"`
 	DeletedAt   *int64          `json:"deletedAt"`
 	Permissions userPermissions `json:"permissions"`
-	AvatarURL   string          `json:"avatarUrl"`
 }
 
 type signInRequest struct {

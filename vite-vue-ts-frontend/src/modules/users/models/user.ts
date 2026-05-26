@@ -11,19 +11,16 @@ interface UserPermissions {
 export class UserBase {
   id: string;
   name: string;
-  avatarUrl: string | null;
 
   constructor(data: UserBaseDTO) {
     this.id = data.id;
     this.name = data.name;
-    this.avatarUrl = data.avatarUrl;
   }
 
   toDTO(): UserBaseDTO {
     return {
       id: this.id,
       name: this.name,
-      avatarUrl: this.avatarUrl,
     };
   }
 }
@@ -37,7 +34,6 @@ export class User {
   createdAt: IDate;
   updatedAt: IDate | null;
   deletedAt: IDate | null;
-  avatarUrl: string | null;
 
   constructor(data: UserDTO) {
     this.id = data.id;
@@ -50,7 +46,6 @@ export class User {
     this.createdAt = new IDate(data.createdAt);
     this.updatedAt = data.updatedAt !== null ? new IDate(data.updatedAt) : null;
     this.deletedAt = data.deletedAt !== null ? new IDate(data.deletedAt) : null;
-    this.avatarUrl = data.avatarUrl;
   }
 
   toDTO(): UserDTO {
@@ -64,7 +59,6 @@ export class User {
       createdAt: this.createdAt.msTimestamp,
       updatedAt: this.updatedAt?.msTimestamp ?? null,
       deletedAt: this.deletedAt?.msTimestamp ?? null,
-      avatarUrl: this.avatarUrl ?? "",
     };
   }
 }

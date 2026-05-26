@@ -51,15 +51,13 @@ func domainToResponse(user domain.User) userResponse {
 		UpdatedAt:   utils.TimePtrToInt64Ptr(user.UpdatedAt),
 		DeletedAt:   utils.TimePtrToInt64Ptr(user.DeletedAt),
 		Permissions: permissionsDomainToResponsePermissionsFlags(user.PermissionsBitmask),
-		AvatarURL:   user.AvatarURL,
 	}
 }
 
 func BaseDomainToBaseResponse(user domain.UserBase) UserBaseResponse {
 	return UserBaseResponse{
-		ID:        user.ID,
-		Name:      user.Name,
-		AvatarURL: user.AvatarURL,
+		ID:   user.ID,
+		Name: user.Name,
 	}
 }
 

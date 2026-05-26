@@ -46,7 +46,7 @@
         priority: new ProjectPriority({ id: "", name: "", hexColor: "" }),
         status: new ProjectStatus({ id: "", name: "", hexColor: "" }),
         createdAt: new Date().getTime(),
-        createdBy: new UserBase({ id: "", name: "", avatarUrl: "" }),
+        createdBy: new UserBase({ id: "", name: "" }),
         tasksCount: 0,
         permissionsCount: 0,
         attachmentsCount: 0,

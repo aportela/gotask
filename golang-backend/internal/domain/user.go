@@ -5,9 +5,8 @@ import (
 )
 
 type UserBase struct {
-	ID        string
-	Name      string
-	AvatarURL string
+	ID   string
+	Name string
 }
 
 type User struct {

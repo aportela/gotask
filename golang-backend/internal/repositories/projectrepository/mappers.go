@@ -38,7 +38,7 @@ func DTOToDomain(project projectDTO) domain.Project {
 		Key:                    project.Key,
 		Summary:                project.Summary,
 		Description:            project.Description,
-		CreatedBy:              domain.UserBase{ID: project.CreatorId, Name: project.CreatorName, AvatarURL: "https://i.pravatar.cc/32?u=" + project.CreatorId},
+		CreatedBy:              domain.UserBase{ID: project.CreatorId, Name: project.CreatorName},
 		CreatedAt:              project.CreatedAt,
 		UpdatedAt:              project.UpdatedAt,
 		StartedAt:              project.StartedAt,

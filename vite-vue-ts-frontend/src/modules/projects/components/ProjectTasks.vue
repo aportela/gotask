@@ -20,7 +20,7 @@
 
     const { t } = useI18n();
 
-    const user = new UserBase({ id: '019e5b68-f701-7af7-a694-c8146e3366a1', name: 'John Doe', avatarUrl: 'https://i.pravatar.cc/32?u=019e5b68-f701-7af7-a694-c8146e3366a1' });
+    const user = new UserBase({ id: '019e5b68-f701-7af7-a694-c8146e3366a1', name: 'John Doe' });
 
 </script>
 

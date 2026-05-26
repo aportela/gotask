@@ -49,7 +49,7 @@
     const userDialogFormMode = ref<FormMode>("add");
 
     const selectedUser = ref<User>(
-        new User({ "id": "", name: "", email: "", permissions: { isSuperUser: false }, createdAt: 0, updatedAt: 0, deletedAt: 0, avatarUrl: "" })
+        new User({ "id": "", name: "", email: "", permissions: { isSuperUser: false }, createdAt: 0, updatedAt: 0, deletedAt: 0 })
     );
 
     watch(state, (newValue: AjaxStateInterface) => {

@@ -28,7 +28,7 @@
     const { t } = useI18n();
 
     const user = ref<User>(
-        new User({ "id": "", name: "", email: "", permissions: { isSuperUser: false }, createdAt: 0, updatedAt: 0, deletedAt: 0, avatarUrl: "" })
+        new User({ "id": "", name: "", email: "", permissions: { isSuperUser: false }, createdAt: 0, updatedAt: 0, deletedAt: 0 })
     );
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
@@ -321,7 +321,7 @@
             <div class="doneo-flex-center-align">
                 <n-icon :component="props.mode == 'add' ? IconUserPlus : IconUserEdit" />
                 {{ t(props.mode == "add" ? "modules.user.components.UserForm.headers.addUser" :
-                "modules.user.components.UserForm.headers.updateUser") }}
+                    "modules.user.components.UserForm.headers.updateUser") }}
             </div>
         </template>
         <template #header-extra>
@@ -374,7 +374,7 @@
                 </n-input>
                 <n-button v-else @click="onShowPasswordFormItem" block :disabled="state.ajaxRunning">{{
                     t("modules.user.components.UserForm.buttons.changePassword.label")
-                    }}</n-button>
+                }}</n-button>
             </n-form-item>
             <n-form-item :label="t('userFormPermissionsLabel')">
                 <n-radio-group v-model:value="user.permissions.isSuperUser" name="radiogroup">

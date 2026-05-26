@@ -55,7 +55,6 @@
             createdBy: new UserBase({
                 id: "",
                 name: "",
-                avatarUrl: "",
             }),
             tasksCount: 0,
             permissionsCount: 0,

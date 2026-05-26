@@ -14,7 +14,6 @@ export type UserRequest = {
   createdAt: number;
   updatedAt: number | null;
   deletedAt: number | null;
-  avatarURL: string;
 };
 */
 
@@ -59,7 +58,6 @@ export type SearchRequest = {
 export type UserBaseResponse = {
   id: string;
   name: string;
-  avatarUrl: string | null;
 };
 
 export type UserResponse = {
@@ -70,7 +68,6 @@ export type UserResponse = {
   createdAt: number;
   updatedAt: number | null;
   deletedAt: number | null;
-  avatarUrl: string | null;
 };
 
 export type SearchResponse = {

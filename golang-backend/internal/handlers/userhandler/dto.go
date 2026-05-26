@@ -46,9 +46,8 @@ type searchRequest struct {
 }
 
 type UserBaseResponse struct {
-	ID        string `json:"id"`
-	Name      string `json:"name"`
-	AvatarURL string `json:"avatarUrl"`
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type userResponse struct {
@@ -59,7 +58,6 @@ type userResponse struct {
 	UpdatedAt   *int64           `json:"updatedAt"`
 	DeletedAt   *int64           `json:"deletedAt"`
 	Permissions permissionsFlags `json:"permissions"`
-	AvatarURL   string           `json:"avatarUrl"`
 }
 
 type searchResponse struct {

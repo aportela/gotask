@@ -29,9 +29,8 @@ func DomainToDTO(user domain.User) UserDTO {
 
 func BaseDTOToBaseDomain(user UserBaseDTO) domain.UserBase {
 	return domain.UserBase{
-		ID:        user.ID,
-		Name:      user.Name,
-		AvatarURL: "https://i.pravatar.cc/32?u=" + user.ID,
+		ID:   user.ID,
+		Name: user.Name,
 	}
 }
 
