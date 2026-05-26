@@ -102,6 +102,7 @@
             await projectPermissionService.delete(props.projectId, projectPermission.id);
             notify('success', t("modules.projectPermission.components.projectPermissions.notifications.projectPermissionDeleted", { user: projectPermission.user.name, role: projectPermission.role.name }));
             onRefresh();
+            // TODO: not refreshing permission count on parent component
         } catch (error: unknown) {
             state.ajaxErrors = true;
             handleAPIError(error,
