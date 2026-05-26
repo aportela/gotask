@@ -44,7 +44,7 @@
                     <td>application/pdf</td>
                     <td>23/02/2026</td>
                     <td>
-                        <AvatarUserName :user="user" />
+                        <AvatarUserName :user-id="user.id" :user-name="user.name" />
                     </td>
                     <td class="doneo-text-center">
                         <ManageTableActionButtons show-delete show-download />

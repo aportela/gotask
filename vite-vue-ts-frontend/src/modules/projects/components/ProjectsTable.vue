@@ -156,7 +156,7 @@
                 <td>{{ project.summary }}</td>
                 <td>{{ project.createdAt.toLocaleString() }}</td>
                 <td>
-                    <AvatarUserName :user="project.createdBy" />
+                    <AvatarUserName :user-id="project.createdBy.id" :user-name="project.createdBy.name" />
                 </td>
                 <td class="doneo-text-center">
                     <n-button-group size="small">

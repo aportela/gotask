@@ -103,7 +103,7 @@
             <template #tbody>
                 <tr v-for="projectPermission in projectPermissions" :key="projectPermission.id">
                     <td>
-                        <AvatarUserName :user="projectPermission.user" />
+                        <AvatarUserName :user-id="projectPermission.user.id" :user-name="projectPermission.user.name" />
                     </td>
                     <td>{{ projectPermission.role.name }}</td>
                     <td>[1][2][3][4]</td>

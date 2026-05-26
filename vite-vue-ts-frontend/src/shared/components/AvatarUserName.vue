@@ -1,10 +1,11 @@
 <script setup lang="ts">
     import { computed } from 'vue';
+
     import { NAvatar } from 'naive-ui';
-    import type { UserBase } from '../../modules/users/models/user';
 
     interface AvatarUserNameProps {
-        user: UserBase;
+        userId: string;
+        userName: string;
         avatarSize?: number;
     };
 
@@ -12,13 +13,13 @@
         avatarSize: 32,
     });
 
-    const avatarURL = computed(() => `/api/avatars/${props.avatarSize}/user/${props.user.id}`);
+    const avatarURL = computed(() => `/api/avatars/${props.avatarSize}/user/${props.userId}`);
 </script>
 
 <template>
     <div class="doneo-flex-center-align" style="gap: 8px;">
-        <n-avatar :src="avatarURL" class="doneo-avatar-username" :size="props.avatarSize" />
-        {{ user.name }}
+        <n-avatar v-if="props.userId" :src="avatarURL" class="doneo-avatar-username" :size="props.avatarSize" />
+        {{ props.userName }}
     </div>
 </template>
 

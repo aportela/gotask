@@ -218,7 +218,7 @@
                     </span>
                 </td>
                 <td>
-                    <AvatarUserName :user="user" />
+                    <AvatarUserName :user-id="user.id" :user-name="user.name" />
                 </td>
                 <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>
                 <td class="hide-mobile">{{ user.createdAt.toLocaleString() }}</td>

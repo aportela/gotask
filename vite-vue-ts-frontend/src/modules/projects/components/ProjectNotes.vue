@@ -24,7 +24,7 @@
             <n-card v-for="index in [1, 2, 3, 4, 5]" :key="index" size="small" bordered>
                 <div class="note-header">
                     <div class="note-user">
-                        <AvatarUserName :user="user" />
+                        <AvatarUserName :user-id="user.id" :user-name="user.name" />
                     </div>
 
                     <span class="note-date">

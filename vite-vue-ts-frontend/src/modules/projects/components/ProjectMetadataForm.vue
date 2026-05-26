@@ -25,7 +25,7 @@
     <n-card bordered :style="props.style">
         <n-form-item label="Created by">
             <div class="note-user">
-                <AvatarUserName :user="project.createdBy" />
+                <AvatarUserName :user-id="project.createdBy.id" :user-name="project.createdBy.name" />
             </div>
         </n-form-item>
         <n-form-item label="Created at">
