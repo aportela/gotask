@@ -43,8 +43,28 @@
         },
     ]);
 
-    const filterByUsername = ref<string>("");
+    const filterByUser = ref<string>("");
     const filterByRole = ref<string>("");
+
+    const userFilter = computed(() =>
+        filterByUser.value?.toLowerCase() ?? ''
+    );
+
+    const roleFilter = computed(() =>
+        filterByRole.value?.toLowerCase() ?? ''
+    );
+
+    const filteredPermissions = computed(() => {
+        return props.projectPermissions.filter((permission) => {
+            const userName = permission.user.name.toLowerCase();
+            const roleName = permission.role.name.toLowerCase();
+
+            return (
+                (!userFilter.value || userName.includes(userFilter.value)) &&
+                (!roleFilter.value || roleName.includes(roleFilter.value))
+            );
+        });
+    });
 
     const dialog = useDialog();
 
@@ -55,7 +75,6 @@
     const onAdd = () => {
         emit("add");
     };
-
 
     const onConfirmDelete = (projectPermission: ProjectPermission, index: number) => {
         dialog.warning({
@@ -91,7 +110,7 @@
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.projectPermission.components.projectPermissionsTable.filters.user.placeholder')"
-                        v-model:value="filterByUsername" />
+                        v-model:value="filterByUser" />
                 </th>
                 <th>
                     <TextFilterInput clearable size="small"
@@ -106,7 +125,7 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="projectPermission, index in projectPermissions" :key="projectPermission.id">
+            <tr v-for="projectPermission, index in filteredPermissions" :key="projectPermission.id">
                 <td>
                     <AvatarUserName :user-id="projectPermission.user.id" :user-name="projectPermission.user.name" />
                 </td>
