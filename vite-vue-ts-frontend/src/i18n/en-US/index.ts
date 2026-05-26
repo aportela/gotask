@@ -655,7 +655,8 @@ export default {
             columns: {
               user: "User",
               role: "Role",
-              permissions: "Permissions",
+              projectPermissions: "Project permissions",
+              taskPermissions: "Task permissions",
             },
           },
           filters: {
@@ -664,6 +665,19 @@ export default {
             },
             role: {
               placeholder: "search by role",
+            },
+          },
+          body: {
+            columns: {
+              permissionsHints: {
+                updateProjectAllowed: "Update project allowed",
+                deleteProjectAllowed: "Delete project allowed",
+                viewProjectAllowed: "View project allowed",
+                addTaskAllowed: "Add task allowed",
+                updateTaskAllowed: "Update task allowed",
+                deleteTaskAllowed: "Delete task allowed",
+                viewTaskAllowed: "View task allowed",
+              },
             },
           },
           dialogs: {
