@@ -50,6 +50,17 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 
 	uuidPattern := "[0-9a-fA-F-]{36}"
 
+	apiRouter.Route("/avatars", func(r chi.Router) {
+		r.Get("/{size:[0-9]+}/user/{id:"+uuidPattern+"}", func(w http.ResponseWriter, r *http.Request) {
+			http.Redirect(
+				w,
+				r,
+				"https://i.pravatar.cc/"+chi.URLParam(r, "size")+"?u="+chi.URLParam(r, "id"),
+				http.StatusTemporaryRedirect,
+			)
+		})
+	})
+
 	apiRouter.Route("/users", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
