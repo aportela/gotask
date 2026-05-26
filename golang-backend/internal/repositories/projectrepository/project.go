@@ -179,7 +179,7 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 				P.creator_id,
 				U.name AS creator_name,
 				abs(random() % 4) + 1 AS tasks_count,
-				abs(random() % 2) + 1 AS permissions_count,
+				IFNULL(PUR.permissions_count, 0) AS permissions_count,
 				abs(random() % 4) + 1 AS attachments_count,
 				abs(random() % 4) + 1 AS notes_count,
 				abs(random() % 4) + 1 AS history_operations_count
@@ -188,7 +188,13 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 			INNER JOIN project_statuses PS ON PS.id = P.status_id
 			INNER JOIN project_types PT ON PT.id = P.type_id
 			INNER JOIN users U ON U.ID = P.creator_id
+			LEFT JOIN (
+    			SELECT project_id, COUNT(*) AS permissions_count
+    			FROM project_user_role
+    			GROUP BY project_id
+			) PUR ON PUR.project_id = P.id
             WHERE P.id = ?
+			GROUP BY P.id
         `,
 		id).Scan(
 		&project.ID,
