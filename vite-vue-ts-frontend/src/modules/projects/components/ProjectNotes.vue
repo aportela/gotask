@@ -1,11 +1,19 @@
 <script setup lang="ts">
-    import type { CSSProperties } from "vue";
+    import { shallowRef, reactive, onMounted, onBeforeUnmount, watch, type CSSProperties } from "vue";
+    import { useI18n } from "vue-i18n";
 
     import { NSpace, NCard } from "naive-ui";
 
-    import { UserBase } from "../../users/models/user.ts";
-
+    import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
+    import { useLoadingStore } from '../../../stores/loading';
+    //    import { useNotify } from '../../../shared/composables/notification';
+    import { appBus } from '../../../shared/composables/bus';
+    import { Note } from "../../notes/models/note.ts";
+    import { noteService } from "../../notes/services/note.ts";
+    import { handleAPIError } from '../../../api/client/errorHandler';
+    import type { SearchResponse } from "../../notes/types/dto.ts";
     import AvatarUserName from "../../../shared/components/AvatarUserName.vue";
+
 
     interface ProjectNotesProps {
         style?: string | CSSProperties;
@@ -14,58 +22,96 @@
 
     const props = defineProps<ProjectNotesProps>();
 
-    const user = new UserBase({ id: '019e5b68-f701-7af7-a694-c8146e3366a1', name: 'John Doe' });
+    const { t } = useI18n();
+    //const { notify } = useNotify();
+    const loadingStore = useLoadingStore();
 
+    const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+    const items = shallowRef<Note[]>([]);
+
+    const itemCount = defineModel<number>("itemCount", { default: 0 });
+
+    watch(state, (newValue: AjaxStateInterface) => {
+        loadingStore.set(newValue.ajaxRunning);
+    });
+
+    watch(() => props.projectId, (newValue, oldValue) => {
+        if (!oldValue && newValue) {
+            onRefresh();
+        }
+    });
+
+    const onRefresh = async () => {
+        if (props.projectId) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                const results: SearchResponse = await noteService.search(props.projectId);
+                items.value = results.notes.map((note) => new Note(note));
+                itemCount.value = items.value?.length ?? 0;
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectNotes.onRefresh" } });
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
+                        console.error("Unhandled API error", { file: "ProjectNotes.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("project id not set", { file: "ProjectNotes.vue", method: "onRefresh" });
+        }
+    };
+
+    let stopBusReauthListener: () => void;
+
+    onMounted(() => {
+        if (props.projectId) {
+            onRefresh();
+        }
+        stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
+            if (payload.to.includes("ProjectNotes.onRefresh")) {
+                onRefresh();
+            } else if (payload.to.includes("ProjectNotes.onDelete")) {
+                //onDelete(selectedItem.value);
+            }
+        });
+    });
+
+    onBeforeUnmount(() => {
+        stopBusReauthListener();
+    });
 </script>
 
 <template>
     <n-card bordered :style="props.style">
         <n-space vertical size="large" style="margin-right: 12px;">
-            <n-card v-for="index in [1, 2, 3, 4, 5]" :key="index" size="small" bordered>
+            <n-card v-for="note, index in items" :key="note.id ?? index" size="small" bordered>
                 <div class="note-header">
                     <div class="note-user">
-                        <AvatarUserName :user-id="user.id" :user-name="user.name" />
+                        <AvatarUserName :user-id="note.user.id" :user-name="note.user.name" />
                     </div>
-
                     <span class="note-date">
-                        12/02/2026
+                        {{ note.createdAt?.toLocaleString() }}
                     </span>
                 </div>
-
                 <div class="note-content">
-
-                    random note text {{ index }}
-
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec fringilla pellentesque
-                    bibendum.
-                    Nunc efficitur est eget magna consectetur euismod. Nam eget ante arcu. Vestibulum ex
-                    enim,
-                    consectetur sit amet fringilla hendrerit, tristique vel risus. Nunc eu magna at magna
-                    dictum
-                    posuere ac id lectus. Fusce sed euismod elit. Vivamus porta diam quis bibendum tempor.
-                    Mauris at
-                    mauris laoreet, porta nunc quis, suscipit orci. Donec eu ex nec tellus luctus tincidunt.
-                    Quisque
-                    malesuada sollicitudin luctus.
-
-                    Donec rhoncus hendrerit ante id tincidunt. Etiam quis scelerisque tellus. Vivamus sit
-                    amet massa
-                    finibus, commodo erat sit amet, porttitor quam. Integer pellentesque urna vitae risus
-                    mattis
-                    elementum. Nam ornare ornare enim, quis rutrum nunc ornare et. Donec quis ex at magna
-                    facilisis
-                    cursus. Duis et libero sollicitudin, aliquet nunc porta, tristique nulla. Nam eget nisl
-                    mauris.
-                    Aliquam quis ultrices ante. Nullam ullamcorper tortor consequat metus auctor, vel
-                    sagittis mi
-                    maximus. Donec ut aliquet neque. Ut malesuada lorem hendrerit nulla scelerisque
-                    volutpat.
-                    Pellentesque commodo pellentesque tortor, at pellentesque enim feugiat lacinia. Integer
-                    ac nulla
-                    pretium ex eleifend feugiat id et massa. Donec ex mauris, sodales at justo posuere,
-                    mattis
-                    rutrum nisi.
-
+                    <p>
+                        random note text {{ index }}
+                    </p>
+                    {{ note.body }}
                 </div>
             </n-card>
         </n-space>

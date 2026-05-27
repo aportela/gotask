@@ -180,8 +180,8 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 				U.name AS creator_name,
 				abs(random() % 4) + 1 AS tasks_count,
 				IFNULL(PUR.permissions_count, 0) AS permissions_count,
+				IFNULL(PN.notes_count, 0) AS notes_count,
 				abs(random() % 4) + 1 AS attachments_count,
-				abs(random() % 4) + 1 AS notes_count,
 				abs(random() % 4) + 1 AS history_operations_count
             FROM projects P
 			INNER JOIN project_priorities PP ON PP.id = P.priority_id
@@ -193,6 +193,11 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
     			FROM project_user_role
     			GROUP BY project_id
 			) PUR ON PUR.project_id = P.id
+			LEFT JOIN (
+    			SELECT project_id, COUNT(*) AS notes_count
+    			FROM project_notes
+    			GROUP BY project_id
+			) PN ON PN.project_id = P.id
             WHERE P.id = ?
 			GROUP BY P.id
         `,
@@ -219,8 +224,8 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 		&project.CreatorName,
 		&project.TasksCount,
 		&project.PermissionsCount,
-		&project.AttachmentsCount,
 		&project.NotesCount,
+		&project.AttachmentsCount,
 		&project.HistoryOperationsCount,
 	)
 	if err != nil {

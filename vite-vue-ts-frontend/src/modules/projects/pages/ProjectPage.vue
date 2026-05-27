@@ -97,6 +97,8 @@
         }
     });
 
+    // TODO: skeleton while loading ???
+    // TODO: loading error
 </script>
 
 <template>

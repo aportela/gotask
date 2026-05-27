@@ -12,6 +12,7 @@ import (
 	"github.com/aportela/doneo/internal/config"
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/handlers/authhandler"
+	"github.com/aportela/doneo/internal/handlers/notehandler"
 	"github.com/aportela/doneo/internal/handlers/projecthandler"
 	"github.com/aportela/doneo/internal/handlers/projectpermissionhandler"
 	"github.com/aportela/doneo/internal/handlers/projectpriorityhandler"
@@ -151,14 +152,20 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		projectHandler := projecthandler.NewProjectHandler(db)
 		projectPermissionHandler := projectpermissionhandler.NewProjectPermissionHandler(db)
+		noteHandler := notehandler.NewNoteHandler(db)
 		r.Post("/", projectHandler.Add)
 		r.Post("/search", projectHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", projectHandler.Get)
 		r.Put("/{id:"+uuidPattern+"}", projectHandler.Update)
 		r.Delete("/{id:"+uuidPattern+"}", projectHandler.Delete)
+
 		r.Get("/{id:"+uuidPattern+"}/permissions", projectPermissionHandler.Search)
 		r.Post("/{id:"+uuidPattern+"}/permissions/", projectPermissionHandler.Add)
 		r.Delete("/{id:"+uuidPattern+"}/permissions/{permission_id:"+uuidPattern+"}", projectPermissionHandler.Delete)
+
+		r.Get("/{id:"+uuidPattern+"}/notes", noteHandler.SearchProjectNotes)
+		r.Post("/{id:"+uuidPattern+"}/notes/", noteHandler.AddProjectNote)
+		r.Delete("/{id:"+uuidPattern+"}/notes/{note_id:"+uuidPattern+"}", noteHandler.DeleteProjectNote)
 	})
 
 	// TODO: 404 route ?

@@ -5,11 +5,13 @@ import (
 	"github.com/aportela/doneo/internal/handlers/userhandler"
 )
 
+// TODO: share userbase with user handler ??
 type userBase struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
+// TODO: share rolebase with role handler ??
 type roleBase struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`

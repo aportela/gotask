@@ -1,8 +1,11 @@
 package domain
 
+import "time"
+
 type Note struct {
-	ID        string   `json:"id"`
-	Body      string   `json:"body"`
-	CreatedBy UserBase `json:"createdBy"`
-	CreatedAt int64    `json:"createdAt"`
+	ID        string
+	User      UserBase
+	CreatedAt time.Time
+	UpdatedAt *time.Time
+	Body      string
 }

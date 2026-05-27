@@ -14,7 +14,6 @@
     import { projectPermissionService } from "../../project-permissions/services/project-permission.ts";
     import { handleAPIError } from '../../../api/client/errorHandler';
 
-
     import type { SearchResponse } from "../../project-permissions/types/dto.ts";
     import { ProjectPermission } from "../../project-permissions/models/project-permission.ts";
 

@@ -1,0 +1,21 @@
+package notehandler
+
+import (
+	"github.com/aportela/doneo/internal/handlers/userhandler"
+)
+
+type addRequest struct {
+	Body string `json:"body"`
+}
+
+type NoteResponse struct {
+	ID        string                       `json:"id"`
+	User      userhandler.UserBaseResponse `json:"user"`
+	CreatedAt int64                        `json:"createdAt"`
+	UpdatedAt *int64                       `json:"updatedAt"`
+	Body      string                       `json:"body"`
+}
+
+type searchResponse struct {
+	ProjectPermissions []NoteResponse `json:"notes"`
+}

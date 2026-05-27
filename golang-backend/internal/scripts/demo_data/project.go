@@ -4,12 +4,15 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"strconv"
 	"time"
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
+	"github.com/aportela/doneo/internal/repositories/noterepository"
 	"github.com/aportela/doneo/internal/repositories/projectpermissionrepository"
 	"github.com/aportela/doneo/internal/repositories/projectrepository"
+	"github.com/aportela/doneo/internal/services/noteservice"
 	"github.com/aportela/doneo/internal/services/projectpermissionservice"
 	"github.com/aportela/doneo/internal/services/projectservice"
 	"github.com/aportela/doneo/internal/utils"
@@ -141,10 +144,23 @@ func getRandomProject(userIds []string, projectTypeIds []string, projectPriority
 	}
 }
 
+func randomText(n int) string {
+	const chars = "abcdefghijklmnopqrstuvwxyz "
+
+	b := make([]byte, n)
+
+	for i := range b {
+		b[i] = chars[rand.Intn(len(chars))]
+	}
+
+	return string(b)
+}
 func createProjects(database database.Database, projectTypeIds []string, projectPriorityIds []string, projectStatusIds []string, userIds []string, roleIds []string, count int) []string {
 	var newProjectIds []string
 	projectRepository := projectrepository.NewProjectRepository(database)
 	projectService := projectservice.NewProjectService(projectRepository)
+	noteRepository := noterepository.NewNoteRepository(database)
+	noteService := noteservice.NewNoteService(noteRepository)
 
 	projectPermissionRepository := projectpermissionrepository.NewProjectPermissionRepository(database)
 	projectPermissionService := projectpermissionservice.NewProjectPermissionService(projectPermissionRepository)
@@ -162,6 +178,17 @@ func createProjects(database database.Database, projectTypeIds []string, project
 		projectPermissionService.Add(context.Background(), utils.UUID(), newProject.ID, userIds[2], roleIds[1])
 		projectPermissionService.Add(context.Background(), utils.UUID(), newProject.ID, userIds[3], roleIds[1])
 		newProjectIds = append(newProjectIds, newProject.ID)
+		for j := 0; j < 5; j++ {
+			note := domain.Note{
+				ID: utils.UUID(),
+				User: domain.UserBase{
+					ID: userIds[j],
+				},
+				Body:      "Note index " + strconv.Itoa(j) + ": " + randomText(rand.Intn(384)+128),
+				CreatedAt: time.Now().Add(time.Duration(j*5) * time.Minute),
+			}
+			noteService.AddProjectNote(context.Background(), newProject.ID, note)
+		}
 	}
 	return newProjectIds
 }

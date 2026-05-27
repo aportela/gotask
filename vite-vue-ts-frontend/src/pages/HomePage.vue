@@ -13,8 +13,6 @@
                 <h2>
                     WARNING
                 </h2>
-
-
                 <p>5 pending post-install settings</p>
                 <ul>
                     <li>No project types found, <router-link :to="{ name: 'manageProjectTypes' }">create
