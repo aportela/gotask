@@ -39,6 +39,8 @@
 
     const items = shallowRef<ProjectPermission[]>([]);
 
+    const itemCount = defineModel<number>("itemCount", { default: 0 });
+
     const filterByUser = ref<string>("");
     const filterByRole = ref<string>("");
 
@@ -97,6 +99,7 @@
             try {
                 const results: SearchResponse = await projectPermissionService.search(props.projectId);
                 items.value = results.projectPermissions.map((permission) => new ProjectPermission(permission));
+                itemCount.value = items.value?.length ?? 0;
             } catch (error: unknown) {
                 state.ajaxErrors = true;
                 handleAPIError(error,

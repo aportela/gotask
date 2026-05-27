@@ -105,7 +105,7 @@
             <ProjectMetadataForm mode="add" :project-id="projectId" v-model:project="project" />
         </n-tab-pane>
         <n-tab-pane name="permissions" :tab="permissionsTabLabel" display-directive="show:lazy">
-            <ProjectPermissions :project-id="project.id" />
+            <ProjectPermissions :project-id="project.id" v-model:item-count="project.permissionsCount" />
         </n-tab-pane>
         <n-tab-pane name="notes" :tab="notesTabLabel" display-directive="show:lazy">
             <ProjectNotes :project-id="project.id" />
