@@ -1,0 +1,115 @@
+<script setup lang="ts">
+    import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+
+    import { NInputGroup, NButton, NSelect, NIcon, NAvatar, type SelectOption, type SelectSize } from 'naive-ui';
+    import { IconAlertCircle, IconUserCircle } from '@tabler/icons-vue';
+
+    import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
+    import { userService } from '../services/user';
+    import type { SearchRequest, UserResponse } from '../types/dto';
+    import { Sort } from '../../../shared/types/models/sort';
+    import { appBus } from '../../../shared/composables/bus';
+    import { handleAPIError } from '../../../api/client/errorHandler';
+
+    interface UserSelectorProps {
+        placeholder?: string;
+        clearable?: boolean;
+        size?: SelectSize;
+        hideAvatar?: boolean;
+    }
+
+    const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+    const isDisabled = computed(() => state.ajaxRunning);
+
+    const userId = defineModel<string | null>('id');
+
+    const avatarURL = computed(() => userId.value ? `/api/avatars/32/user/${userId.value}` : null);
+
+    const props = defineProps<UserSelectorProps>();
+
+    const sort = ref<Sort>(new Sort("name", "ASC"));
+
+    const options = shallowRef<SelectOption[]>([]);
+
+    const onRefresh = async () => {
+        Object.assign(state, defaultAjaxStateRunning);
+        try {
+            const payload: SearchRequest = {
+                pager: {
+                    currentPage: 1,
+                    resultsPage: 0,
+                },
+                order: {
+                    field: sort.value.field,
+                    sort: sort.value.order,
+                },
+                filter: {
+                    name: undefined,
+                }
+            };
+            const response = await userService.search(payload);
+            options.value = response.users.map((user: UserResponse) => ({ label: user.name, value: user.id }));
+        } catch (error: unknown) {
+            options.value.length = 0;
+            state.ajaxErrors = true;
+            handleAPIError(error,
+                (apiError) => {
+                    switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "UserSelector.onRefresh" } });
+                            break;
+                        default:
+                            console.error("Unhandled API error", { file: "UserSelector.vue", method: "onRefresh" });
+                            break;
+                    }
+                },
+                (fatalError) => {
+                    console.error("Unhandled API error", { file: "UserSelector.vue", method: "onRefresh" }, { err: fatalError });
+                });
+        }
+        finally {
+            state.ajaxRunning = false;
+        }
+    };
+
+    let stopBusReauthListener: () => void;
+
+    onMounted(() => {
+        stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
+            if (payload.to.includes("UserSelector.onRefresh")) {
+                onRefresh();
+            }
+        });
+        onRefresh();
+    });
+
+    onBeforeUnmount(() => {
+        stopBusReauthListener();
+    });
+</script>
+
+<template>
+    <n-input-group>
+        <div v-if="!props.hideAvatar">
+            <n-avatar v-if="avatarURL" :src="avatarURL" />
+            <n-button secondary :disabled="true" class="doneo-cursor-default doneo-disable-opacity" v-else>
+                <template #icon>
+                    <n-icon :component="IconUserCircle">
+                    </n-icon>
+                </template>
+            </n-button>
+        </div>
+        <n-select filterable :clearable="props.clearable" v-model:value="userId" :options="options"
+            :placeholder="props.placeholder" :size="props.size" :disabled="isDisabled" />
+        <n-button secondary :disabled="true" class="doneo-cursor-default doneo-disable-opacity" v-if="state.ajaxErrors">
+            <template #icon>
+                <n-icon color="red" :component="IconAlertCircle">
+                </n-icon>
+            </template>
+        </n-button>
+    </n-input-group>
+</template>
+
+<style lang="css" scoped></style>
