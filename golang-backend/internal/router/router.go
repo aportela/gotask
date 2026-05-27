@@ -157,6 +157,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Put("/{id:"+uuidPattern+"}", projectHandler.Update)
 		r.Delete("/{id:"+uuidPattern+"}", projectHandler.Delete)
 		r.Get("/{id:"+uuidPattern+"}/permissions", projectPermissionHandler.Search)
+		r.Post("/{id:"+uuidPattern+"}/permissions/", projectPermissionHandler.Add)
 		r.Delete("/{id:"+uuidPattern+"}/permissions/{permission_id:"+uuidPattern+"}", projectPermissionHandler.Delete)
 	})
 
