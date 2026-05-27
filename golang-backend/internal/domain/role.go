@@ -1,8 +1,12 @@
 package domain
 
+type RoleBase struct {
+	ID   string
+	Name string
+}
+
 type Role struct {
-	ID                 string
-	Name               string
+	RoleBase
 	PermissionsBitmask PermissionsBitmask
 }
 

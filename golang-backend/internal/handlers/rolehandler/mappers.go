@@ -34,15 +34,19 @@ func requestPermissionsToDomainPermissionsBitmask(permissions permissionsFlags) 
 
 func addRequestToDomain(request addRequest) domain.Role {
 	return domain.Role{
-		Name:               request.Name,
+		RoleBase: domain.RoleBase{
+			Name: request.Name,
+		},
 		PermissionsBitmask: requestPermissionsToDomainPermissionsBitmask(request.Permissions),
 	}
 }
 
 func updateRequestToDomain(request updateRequest) domain.Role {
 	return domain.Role{
-		ID:                 request.Id,
-		Name:               request.Name,
+		RoleBase: domain.RoleBase{
+			ID:   request.Id,
+			Name: request.Name,
+		},
 		PermissionsBitmask: requestPermissionsToDomainPermissionsBitmask(request.Permissions),
 	}
 }

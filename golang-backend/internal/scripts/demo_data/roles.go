@@ -19,8 +19,10 @@ func createRoles(database database.Database) []string {
 	permissionBitMask := domain.PermissionsBitmask(0)
 	permissionBitMask.AddPermission(domain.PermissionCreate | domain.PermissionUpdate | domain.PermissionDelete | domain.PermissionView | domain.PermissionList | domain.PermissionExecute)
 	err := roleService.Add(context.Background(), domain.Role{
-		ID:                 roleID,
-		Name:               "Administrator",
+		RoleBase: domain.RoleBase{
+			ID:   roleID,
+			Name: "Administrator",
+		},
 		PermissionsBitmask: permissionBitMask,
 	})
 	if err != nil {
@@ -32,8 +34,10 @@ func createRoles(database database.Database) []string {
 	permissionBitMask.Clear()
 	permissionBitMask.AddPermission(domain.PermissionView | domain.PermissionList)
 	err = roleService.Add(context.Background(), domain.Role{
-		ID:                 roleID,
-		Name:               "Guest",
+		RoleBase: domain.RoleBase{
+			ID:   roleID,
+			Name: "Guest",
+		},
 		PermissionsBitmask: permissionBitMask,
 	})
 	if err != nil {

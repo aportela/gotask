@@ -14,8 +14,10 @@ func DomainToDTO(role domain.Role) roleDTO {
 
 func DTOToDomain(role roleDTO) domain.Role {
 	return domain.Role{
-		ID:                 role.ID,
-		Name:               role.Name,
+		RoleBase: domain.RoleBase{
+			ID:   role.ID,
+			Name: role.Name,
+		},
 		PermissionsBitmask: domain.PermissionsBitmask(role.PermissionsBitmask),
 	}
 }

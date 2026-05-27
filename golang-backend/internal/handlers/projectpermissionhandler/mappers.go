@@ -12,7 +12,9 @@ func addRequestToDomain(request addRequest) domain.ProjectPermission {
 			ID: request.UserId,
 		},
 		Role: domain.Role{
-			ID: request.RoleId,
+			RoleBase: domain.RoleBase{
+				ID: request.RoleId,
+			},
 		},
 	}
 }
