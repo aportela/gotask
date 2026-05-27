@@ -279,7 +279,8 @@
                     <h4 class="doneo-permission-group-header">{{
                         t("modules.role.components.RoleForm.headers.projectPermissions")
                         }}</h4>
-                    <n-switch v-model:value="role.permissions.allowUpdateProject" class="doneo-permission-switch">
+                    <n-switch v-model:value="role.permissions.allowUpdateProject" class="doneo-permission-switch"
+                        :disabled="state.ajaxRunning">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.updateProjectAllowed") }}
                         </template>
@@ -287,7 +288,8 @@
                             {{ t("modules.role.components.RoleForm.permissionSwitches.updateProjectAllowed") }}
                         </template>
                     </n-switch>
-                    <n-switch v-model:value="role.permissions.allowDeleteProject" class="doneo-permission-switch">
+                    <n-switch v-model:value="role.permissions.allowDeleteProject" class="doneo-permission-switch"
+                        :disabled="state.ajaxRunning">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.deleteProjectAllowed") }}
                         </template>
@@ -295,7 +297,8 @@
                             {{ t("modules.role.components.RoleForm.permissionSwitches.deleteProjectAllowed") }}
                         </template>
                     </n-switch>
-                    <n-switch v-model:value="role.permissions.allowViewProject" class="doneo-permission-switch">
+                    <n-switch v-model:value="role.permissions.allowViewProject" class="doneo-permission-switch"
+                        :disabled="state.ajaxRunning">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.viewProjectAllowed") }}
                         </template>
@@ -309,7 +312,8 @@
                         t("modules.role.components.RoleForm.headers.taskPermissions")
                         }}
                     </h4>
-                    <n-switch v-model:value="role.permissions.allowAddTask" class="doneo-permission-switch">
+                    <n-switch v-model:value="role.permissions.allowAddTask" class="doneo-permission-switch"
+                        :disabled="state.ajaxRunning">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.addTaskAllowed") }}
                         </template>
@@ -317,7 +321,8 @@
                             {{ t("modules.role.components.RoleForm.permissionSwitches.addTaskAllowed") }}
                         </template>
                     </n-switch>
-                    <n-switch v-model:value="role.permissions.allowUpdateTask" class="doneo-permission-switch">
+                    <n-switch v-model:value="role.permissions.allowUpdateTask" class="doneo-permission-switch"
+                        :disabled="state.ajaxRunning">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.updateTaskAllowed") }}
                         </template>
@@ -325,7 +330,8 @@
                             {{ t("modules.role.components.RoleForm.permissionSwitches.updateTaskAllowed") }}
                         </template>
                     </n-switch>
-                    <n-switch v-model:value="role.permissions.allowDeleteTask" class="doneo-permission-switch">
+                    <n-switch v-model:value="role.permissions.allowDeleteTask" class="doneo-permission-switch"
+                        :disabled="state.ajaxRunning">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.deleteTaskAllowed") }}
                         </template>
@@ -333,7 +339,8 @@
                             {{ t("modules.role.components.RoleForm.permissionSwitches.deleteTaskAllowed") }}
                         </template>
                     </n-switch>
-                    <n-switch v-model:value="role.permissions.allowViewTask" class="doneo-permission-switch">
+                    <n-switch v-model:value="role.permissions.allowViewTask" class="doneo-permission-switch"
+                        :disabled="state.ajaxRunning">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.viewTaskAllowed") }}
                         </template>
