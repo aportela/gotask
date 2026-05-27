@@ -19,6 +19,7 @@
     import { ProjectPermission } from "../../project-permissions/models/project-permission.ts";
 
     import ProjectPermissionsTable from "../../project-permissions/components/ProjectPermissionsTable.vue";
+    import ProjectPermissionForm from "../../project-permissions/components/ProjectPermissionForm.vue";
 
     interface ProjectPermissionsProps {
         style?: string | CSSProperties;
@@ -77,6 +78,17 @@
 
     const onShowAddForm = () => {
         showForm.value = true;
+    };
+
+    const onAdd = (_projectPermission: ProjectPermission) => {
+        showForm.value = false;
+        // TODO:
+        //notify('success', t("modules.projectStatus.components.ManageProjectStatusesPage.notifications.projectStatusAdded", { name: projectPermission.name }));
+        onRefresh();
+    };
+
+    const onCancel = () => {
+        showForm.value = false;
     };
 
     const onRefresh = async () => {
@@ -173,7 +185,8 @@
 
 <template>
     <n-modal v-model:show="showForm">
-        TODO: add permission dialog
+        <ProjectPermissionForm :project-id="props.projectId" mode="add" style="width: 40%;" @add="onAdd"
+            @cancel="onCancel" />
     </n-modal>
     <n-card bordered :style="props.style">
         <ProjectPermissionsTable :project-permissions="filteredPermissions" :loading="state.ajaxRunning"
