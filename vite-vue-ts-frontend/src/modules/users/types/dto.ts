@@ -70,6 +70,10 @@ export type UserResponse = {
   deletedAt: number | null;
 };
 
+export type SearchBaseResponse = {
+  users: UserResponse[];
+};
+
 export type SearchResponse = {
   users: UserResponse[];
   pager: PagerResponse;

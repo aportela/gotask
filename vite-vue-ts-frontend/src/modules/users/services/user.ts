@@ -5,6 +5,7 @@ import type {
   UpdateRequest,
   SearchRequest,
   UserResponse,
+  SearchBaseResponse,
   SearchResponse,
 } from "../types/dto";
 
@@ -31,6 +32,11 @@ export const userService = {
   },
   async get(id: string): Promise<UserResponse> {
     const { data } = await axiosInstance.get<UserResponse>("/users/" + id);
+    return data;
+  },
+  async searchBase(): Promise<SearchBaseResponse> {
+    const { data } =
+      await axiosInstance.get<SearchBaseResponse>("/entities/users");
     return data;
   },
   async search(payload: SearchRequest): Promise<SearchResponse> {

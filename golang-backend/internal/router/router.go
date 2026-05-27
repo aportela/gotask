@@ -61,6 +61,12 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		})
 	})
 
+	apiRouter.Route("/entities", func(r chi.Router) {
+		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
+		userHandler := userhandler.NewUserHandler(db)
+		r.Get("/users", userHandler.SearchBase)
+	})
+
 	apiRouter.Route("/users", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)

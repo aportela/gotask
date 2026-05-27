@@ -61,12 +61,33 @@ func BaseDomainToBaseResponse(user domain.UserBase) UserBaseResponse {
 	}
 }
 
+func domainToBaseResponse(user domain.User) UserBaseResponse {
+	return UserBaseResponse{
+		ID:   user.ID,
+		Name: user.Name,
+	}
+}
+
 func domainArrayToResponseArray(users []domain.User) []userResponse {
 	userResponses := []userResponse{}
 	for _, user := range users {
 		userResponses = append(userResponses, domainToResponse(user))
 	}
 	return userResponses
+}
+
+func domainArrayToBaseResponseArray(users []domain.User) []UserBaseResponse {
+	userResponses := []UserBaseResponse{}
+	for _, user := range users {
+		userResponses = append(userResponses, domainToBaseResponse(user))
+	}
+	return userResponses
+}
+
+func toSearchBaseResponse(users []domain.User) searchBaseResponse {
+	return searchBaseResponse{
+		Users: domainArrayToBaseResponseArray(users),
+	}
 }
 
 func toSearchResponse(users []domain.User, pager browser.Result) searchResponse {

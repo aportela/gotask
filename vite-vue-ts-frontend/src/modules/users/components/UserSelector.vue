@@ -1,13 +1,12 @@
 <script setup lang="ts">
-    import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+    import { shallowRef, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
 
     import { NInputGroup, NButton, NSelect, NIcon, NAvatar, type SelectOption, type SelectSize } from 'naive-ui';
     import { IconAlertCircle, IconUserCircle } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { userService } from '../services/user';
-    import type { SearchRequest, UserResponse } from '../types/dto';
-    import { Sort } from '../../../shared/types/models/sort';
+    import type { UserResponse } from '../types/dto';
     import { appBus } from '../../../shared/composables/bus';
     import { handleAPIError } from '../../../api/client/errorHandler';
 
@@ -28,27 +27,12 @@
 
     const props = defineProps<UserSelectorProps>();
 
-    const sort = ref<Sort>(new Sort("name", "ASC"));
-
     const options = shallowRef<SelectOption[]>([]);
 
     const onRefresh = async () => {
         Object.assign(state, defaultAjaxStateRunning);
         try {
-            const payload: SearchRequest = {
-                pager: {
-                    currentPage: 1,
-                    resultsPage: 0,
-                },
-                order: {
-                    field: sort.value.field,
-                    sort: sort.value.order,
-                },
-                filter: {
-                    name: undefined,
-                }
-            };
-            const response = await userService.search(payload);
+            const response = await userService.searchBase();
             options.value = response.users.map((user: UserResponse) => ({ label: user.name, value: user.id }));
         } catch (error: unknown) {
             options.value.length = 0;

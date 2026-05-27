@@ -60,6 +60,10 @@ type userResponse struct {
 	Permissions permissionsFlags `json:"permissions"`
 }
 
+type searchBaseResponse struct {
+	Users []UserBaseResponse `json:"users"`
+}
+
 type searchResponse struct {
 	Users []userResponse         `json:"users"`
 	Pager handlers.PagerResponse `json:"pager"`
