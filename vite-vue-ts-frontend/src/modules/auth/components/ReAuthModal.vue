@@ -48,13 +48,9 @@
 
 <template>
     <n-modal :title="t('modules.auth.components.reauthModal.title')" v-model:show="show" preset="card"
-        class="doneo-reauth-modal">
+        :style="{ width: '400px' }">
         <LoginForm @success="onSuccessReauth" />
     </n-modal>
 </template>
 
-<style lang="css" scoped>
-    .doneo-reauth-modal {
-        width: 400px;
-    }
-</style>
+<style lang="css" scoped></style>
