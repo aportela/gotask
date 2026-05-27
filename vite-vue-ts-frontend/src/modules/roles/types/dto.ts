@@ -14,6 +14,18 @@ export type Permissions = {
   allowViewTask: boolean;
 };
 
+export const getDefaultPermissions = (): Permissions => {
+  return {
+    allowUpdateProject: false,
+    allowDeleteProject: false,
+    allowViewProject: false,
+    allowAddTask: false,
+    allowUpdateTask: false,
+    allowDeleteTask: false,
+    allowViewTask: false,
+  };
+};
+
 export type AddRequest = {
   name: string;
   permissions: Permissions;

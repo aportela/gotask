@@ -123,7 +123,7 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="role, index in roles" :key="role.id">
+            <tr v-for="role, index in roles" :key="role.id ?? index">
                 <td>
                     <div class="doneo-flex-center-align" style="gap: 8px;">
                         {{ role.name }}

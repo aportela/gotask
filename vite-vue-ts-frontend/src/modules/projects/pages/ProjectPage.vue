@@ -6,10 +6,6 @@
     import { NTabs, NTabPane } from 'naive-ui';
 
     import { Project } from "../models/project";
-    import { ProjectType } from '../../project-types/models/project-type';
-    import { ProjectStatus } from '../../project-statuses/models/project-status';
-    import { ProjectPriority } from '../../project-priorities/models/project-priority';
-    import { UserBase } from '../../users/models/user';
 
     import ProjectMetadataForm from '../components/ProjectMetadataForm.vue';
     import ProjectTasks from '../components/ProjectTasks.vue';
@@ -31,39 +27,7 @@
 
     const projectId = route.params.id as string
 
-    const project = ref<Project>(new Project(
-        {
-            id: "",
-            key: "",
-            summary: "",
-            description: "",
-            type: new ProjectType({
-                id: "",
-                name: "",
-                hexColor: "",
-            }),
-            priority: new ProjectPriority({
-                id: "",
-                name: "",
-                hexColor: "",
-            }),
-            status: new ProjectStatus({
-                id: "",
-                name: "",
-                hexColor: "",
-            }),
-            createdAt: 0,
-            createdBy: new UserBase({
-                id: "",
-                name: "",
-            }),
-            tasksCount: 0,
-            permissionsCount: 0,
-            attachmentsCount: 0,
-            notesCount: 0,
-            historyOperationsCount: 0,
-        }
-    ));
+    const project = ref<Project>(new Project());
 
     const tab = computed({
         get: () => route.params.tab as string,

@@ -111,9 +111,10 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="projectPriority, index in projectPriorities" :key="projectPriority.id">
+            <tr v-for="projectPriority, index in projectPriorities" :key="projectPriority.id ?? index">
                 <td>
-                    <n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor)">{{ projectPriority.name
+                    <n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor ?? '#888888')">{{
+                        projectPriority.name
                         }}</n-tag>
                 </td>
                 <td class="doneo-text-center">

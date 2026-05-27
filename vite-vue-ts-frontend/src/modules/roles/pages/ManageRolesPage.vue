@@ -34,23 +34,7 @@
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
 
-    const selectedItem = ref<Role>(
-        new Role(
-            {
-                id: "",
-                name: "",
-                permissions: {
-                    allowUpdateProject: false,
-                    allowDeleteProject: false,
-                    allowViewProject: false,
-                    allowAddTask: false,
-                    allowUpdateTask: false,
-                    allowDeleteTask: false,
-                    allowViewTask: false,
-                },
-            }
-        )
-    );
+    const selectedItem = ref<Role>(new Role());
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -132,35 +116,39 @@
     };
 
     const onDelete = async (role: Role, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await roleService.delete(role.id);
-            notify('success', t("modules.role.components.ManageRolesPage.notifications.roleDeleted", { name: role.name }));
-            onRefresh();
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedItem.value = role;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageRolesPage.onDelete" } });
-                            break;
-                        case 404:
-                            state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.notFoundError");
-                            break;
-                        default:
-                            state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.deleteError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ManageRolesPage.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (role.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await roleService.delete(role.id);
+                notify('success', t("modules.role.components.ManageRolesPage.notifications.roleDeleted", { name: role.name }));
+                onRefresh();
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedItem.value = role;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageRolesPage.onDelete" } });
+                                break;
+                            case 404:
+                                state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.notFoundError");
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.role.components.ManageRolesPage.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ManageRolesPage.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("role id not set", { file: "ManageRolesPage.vue", method: "onDelete" });
         }
     };
 

@@ -17,7 +17,7 @@
 
     interface ProjectTypeFormProps {
         mode: FormMode;
-        projectTypeId?: string;
+        projectTypeId?: string | null;
         style?: string | CSSProperties;
     }
 
@@ -27,11 +27,8 @@
 
     const { t } = useI18n();
 
-    const projectType = ref<ProjectType>(
-        new ProjectType(
-            { id: "", name: "", hexColor: generateRandomSoftHexColor() }
-        )
-    );
+    const projectType = ref<ProjectType>(new ProjectType());
+    projectType.value.hexColor = generateRandomSoftHexColor();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -131,8 +128,8 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
-                name: projectType.value.name,
-                HexColor: projectType.value.hexColor,
+                name: projectType.value.name ?? "",
+                HexColor: projectType.value.hexColor ?? "",
             };
             const addedRole: ProjectTypeResponse = await projectTypeService.add(payload);
             emit('add', addedRole)
@@ -176,9 +173,9 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
-                id: projectType.value.id,
-                name: projectType.value.name,
-                HexColor: projectType.value.hexColor,
+                id: projectType.value.id ?? "",
+                name: projectType.value.name ?? "",
+                HexColor: projectType.value.hexColor ?? "",
             };
             const updatedRole: ProjectTypeResponse = await projectTypeService.update(payload);
             emit('update', updatedRole)
@@ -273,7 +270,7 @@
             </n-form-item>
             <n-form-item :label="t('Preview')">
                 <n-flex style="width: 100%" align="center" :wrap="false">
-                    <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)" style="width: 100%;">
+                    <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor ?? '#888888')" style="width: 100%;">
                         {{ projectType.name }}
                     </n-tag>
                     <n-color-picker :modes="['hex']" :show-alpha="false" v-model:value="projectType.hexColor">

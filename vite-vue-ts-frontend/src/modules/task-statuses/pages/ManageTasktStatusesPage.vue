@@ -33,11 +33,7 @@
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
 
-    const selectedItem = ref<TaskStatus>(new TaskStatus({
-        id: "",
-        name: "",
-        hexColor: "",
-    }));
+    const selectedItem = ref<TaskStatus>(new TaskStatus());
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -119,35 +115,39 @@
     };
 
     const onDelete = async (taskStatus: TaskStatus, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await taskStatusService.delete(taskStatus.id);
-            notify('success', t("modules.taskStatus.components.ManageTaskStatusesPage.notifications.taskStatusUpdated", { name: taskStatus.name }));
-            onRefresh();
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedItem.value = taskStatus;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskStatusesPage.onDelete" } });
-                            break;
-                        case 404:
-                            state.ajaxErrorMessage = t("modules.taskStatus.components.ManageTaskStatusesPage.errors.notFoundError");
-                            break;
-                        default:
-                            state.ajaxErrorMessage = t("modules.taskStatus.components.ManageTaskStatusesPage.errors.deleteError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.taskStatus.components.ManageTaskStatusesPage.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ManageTaskStatusesPage.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (taskStatus.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await taskStatusService.delete(taskStatus.id);
+                notify('success', t("modules.taskStatus.components.ManageTaskStatusesPage.notifications.taskStatusUpdated", { name: taskStatus.name }));
+                onRefresh();
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedItem.value = taskStatus;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskStatusesPage.onDelete" } });
+                                break;
+                            case 404:
+                                state.ajaxErrorMessage = t("modules.taskStatus.components.ManageTaskStatusesPage.errors.notFoundError");
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.taskStatus.components.ManageTaskStatusesPage.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.taskStatus.components.ManageTaskStatusesPage.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ManageTaskStatusesPage.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("task status id not set", { file: "ManageTaskStatusesPage.vue", method: "onDelete" });
         }
     };
 

@@ -33,11 +33,7 @@
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
 
-    const selectedItem = ref<ProjectPriority>(new ProjectPriority({
-        id: "",
-        name: "",
-        hexColor: "",
-    }));
+    const selectedItem = ref<ProjectPriority>(new ProjectPriority());
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -119,35 +115,39 @@
     };
 
     const onDelete = async (projectPriority: ProjectPriority, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await projectPriorityService.delete(projectPriority.id);
-            notify('success', t("modules.projectPriority.components.ManageProjectPrioritiesPage.notifications.projectPriorityDeleted", { name: projectPriority.name }));
-            onRefresh();
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedItem.value = projectPriority;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectPrioritiesPage.onDelete" } });
-                            break;
-                        case 404:
-                            state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.notFoundError");
-                            break;
-                        default:
-                            state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.deleteError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ManageProjectPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (projectPriority.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await projectPriorityService.delete(projectPriority.id);
+                notify('success', t("modules.projectPriority.components.ManageProjectPrioritiesPage.notifications.projectPriorityDeleted", { name: projectPriority.name }));
+                onRefresh();
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedItem.value = projectPriority;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectPrioritiesPage.onDelete" } });
+                                break;
+                            case 404:
+                                state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.notFoundError");
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.projectPriority.components.ManageProjectPrioritiesPage.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ManageProjectPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("project priority id not set", { file: "ManageProjectPrioritiesPage.vue", method: "onDelete" });
         }
     };
 

@@ -17,7 +17,7 @@
 
     interface UserFormProps {
         mode: FormMode;
-        userId?: string;
+        userId?: string | null;
         style?: string | CSSProperties;
     }
 
@@ -27,9 +27,7 @@
 
     const { t } = useI18n();
 
-    const user = ref<User>(
-        new User({ "id": "", name: "", email: "", permissions: { isSuperUser: false }, createdAt: 0, updatedAt: 0, deletedAt: 0 })
-    );
+    const user = ref<User>(new User());
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -188,10 +186,10 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
-                name: user.value.name,
-                email: user.value.email,
+                name: user.value.name ?? "",
+                email: user.value.email ?? "",
                 permissions: {
-                    isSuperUser: user.value.permissions.isSuperUser,
+                    isSuperUser: user.value.permissions?.isSuperUser ?? false,
                 }
             };
             const addedUser: UserResponse = await userService.add(payload);
@@ -238,12 +236,12 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
-                id: user.value.id,
-                name: user.value.name,
+                id: user.value.id ?? "",
+                name: user.value.name ?? "",
                 password: user.value.password || undefined,
-                email: user.value.email,
+                email: user.value.email ?? "",
                 permissions: {
-                    isSuperUser: user.value.permissions.isSuperUser,
+                    isSuperUser: user.value.permissions?.isSuperUser ?? false,
                 }
             };
             const updatedUser: UserResponse = await userService.update(payload);

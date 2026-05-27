@@ -16,10 +16,6 @@
     import Pager from '../../../shared/components/tables/Pager.vue';
     import { Sort } from '../../../shared/types/models/sort';
     import type { FormMode } from '../../../shared/types/form-mode';
-    import { ProjectType } from '../../project-types/models/project-type';
-    import { ProjectPriority } from '../../project-priorities/models/project-priority';
-    import { ProjectStatus } from '../../project-statuses/models/project-status';
-    import { UserBase } from '../../users/models/user';
 
     const { t } = useI18n();
     const { notify } = useNotify();
@@ -37,22 +33,7 @@
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
 
-    const selectedItem = ref<Project>(new Project({
-        id: "",
-        key: "",
-        summary: "",
-        description: "",
-        type: new ProjectType({ id: "", name: "", hexColor: "" }),
-        priority: new ProjectPriority({ id: "", name: "", hexColor: "" }),
-        status: new ProjectStatus({ id: "", name: "", hexColor: "" }),
-        createdAt: new Date().getTime(),
-        createdBy: new UserBase({ id: "", name: "" }),
-        tasksCount: 0,
-        permissionsCount: 0,
-        attachmentsCount: 0,
-        notesCount: 0,
-        historyOperationsCount: 0,
-    }));
+    const selectedItem = ref<Project>(new Project());
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -142,35 +123,39 @@
     };
 
     const onDelete = async (project: Project, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await projectService.delete(project.id);
-            notify('success', t("modules.project.components.ManageProjectsPage.notifications.projectDeleted", { summary: project.summary }));
-            onRefresh();
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedItem.value = project;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectsPage.onDelete" } });
-                            break;
-                        case 404:
-                            state.ajaxErrorMessage = t("modules.project.components.ManageProjectsPage.errors.notFoundError");
-                            break;
-                        default:
-                            state.ajaxErrorMessage = t("modules.project.components.ManageProjectsPage.errors.deleteError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.project.components.ManageProjectsPage.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ManageProjectsPage.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (project.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await projectService.delete(project.id);
+                notify('success', t("modules.project.components.ManageProjectsPage.notifications.projectDeleted", { summary: project.summary }));
+                onRefresh();
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedItem.value = project;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageProjectsPage.onDelete" } });
+                                break;
+                            case 404:
+                                state.ajaxErrorMessage = t("modules.project.components.ManageProjectsPage.errors.notFoundError");
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.project.components.ManageProjectsPage.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.project.components.ManageProjectsPage.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ManageProjectsPage.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("project id not set", { file: "ManageProjectsPage.vue", method: "onDelete" });
         }
     };
 

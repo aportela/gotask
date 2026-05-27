@@ -110,9 +110,10 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="projectType, index in projectTypes" :key="projectType.id">
+            <tr v-for="projectType, index in projectTypes" :key="projectType.id ?? index">
                 <td>
-                    <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor)">{{ projectType.name }}</n-tag>
+                    <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor ?? '#888888')">{{ projectType.name
+                    }}</n-tag>
                 </td>
                 <td class="doneo-text-center">
                     <UpdateDeleteActionsColumn @update="onUpdate(projectType, index)"

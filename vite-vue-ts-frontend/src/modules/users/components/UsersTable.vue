@@ -204,15 +204,15 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="user, index in users" :key="user.id">
+            <tr v-for="user, index in users" :key="user.id ?? index">
                 <td class="doneo-text-center">
                     <!-- TODO: hide icon /label on small screens ? -->
                     <span class="doneo-flex-center-align">
                         <n-icon :size="16" style="margin-right: 6px;"
-                            :component="user.permissions.isSuperUser ? IconUserKey : IconUser"
-                            :color="user.permissions.isSuperUser ? 'red' : undefined">
+                            :component="user.permissions?.isSuperUser ? IconUserKey : IconUser"
+                            :color="user.permissions?.isSuperUser ? 'red' : undefined">
                         </n-icon>
-                        {{ t(user.permissions.isSuperUser ?
+                        {{ t(user.permissions?.isSuperUser ?
                             "modules.user.components.UsersTable.body.columns.permissions.administrator" :
                             "modules.user.components.UsersTable.body.columns.permissions.user") }}
                     </span>
@@ -221,7 +221,7 @@
                     <AvatarUserName :user-id="user.id" :user-name="user.name" />
                 </td>
                 <td><a :href="'mailto:' + user.email">{{ user.email }}</a></td>
-                <td class="hide-mobile">{{ user.createdAt.toLocaleString() }}</td>
+                <td class="hide-mobile">{{ user.createdAt?.toLocaleString() }}</td>
                 <td class="hide-mobile">{{ user.updatedAt?.toLocaleString() }}</td>
                 <td class="hide-mobile">{{ user.deletedAt?.toLocaleString() }}</td>
                 <td class="doneo-text-center">

@@ -33,11 +33,7 @@
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
 
-    const selectedItem = ref<TaskPriority>(new TaskPriority({
-        id: "",
-        name: "",
-        hexColor: "",
-    }));
+    const selectedItem = ref<TaskPriority>(new TaskPriority());
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -119,35 +115,39 @@
     };
 
     const onDelete = async (taskPriority: TaskPriority, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await taskPriorityService.delete(taskPriority.id);
-            notify('success', t("modules.taskPriority.components.ManageTaskPrioritiesPage.notifications.taskPriorityDeleted", { name: taskPriority.name }));
-            onRefresh();
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedItem.value = taskPriority;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskPrioritiesPage.onDelete" } });
-                            break;
-                        case 404:
-                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.notFoundError");
-                            break;
-                        default:
-                            state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ManageTaskPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (taskPriority.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await taskPriorityService.delete(taskPriority.id);
+                notify('success', t("modules.taskPriority.components.ManageTaskPrioritiesPage.notifications.taskPriorityDeleted", { name: taskPriority.name }));
+                onRefresh();
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedItem.value = taskPriority;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageTaskPrioritiesPage.onDelete" } });
+                                break;
+                            case 404:
+                                state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.notFoundError");
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.taskPriority.components.ManageTaskPrioritiesPage.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ManageTaskPrioritiesPage.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("task priority id not set", { file: "ManageTaskPrioritiesPage.vue", method: "onDelete" });
         }
     };
 

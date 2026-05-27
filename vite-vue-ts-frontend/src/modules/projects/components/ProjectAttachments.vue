@@ -11,7 +11,7 @@
 
     interface ProjectAttachmentsProps {
         style?: string | CSSProperties;
-        projectId: string;
+        projectId: string | null;
     }
 
     const props = defineProps<ProjectAttachmentsProps>();

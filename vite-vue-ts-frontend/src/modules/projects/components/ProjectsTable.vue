@@ -141,18 +141,20 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="project, _index in projects" :key="project.id">
+            <tr v-for="project, index in projects" :key="project.id ?? index">
                 <td>
                     {{ project.key }}
                 </td>
-                <td><n-tag :bordered="false" :color="getNaiveUITagColorProperty(project.type.hexColor)">{{
+                <td><n-tag :bordered="false" :color="getNaiveUITagColorProperty(project.type.hexColor ?? '#888888')">{{
                     project.type.name }}</n-tag>
                 </td>
-                <td><n-tag :bordered="false" :color="getNaiveUITagColorProperty(project.priority.hexColor)">{{
-                    project.priority.name
+                <td><n-tag :bordered="false"
+                        :color="getNaiveUITagColorProperty(project.priority.hexColor ?? '#888888')">{{
+                            project.priority.name
                         }}</n-tag></td>
-                <td><n-tag :bordered="false" :color="getNaiveUITagColorProperty(project.status.hexColor)">{{
-                    project.status.name }}</n-tag></td>
+                <td><n-tag :bordered="false"
+                        :color="getNaiveUITagColorProperty(project.status.hexColor ?? '#888888')">{{
+                            project.status.name }}</n-tag></td>
                 <td>{{ project.summary }}</td>
                 <td>{{ project.createdAt.toLocaleString() }}</td>
                 <td>

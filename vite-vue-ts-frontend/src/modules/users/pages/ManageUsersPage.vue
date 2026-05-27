@@ -157,72 +157,80 @@
     };
 
     const onDelete = async (user: User, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await userService.delete(user.id);
-            notify('success', t("modules.user.components.ManageUsersPage.notifications.userDeleted", { name: user.name }));
-            onRefresh();
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedUser.value = user;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageUsersPage.onDelete" } });
-                            break;
-                        case 404:
-                            // TODO: notification vs error ?
-                            state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.notFoundError");
-                            break;
-                        default:
-                            // TODO: notification vs error ?
-                            state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.deleteError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ManageUsersPage.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (user.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await userService.delete(user.id);
+                notify('success', t("modules.user.components.ManageUsersPage.notifications.userDeleted", { name: user.name }));
+                onRefresh();
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedUser.value = user;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageUsersPage.onDelete" } });
+                                break;
+                            case 404:
+                                // TODO: notification vs error ?
+                                state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.notFoundError");
+                                break;
+                            default:
+                                // TODO: notification vs error ?
+                                state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ManageUsersPage.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("user id not set", { file: "ManageUsersPage.vue", method: "onDelete" });
         }
     };
 
     const onUnDelete = async (user: User, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await userService.unDelete(user.id);
-            notify('success', t("modules.user.components.ManageUsersPage.notifications.userRestored", { name: user.name }));
-            onRefresh();
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedUser.value = user;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageUsersPage.onUnDelete" } });
-                            break;
-                        case 404:
-                            // TODO: notification vs error ?
-                            state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.notFoundError");
-                            break;
-                        default:
-                            // TODO: notification vs error ?
-                            state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.restoreError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.restoreError");
-                    console.error("Unhandled API error", { file: "ManageUsersPage.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (user.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await userService.unDelete(user.id);
+                notify('success', t("modules.user.components.ManageUsersPage.notifications.userRestored", { name: user.name }));
+                onRefresh();
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedUser.value = user;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ManageUsersPage.onUnDelete" } });
+                                break;
+                            case 404:
+                                // TODO: notification vs error ?
+                                state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.notFoundError");
+                                break;
+                            default:
+                                // TODO: notification vs error ?
+                                state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.restoreError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.user.components.ManageUsersPage.errors.restoreError");
+                        console.error("Unhandled API error", { file: "ManageUsersPage.vue", method: "onUnDelete" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("user id not set", { file: "ManageUsersPage.vue", method: "onUnDelete" });
         }
     };
 

@@ -17,7 +17,7 @@
 
     interface ProjectStatusFormProps {
         mode: FormMode;
-        taskPriorityId?: string;
+        taskPriorityId?: string | null;
         style?: string | CSSProperties;
     }
 
@@ -27,11 +27,8 @@
 
     const { t } = useI18n();
 
-    const taskPriority = ref<TaskPriority>(
-        new TaskPriority(
-            { id: "", name: "", hexColor: generateRandomSoftHexColor() }
-        )
-    );
+    const taskPriority = ref<TaskPriority>(new TaskPriority());
+    taskPriority.value.hexColor = generateRandomSoftHexColor();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -135,8 +132,8 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
-                name: taskPriority.value.name,
-                HexColor: taskPriority.value.hexColor,
+                name: taskPriority.value.name ?? "",
+                HexColor: taskPriority.value.hexColor ?? "",
             };
             const addedRole: TaskPriorityResponse = await taskPriorityService.add(payload);
             emit('add', addedRole)
@@ -180,9 +177,9 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
-                id: taskPriority.value.id,
-                name: taskPriority.value.name,
-                HexColor: taskPriority.value.hexColor,
+                id: taskPriority.value.id ?? "",
+                name: taskPriority.value.name ?? "",
+                HexColor: taskPriority.value.hexColor ?? "",
             };
             const updatedRole: TaskPriorityResponse = await taskPriorityService.update(payload);
             emit('update', updatedRole)
@@ -278,7 +275,7 @@
             </n-form-item>
             <n-form-item :label="t('modules.taskPriority.components.TaskPriorityForm.inputs.preview.label')">
                 <n-flex style="width: 100%" align="center" :wrap="false">
-                    <n-tag :color="getNaiveUITagColorProperty(taskPriority.hexColor)" style="width: 100%;">
+                    <n-tag :color="getNaiveUITagColorProperty(taskPriority.hexColor ?? '#888888')" style="width: 100%;">
                         {{ taskPriority.name }}
                     </n-tag>
                     <n-color-picker :modes="['hex']" :show-alpha="false" v-model:value="taskPriority.hexColor">

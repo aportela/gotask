@@ -13,10 +13,11 @@
     import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import type { FormMode } from '../../../shared/types/form-mode';
     import { appBus } from '../../../shared/composables/bus';
+    import { getDefaultPermissions } from '../types/dto';
 
     interface RoleFormProps {
         mode: FormMode;
-        roleId?: string;
+        roleId?: string | null;
         style?: string | CSSProperties;
     }
 
@@ -26,23 +27,7 @@
 
     const { t } = useI18n();
 
-    const role = ref<Role>(
-        new Role(
-            {
-                "id": "",
-                name: "",
-                permissions: {
-                    allowUpdateProject: false,
-                    allowDeleteProject: false,
-                    allowViewProject: false,
-                    allowAddTask: false,
-                    allowUpdateTask: false,
-                    allowDeleteTask: false,
-                    allowViewTask: false,
-                }
-            }
-        )
-    );
+    const role = ref<Role>(new Role());
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -148,8 +133,8 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
-                name: role.value.name,
-                permissions: role.value.permissions,
+                name: role.value.name ?? "",
+                permissions: role.value.permissions ?? getDefaultPermissions(),
             };
             const addedRole: RoleResponse = await roleService.add(payload);
             emit('add', addedRole)
@@ -193,9 +178,9 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
-                id: role.value.id,
-                name: role.value.name,
-                permissions: role.value.permissions,
+                id: role.value.id ?? "",
+                name: role.value.name ?? "",
+                permissions: role.value.permissions ?? getDefaultPermissions(),
             };
             const updatedRole: RoleResponse = await roleService.update(payload);
             emit('update', updatedRole)
@@ -293,7 +278,7 @@
                 <n-gi>
                     <h4 class="doneo-permission-group-header">{{
                         t("modules.role.components.RoleForm.headers.projectPermissions")
-                    }}</h4>
+                        }}</h4>
                     <n-switch v-model:value="role.permissions.allowUpdateProject" class="doneo-permission-switch">
                         <template #checked>
                             {{ t("modules.role.components.RoleForm.permissionSwitches.updateProjectAllowed") }}
@@ -322,7 +307,7 @@
                 <n-gi>
                     <h4 class="doneo-permission-group-header">{{
                         t("modules.role.components.RoleForm.headers.taskPermissions")
-                    }}
+                        }}
                     </h4>
                     <n-switch v-model:value="role.permissions.allowAddTask" class="doneo-permission-switch">
                         <template #checked>

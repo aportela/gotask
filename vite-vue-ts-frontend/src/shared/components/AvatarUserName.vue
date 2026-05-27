@@ -4,8 +4,8 @@
     import { NAvatar } from 'naive-ui';
 
     interface AvatarUserNameProps {
-        userId: string;
-        userName: string;
+        userId: string | null;
+        userName: string | null;
         avatarSize?: number;
     };
 

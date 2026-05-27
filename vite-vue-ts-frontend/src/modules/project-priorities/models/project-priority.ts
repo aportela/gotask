@@ -1,21 +1,21 @@
 import type { ProjectPriorityResponse as ProjectPriorityDTO } from "../types/dto";
 
 export class ProjectPriority {
-  id: string;
-  name: string;
-  hexColor: string;
+  id: string | null;
+  name: string | null;
+  hexColor: string | null;
 
-  constructor(data: ProjectPriorityDTO) {
-    this.id = data.id;
-    this.name = data.name;
-    this.hexColor = data.hexColor;
+  constructor(data?: ProjectPriorityDTO) {
+    this.id = data?.id ?? null;
+    this.name = data?.name ?? null;
+    this.hexColor = data?.hexColor ?? null;
   }
 
   toDTO(): ProjectPriorityDTO {
     return {
-      id: this.id,
-      name: this.name,
-      hexColor: this.hexColor,
+      id: this.id ?? "",
+      name: this.name ?? "",
+      hexColor: this.hexColor ?? "",
     };
   }
 }

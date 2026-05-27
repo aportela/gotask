@@ -19,12 +19,10 @@
     import { ProjectPermission } from "../../project-permissions/models/project-permission.ts";
 
     import ProjectPermissionsTable from "../../project-permissions/components/ProjectPermissionsTable.vue";
-    import { Role } from "../../roles/models/role.ts";
-    import { UserBase } from "../../users/models/user.ts";
 
     interface ProjectPermissionsProps {
         style?: string | CSSProperties;
-        projectId: string;
+        projectId: string | null;
     }
 
     const props = defineProps<ProjectPermissionsProps>();
@@ -53,34 +51,19 @@
 
     const filteredPermissions = computed(() => {
         return items.value.filter((permission) => {
-            const userName = permission.user.name.toLowerCase();
-            const roleName = permission.role.name.toLowerCase();
+            const userName = permission.user?.name?.toLowerCase();
+            const roleName = permission.role?.name?.toLowerCase();
 
             return (
-                (!userFilter.value || userName.includes(userFilter.value)) &&
-                (!roleFilter.value || roleName.includes(roleFilter.value))
+                (!userFilter.value || userName?.includes(userFilter.value)) &&
+                (!roleFilter.value || roleName?.includes(roleFilter.value))
             );
         });
     });
 
     const showForm = ref<boolean>(false);
 
-    const selectedItem = ref<ProjectPermission>(new ProjectPermission({
-        id: "",
-        user: new UserBase({ id: "", name: "" }),
-        role: new Role({
-            id: "", name: "",
-            permissions: {
-                allowUpdateProject: false,
-                allowDeleteProject: false,
-                allowViewProject: false,
-                allowAddTask: false,
-                allowUpdateTask: false,
-                allowDeleteTask: false,
-                allowViewTask: false,
-            },
-        }),
-    }));
+    const selectedItem = ref<ProjectPermission>(new ProjectPermission());
 
     watch(state, (newValue: AjaxStateInterface) => {
         loadingStore.set(newValue.ajaxRunning);
@@ -97,64 +80,72 @@
     };
 
     const onRefresh = async () => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            const results: SearchResponse = await projectPermissionService.search(props.projectId);
-            items.value = results.projectPermissions.map((permission) => new ProjectPermission(permission));
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPermissions.onRefresh" } });
-                            break;
-                        default:
-                            state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
-                    console.error("Unhandled API error", { file: "ProjectPermissions.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (props.projectId) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                const results: SearchResponse = await projectPermissionService.search(props.projectId);
+                items.value = results.projectPermissions.map((permission) => new ProjectPermission(permission));
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPermissions.onRefresh" } });
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
+                        console.error("Unhandled API error", { file: "ProjectPermissions.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("project id not set", { file: "ProjectPermissions.vue", method: "onRefresh" });
         }
     };
 
     const onDelete = async (projectPermission: ProjectPermission, _index?: number) => {
-        Object.assign(state, defaultAjaxStateRunning);
-        try {
-            await projectPermissionService.delete(props.projectId, projectPermission.id);
-            notify('success', t("modules.projectPermission.components.projectPermissions.notifications.projectPermissionDeleted", { user: projectPermission.user.name, role: projectPermission.role.name }));
-            onRefresh();
-            // TODO: not refreshing permission count on parent component
-        } catch (error: unknown) {
-            state.ajaxErrors = true;
-            handleAPIError(error,
-                (apiError) => {
-                    switch (apiError.response?.status) {
-                        case 401:
-                            state.ajaxErrors = false;
-                            selectedItem.value = projectPermission;
-                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPermissions.onDelete" } });
-                            break;
-                        case 404:
-                            state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.notFoundError");
-                            break;
-                        default:
-                            state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.deleteError");
-                            break;
-                    }
-                },
-                (fatalError) => {
-                    state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.deleteError");
-                    console.error("Unhandled API error", { file: "ProjectPermissions.vue", method: "onRefresh" }, { err: fatalError });
-                });
-        } finally {
-            state.ajaxRunning = false;
+        if (props.projectId && projectPermission.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await projectPermissionService.delete(props.projectId, projectPermission.id);
+                notify('success', t("modules.projectPermission.components.projectPermissions.notifications.projectPermissionDeleted", { user: projectPermission.user.name, role: projectPermission.role.name }));
+                onRefresh();
+                // TODO: not refreshing permission count on parent component
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedItem.value = projectPermission;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPermissions.onDelete" } });
+                                break;
+                            case 404:
+                                state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.notFoundError");
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ProjectPermissions.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("(project permission id || project id) not set", { file: "ProjectPermissions.vue", method: "onDelete" });
         }
     };
 

@@ -111,9 +111,9 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="taskPriority, index in taskPriorities" :key="taskPriority.id">
+            <tr v-for="taskPriority, index in taskPriorities" :key="taskPriority.id ?? index">
                 <td>
-                    <n-tag :color="getNaiveUITagColorProperty(taskPriority.hexColor)">{{ taskPriority.name
+                    <n-tag :color="getNaiveUITagColorProperty(taskPriority.hexColor ?? '#888888')">{{ taskPriority.name
                     }}</n-tag>
                 </td>
                 <td class="doneo-text-center">

@@ -13,7 +13,7 @@
 
     interface ProjectTasksProps {
         style?: string | CSSProperties;
-        projectId: string;
+        projectId: string | null;
     }
 
     const props = defineProps<ProjectTasksProps>();

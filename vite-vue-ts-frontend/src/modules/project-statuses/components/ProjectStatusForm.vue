@@ -17,7 +17,7 @@
 
     interface ProjectStatusFormProps {
         mode: FormMode;
-        projectStatusId?: string;
+        projectStatusId?: string | null;
         style?: string | CSSProperties;
     }
 
@@ -27,11 +27,8 @@
 
     const { t } = useI18n();
 
-    const projectStatus = ref<ProjectStatus>(
-        new ProjectStatus(
-            { id: "", name: "", hexColor: generateRandomSoftHexColor() }
-        )
-    );
+    const projectStatus = ref<ProjectStatus>(new ProjectStatus());
+    projectStatus.value.hexColor = generateRandomSoftHexColor();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -131,8 +128,8 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
-                name: projectStatus.value.name,
-                HexColor: projectStatus.value.hexColor,
+                name: projectStatus.value.name ?? "",
+                HexColor: projectStatus.value.hexColor ?? "",
             };
             const addedRole: ProjectStatusResponse = await projectStatusService.add(payload);
             emit('add', addedRole)
@@ -176,9 +173,9 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
-                id: projectStatus.value.id,
-                name: projectStatus.value.name,
-                HexColor: projectStatus.value.hexColor,
+                id: projectStatus.value.id ?? "",
+                name: projectStatus.value.name ?? "",
+                HexColor: projectStatus.value.hexColor ?? "",
             };
             const updatedRole: ProjectStatusResponse = await projectStatusService.update(payload);
             emit('update', updatedRole)
@@ -273,7 +270,8 @@
             </n-form-item>
             <n-form-item :label="t('modules.projectStatus.components.ProjectStatusForm.inputs.preview.label')">
                 <n-flex style="width: 100%" align="center" :wrap="false">
-                    <n-tag :color="getNaiveUITagColorProperty(projectStatus.hexColor)" style="width: 100%;">
+                    <n-tag :color="getNaiveUITagColorProperty(projectStatus.hexColor ?? '#888888')"
+                        style="width: 100%;">
                         {{ projectStatus.name }}
                     </n-tag>
                     <n-color-picker :modes="['hex']" :show-alpha="false" v-model:value="projectStatus.hexColor">

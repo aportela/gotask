@@ -115,13 +115,14 @@
             </tr>
         </template>
         <template #tbody>
-            <tr v-for="projectPermission, index in projectPermissions" :key="projectPermission.id">
+            <tr v-for="projectPermission, index in projectPermissions" :key="projectPermission.id ?? index">
                 <td>
-                    <AvatarUserName :user-id="projectPermission.user.id" :user-name="projectPermission.user.name" />
+                    <AvatarUserName :user-id="projectPermission.user?.id ?? ''"
+                        :user-name="projectPermission.user?.name ?? ''" />
                 </td>
                 <td>{{ projectPermission.role.name }}</td>
                 <td class="doneo-text-center">
-                    <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowUpdateProject">
+                    <n-tooltip trigger="hover" v-if="projectPermission.role?.permissions?.allowUpdateProject">
                         <template #trigger>
                             <n-icon :size="22" class="doneo-cursor-help">
                                 <IconEdit />
@@ -134,7 +135,7 @@
                     <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
                         <IconEdit />
                     </n-icon>
-                    <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowDeleteProject">
+                    <n-tooltip trigger="hover" v-if="projectPermission.role?.permissions?.allowDeleteProject">
                         <template #trigger>
                             <n-icon :size="22" class="doneo-cursor-help">
                                 <IconTrash />
@@ -147,7 +148,7 @@
                     <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
                         <IconTrash />
                     </n-icon>
-                    <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowViewProject">
+                    <n-tooltip trigger="hover" v-if="projectPermission.role?.permissions?.allowViewProject">
                         <template #trigger>
                             <n-icon :size="22" class="doneo-cursor-help">
                                 <IconEyeCheck />
@@ -162,7 +163,7 @@
                     </n-icon>
                 </td>
                 <td class="doneo-text-center">
-                    <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowAddTask">
+                    <n-tooltip trigger="hover" v-if="projectPermission.role?.permissions?.allowAddTask">
                         <template #trigger>
                             <n-icon :size="22" class="doneo-cursor-help">
                                 <IconSquarePlus />
@@ -175,7 +176,7 @@
                     <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
                         <IconSquarePlus />
                     </n-icon>
-                    <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowUpdateTask">
+                    <n-tooltip trigger="hover" v-if="projectPermission.role?.permissions?.allowUpdateTask">
                         <template #trigger>
                             <n-icon :size="22" class="doneo-cursor-help">
                                 <IconEdit />
@@ -188,7 +189,7 @@
                     <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
                         <IconEdit />
                     </n-icon>
-                    <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowDeleteTask">
+                    <n-tooltip trigger="hover" v-if="projectPermission.role?.permissions?.allowDeleteTask">
                         <template #trigger>
                             <n-icon :size="22" class="doneo-cursor-help">
                                 <IconTrash />
@@ -201,7 +202,7 @@
                     <n-icon :size="22" class="doneo-disabled-permission-icon" v-else>
                         <IconTrash />
                     </n-icon>
-                    <n-tooltip trigger="hover" v-if="projectPermission.role.permissions.allowViewTask">
+                    <n-tooltip trigger="hover" v-if="projectPermission.role?.permissions?.allowViewTask">
                         <template #trigger>
                             <n-icon :size="22" class="doneo-cursor-help">
                                 <IconEyeCheck />

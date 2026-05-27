@@ -17,7 +17,7 @@
 
     interface ProjectStatusFormProps {
         mode: FormMode;
-        projectPriorityId?: string;
+        projectPriorityId?: string | null;
         style?: string | CSSProperties;
     }
 
@@ -27,11 +27,8 @@
 
     const { t } = useI18n();
 
-    const projectPriority = ref<ProjectPriority>(
-        new ProjectPriority(
-            { id: "", name: "", hexColor: generateRandomSoftHexColor() }
-        )
-    );
+    const projectPriority = ref<ProjectPriority>(new ProjectPriority());
+    projectPriority.value.hexColor = generateRandomSoftHexColor();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -135,8 +132,8 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: AddRequest = {
-                name: projectPriority.value.name,
-                HexColor: projectPriority.value.hexColor,
+                name: projectPriority.value.name ?? "",
+                HexColor: projectPriority.value.hexColor ?? "",
             };
             const addedRole: ProjectPriorityResponse = await projectPriorityService.add(payload);
             emit('add', addedRole)
@@ -180,9 +177,9 @@
         Object.assign(state, defaultAjaxStateRunning);
         try {
             const payload: UpdateRequest = {
-                id: projectPriority.value.id,
-                name: projectPriority.value.name,
-                HexColor: projectPriority.value.hexColor,
+                id: projectPriority.value.id ?? "",
+                name: projectPriority.value.name ?? "",
+                HexColor: projectPriority.value.hexColor ?? "",
             };
             const updatedRole: ProjectPriorityResponse = await projectPriorityService.update(payload);
             emit('update', updatedRole)
@@ -278,7 +275,8 @@
             </n-form-item>
             <n-form-item :label="t('modules.projectPriority.components.ProjectPriorityForm.inputs.preview.label')">
                 <n-flex style="width: 100%" align="center" :wrap="false">
-                    <n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor)" style="width: 100%;">
+                    <n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor ?? '#888888')"
+                        style="width: 100%;">
                         {{ projectPriority.name }}
                     </n-tag>
                     <n-color-picker :modes="['hex']" :show-alpha="false" v-model:value="projectPriority.hexColor">
