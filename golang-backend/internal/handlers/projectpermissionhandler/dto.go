@@ -5,9 +5,19 @@ import (
 	"github.com/aportela/doneo/internal/handlers/userhandler"
 )
 
+type userBase struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type roleBase struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
 type addRequest struct {
-	UserId string `json:"userId"`
-	RoleId string `json:"roleId"`
+	User userBase `json:"user"`
+	Role roleBase `json:"role"`
 }
 
 type ProjectPermissionResponse struct {

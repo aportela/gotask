@@ -33,7 +33,8 @@ func (h *ProjectPermissionHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	projectPermission := addRequestToDomain(request)
 	projectPermission.ID = utils.UUID()
-	projectId := chi.URLParam(r, "project_id")
+	projectId := chi.URLParam(r, "id")
+
 	err := h.service.Add(r.Context(), projectPermission.ID, projectId, projectPermission.User.ID, projectPermission.Role.ID)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPermissionHandler] failed to add project permission: %w", err))

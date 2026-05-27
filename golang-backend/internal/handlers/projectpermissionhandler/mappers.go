@@ -9,11 +9,11 @@ import (
 func addRequestToDomain(request addRequest) domain.ProjectPermission {
 	return domain.ProjectPermission{
 		User: domain.UserBase{
-			ID: request.UserId,
+			ID: request.User.ID,
 		},
 		Role: domain.Role{
 			RoleBase: domain.RoleBase{
-				ID: request.RoleId,
+				ID: request.Role.ID,
 			},
 		},
 	}
