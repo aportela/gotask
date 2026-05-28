@@ -15,15 +15,20 @@
     interface ProjectFormProps {
         mode: FormMode;
         style?: string | CSSProperties;
+        disabled?: boolean;
     }
 
     const props = defineProps<ProjectFormProps>();
 
     const emit = defineEmits(["save"]);
 
+
     const project = defineModel<Project>("project", { required: true });
 
     const { t } = useI18n();
+
+
+    const keyEditMode = ref<boolean>(false);
 
     const summaryEditMode = ref<boolean>(false);
 
@@ -31,6 +36,7 @@
         emit("save");
     };
 
+    const keyRef = ref<InputInst | null>(null);
     const summaryRef = ref<InputInst | null>(null);
 
     const onToggleSummaryMode = () => {
@@ -43,6 +49,15 @@
         }
     };
 
+    const onToggleKeyMode = () => {
+        keyEditMode.value = !keyEditMode.value;
+        if (keyEditMode) {
+            nextTick(() => {
+                keyRef.value?.focus();
+            });
+
+        }
+    };
 
 </script>
 
@@ -58,42 +73,57 @@
         </n-form-item>
         <n-form>
             <n-form-item label="Key">
-                <n-input v-model:value="project.key" :show-count="true" :maxlength="MAX_KEY_LENGTH" />
-            </n-form-item>
-            <n-form-item label="Summary">
                 <n-input-group>
-                    <n-input v-if="summaryEditMode" v-model:value="project.summary" :show-count="true"
-                        :maxlength="MAX_SUMMARY_LENGTH" ref="summaryRef" />
+                    <n-input v-if="keyEditMode" v-model:value="project.key" :show-count="true"
+                        :maxlength="MAX_KEY_LENGTH" ref="keyRef" :disabled="props.disabled" />
                     <div class="doneo-form-item-view" v-else>{{
                         project.summary
                     }}</div>
-                    <n-button v-if="!summaryEditMode" @click="onToggleSummaryMode">
+                    <n-button v-if="!keyEditMode" @click="onToggleKeyMode" :disabled="props.disabled">
                         <template #icon>
                             <n-icon :component="IconPencil" />
                         </template>
                     </n-button>
-                    <n-button v-if="summaryEditMode" @click="onToggleSummaryMode">
+                    <n-button v-if="keyEditMode" @click="onToggleKeyMode" :disabled="props.disabled">
                         <template #icon>
                             <n-icon :component="IconCheck" />
                         </template>
                     </n-button>
-
+                </n-input-group>
+            </n-form-item>
+            <n-form-item label="Summary">
+                <n-input-group>
+                    <n-input v-if="summaryEditMode" v-model:value="project.summary" :show-count="true"
+                        :maxlength="MAX_SUMMARY_LENGTH" ref="summaryRef" :disabled="props.disabled" />
+                    <div class="doneo-form-item-view" v-else>{{
+                        project.summary
+                    }}</div>
+                    <n-button v-if="!summaryEditMode" @click="onToggleSummaryMode" :disabled="props.disabled">
+                        <template #icon>
+                            <n-icon :component="IconPencil" />
+                        </template>
+                    </n-button>
+                    <n-button v-if="summaryEditMode" @click="onToggleSummaryMode" :disabled="props.disabled">
+                        <template #icon>
+                            <n-icon :component="IconCheck" />
+                        </template>
+                    </n-button>
                 </n-input-group>
             </n-form-item>
             <n-form-item label="Description">
-                <n-input v-model:value="project.description" type="textarea" clearable />
+                <n-input v-model:value="project.description" type="textarea" clearable :disabled="props.disabled" />
             </n-form-item>
             <n-form-item label="Type">
-                <ProjectTypeSelector v-model:id="project.type.id" />
+                <ProjectTypeSelector v-model:id="project.type.id" :disabled="props.disabled" />
             </n-form-item>
             <n-form-item label="Priority">
-                <ProjectPrioritySelector v-model:id="project.priority.id" />
+                <ProjectPrioritySelector v-model:id="project.priority.id" :disabled="props.disabled" />
             </n-form-item>
             <n-form-item label="Status">
-                <ProjectStatusSelector v-model:id="project.status.id" />
+                <ProjectStatusSelector v-model:id="project.status.id" :disabled="props.disabled" />
             </n-form-item>
         </n-form>
-        <n-button @click="onSave">
+        <n-button @click="onSave" :disabled="props.disabled">
             <template #icon>
                 <n-icon :component="IconDeviceFloppy" color="red"></n-icon>
             </template>

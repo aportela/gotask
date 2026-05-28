@@ -233,7 +233,8 @@
 <template>
     <n-tabs placement="top" type="line" animated v-model:value="tab">
         <n-tab-pane name="metadata" tab="Metadata" display-directive="show:lazy">
-            <ProjectMetadataForm mode="add" :project-id="projectId" v-model:project="project" @save="onSave" />
+            <ProjectMetadataForm mode="add" :project-id="projectId" v-model:project="project"
+                :disabled="state.ajaxRunning" @save="onSave" />
         </n-tab-pane>
         <n-tab-pane name="permissions" :tab="permissionsTabLabel" display-directive="show:lazy">
             <ProjectPermissions :project-id="project.id" v-model:item-count="project.permissionsCount" />
