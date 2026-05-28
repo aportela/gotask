@@ -41,3 +41,7 @@ th, td, .n-menu, .n-menu-item, .n-tabs-nav, .n-notification-container {
     white-space: nowrap;
     text-align: center !important;
 }
+
+.doneo-table-header-click-action th:not(:last-of-type) .n-icon {
+    margin-top: 4px;
+}
