@@ -1,8 +1,8 @@
 <script setup lang="ts">
-    import type { CSSProperties } from 'vue';
+    import { ref, type CSSProperties, nextTick } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NCard, NForm, NFormItem, NInput, NButton, NIcon } from 'naive-ui';
+    import { NCard, NForm, NFormItem, NInput, NInputGroup, NButton, NIcon, type InputInst } from 'naive-ui';
 
     import type { FormMode } from '../../../shared/types/form-mode';
     import { Project, MAX_KEY_LENGTH, MAX_SUMMARY_LENGTH } from "../models/project";
@@ -10,7 +10,7 @@
     import ProjectStatusSelector from "../../project-statuses/components/ProjectStatusSelector.vue";
     import ProjectTypeSelector from "../../project-types/components/ProjectTypeSelector.vue";
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
-    import { IconDeviceFloppy } from '@tabler/icons-vue';
+    import { IconCheck, IconDeviceFloppy, IconPencil } from '@tabler/icons-vue';
 
     interface ProjectFormProps {
         mode: FormMode;
@@ -25,9 +25,24 @@
 
     const { t } = useI18n();
 
+    const summaryEditMode = ref<boolean>(false);
+
     const onSave = () => {
         emit("save");
     };
+
+    const summaryRef = ref<InputInst | null>(null);
+
+    const onToggleSummaryMode = () => {
+        summaryEditMode.value = !summaryEditMode.value;
+        if (summaryEditMode) {
+            nextTick(() => {
+                summaryRef.value?.focus();
+            });
+
+        }
+    };
+
 
 </script>
 
@@ -46,7 +61,24 @@
                 <n-input v-model:value="project.key" :show-count="true" :maxlength="MAX_KEY_LENGTH" />
             </n-form-item>
             <n-form-item label="Summary">
-                <n-input v-model:value="project.summary" :show-count="true" :maxlength="MAX_SUMMARY_LENGTH" />
+                <n-input-group>
+                    <n-input v-if="summaryEditMode" v-model:value="project.summary" :show-count="true"
+                        :maxlength="MAX_SUMMARY_LENGTH" ref="summaryRef" />
+                    <div class="doneo-form-item-view" v-else>{{
+                        project.summary
+                    }}</div>
+                    <n-button v-if="!summaryEditMode" @click="onToggleSummaryMode">
+                        <template #icon>
+                            <n-icon :component="IconPencil" />
+                        </template>
+                    </n-button>
+                    <n-button v-if="summaryEditMode" @click="onToggleSummaryMode">
+                        <template #icon>
+                            <n-icon :component="IconCheck" />
+                        </template>
+                    </n-button>
+
+                </n-input-group>
             </n-form-item>
             <n-form-item label="Description">
                 <n-input v-model:value="project.description" type="textarea" clearable />
@@ -63,11 +95,23 @@
         </n-form>
         <n-button @click="onSave">
             <template #icon>
-                <n-icon :component="IconDeviceFloppy"></n-icon>
+                <n-icon :component="IconDeviceFloppy" color="red"></n-icon>
             </template>
             {{ t("shared.buttons.Save.label") }}
         </n-button>
     </n-card>
 </template>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+
+    .doneo-form-item-view {
+        display: block;
+        width: 100%;
+        border: 1px solid #ccc;
+        word-break: break-word;
+        color: var(--n-text-color);
+        border-radius: var(--n-border-radius);
+        padding: 4px 12px;
+        user-select: none;
+    }
+</style>
