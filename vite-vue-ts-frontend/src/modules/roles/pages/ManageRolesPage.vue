@@ -91,7 +91,7 @@
             const response = await roleService.search(payload);
             items.value = response.roles.map((role: RoleResponse) => new Role(role));
         } catch (error: unknown) {
-            items.value.length = 0;
+            items.value = [];
             state.ajaxErrors = true;
             handleAPIError(error,
                 (apiError) => {
@@ -179,7 +179,8 @@
     <n-card :title="t('modules.role.components.ManageRolesPage.header.title')">
         <RolesTable :roles="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter"
+            :error-message="state.ajaxErrorMessage" />
     </n-card>
 </template>
 

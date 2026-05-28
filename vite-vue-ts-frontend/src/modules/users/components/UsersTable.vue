@@ -19,12 +19,14 @@
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
     import { useSessionStore } from '../../../stores/session';
     import type { TimestampRange } from '../../../shared/composables/timestamps';
+    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
         users: User[];
         sortField: string;
         sortOrder: SortOrder;
+        errorMessage?: string | null;
     }
 
     const { t } = useI18n();
@@ -175,7 +177,7 @@
                 </th>
                 <th class="doneo-table-actions-column">{{ t("shared.components.table.header.columns.actions") }}</th>
             </tr>
-            <tr class="hide-mobile">
+            <tr>
                 <th>
                     <UserPermissionsFilterSelector size="small" v-model:value="userPermissionsFilter" />
                 </th>
@@ -203,7 +205,7 @@
                 </th>
             </tr>
         </template>
-        <template #tbody>
+        <template #tbody v-if="!props.errorMessage">
             <tr v-for="user, index in users" :key="user.id ?? index">
                 <td class="doneo-text-center">
                     <!-- TODO: hide icon /label on small screens ? -->
@@ -261,13 +263,15 @@
                 </td>
             </tr>
         </template>
+        <template #error v-else>
+            <tr>
+                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
+                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
+                        :message="props.errorMessage" />
+                </td>
+            </tr>
+        </template>
     </ManageTable>
 </template>
 
-<style lang="css" scoped>
-    @media (max-width: 768px) {
-        .hide-mobile {
-            display: none;
-        }
-    }
-</style>
+<style lang="css" scoped></style>

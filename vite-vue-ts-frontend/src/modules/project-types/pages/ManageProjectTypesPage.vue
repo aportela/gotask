@@ -90,7 +90,7 @@
             const response = await projectTypeService.search(payload);
             items.value = response.projectTypes.map((projectType: ProjectTypeResponse) => new ProjectType(projectType))
         } catch (error: unknown) {
-            items.value.length = 0;
+            items.value = [];
             state.ajaxErrors = true;
             handleAPIError(error,
                 (apiError) => {
@@ -178,7 +178,8 @@
     <n-card :title="t('modules.projectType.components.ManageProjectTypesPage.header.title')">
         <ProjectTypesTable :project-types="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:project-type-name-filter="nameFilter" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:project-type-name-filter="nameFilter"
+            :error-message="state.ajaxErrorMessage" />
     </n-card>
 </template>
 

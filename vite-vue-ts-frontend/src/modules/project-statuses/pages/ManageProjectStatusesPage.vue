@@ -90,7 +90,7 @@
             const response = await projectStatusService.search(payload);
             items.value = response.projectStatuses.map((projectStatus: ProjectStatusResponse) => new ProjectStatus(projectStatus))
         } catch (error: unknown) {
-            items.value.length = 0;
+            items.value = [];
             state.ajaxErrors = true;
             handleAPIError(error,
                 (apiError) => {
@@ -179,7 +179,7 @@
         <ProjectStatusesTable :projectStatuses="items" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
-            v-model:project-status-name-filter="nameFilter" />
+            v-model:project-status-name-filter="nameFilter" :error-message="state.ajaxErrorMessage" />
     </n-card>
 </template>
 

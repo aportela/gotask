@@ -100,7 +100,7 @@
 <template>
     <ManageTable size="small">
         <template #thead>
-            <tr class="table-header-click-action">
+            <tr class="doneo-table-header-click-action">
                 <th v-for="column in columns" :key="column.field" @click="column.sortable && onToggleSort(column.field)"
                     :class="{ 'doneo-cursor-pointer': column.sortable, 'doneo-text-center': column.align === 'center' }">
                     <n-flex justify="space-between" v-if="column.sortable">
@@ -187,7 +187,7 @@
 
 <style lang="css" scoped>
 
-    .table-header-click-action th:not(:last-of-type) .n-icon {
+    .doneo-table-header-click-action th:not(:last-of-type) .n-icon {
         margin-top: 4px;
     }
 

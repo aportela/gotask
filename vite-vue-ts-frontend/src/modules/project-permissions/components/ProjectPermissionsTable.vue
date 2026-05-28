@@ -13,10 +13,12 @@
     import RefreshAddActionsColumn from '../../../shared/components/tables/RefreshAddActionsColumn.vue';
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
+    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
         projectPermissions: ProjectPermission[];
+        errorMessage?: string | null;
     }
 
     const { t } = useI18n();
@@ -96,7 +98,7 @@
                 </th>
                 <th class="doneo-table-actions-column">{{ t("shared.components.table.header.columns.actions") }}</th>
             </tr>
-            <tr class="hide-mobile">
+            <tr>
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.projectPermission.components.projectPermissionsTable.filters.user.placeholder')"
@@ -114,7 +116,7 @@
                 </th>
             </tr>
         </template>
-        <template #tbody>
+        <template #tbody v-if="!props.errorMessage">
             <tr v-for="projectPermission, index in projectPermissions" :key="projectPermission.id ?? index">
                 <td>
                     <AvatarUserName :user-id="projectPermission.user?.id ?? ''"
@@ -228,16 +230,18 @@
                 </td>
             </tr>
         </template>
+        <template #error v-else>
+            <tr>
+                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
+                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
+                        :message="props.errorMessage" />
+                </td>
+            </tr>
+        </template>
     </ManageTable>
 </template>
 
 <style lang="css" scoped>
-    @media (max-width: 768px) {
-        .hide-mobile {
-            display: none;
-        }
-    }
-
     .doneo-disabled-permission-icon {
         opacity: 0.1;
     }

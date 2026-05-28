@@ -14,12 +14,14 @@
     import TableCellHeaderSortIcon from '../../../shared/components/tables/TableCellHeaderSortIcon.vue';
     import UpdateDeleteActionsColumn from '../../../shared/components/tables/UpdateDeleteActionsColumn.vue';
     import RefreshAddActionsColumn from '../../../shared/components/tables/RefreshAddActionsColumn.vue';
+    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
         roles: Role[];
         sortField: string;
         sortOrder: SortOrder;
+        errorMessage?: string | null;
     }
 
     const { t } = useI18n();
@@ -98,7 +100,7 @@
 <template>
     <ManageTable size="small">
         <template #thead>
-            <tr class="table-header-click-action">
+            <tr class="doneo-table-header-click-action">
                 <th v-for="column in columns" :key="column.field" @click="column.sortable && onToggleSort(column.field)"
                     :class="{ 'doneo-cursor-pointer': column.sortable, 'doneo-text-center': column.align === 'center' }">
                     <n-flex justify="space-between" v-if="column.sortable">
@@ -109,7 +111,7 @@
                 </th>
                 <th class="doneo-table-actions-column">{{ t("shared.components.table.header.columns.actions") }}</th>
             </tr>
-            <tr class="hide-mobile">
+            <tr>
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.role.components.RolesTable.filters.name.placeholder')"
@@ -122,7 +124,7 @@
                 </th>
             </tr>
         </template>
-        <template #tbody>
+        <template #tbody v-if="!props.errorMessage">
             <tr v-for="role, index in roles" :key="role.id ?? index">
                 <td>
                     <div class="doneo-flex-center-align" style="gap: 8px;">
@@ -221,21 +223,18 @@
                 </td>
             </tr>
         </template>
+        <template #error v-else>
+            <tr>
+                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
+                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
+                        :message="props.errorMessage" />
+                </td>
+            </tr>
+        </template>
     </ManageTable>
 </template>
 
 <style lang="css" scoped>
-
-    .table-header-click-action th:not(:last-of-type) .n-icon {
-        margin-top: 4px;
-    }
-
-    @media (max-width: 768px) {
-        .hide-mobile {
-            display: none;
-        }
-    }
-
     .doneo-disabled-permission-icon {
         opacity: 0.1;
     }

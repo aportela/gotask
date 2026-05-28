@@ -90,7 +90,7 @@
             const response = await taskPriorityService.search(payload);
             items.value = response.taskPriorities.map((taskPriority: TaskPriorityResponse) => new TaskPriority(taskPriority))
         } catch (error: unknown) {
-            items.value.length = 0;
+            items.value = [];
             state.ajaxErrors = true;
             handleAPIError(error,
                 (apiError) => {
@@ -179,7 +179,7 @@
         <TaskPrioritiesTable :task-priorities="items" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
-            v-model:task-priority-name-filter="nameFilter" />
+            v-model:task-priority-name-filter="nameFilter" :error-message="state.ajaxErrorMessage" />
     </n-card>
 </template>
 

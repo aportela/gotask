@@ -28,7 +28,7 @@
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-    const users = shallowRef<User[]>([]);
+    const items = shallowRef<User[]>([]);
 
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
@@ -130,9 +130,9 @@
             const response = await userService.search(payload);
             totalPages.value = response.pager.totalPages;
             totalResults.value = response.pager.totalResults;
-            users.value = response.users.map((user: UserResponse) => new User(user));
+            items.value = response.users.map((user: UserResponse) => new User(user));
         } catch (error: unknown) {
-            users.value.length = 0;
+            items.value = [];
             state.ajaxErrors = true;
             handleAPIError(error,
                 (apiError) => {
@@ -267,12 +267,13 @@
                 {{ t("modules.user.components.ManageUsersPage.pager.totalItemsLabel", { total: totalResults }) }}
             </template>
         </Pager>
-        <UsersTable :users="users" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
+        <UsersTable :users="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @undelete="onUnDelete" @textfilter-keydown-enter="onRefresh"
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
             v-model:user-type-filter="typeFilter" v-model:user-name-filter="nameFilter"
             v-model:email-filter="emailFilter" v-model:created-at-filter="createdAtFilter"
-            v-model:updated-at-filter="updatedAtFilter" v-model:deleted-at-filter="deletedAtFilter" />
+            v-model:updated-at-filter="updatedAtFilter" v-model:deleted-at-filter="deletedAtFilter"
+            :error-message="state.ajaxErrorMessage" />
     </n-card>
 </template>
 

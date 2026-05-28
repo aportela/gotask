@@ -90,7 +90,7 @@
             const response = await projectPriorityService.search(payload);
             items.value = response.projectPriorities.map((projectPriority: ProjectPriorityResponse) => new ProjectPriority(projectPriority))
         } catch (error: unknown) {
-            items.value.length = 0;
+            items.value = [];
             state.ajaxErrors = true;
             handleAPIError(error,
                 (apiError) => {
@@ -179,7 +179,7 @@
         <ProjectPrioritiesTable :projectPriorities="items" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
-            v-model:project-priority-name-filter="nameFilter" />
+            v-model:project-priority-name-filter="nameFilter" :error-message="state.ajaxErrorMessage" />
     </n-card>
 </template>
 
