@@ -10,7 +10,6 @@
     import { roleService } from '../services/role'
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { RoleResponse, AddRequest, UpdateRequest } from '../types/dto';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import type { FormMode } from '../../../shared/types/form-mode';
     import { appBus } from '../../../shared/composables/bus';
     import { getDefaultPermissions } from '../types/dto';
@@ -121,8 +120,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                roleFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    roleFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -166,8 +169,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                roleFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    roleFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -212,8 +219,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                roleFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    roleFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -351,9 +362,6 @@
                 </n-gi>
             </n-grid>
         </n-form>
-        <template #footer v-if="state.ajaxErrorMessage">
-            <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')" :message="state.ajaxErrorMessage" />
-        </template>
         <template #action>
             <n-flex>
                 <n-button @click="onSave" :disabled="isSaveDisabled">

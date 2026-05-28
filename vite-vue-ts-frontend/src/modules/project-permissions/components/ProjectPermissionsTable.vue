@@ -13,7 +13,6 @@
     import RefreshAddActionsColumn from '../../../shared/components/tables/RefreshAddActionsColumn.vue';
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
     import TextFilterInput from '../../../shared/components/TextFilterInput.vue';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
@@ -227,14 +226,6 @@
                     <n-empty
                         :description="t('modules.projectPermission.components.projectPermissionsTable.warnings.noItemsFound')">
                     </n-empty>
-                </td>
-            </tr>
-        </template>
-        <template #error v-else>
-            <tr>
-                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
-                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
-                        :message="props.errorMessage" />
                 </td>
             </tr>
         </template>

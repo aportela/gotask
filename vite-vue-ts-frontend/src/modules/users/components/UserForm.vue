@@ -11,7 +11,6 @@
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { UserResponse, AddRequest, UpdateRequest } from '../types/dto';
     import { isValidEmail } from '../../../shared/composables/form-validators';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import type { FormMode } from '../../../shared/types/form-mode';
     import { appBus } from '../../../shared/composables/bus';
 
@@ -174,8 +173,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                userFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    userFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -224,8 +227,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                userFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    userFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -276,8 +283,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                userFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    userFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -385,9 +396,6 @@
                 </n-radio-group>
             </n-form-item>
         </n-form>
-        <template #footer v-if="state.ajaxErrorMessage">
-            <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')" :message="state.ajaxErrorMessage" />
-        </template>
         <template #action>
             <n-flex>
                 <n-button @click="onSave" :disabled="isSaveDisabled">

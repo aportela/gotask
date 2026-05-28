@@ -11,7 +11,6 @@
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { ProjectPermissionResponse, AddRequest, } from '../types/dto';
     import { getDefaultPermissions } from '../../roles/types/dto.ts';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import type { FormMode } from '../../../shared/types/form-mode';
     import { appBus } from '../../../shared/composables/bus';
     import UserSelector from '../../users/components/UserSelector.vue';
@@ -115,8 +114,12 @@
             } finally {
                 state.ajaxRunning = false;
                 if (state.ajaxErrors) {
-                    await nextTick();
-                    projectPermissionFormRef.value?.validate().then(() => { }).catch(() => { });
+                    if (state.ajaxErrorMessage) {
+                        appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                    } else {
+                        await nextTick();
+                        projectPermissionFormRef.value?.validate().then(() => { }).catch(() => { });
+                    }
                 }
             }
         } else {
@@ -165,9 +168,6 @@
                     :placeholder="t('modules.projectPermission.components.ProjectPermissionForm.inputs.role.placeholder')" />
             </n-form-item>
         </n-form>
-        <template #footer v-if="state.ajaxErrorMessage">
-            <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')" :message="state.ajaxErrorMessage" />
-        </template>
         <template #action>
             <n-flex>
                 <n-button @click="onSave" :disabled="isSaveDisabled">

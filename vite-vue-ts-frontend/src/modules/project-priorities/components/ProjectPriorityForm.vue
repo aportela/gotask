@@ -11,7 +11,6 @@
     import { handleAPIError } from '../../../api/client/errorHandler';
     import { generateRandomSoftHexColor, getNaiveUITagColorProperty } from '../../../shared/composables/color';
     import type { ProjectPriorityResponse, AddRequest, UpdateRequest } from '../types/dto';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import type { FormMode } from '../../../shared/types/form-mode';
     import { appBus } from '../../../shared/composables/bus';
 
@@ -120,8 +119,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                projectPriorityFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    projectPriorityFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -165,8 +168,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                projectPriorityFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    projectPriorityFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -211,8 +218,12 @@
         } finally {
             state.ajaxRunning = false;
             if (state.ajaxErrors) {
-                await nextTick();
-                projectPriorityFormRef.value?.validate().then(() => { }).catch(() => { });
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                } else {
+                    await nextTick();
+                    projectPriorityFormRef.value?.validate().then(() => { }).catch(() => { });
+                }
             }
         }
     };
@@ -291,9 +302,6 @@
                 </n-flex>
             </n-form-item>
         </n-form>
-        <template #footer v-if="state.ajaxErrorMessage">
-            <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')" :message="state.ajaxErrorMessage" />
-        </template>
         <template #action>
             <n-flex>
                 <n-button @click="onSave" :disabled="isSaveDisabled">

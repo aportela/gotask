@@ -17,7 +17,6 @@
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { projectService } from '../services/project';
     import { handleAPIError } from '../../../api/client/errorHandler';
-    //import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import { appBus } from '../../../shared/composables/bus';
     import type { AddRequest, ProjectResponse, UpdateRequest } from '../types/dto';
 
