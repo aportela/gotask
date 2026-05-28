@@ -1,6 +1,14 @@
 <script setup lang="ts">
-    import { ref, h, watch, nextTick, onMounted } from "vue";
+    import { ref, h, watch, computed, nextTick, onMounted } from "vue";
     import { useI18n } from "vue-i18n";
+
+    // @ts-expect-error
+    import TurndownService from 'turndown'
+
+    const turndownService = new TurndownService()
+
+    import MarkdownIt from "markdown-it"
+    import DOMPurify from "dompurify"
 
     import { NCard, NFlex, NButtonGroup, NButton, NIcon, NFormItem, NInput, useDialog, type InputInst } from 'naive-ui';
     import { IconDeviceFloppy, IconCancel, IconEdit, IconTrash } from '@tabler/icons-vue';
@@ -25,6 +33,18 @@
     const currentMode = ref<NoteItemMode>(!!props.note.id ? "view" : "add");
 
     const body = ref<string>("");
+
+    const md = new MarkdownIt({
+        html: false,
+        linkify: true,
+        typographer: true,
+        breaks: true,
+    })
+
+    const htmlMarkDownBodyPreview = computed(() => {
+        const rawHtml = md.render(props.note.body);
+        return DOMPurify.sanitize(rawHtml);
+    })
 
     const onConfirmDelete = () => {
         dialog.warning({
@@ -76,6 +96,44 @@
         }
     });
 
+    const insertAtCursor = (value: string) => {
+        const el = document.activeElement as HTMLTextAreaElement
+        if (!el) {
+            body.value += value
+            return
+        }
+
+        const start = el.selectionStart ?? body.value.length
+        const end = el.selectionEnd ?? body.value.length
+
+        body.value =
+            body.value.slice(0, start) +
+            value +
+            body.value.slice(end)
+
+        // restore cursor
+        requestAnimationFrame(() => {
+            el.selectionStart = el.selectionEnd = start + value.length
+        })
+    }
+
+    const onPaste = (e: ClipboardEvent) => {
+        const clipboard = e.clipboardData
+        if (!clipboard) return
+
+        const html = clipboard.getData('text/html')
+        const plain = clipboard.getData('text/plain')
+
+        let markdown = plain
+
+        if (html) {
+            markdown = turndownService.turndown(html)
+        }
+
+        e.preventDefault()
+
+        insertAtCursor(markdown)
+    };
 
     onMounted(() => {
         if (!props.note.id) {
@@ -102,11 +160,10 @@
                 </div>
             </span>
         </div>
-        <div class="note-content" v-if="currentMode === 'view'">
-            {{ props.note.body }}
-        </div>
+        <div v-if="currentMode === 'view'" v-html="htmlMarkDownBodyPreview" />
         <n-form-item v-else>
-            <n-input placeholder="Type note body" v-model:value="body" type="textarea" rows="6" ref="bodyRef" />
+            <n-input placeholder="Type note body" v-model:value="body" type="textarea" rows="6" ref="bodyRef"
+                @paste="onPaste" />
         </n-form-item>
 
         <n-flex justify="end">
@@ -164,12 +221,8 @@
         color: #999;
     }
 
-    .note-content {
-        font-size: 14px;
-        white-space: pre-line;
-    }
-
     .doneo-note-bottom-action-buttons {
         margin-top: 16px;
     }
+
 </style>
