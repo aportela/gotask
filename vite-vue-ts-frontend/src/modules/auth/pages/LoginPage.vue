@@ -9,6 +9,7 @@
     import GithubButton from "../../../shared/components/buttons/GithubButton.vue";
     import SwitchColorSchemeButton from "../../../shared/components/buttons/SwitchColorSchemeButton.vue";
     import SwitchLocaleButton from "../../../shared/components/buttons/SwitchLocaleButton.vue";
+    import RemoteAPIAlertModal from "../../../shared/components/modals/RemoteAPIAlertModal.vue";
 
     const router = useRouter();
 
@@ -47,6 +48,7 @@
             </div>
         </div>
     </div>
+    <RemoteAPIAlertModal />
 </template>
 
 <style lang="css" scoped>

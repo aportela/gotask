@@ -9,11 +9,11 @@
     import { isValidEmail } from '../../../shared/composables/form-validators';
     import { createStorageEntry } from '../../../shared/composables/localStorage';
     import { useSessionStore } from "../../../stores/session";
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
     import { authService } from '../../../modules/auth/services/auth';
     import type { SignInRequest, SignInResponse } from '../../../modules/auth/types/dto';
     import { handleAPIError } from '../../../api/client/errorHandler';
     import { MAX_EMAIL_LENGTH, MIN_PASSWORD_LENGTH, User } from "../../../modules/users/models/user";
+    import { appBus } from '../../../shared/composables/bus.ts';
 
     type signInFormValuesInterface = {
         email: string;
@@ -115,19 +115,23 @@
                                 serverErrors.value.password = "modules.auth.components.LoginForm.warnings.incorrectPassword";
                                 break;
                             default:
-                                state.ajaxErrorMessage = t("shared.errorMessages.invalidAPIResponseCode");
+                                state.ajaxErrorMessage = t("modules.auth.components.LoginForm.errors.signInError");
                                 break;
                         }
                     },
                     (fatalError) => {
-                        state.ajaxErrorMessage = t("shared.errorMessages.uncaugthException");
+                        state.ajaxErrorMessage = t("modules.auth.components.LoginForm.errors.signInError");
                         console.error("Fatal error", { file: "LoginForm.vue", method: "onSubmit", details: "uncaught exception", error: fatalError });
                     });
             } finally {
                 state.ajaxRunning = false;
                 if (state.ajaxErrors) {
-                    await nextTick();
-                    signInFormRef.value?.validate().then(() => { }).catch(() => { });
+                    if (state.ajaxErrorMessage) {
+                        appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                    } else {
+                        await nextTick();
+                        signInFormRef.value?.validate().then(() => { }).catch(() => { });
+                    }
                 }
             }
         } else {
@@ -204,8 +208,6 @@
             </n-form-item>
         </n-form>
     </n-spin>
-    <RemoteAPIAlert v-if="state.ajaxErrorMessage" type="error"
-        :title="t('modules.auth.components.LoginForm.errors.signInError')" :message="state.ajaxErrorMessage" />
 </template>
 
 <style lang="css" scoped></style>
