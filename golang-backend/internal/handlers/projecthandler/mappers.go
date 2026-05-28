@@ -12,17 +12,37 @@ import (
 
 func addRequestToDomain(request addRequest) domain.Project {
 	return domain.Project{
-		ID:      request.ID,
-		Key:     request.Key,
-		Summary: request.Summary,
+		ID:          request.ID,
+		Key:         request.Key,
+		Summary:     request.Summary,
+		Description: request.Description,
+		Type: domain.ProjectType{
+			ID: request.Type.ID,
+		},
+		Priority: domain.ProjectPriority{
+			ID: request.Priority.ID,
+		},
+		Status: domain.ProjectStatus{
+			ID: request.Status.ID,
+		},
 	}
 }
 
 func updateRequestToDomain(request updateRequest) domain.Project {
 	return domain.Project{
-		ID:      request.ID,
-		Key:     request.Key,
-		Summary: request.Summary,
+		ID:          request.ID,
+		Key:         request.Key,
+		Summary:     request.Summary,
+		Description: request.Description,
+		Type: domain.ProjectType{
+			ID: request.Type.ID,
+		},
+		Priority: domain.ProjectPriority{
+			ID: request.Priority.ID,
+		},
+		Status: domain.ProjectStatus{
+			ID: request.Status.ID,
+		},
 	}
 }
 

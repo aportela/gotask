@@ -8,16 +8,36 @@ import (
 	"github.com/aportela/doneo/internal/handlers/userhandler"
 )
 
+type projectType struct {
+	ID string `json:"id"`
+}
+
+type projectPriority struct {
+	ID string `json:"id"`
+}
+
+type projectStatus struct {
+	ID string `json:"id"`
+}
+
 type addRequest struct {
-	ID      string `json:"id"`
-	Key     string `json:"key"`
-	Summary string `json:"summary"`
+	ID          string          `json:"id"`
+	Key         string          `json:"key"`
+	Summary     string          `json:"summary"`
+	Description *string         `json:"description"`
+	Type        projectType     `json:"type"`
+	Priority    projectPriority `json:"priority"`
+	Status      projectStatus   `json:"status"`
 }
 
 type updateRequest struct {
-	ID      string `json:"id"`
-	Key     string `json:"key"`
-	Summary string `json:"summary"`
+	ID          string          `json:"id"`
+	Key         string          `json:"key"`
+	Summary     string          `json:"summary"`
+	Description *string         `json:"description"`
+	Type        projectType     `json:"type"`
+	Priority    projectPriority `json:"priority"`
+	Status      projectStatus   `json:"status"`
 }
 
 type filterRequest struct {
