@@ -12,12 +12,14 @@ import type { UserBaseResponse } from "../../users/types/dto";
 export type AddRequest = {
   key: string;
   summary: string;
+  description: string | null;
 };
 
 export type UpdateRequest = {
   id: string;
   key: string;
   summary: string;
+  description: string | null;
 };
 
 type SearchRequestFilter = {
