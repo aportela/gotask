@@ -145,9 +145,10 @@
                 </div>
             </span>
         </div>
-        <div v-if="currentMode === 'view'" v-html="htmlMarkDownBodyPreview" />
-        <n-form-item v-else>
-            <n-input placeholder="Type note body" v-model:value="body" type="textarea" rows="6" ref="bodyRef"
+
+        <n-form-item>
+            <div v-if="currentMode === 'view'" v-html="htmlMarkDownBodyPreview" />
+            <n-input v-else placeholder="Type note body" v-model:value="body" type="textarea" rows="6" ref="bodyRef"
                 @paste="onPaste" />
         </n-form-item>
 
