@@ -106,7 +106,16 @@
             const payload: AddRequest = {
                 key: project.value.key ?? "",
                 summary: project.value.summary ?? "",
-                description: project.value.description
+                description: project.value.description,
+                type: {
+                    id: project.value.type.id ?? ""
+                },
+                priority: {
+                    id: project.value.priority.id ?? ""
+                },
+                status: {
+                    id: project.value.status.id ?? ""
+                }
             };
             const response: ProjectResponse = await projectService.add(payload);
             if (response.id === project.value.id) {
@@ -149,7 +158,16 @@
                 id: project.value.id ?? "",
                 key: project.value.key ?? "",
                 summary: project.value.summary ?? "",
-                description: project.value.description
+                description: project.value.description,
+                type: {
+                    id: project.value.type.id ?? ""
+                },
+                priority: {
+                    id: project.value.priority.id ?? ""
+                },
+                status: {
+                    id: project.value.status.id ?? ""
+                }
             };
             const response: ProjectResponse = await projectService.update(payload);
             if (response.id === project.value.id) {

@@ -13,6 +13,15 @@ export type AddRequest = {
   key: string;
   summary: string;
   description: string | null;
+  type: {
+    id: string;
+  };
+  priority: {
+    id: string;
+  };
+  status: {
+    id: string;
+  };
 };
 
 export type UpdateRequest = {
@@ -20,6 +29,15 @@ export type UpdateRequest = {
   key: string;
   summary: string;
   description: string | null;
+  type: {
+    id: string;
+  };
+  priority: {
+    id: string;
+  };
+  status: {
+    id: string;
+  };
 };
 
 type SearchRequestFilter = {
