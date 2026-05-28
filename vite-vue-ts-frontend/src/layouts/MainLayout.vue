@@ -13,8 +13,7 @@
     import SearchModal from '../shared/components/modals/SearchModal.vue';
     import SidebarMenu from './SidebarMenu.vue';
     import ReAuthModal from '../modules/auth/components/ReAuthModal.vue';
-
-
+    import RemoteAPIAlertModal from '../shared/components/modals/RemoteAPIAlertModal.vue';
 
     const sessionStore = useSessionStore();
 
@@ -82,6 +81,7 @@
     <n-dialog-provider>
         <n-spin style="height: 100vh;" :show="loadingStore.isLoading">
             <ReAuthModal />
+            <RemoteAPIAlertModal />
             <n-layout>
                 <n-drawer v-model:show="mobileMenuOpen" placement="left" :width="220">
                     <n-drawer-content closable>

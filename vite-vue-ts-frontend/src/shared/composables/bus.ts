@@ -3,6 +3,7 @@ import { useEventBus } from "@vueuse/core";
 type AppBusEvents = {
   reauthRequired: { emitter: string };
   reauthValidNotify: { to: string[] };
+  remoteAPIError: { errorMessage: string };
 };
 
 type BusEventMap = {
