@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, reactive, computed, nextTick, onMounted, onBeforeUnmount } from 'vue';
+    import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
     import { useI18n } from "vue-i18n";
     import { useRoute, useRouter } from 'vue-router';
 
@@ -85,9 +85,10 @@
                 });
         } finally {
             state.ajaxRunning = false;
-            if (state.ajaxErrors) {
-                await nextTick();
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
             }
+
         }
     };
 
@@ -134,6 +135,10 @@
                 });
         } finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
+
         }
     };
 
@@ -176,6 +181,10 @@
                 });
         } finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
+
         }
     };
 

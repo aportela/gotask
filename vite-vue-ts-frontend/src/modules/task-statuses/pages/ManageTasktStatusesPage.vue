@@ -111,6 +111,9 @@
         }
         finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
         }
     };
 
@@ -145,6 +148,9 @@
                     });
             } finally {
                 state.ajaxRunning = false;
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                }
             }
         } else {
             console.error("task status id not set", { file: "ManageTaskStatusesPage.vue", method: "onDelete" });
@@ -178,8 +184,7 @@
     <n-card :title="t('modules.taskStatus.components.ManageTaskStatusesPage.header.title')">
         <TaskStatusesTable :task-statuses="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:task-status-name-filter="nameFilter"
-            :error-message="state.ajaxErrorMessage" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:task-status-name-filter="nameFilter" />
     </n-card>
 </template>
 

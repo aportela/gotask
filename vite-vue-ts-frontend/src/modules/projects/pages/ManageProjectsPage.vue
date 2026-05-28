@@ -119,6 +119,9 @@
         }
         finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
         }
     };
 
@@ -153,6 +156,9 @@
                     });
             } finally {
                 state.ajaxRunning = false;
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                }
             }
         } else {
             console.error("project id not set", { file: "ManageProjectsPage.vue", method: "onDelete" });
@@ -187,7 +193,7 @@
         </Pager>
         <ProjectsTable :projects="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" :error-message="state.ajaxErrorMessage" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" />
     </n-card>
 </template>
 

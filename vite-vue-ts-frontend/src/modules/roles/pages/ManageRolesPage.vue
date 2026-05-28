@@ -112,6 +112,10 @@
         }
         finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
+
         }
     };
 
@@ -146,6 +150,9 @@
                     });
             } finally {
                 state.ajaxRunning = false;
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                }
             }
         } else {
             console.error("role id not set", { file: "ManageRolesPage.vue", method: "onDelete" });
@@ -179,8 +186,7 @@
     <n-card :title="t('modules.role.components.ManageRolesPage.header.title')">
         <RolesTable :roles="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
             @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter"
-            :error-message="state.ajaxErrorMessage" />
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:role-name-filter="nameFilter" />
     </n-card>
 </template>
 

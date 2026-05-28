@@ -153,6 +153,9 @@
         }
         finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
         }
     };
 
@@ -189,6 +192,9 @@
                     });
             } finally {
                 state.ajaxRunning = false;
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                }
             }
         } else {
             console.error("user id not set", { file: "ManageUsersPage.vue", method: "onDelete" });
@@ -228,6 +234,9 @@
                     });
             } finally {
                 state.ajaxRunning = false;
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                }
             }
         } else {
             console.error("user id not set", { file: "ManageUsersPage.vue", method: "onUnDelete" });
@@ -272,8 +281,7 @@
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
             v-model:user-type-filter="typeFilter" v-model:user-name-filter="nameFilter"
             v-model:email-filter="emailFilter" v-model:created-at-filter="createdAtFilter"
-            v-model:updated-at-filter="updatedAtFilter" v-model:deleted-at-filter="deletedAtFilter"
-            :error-message="state.ajaxErrorMessage" />
+            v-model:updated-at-filter="updatedAtFilter" v-model:deleted-at-filter="deletedAtFilter" />
     </n-card>
 </template>
 

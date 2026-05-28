@@ -111,6 +111,9 @@
         }
         finally {
             state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
         }
     };
 
@@ -145,6 +148,9 @@
                     });
             } finally {
                 state.ajaxRunning = false;
+                if (state.ajaxErrorMessage) {
+                    appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+                }
             }
         } else {
             console.error("project status id not set", { file: "ManageProjectStatusesPage.vue", method: "onDelete" });
@@ -179,7 +185,7 @@
         <ProjectStatusesTable :projectStatuses="items" :loading="state.ajaxRunning" @refresh="onRefresh"
             @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
             :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
-            v-model:project-status-name-filter="nameFilter" :error-message="state.ajaxErrorMessage" />
+            v-model:project-status-name-filter="nameFilter" />
     </n-card>
 </template>
 

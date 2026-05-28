@@ -19,14 +19,12 @@
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
     import { useSessionStore } from '../../../stores/session';
     import type { TimestampRange } from '../../../shared/composables/timestamps';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
         users: User[];
         sortField: string;
         sortOrder: SortOrder;
-        errorMessage?: string | null;
     }
 
     const { t } = useI18n();
@@ -205,7 +203,7 @@
                 </th>
             </tr>
         </template>
-        <template #tbody v-if="!props.errorMessage">
+        <template #tbody>
             <tr v-for="user, index in users" :key="user.id ?? index">
                 <td class="doneo-text-center">
                     <!-- TODO: hide icon /label on small screens ? -->
@@ -260,14 +258,6 @@
                 <td :colspan="columns.length + 1" v-if="users.length < 1 && !props.loading">
                     <n-empty :description="t('modules.user.components.UsersTable.warnings.noItemsFound')">
                     </n-empty>
-                </td>
-            </tr>
-        </template>
-        <template #error v-else>
-            <tr>
-                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
-                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
-                        :message="props.errorMessage" />
                 </td>
             </tr>
         </template>

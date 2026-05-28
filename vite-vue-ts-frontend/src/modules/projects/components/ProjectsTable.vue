@@ -18,14 +18,12 @@
     import DateFilterSelect from '../../../shared/components/selectors/DateFilterSelect.vue';
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
     import { getNaiveUITagColorProperty } from '../../../shared/composables/color';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
         projects: Project[];
         sortField: string;
         sortOrder: SortOrder;
-        errorMessage?: string | null;
     }
 
     const { t } = useI18n();
@@ -142,7 +140,7 @@
                 </th>
             </tr>
         </template>
-        <template #tbody v-if="!props.errorMessage">
+        <template #tbody>
             <tr v-for="project, index in projects" :key="project.id ?? index">
                 <td>
                     {{ project.key }}
@@ -181,14 +179,6 @@
                 <td :colspan="columns.length + 1" v-if="projects.length < 1 && !props.loading">
                     <n-empty :description="t('modules.project.components.ProjectsTable.warnings.noItemsFound')">
                     </n-empty>
-                </td>
-            </tr>
-        </template>
-        <template #error v-else>
-            <tr>
-                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
-                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
-                        :message="props.errorMessage" />
                 </td>
             </tr>
         </template>

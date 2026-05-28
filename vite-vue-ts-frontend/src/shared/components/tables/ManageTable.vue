@@ -16,7 +16,6 @@
         </thead>
         <tbody>
             <slot name="tbody" />
-            <slot name="error" />
         </tbody>
         <tfoot>
             <slot name="tfoot" />

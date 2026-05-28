@@ -15,14 +15,12 @@
     import UpdateDeleteActionsColumn from '../../../shared/components/tables/UpdateDeleteActionsColumn.vue';
     import RefreshAddActionsColumn from '../../../shared/components/tables/RefreshAddActionsColumn.vue';
     import { getNaiveUITagColorProperty } from '../../../shared/composables/color';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
         projectTypes: ProjectType[];
         sortField: string;
         sortOrder: SortOrder;
-        errorMessage?: string | null;
     }
 
     const { t } = useI18n();
@@ -111,7 +109,7 @@
                 </th>
             </tr>
         </template>
-        <template #tbody v-if="!props.errorMessage">
+        <template #tbody>
             <tr v-for="projectType, index in projectTypes" :key="projectType.id ?? index">
                 <td>
                     <n-tag :color="getNaiveUITagColorProperty(projectType.hexColor ?? '#888888')">{{ projectType.name
@@ -129,14 +127,6 @@
                 </td>
             </tr>
 
-        </template>
-        <template #error v-else>
-            <tr>
-                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
-                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
-                        :message="props.errorMessage" />
-                </td>
-            </tr>
         </template>
     </ManageTable>
 </template>

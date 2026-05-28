@@ -15,14 +15,12 @@
     import UpdateDeleteActionsColumn from '../../../shared/components/tables/UpdateDeleteActionsColumn.vue';
     import RefreshAddActionsColumn from '../../../shared/components/tables/RefreshAddActionsColumn.vue';
     import { getNaiveUITagColorProperty } from '../../../shared/composables/color';
-    import RemoteAPIAlert from '../../../shared/components/alerts/RemoteAPIAlert.vue';
 
     interface Props {
         loading: boolean;
         taskPriorities: TaskPriority[];
         sortField: string;
         sortOrder: SortOrder;
-        errorMessage?: string | null;
     }
 
     const { t } = useI18n();
@@ -112,11 +110,11 @@
                 </th>
             </tr>
         </template>
-        <template #tbody v-if="!props.errorMessage">
+        <template #tbody>
             <tr v-for="taskPriority, index in taskPriorities" :key="taskPriority.id ?? index">
                 <td>
                     <n-tag :color="getNaiveUITagColorProperty(taskPriority.hexColor ?? '#888888')">{{ taskPriority.name
-                    }}</n-tag>
+                        }}</n-tag>
                 </td>
                 <td class="doneo-text-center">
                     <UpdateDeleteActionsColumn @update="onUpdate(taskPriority, index)"
@@ -128,14 +126,6 @@
                     <n-empty
                         :description="t('modules.taskPriority.components.TaskPrioritiesTable.warnings.noItemsFound')">
                     </n-empty>
-                </td>
-            </tr>
-        </template>
-        <template #error v-else>
-            <tr>
-                <td :colspan="columns.length + 1" v-if="props.errorMessage && !props.loading">
-                    <RemoteAPIAlert type="error" :title="t('shared.errorMessages.Error')"
-                        :message="props.errorMessage" />
                 </td>
             </tr>
         </template>
