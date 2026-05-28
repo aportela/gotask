@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue';
+    import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue';
     import { useI18n } from "vue-i18n";
     import { useRoute, useRouter } from 'vue-router';
 
@@ -14,6 +14,7 @@
     import ProjectNotes from '../components/ProjectNotes.vue';
     import ProjectHistoryOperations from '../components/ProjectHistoryOperations.vue';
 
+    import { useLoadingStore } from '../../../stores/loading';
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { projectService } from '../services/project';
     import { handleAPIError } from '../../../api/client/errorHandler';
@@ -21,6 +22,7 @@
     import type { AddRequest, ProjectResponse, UpdateRequest } from '../types/dto';
 
     const { t } = useI18n();
+    const loadingStore = useLoadingStore();
     const route = useRoute();
     const router = useRouter();
 
@@ -50,6 +52,10 @@
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
     const serverErrors = ref<Record<string, string>>({});
+
+    watch(state, (newValue: AjaxStateInterface) => {
+        loadingStore.set(newValue.ajaxRunning);
+    });
 
     const onGet = async (id: string) => {
         serverErrors.value = {};
