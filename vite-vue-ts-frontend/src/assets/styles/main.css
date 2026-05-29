@@ -30,6 +30,10 @@
     user-select: none;
 }
 
+.doneo-link-text-color-default {
+    color: var(--n-text-color);
+}
+
 /* deny select text (clicking at element) */
 th, td, .n-menu, .n-menu-item, .n-tabs-nav, .n-notification-container {
         user-select: none;

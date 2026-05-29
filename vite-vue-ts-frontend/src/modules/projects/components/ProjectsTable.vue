@@ -170,7 +170,10 @@
                 <td><n-tag :bordered="false"
                         :color="getNaiveUITagColorProperty(project.status.hexColor ?? '#888888')">{{
                             project.status.name }}</n-tag></td>
-                <td>{{ project.summary }}</td>
+                <td><router-link :to="{ name: 'projectTab', params: { id: project.id, tab: 'metadata' } }"
+                        class="doneo-link-text-color-default">{{
+                            project.summary
+                        }}</router-link></td>
                 <td>{{ project.createdAt.toLocaleString() }}</td>
                 <td>
                     <AvatarUserName :user-id="project.createdBy.id" :user-name="project.createdBy.name" />
