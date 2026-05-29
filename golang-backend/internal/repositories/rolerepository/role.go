@@ -159,7 +159,7 @@ func (roleRepository *roleRepository) Search(ctx context.Context, pager browser.
 	sqlOrder := fmt.Sprintf(" ORDER BY %s %s ", field, sort)
 	sqlWhere := ""
 	var sqlWhereConditions []string
-	if filter.Name != nil {
+	if filter.Name != nil && len(*filter.Name) > 0 {
 		sqlWhereConditions = append(sqlWhereConditions, "R.name LIKE ?")
 		filterArgs = append(filterArgs, "%"+*filter.Name+"%")
 	}

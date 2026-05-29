@@ -306,7 +306,7 @@ func (projectRepository *projectRepository) Search(ctx context.Context, pager br
 	sqlOrder := fmt.Sprintf(" ORDER BY %s %s ", field, sort)
 	sqlWhere := ""
 	var sqlWhereConditions []string
-	if filter.Key != nil {
+	if filter.Key != nil && len(*filter.Key) > 0 {
 		sqlWhereConditions = append(sqlWhereConditions, "P.key LIKE ?")
 		filterArgs = append(filterArgs, "%"+*filter.Key+"%")
 	}

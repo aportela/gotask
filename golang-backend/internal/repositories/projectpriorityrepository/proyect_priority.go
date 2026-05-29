@@ -165,7 +165,7 @@ func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.C
 	sqlOrder := fmt.Sprintf(" ORDER BY %s %s ", field, sort)
 	sqlWhere := ""
 	var sqlWhereConditions []string
-	if filter.Name != nil {
+	if filter.Name != nil && len(*filter.Name) > 0 {
 		sqlWhereConditions = append(sqlWhereConditions, "PP.name LIKE ?")
 		filterArgs = append(filterArgs, "%"+*filter.Name+"%")
 	}

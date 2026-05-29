@@ -242,11 +242,11 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 	sqlOrder := fmt.Sprintf(" ORDER BY %s %s ", field, sort)
 	sqlWhere := ""
 	var sqlWhereConditions []string
-	if filter.Name != nil {
+	if filter.Name != nil && len(*filter.Name) > 0 {
 		sqlWhereConditions = append(sqlWhereConditions, "U.name LIKE ?")
 		filterArgs = append(filterArgs, "%"+*filter.Name+"%")
 	}
-	if filter.Email != nil {
+	if filter.Email != nil && len(*filter.Email) > 0 {
 		sqlWhereConditions = append(sqlWhereConditions, "U.email LIKE ?")
 		filterArgs = append(filterArgs, "%"+*filter.Email+"%")
 	}
@@ -259,31 +259,31 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 		filterArgs = append(filterArgs, filter.ForbiddenPermissionsBitmask)
 	}
 	if filter.CreatedAt != nil {
-		if filter.CreatedAt.From != nil {
+		if filter.CreatedAt.From != nil && *filter.CreatedAt.From > 0 {
 			sqlWhereConditions = append(sqlWhereConditions, "U.created_at >= ?")
 			filterArgs = append(filterArgs, filter.CreatedAt.From)
 		}
-		if filter.CreatedAt.To != nil {
+		if filter.CreatedAt.To != nil && *filter.CreatedAt.To > 0 {
 			sqlWhereConditions = append(sqlWhereConditions, "U.created_at <= ?")
 			filterArgs = append(filterArgs, filter.CreatedAt.To)
 		}
 	}
 	if filter.UpdatedAt != nil {
-		if filter.UpdatedAt.From != nil {
+		if filter.UpdatedAt.From != nil && *filter.UpdatedAt.From > 0 {
 			sqlWhereConditions = append(sqlWhereConditions, "U.updated_at >= ?")
 			filterArgs = append(filterArgs, filter.UpdatedAt.From)
 		}
-		if filter.UpdatedAt.To != nil {
+		if filter.UpdatedAt.To != nil && *filter.UpdatedAt.To > 0 {
 			sqlWhereConditions = append(sqlWhereConditions, "U.updated_at <= ?")
 			filterArgs = append(filterArgs, filter.UpdatedAt.To)
 		}
 	}
 	if filter.DeletedAt != nil {
-		if filter.DeletedAt.From != nil {
+		if filter.DeletedAt.From != nil && *filter.DeletedAt.From > 0 {
 			sqlWhereConditions = append(sqlWhereConditions, "U.deleted_at >= ?")
 			filterArgs = append(filterArgs, filter.DeletedAt.From)
 		}
-		if filter.DeletedAt.To != nil {
+		if filter.DeletedAt.To != nil && *filter.DeletedAt.To > 0 {
 			sqlWhereConditions = append(sqlWhereConditions, "U.deleted_at <= ?")
 			filterArgs = append(filterArgs, filter.DeletedAt.To)
 		}
