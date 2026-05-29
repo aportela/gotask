@@ -6,13 +6,17 @@
     import { IconCheck, IconX } from '@tabler/icons-vue';
 
     interface ToggleInputProps {
+        startupEditMode?: boolean;
         showCount?: boolean;
         maxLength?: number;
         disabled?: boolean;
         readOnly?: boolean;
+        onConfirm?: (newValue: string | null) => void;
+        onCancel?: () => void;
     };
 
     const props = withDefaults(defineProps<ToggleInputProps>(), {
+        startupEditMode: false,
         showCount: false,
         disabled: false,
         readOnly: false,
@@ -22,14 +26,13 @@
 
     const value = defineModel<string | null>("value");
 
-    const editValue = ref<string | null>(null);
-
+    const editValue = ref<string | null>(value.value ?? null);
 
     watch(value, (newValue) => {
         editValue.value = newValue ?? null;
     });
 
-    const editMode = ref<boolean>(false);
+    const editMode = ref<boolean>(props.startupEditMode);
 
     const toggleMode = () => {
         if (!props.readOnly) {
@@ -37,13 +40,31 @@
         }
     };
 
-    const confirmNewValue = () => {
-        editMode.value = !editMode.value;
-        value.value = editValue.value;
+    const setEditMode = () => {
+        editMode.value = true;
     };
 
-    const cancelnewValue = () => {
-        editMode.value = !editMode.value;
+    const setViewMode = () => {
+        editMode.value = false;
+    };
+
+    defineExpose({ setEditMode, setViewMode });
+
+    const confirmNewValue = () => {
+        if (typeof props.onConfirm === 'function') {
+            props.onConfirm(editValue.value);
+        } else {
+            editMode.value = !editMode.value;
+            value.value = editValue.value;
+        }
+    };
+
+    const cancelNewValue = () => {
+        if (typeof props.onCancel === 'function') {
+            props.onCancel();
+        } else {
+            editMode.value = !editMode.value;
+        }
         editValue.value = value.value ?? null;
     };
 
@@ -53,7 +74,7 @@
                 confirmNewValue();
                 break;
             case 'Escape':
-                cancelnewValue();
+                cancelNewValue();
                 break;
         }
     };
@@ -77,7 +98,7 @@
             </n-tooltip>
             <n-tooltip trigger="hover">
                 <template #trigger>
-                    <n-button @click="cancelnewValue" :disabled="props.disabled">
+                    <n-button @click="cancelNewValue" :disabled="props.disabled">
                         <template #icon>
                             <n-icon :component="IconX" />
                         </template>
