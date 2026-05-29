@@ -4,7 +4,7 @@ type projectDTO struct {
 	ID                     string  `db:"id"`
 	Key                    string  `db:"key"`
 	Summary                string  `db:"summary"`
-	Description            *string `json:"description"`
+	Description            *string `db:"description"`
 	CreatorId              string  `db:"creator_id"`
 	CreatorName            string  `db:"creator_name"`
 	CreatedAt              int64   `db:"created_at"`
