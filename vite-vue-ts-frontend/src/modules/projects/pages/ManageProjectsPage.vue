@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch } from 'vue';
     import { useI18n } from "vue-i18n";
+    import { useRouter } from 'vue-router';
 
     import { NCard, NModal } from 'naive-ui';
 
@@ -18,6 +19,7 @@
     import { Sort } from '../../../shared/types/models/sort';
     import type { FormMode } from '../../../shared/types/form-mode';
 
+    const router = useRouter();
     const { t } = useI18n();
     const { notify } = useNotify();
 
@@ -78,10 +80,24 @@
     };
 
 
-    const onAdd = (project: Project) => {
+    const onAdd = (project: Project, openProjectAfterCreate: boolean) => {
         showForm.value = false;
         notify('success', t("modules.project.components.ManageProjectsPage.notifications.projectAdded", { summary: project.summary }));
-        onRefresh();
+        if (openProjectAfterCreate) {
+            router.push(
+                {
+                    name: "projectTab",
+                    params: {
+                        id: project.id,
+                        tab: "metadata",
+                    }
+                },
+            ).catch((e) => {
+                console.error(e);
+            });
+        } else {
+            onRefresh();
+        }
     };
 
     const onCancel = () => {

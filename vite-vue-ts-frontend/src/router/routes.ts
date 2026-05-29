@@ -36,7 +36,7 @@ const routes: RouteRecordRaw[] = [
         children: [
           {
             path: "tab/:tab",
-            name: "project-tab",
+            name: "projectTab",
             component: () =>
               import("../modules/projects/pages/ProjectPage.vue"),
           },

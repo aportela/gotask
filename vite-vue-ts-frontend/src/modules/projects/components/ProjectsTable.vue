@@ -162,7 +162,7 @@
                 </td>
                 <td class="doneo-text-center">
                     <n-button-group size="small">
-                        <router-link :to="{ name: 'project', params: { id: project.id } }">
+                        <router-link :to="{ name: 'projectTab', params: { id: project.id, tab: 'metadata' } }">
                             <n-button>
                                 {{ t("shared.buttons.Open.label") }}
                                 <template #icon>

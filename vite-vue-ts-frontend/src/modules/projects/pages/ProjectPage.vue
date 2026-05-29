@@ -34,7 +34,7 @@
         get: () => route.params.tab as string,
         set: (value: string) => {
             router.push({
-                name: 'project-tab',
+                name: 'projectTab',
                 params: {
                     id: route.params.id,
                     tab: value

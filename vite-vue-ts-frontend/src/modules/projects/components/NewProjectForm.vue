@@ -114,7 +114,7 @@
                 status: { id: project.value.status.id ?? "" },
             };
             const addedProject: ProjectResponse = await projectService.add(payload);
-            emit('add', { project: addedProject, openAfterCreate: openProjectAfterCreate.value })
+            emit('add', addedProject, openProjectAfterCreate.value)
         } catch (error: unknown) {
             state.ajaxErrors = true;
             handleAPIError(error,
