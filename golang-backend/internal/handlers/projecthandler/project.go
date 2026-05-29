@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/aportela/doneo/internal/browser"
 	"github.com/aportela/doneo/internal/database"
@@ -37,6 +38,7 @@ func (h *ProjectHandler) Add(w http.ResponseWriter, r *http.Request) {
 	project.ID = utils.UUID()
 	project.CreatedBy = domain.UserBase{}
 	project.CreatedBy.ID, _ = middlewares.GetUserIDFromContext(r.Context())
+	project.CreatedAt = time.Now().UnixMilli()
 	err := h.service.Add(r.Context(), project)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectHandler] failed to add project with ID %s: %w", request.ID, err))
