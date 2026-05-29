@@ -2,7 +2,7 @@
     import { ref, computed, type CSSProperties, nextTick } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NCard, NForm, NFormItem, NInput, NButton, NButtonGroup, NIcon, type InputInst, NFlex } from 'naive-ui';
+    import { NCard, NForm, NFormItem, NInput, NButton, NButtonGroup, NIcon, type InputInst, NFlex, NEllipsis } from 'naive-ui';
 
     import type { FormMode } from '../../../shared/types/form-mode';
     import { Project, MAX_KEY_LENGTH, MAX_SUMMARY_LENGTH } from "../models/project";
@@ -10,7 +10,7 @@
     import ProjectStatusSelector from "../../project-statuses/components/ProjectStatusSelector.vue";
     import ProjectTypeSelector from "../../project-types/components/ProjectTypeSelector.vue";
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
-    import { IconX, IconCheck, IconChevronsDown, IconChevronsUp, IconDeviceFloppy } from '@tabler/icons-vue';
+    import { IconX, IconCheck, IconDeviceFloppy } from '@tabler/icons-vue';
     import { useMarkdown } from "../../../shared/composables/useMarkdown.ts";
     import ToggleInput from '../../../shared/components/ToggleInput.vue';
 
@@ -30,9 +30,16 @@
     const { t } = useI18n();
     const { render, toMarkdown } = useMarkdown();
 
+    interface ToggleInputComponent {
+        setEditMode: () => void
+        setViewMode: () => void
+    };
+
+    const keyRef = ref<ToggleInputComponent | undefined>();
+
     const descriptionEditMode = ref<boolean>(false);
 
-    const descriptionExpanded = ref<boolean>(false);
+    const descriptionExpanded = ref<boolean>(true);
 
     const htmlMarkDownDescriptionPreview = computed(() => render(project.value.description ?? ""));
 
@@ -41,6 +48,22 @@
     };
 
     const descriptionRef = ref<InputInst | null>(null);
+
+
+    const onConfirmNewKeyValue = (newValue: string | null) => {
+        if (project.value.key != newValue) {
+            project.value.key = newValue;
+            // TODO: async, await, check/show errors
+            onSave();
+            keyRef.value?.setViewMode();
+        } else {
+            keyRef.value?.setViewMode();
+        }
+    };
+
+    const onCancelNewKeyValue = () => {
+        keyRef.value?.setViewMode();
+    };
 
     const onToggleDescriptionMode = () => {
         descriptionEditMode.value = !descriptionEditMode.value;
@@ -128,10 +151,10 @@
                     <ProjectStatusSelector v-model:id="project.status.id" :disabled="props.disabled" />
                 </n-form-item>
             </n-flex>
-
             <n-form-item label="Key">
                 <ToggleInput v-model:value="project.key" show-count :max-length="MAX_KEY_LENGTH"
-                    :disabled="props.disabled" />
+                    :disabled="props.disabled" v-on:confirm="onConfirmNewKeyValue" v-on:cancel="onCancelNewKeyValue"
+                    ref="keyRef" />
             </n-form-item>
             <n-form-item label="Summary">
                 <ToggleInput v-model:value="project.summary" show-count :max-length="MAX_SUMMARY_LENGTH"
@@ -141,19 +164,6 @@
                 <template #label>
                     <n-flex align="center">
                         <span>Description</span>
-                        <div v-if="!descriptionEditMode">
-                            <n-button size="tiny" v-if="!descriptionExpanded"
-                                @click="descriptionExpanded = !descriptionExpanded">
-                                <template #icon>
-                                    <n-icon :component="IconChevronsDown" />
-                                </template>
-                                expand</n-button>
-                            <n-button size="tiny" v-else @click="descriptionExpanded = !descriptionExpanded">
-                                <template #icon>
-                                    <n-icon :component="IconChevronsUp" />
-                                </template>
-                                collapse</n-button>
-                        </div>
                     </n-flex>
                 </template>
                 <div v-if="descriptionEditMode" style="width: 100%;">
@@ -178,6 +188,10 @@
                     class="doneo-project-description-markdown-preview doneo-cursor-pointer"
                     :class="{ 'doneo-project-description-markdown-preview-expanded': descriptionExpanded }"
                     @click="onToggleDescriptionMode" />
+                <!-- TODO: test alternatives -->
+                <n-ellipsis v-if="false" expand-trigger="click" line-clamp="4" :tooltip="false" class="ellipsis"
+                    v-html="htmlMarkDownDescriptionPreview">
+                </n-ellipsis>
             </n-form-item>
         </n-form>
         <n-button @click="onSave" :disabled="props.disabled">
