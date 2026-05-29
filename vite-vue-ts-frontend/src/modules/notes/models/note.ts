@@ -10,7 +10,7 @@ export class Note {
   body: string;
 
   constructor(data?: NoteDTO) {
-    this.id = data?.id ?? "";
+    this.id = data?.id ?? null;
     this.user = new UserBase(data?.user);
     this.createdAt = data?.createdAt ? new IDate(data.createdAt) : null;
     this.updatedAt = data?.updatedAt ? new IDate(data.updatedAt) : null;

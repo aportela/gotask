@@ -6,9 +6,9 @@ export class ProjectType {
   hexColor: string | null;
 
   constructor(data?: ProjectTypeDTO) {
-    this.id = data?.id ?? "";
-    this.name = data?.name ?? "";
-    this.hexColor = data?.hexColor ?? "";
+    this.id = data?.id ?? null;
+    this.name = data?.name ?? null;
+    this.hexColor = data?.hexColor ?? null;
   }
 
   toDTO(): ProjectTypeDTO {

@@ -8,7 +8,7 @@ export class ProjectPermission {
   role: Role;
 
   constructor(data?: ProjectPermissionDTO) {
-    this.id = data?.id ?? "";
+    this.id = data?.id ?? null;
     this.user = new UserBase(data?.user);
     this.role = new Role(data?.role);
   }
