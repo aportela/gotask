@@ -41,7 +41,8 @@ type updateRequest struct {
 }
 
 type filterRequest struct {
-	Key *string `json:"key"`
+	Key     *string `json:"key"`
+	Summary *string `json:"summary"`
 }
 
 type searchRequest struct {

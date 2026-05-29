@@ -110,6 +110,9 @@ func (h *ProjectHandler) Search(w http.ResponseWriter, r *http.Request) {
 		if request.Filter.Key != nil {
 			filter.Key = request.Filter.Key
 		}
+		if request.Filter.Summary != nil {
+			filter.Summary = request.Filter.Summary
+		}
 	}
 	projects, pagerResult, err := h.service.Search(r.Context(),
 		browser.Params{

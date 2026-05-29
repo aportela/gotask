@@ -64,7 +64,9 @@ func DTOArrayToDomainArray(projects []projectDTO) []domain.Project {
 }
 
 func DomainFilterToDTO(filter domain.SearchProjectFilter) searchFilterDTO {
+
 	return searchFilterDTO{
-		Key: filter.Key,
+		Key:     filter.Key,
+		Summary: filter.Summary,
 	}
 }

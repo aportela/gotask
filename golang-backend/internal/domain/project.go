@@ -24,5 +24,6 @@ type Project struct {
 }
 
 type SearchProjectFilter struct {
-	Key *string
+	Key     *string
+	Summary *string
 }

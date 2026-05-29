@@ -31,7 +31,8 @@
 
     const sort = ref<Sort>(new Sort("createdAt", "DESC"));
 
-    const keyFilter = ref<string>("");
+    const keyFilter = ref<string | null>(null);
+    const summaryFilter = ref<string | null>(null);
 
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
@@ -117,7 +118,8 @@
                     sort: sort.value.order,
                 },
                 filter: {
-                    key: keyFilter.value,
+                    key: keyFilter.value ?? undefined,
+                    summary: summaryFilter.value ?? undefined,
                 }
             };
             const response = await projectService.search(payload);
@@ -223,8 +225,9 @@
             </template>
         </Pager>
         <ProjectsTable :projects="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
-            @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
-            :sort-order="sort.order" @toggle-sort="onToggleSort" />
+            @update="onShowUpdateForm" @delete="onDelete" v-model:project-key-filter="keyFilter"
+            v-model:project-summary-filter="summaryFilter" @textfilter-keydown-enter="onRefresh"
+            :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort" />
     </n-card>
 </template>
 

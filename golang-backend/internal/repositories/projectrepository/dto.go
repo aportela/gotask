@@ -29,5 +29,6 @@ type projectDTO struct {
 }
 
 type searchFilterDTO struct {
-	Key *string
+	Key     *string
+	Summary *string
 }

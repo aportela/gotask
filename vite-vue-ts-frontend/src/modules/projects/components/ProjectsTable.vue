@@ -70,11 +70,11 @@
         },
     ]);
 
-    const projectKeyFilter = defineModel<string>("projectKeyFilter", {
+    const projectKeyFilter = defineModel<string | null>("projectKeyFilter", {
         default: "",
     });
 
-    const projectSummaryFilter = defineModel<string>("projectSummaryFilter", {
+    const projectSummaryFilter = defineModel<string | null>("projectSummaryFilter", {
         default: "",
     });
 

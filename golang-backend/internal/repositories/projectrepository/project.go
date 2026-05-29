@@ -310,6 +310,10 @@ func (projectRepository *projectRepository) Search(ctx context.Context, pager br
 		sqlWhereConditions = append(sqlWhereConditions, "P.key LIKE ?")
 		filterArgs = append(filterArgs, "%"+*filter.Key+"%")
 	}
+	if filter.Summary != nil && len(*filter.Summary) > 0 {
+		sqlWhereConditions = append(sqlWhereConditions, "P.summary LIKE ?")
+		filterArgs = append(filterArgs, "%"+*filter.Key+"%")
+	}
 	if len(sqlWhereConditions) > 0 {
 		sqlWhere = " WHERE " + strings.Join(sqlWhereConditions, " AND ")
 	}

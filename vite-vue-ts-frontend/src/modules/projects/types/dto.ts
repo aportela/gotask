@@ -42,6 +42,7 @@ export type UpdateRequest = {
 
 type SearchRequestFilter = {
   key?: string;
+  summary?: string;
 };
 
 export type SearchRequest = {
