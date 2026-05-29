@@ -9,11 +9,13 @@
         showCount?: boolean;
         maxLength?: number;
         disabled?: boolean;
+        readOnly?: boolean;
     };
 
     const props = withDefaults(defineProps<ToggleInputProps>(), {
         showCount: false,
         disabled: false,
+        readOnly: false,
     });
 
     const { t } = useI18n();
@@ -30,7 +32,9 @@
     const editMode = ref<boolean>(false);
 
     const toggleMode = () => {
-        editMode.value = !editMode.value;
+        if (!props.readOnly) {
+            editMode.value = !editMode.value;
+        }
     };
 
     const confirmNewValue = () => {
