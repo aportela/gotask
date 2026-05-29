@@ -2,7 +2,7 @@
     import { ref, computed, type CSSProperties, nextTick } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NCard, NForm, NFormItem, NInput, NInputGroup, NButton, NIcon, type InputInst } from 'naive-ui';
+    import { NCard, NForm, NFormItem, NInput, NInputGroup, NButton, NIcon, type InputInst, NFlex } from 'naive-ui';
 
     import type { FormMode } from '../../../shared/types/form-mode';
     import { Project, MAX_KEY_LENGTH, MAX_SUMMARY_LENGTH } from "../models/project";
@@ -10,7 +10,7 @@
     import ProjectStatusSelector from "../../project-statuses/components/ProjectStatusSelector.vue";
     import ProjectTypeSelector from "../../project-types/components/ProjectTypeSelector.vue";
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
-    import { IconCheck, IconDeviceFloppy } from '@tabler/icons-vue';
+    import { IconCheck, IconChevronsDown, IconChevronsUp, IconDeviceFloppy } from '@tabler/icons-vue';
     import { useMarkdown } from "../../../shared/composables/useMarkdown.ts";
 
     interface ProjectFormProps {
@@ -35,6 +35,8 @@
     const summaryEditMode = ref<boolean>(false);
 
     const descriptionEditMode = ref<boolean>(false);
+
+    const descriptionExpanded = ref<boolean>(false);
 
     const htmlMarkDownDescriptionPreview = computed(() => render(project.value.description ?? ""));
 
@@ -122,10 +124,36 @@
                 <AvatarUserName :user-id="project.createdBy.id" :user-name="project.createdBy.name" />
             </div>
         </n-form-item>
-        <n-form-item label="Created at">
-            {{ project.createdAt.toLocaleString() }}
-        </n-form-item>
+        <n-flex>
+            <n-form-item label="Created at">
+                {{ project.createdAt.toLocaleString() }}
+            </n-form-item>
+            <n-form-item label="Updated at">
+                {{ project.updatedAt?.toLocaleString() }}
+            </n-form-item>
+            <n-form-item label="Started at">
+                {{ project.updatedAt?.toLocaleString() }}
+            </n-form-item>
+            <n-form-item label="Finished at">
+                {{ project.updatedAt?.toLocaleString() }}
+            </n-form-item>
+            <n-form-item label="Due at">
+                {{ project.updatedAt?.toLocaleString() }}
+            </n-form-item>
+        </n-flex>
         <n-form>
+            <n-flex>
+                <n-form-item label="Type">
+                    <ProjectTypeSelector v-model:id="project.type.id" :disabled="props.disabled" />
+                </n-form-item>
+                <n-form-item label="Priority">
+                    <ProjectPrioritySelector v-model:id="project.priority.id" :disabled="props.disabled" />
+                </n-form-item>
+                <n-form-item label="Status">
+                    <ProjectStatusSelector v-model:id="project.status.id" :disabled="props.disabled" />
+                </n-form-item>
+            </n-flex>
+
             <n-form-item label="Key">
                 <n-input-group>
                     <n-input :readonly="!keyEditMode" v-model:value="project.key" :show-count="keyEditMode"
@@ -150,7 +178,25 @@
                     </n-button>
                 </n-input-group>
             </n-form-item>
-            <n-form-item label="Description">
+            <n-form-item label="description">
+                <template #label>
+                    <n-flex align="center">
+                        <span>Description</span>
+                        <div v-if="!descriptionEditMode">
+                            <n-button size="tiny" v-if="!descriptionExpanded"
+                                @click="descriptionExpanded = !descriptionExpanded">
+                                <template #icon>
+                                    <n-icon :component="IconChevronsDown" />
+                                </template>
+                                expand</n-button>
+                            <n-button size="tiny" v-else @click="descriptionExpanded = !descriptionExpanded">
+                                <template #icon>
+                                    <n-icon :component="IconChevronsUp" />
+                                </template>
+                                collapse</n-button>
+                        </div>
+                    </n-flex>
+                </template>
                 <n-input-group v-if="descriptionEditMode">
                     <n-input v-model:value="project.description" type="textarea" clearable :disabled="props.disabled"
                         @paste="onPaste" ref="descriptionRef" :rows="8" />
@@ -162,16 +208,8 @@
                 </n-input-group>
                 <div v-else v-html="htmlMarkDownDescriptionPreview"
                     class="doneo-project-description-markdown-preview doneo-cursor-pointer"
+                    :class="{ 'doneo-project-description-markdown-preview-expanded': descriptionExpanded }"
                     @click="onToggleDescriptionMode" />
-            </n-form-item>
-            <n-form-item label="Type">
-                <ProjectTypeSelector v-model:id="project.type.id" :disabled="props.disabled" />
-            </n-form-item>
-            <n-form-item label="Priority">
-                <ProjectPrioritySelector v-model:id="project.priority.id" :disabled="props.disabled" />
-            </n-form-item>
-            <n-form-item label="Status">
-                <ProjectStatusSelector v-model:id="project.status.id" :disabled="props.disabled" />
             </n-form-item>
         </n-form>
         <n-button @click="onSave" :disabled="props.disabled">
@@ -185,10 +223,18 @@
 
 <style lang="css" scoped>
     .doneo-project-description-markdown-preview {
-        width: 100%;
         border: 1px solid #e0e0e6;
         border-radius: var(--n-border-radius);
         padding: 4px 12px;
         color: var(--n-text-color);
+
+        overflow: hidden;
+        max-height: 12em;
+        /* aprox 6 líneas */
+        transition: max-height 0.3s ease;
+    }
+
+    .doneo-project-description-markdown-preview-expanded {
+        max-height: unset;
     }
 </style>

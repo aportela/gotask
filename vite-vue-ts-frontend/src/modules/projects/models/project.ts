@@ -14,6 +14,7 @@ export class Project {
   priority: ProjectPriority;
   status: ProjectStatus;
   createdAt: IDate;
+  updatedAt?: IDate;
   createdBy: UserBase;
   tasksCount: number;
   permissionsCount: number;
