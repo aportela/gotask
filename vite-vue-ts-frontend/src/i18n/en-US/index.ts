@@ -42,6 +42,18 @@ export default {
           continueMessage: "Do you want to continue ?",
         },
       },
+      inputs: {
+        ToggleInput: {
+          buttons: {
+            confirm: {
+              toolTip: "Confirm",
+            },
+            cancel: {
+              toolTip: "Cancel",
+            },
+          },
+        },
+      },
       selectors: {
         dateFilter: {
           options: {

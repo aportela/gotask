@@ -2,7 +2,7 @@
     import { ref, computed, type CSSProperties, nextTick } from 'vue';
     import { useI18n } from "vue-i18n";
 
-    import { NCard, NForm, NFormItem, NInput, NInputGroup, NButton, NButtonGroup, NIcon, type InputInst, NFlex } from 'naive-ui';
+    import { NCard, NForm, NFormItem, NInput, NButton, NButtonGroup, NIcon, type InputInst, NFlex } from 'naive-ui';
 
     import type { FormMode } from '../../../shared/types/form-mode';
     import { Project, MAX_KEY_LENGTH, MAX_SUMMARY_LENGTH } from "../models/project";
@@ -12,6 +12,7 @@
     import AvatarUserName from '../../../shared/components/AvatarUserName.vue';
     import { IconX, IconCheck, IconChevronsDown, IconChevronsUp, IconDeviceFloppy } from '@tabler/icons-vue';
     import { useMarkdown } from "../../../shared/composables/useMarkdown.ts";
+    import ToggleInput from '../../../shared/components/ToggleInput.vue';
 
     interface ProjectFormProps {
         mode: FormMode;
@@ -29,11 +30,6 @@
     const { t } = useI18n();
     const { render, toMarkdown } = useMarkdown();
 
-
-    const keyEditMode = ref<boolean>(false);
-
-    const summaryEditMode = ref<boolean>(false);
-
     const descriptionEditMode = ref<boolean>(false);
 
     const descriptionExpanded = ref<boolean>(false);
@@ -44,28 +40,7 @@
         emit("save");
     };
 
-    const keyRef = ref<InputInst | null>(null);
-    const summaryRef = ref<InputInst | null>(null);
     const descriptionRef = ref<InputInst | null>(null);
-
-
-    const onToggleKeyMode = () => {
-        keyEditMode.value = !keyEditMode.value;
-        if (keyEditMode) {
-            nextTick(() => {
-                keyRef.value?.focus();
-            });
-        }
-    };
-
-    const onToggleSummaryMode = () => {
-        summaryEditMode.value = !summaryEditMode.value;
-        if (summaryEditMode.value) {
-            nextTick(() => {
-                summaryRef.value?.focus();
-            });
-        }
-    };
 
     const onToggleDescriptionMode = () => {
         descriptionEditMode.value = !descriptionEditMode.value;
@@ -155,28 +130,10 @@
             </n-flex>
 
             <n-form-item label="Key">
-                <n-input-group>
-                    <n-input :readonly="!keyEditMode" v-model:value="project.key" :show-count="keyEditMode"
-                        :maxlength="MAX_KEY_LENGTH" ref="keyRef" :disabled="props.disabled"
-                        @click="() => { if (!keyEditMode) { onToggleKeyMode(); } }" />
-                    <n-button v-if="keyEditMode" @click="onToggleKeyMode" :disabled="props.disabled">
-                        <template #icon>
-                            <n-icon :component="IconCheck" />
-                        </template>
-                    </n-button>
-                </n-input-group>
+                <ToggleInput v-model:value="project.key" show-count :max-length="MAX_KEY_LENGTH" />
             </n-form-item>
             <n-form-item label="Summary">
-                <n-input-group>
-                    <n-input :readonly="!summaryEditMode" v-model:value="project.summary" :show-count="summaryEditMode"
-                        :maxlength="MAX_SUMMARY_LENGTH" ref="summaryRef" :disabled="props.disabled"
-                        @click="() => { if (!summaryEditMode) { onToggleSummaryMode(); } }" />
-                    <n-button v-if="summaryEditMode" @click="onToggleSummaryMode" :disabled="props.disabled">
-                        <template #icon>
-                            <n-icon :component="IconCheck" />
-                        </template>
-                    </n-button>
-                </n-input-group>
+                <ToggleInput v-model:value="project.summary" show-count :max-length="MAX_SUMMARY_LENGTH" />
             </n-form-item>
             <n-form-item label="description">
                 <template #label>
