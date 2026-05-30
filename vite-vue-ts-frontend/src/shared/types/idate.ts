@@ -1,13 +1,13 @@
 export class IDate {
-  msTimestamp: number;
-  date: Date;
+  msTimestamp: number | null;
+  date: Date | null;
 
-  constructor(msTimestamp: number) {
+  constructor(msTimestamp: number | null) {
     this.msTimestamp = msTimestamp;
-    this.date = new Date(msTimestamp);
+    this.date = msTimestamp !== null ? new Date(msTimestamp) : null;
   }
 
   toLocaleString = () => {
-    return this.date.toLocaleString();
+    return this.date?.toLocaleString();
   };
 }

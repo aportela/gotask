@@ -13,6 +13,7 @@
     import { IconX, IconCheck, IconDeviceFloppy } from '@tabler/icons-vue';
     import { useMarkdown } from "../../../shared/composables/useMarkdown.ts";
     import ToggleInput from '../../../shared/components/ToggleInput.vue';
+    import ToggleDateTimePicker from '../../../shared/components/ToggleDateTimePicker.vue';
 
     interface ProjectFormProps {
         mode: FormMode;
@@ -123,20 +124,22 @@
             </div>
         </n-form-item>
         <n-flex>
-            <n-form-item label="Created at" style="width: 12em">
+            <n-form-item label="Created at">
                 {{ project.createdAt.toLocaleString() }}
             </n-form-item>
-            <n-form-item label="Updated at" style="width: 12em">
+            <n-form-item label="Updated at">
                 {{ project.updatedAt?.toLocaleString() }}
             </n-form-item>
-            <n-form-item label="Started at" style="width: 12em">
-                {{ project.startedAt?.toLocaleString() }}
+            <n-form-item label="Started at">
+                <ToggleDateTimePicker clearable v-model:value="project.startedAt.msTimestamp"
+                    :disabled="props.disabled" />
             </n-form-item>
-            <n-form-item label="Finished at" style="width: 12em">
-                {{ project.finishedAt?.toLocaleString() }}
+            <n-form-item label="Finished at">
+                <ToggleDateTimePicker clearable v-model:value="project.finishedAt.msTimestamp"
+                    :disabled="props.disabled" />
             </n-form-item>
-            <n-form-item label="Due at" style="width: 12em">
-                {{ project.dueAt?.toLocaleString() }}
+            <n-form-item label="Due at">
+                <ToggleDateTimePicker clearable v-model:value="project.dueAt.msTimestamp" :disabled="props.disabled" />
             </n-form-item>
         </n-flex>
         <n-form>
