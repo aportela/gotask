@@ -24,7 +24,7 @@
 
     const { t } = useI18n();
 
-    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'toggleSort', 'textfilterKeydownEnter']);
+    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'toggleSort']);
 
     const props = defineProps<Props>();
 
@@ -88,11 +88,6 @@
             },
         });
     };
-
-    const onTextFilterKeyDownEnter = () => {
-        emit("textfilterKeydownEnter");
-    };
-
 </script>
 
 <template>
@@ -113,7 +108,7 @@
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.role.components.RolesTable.filters.name.placeholder')"
-                        v-model:value="roleNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
+                        v-model:value="roleNameFilter" />
                 </th>
                 <th></th>
                 <th></th>
