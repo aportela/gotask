@@ -116,6 +116,7 @@ func getRandomProject(userIds []string, projectTypeIds []string, projectPriority
 	finishOffset := rand.Int63n(96)
 	dueOffset := rand.Int63n(144)
 	ctime := utils.GetRandomMSTimestamp(time.Now().AddDate(-5, 0, 0), time.Now())
+	utime := ctime + startOffset*int64(time.Hour/time.Millisecond)
 	stime := ctime + startOffset*int64(time.Hour/time.Millisecond)
 	ftime := stime + finishOffset*int64(time.Hour/time.Millisecond)
 	dtime := ftime + dueOffset*int64(time.Hour/time.Millisecond)
@@ -135,8 +136,9 @@ func getRandomProject(userIds []string, projectTypeIds []string, projectPriority
 		Description: &projectDescription,
 		CreatedBy:   domain.UserBase{ID: userIds[rand.Intn(len(userIds))]},
 		CreatedAt:   ctime,
-		UpdatedAt:   &ftime,
+		UpdatedAt:   &utime,
 		StartedAt:   &stime,
+		FinishedAt:  &ftime,
 		DueAt:       &dtime,
 		Type:        domain.ProjectType{ID: projectTypeIds[rand.Intn(len(projectTypeIds))]},
 		Priority:    domain.ProjectPriority{ID: projectPriorityIds[rand.Intn(len(projectPriorityIds))]},
