@@ -31,14 +31,14 @@
     const nameFilter = ref<string>("");
 
 
-    const nFilter = computed(() =>
+    const nameFilterLowerCase = computed(() =>
         nameFilter.value?.toLowerCase() ?? ''
     );
 
     const filteredItems = computed(() => {
         return items.value.filter((projectPriority) => {
             const name = projectPriority.name?.toLowerCase();
-            return ((!name || name?.includes(nFilter.value))
+            return ((!name || name?.includes(nameFilterLowerCase.value))
             );
         });
     });
