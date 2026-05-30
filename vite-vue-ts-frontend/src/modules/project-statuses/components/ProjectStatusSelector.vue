@@ -1,7 +1,7 @@
 <script setup lang="ts">
-    import { ref, shallowRef, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue';
+    import { ref, shallowRef, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 
-    import { NInputGroup, NButton, NSelect, NIcon, type SelectOption, type SelectSize } from 'naive-ui';
+    import { NInputGroup, NButton, NSelect, NIcon, type SelectOption, type SelectSize, type SelectInst } from 'naive-ui';
     import { IconSquare, IconSquareFilled, IconAlertCircle } from '@tabler/icons-vue';
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
@@ -12,6 +12,7 @@
     import { handleAPIError } from '../../../api/client/errorHandler';
 
     interface ProjectStatusSelectorProps {
+        autoFocus?: boolean;
         required?: boolean;
         placeholder?: string;
         clearable?: boolean;
@@ -21,6 +22,8 @@
     }
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+    const selectInstRef = ref<SelectInst | null>(null)
 
     const isDisabled = computed(() => props.disabled || state.ajaxRunning);
 
@@ -56,6 +59,9 @@
                 selectedColor.value = projectStatuses.value.find((projectStatus) => projectStatus.id === projectStatusId.value)?.hexColor
             }
             options.value = response.projectStatuses.map((projectStatus: ProjectStatusResponse) => ({ label: projectStatus.name, value: projectStatus.id }));
+            if (props.autoFocus) {
+                focus();
+            }
         } catch (error: unknown) {
             options.value.length = 0;
             state.ajaxErrors = true;
@@ -86,6 +92,12 @@
         selectedColor.value = projectStatuses.value.find((projectStatus) => projectStatus.id === newValue)?.hexColor
     });
 
+    const focus = () => {
+        nextTick(() => {
+            selectInstRef.value?.focus();
+        });
+    };
+
     let stopBusReauthListener: () => void;
 
     onMounted(() => {
@@ -111,8 +123,9 @@
                 </n-icon>
             </template>
         </n-button>
-        <n-select filterable :required="props.required" :clearable="props.clearable" v-model:value="projectStatusId"
-            :options="options" :placeholder="props.placeholder" :size="props.size" :disabled="isDisabled" />
+        <n-select filterable ref="selectInstRef" :required="props.required" :clearable="props.clearable"
+            v-model:value="projectStatusId" :options="options" :placeholder="props.placeholder" :size="props.size"
+            :disabled="isDisabled" />
         <n-button secondary :disabled="true" class="doneo-cursor-default doneo-disable-opacity" v-if="state.ajaxErrors">
             <template #icon>
                 <n-icon color="red" :component="IconAlertCircle">
