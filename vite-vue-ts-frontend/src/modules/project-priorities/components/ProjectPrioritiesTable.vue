@@ -110,7 +110,7 @@
                 </th>
             </tr>
         </template>
-        <template>
+        <template #tbody>
             <tr v-for="projectPriority, index in projectPriorities" :key="projectPriority.id ?? index">
                 <td>
                     <n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor ?? '#888888')">{{
