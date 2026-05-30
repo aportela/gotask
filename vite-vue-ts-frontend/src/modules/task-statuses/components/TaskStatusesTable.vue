@@ -25,7 +25,7 @@
 
     const { t } = useI18n();
 
-    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'toggleSort', 'textfilterKeydownEnter']);
+    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'toggleSort']);
 
     const props = defineProps<Props>();
 
@@ -77,11 +77,6 @@
             },
         });
     };
-
-    const onTextFilterKeyDownEnter = () => {
-        emit("textfilterKeydownEnter");
-    };
-
 </script>
 
 <template>
@@ -102,7 +97,7 @@
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.taskStatus.components.TaskStatusesTable.filters.name.placeholder')"
-                        v-model:value="taskStatusNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
+                        v-model:value="taskStatusNameFilter" />
                 </th>
                 <th class="doneo-text-center">
                     <RefreshAddActionsColumn @refresh="onRefresh" @add="onAdd" />
