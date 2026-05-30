@@ -73,6 +73,55 @@
             },
             trigger: ['blur'],
         },
+        type: {
+            id: {
+                required: true,
+                validator: (_rule: FormItemRule, value: string) => {
+                    if (state.ajaxRunning) {
+                        return true;
+                    }
+                    if (!value?.trim()) {
+                        return new Error(t("shared.warningMessages.fieldIsRequired"));
+                    } else {
+                        return true;
+                    }
+                },
+                trigger: ['blur'],
+            }
+        },
+        priority: {
+            id: {
+                required: true,
+                validator: (_rule: FormItemRule, value: string) => {
+                    if (state.ajaxRunning) {
+                        return true;
+                    }
+                    if (!value?.trim()) {
+                        return new Error(t("shared.warningMessages.fieldIsRequired"));
+                    } else {
+                        return true;
+                    }
+                },
+                trigger: ['blur'],
+            }
+        },
+        status: {
+            id: {
+                required: true,
+                validator: (_rule: FormItemRule, value: string) => {
+                    if (state.ajaxRunning) {
+                        return true;
+                    }
+                    if (!value?.trim()) {
+                        return new Error(t("shared.warningMessages.fieldIsRequired"));
+                    } else {
+                        return true;
+                    }
+                },
+                trigger: ['blur'],
+            }
+        }
+
     };
 
     watch(() => project.value.key, () => { delete serverErrors.value.name });
@@ -189,7 +238,7 @@
                     autofocus>
                 </n-input>
             </n-form-item>
-            <n-form-item :label="t('modules.project.components.NewProjectForm.inputs.summary.label')" path="key"
+            <n-form-item :label="t('modules.project.components.NewProjectForm.inputs.summary.label')" path="summary"
                 show-feedback>
                 <n-input type="text"
                     :placeholder="t('modules.project.components.NewProjectForm.inputs.summary.placeholder')"
@@ -197,23 +246,26 @@
                     required>
                 </n-input>
             </n-form-item>
-            <n-form-item :label="t('modules.project.components.NewProjectForm.inputs.description.label')" path="key"
-                show-feedback>
+            <n-form-item :label="t('modules.project.components.NewProjectForm.inputs.description.label')"
+                path="description" show-feedback>
                 <n-input type="textarea"
                     :placeholder="t('modules.project.components.NewProjectForm.inputs.description.placeholder')"
                     v-model:value="project.description" clearable>
                 </n-input>
             </n-form-item>
-            <n-form-item :label="t('modules.project.components.NewProjectForm.selectors.projectType.label')">
-                <ProjectTypeSelector v-model:id="project.type.id"
+            <n-form-item :label="t('modules.project.components.NewProjectForm.selectors.projectType.label')"
+                path="type.id">
+                <ProjectTypeSelector required v-model:id="project.type.id"
                     :placeholder="t('modules.project.components.NewProjectForm.selectors.projectType.placeholder')" />
             </n-form-item>
-            <n-form-item :label="t('modules.project.components.NewProjectForm.selectors.projectPriority.label')">
-                <ProjectPrioritySelector v-model:id="project.priority.id"
+            <n-form-item :label="t('modules.project.components.NewProjectForm.selectors.projectPriority.label')"
+                path="priority.id">
+                <ProjectPrioritySelector required v-model:id="project.priority.id"
                     :placeholder="t('modules.project.components.NewProjectForm.selectors.projectPriority.placeholder')" />
             </n-form-item>
-            <n-form-item :label="t('modules.project.components.NewProjectForm.selectors.projectStatus.label')">
-                <ProjectStatusSelector v-model:id="project.status.id"
+            <n-form-item :label="t('modules.project.components.NewProjectForm.selectors.projectStatus.label')"
+                path="status.id">
+                <ProjectStatusSelector required v-model:id="project.status.id"
                     :placeholder="t('modules.project.components.NewProjectForm.selectors.projectStatus.placeholder')" />
             </n-form-item>
         </n-form>
