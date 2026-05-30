@@ -46,7 +46,7 @@ func (h *ProjectHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	project, err = h.service.Get(r.Context(), project.ID)
 	if err != nil {
-		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectHandler] failed to get new project with ID %s: %w", request.ID, err))
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectHandler] failed to get new project with ID %s: %w", project.ID, err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(project), nil, http.StatusCreated)
@@ -64,6 +64,11 @@ func (h *ProjectHandler) Update(w http.ResponseWriter, r *http.Request) {
 	err := h.service.Update(r.Context(), project)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectHandler] failed to update project with ID %s: %w", project.ID, err))
+		return
+	}
+	project, err = h.service.Get(r.Context(), project.ID)
+	if err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectHandler] failed to get updated project with ID %s: %w", request.ID, err))
 		return
 	}
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(project), nil)
