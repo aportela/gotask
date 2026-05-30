@@ -28,7 +28,6 @@ func NewNoteRepository(database database.Database) NoteRepository {
 }
 
 func (noteRepository *noteRepository) AddProjectNote(ctx context.Context, projectId string, note noteDTO) error {
-	fmt.Println(note.CreatedAt)
 	_, err := noteRepository.database.ExecContext(
 		ctx,
 		`
