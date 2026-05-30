@@ -1,8 +1,15 @@
 <script setup lang="ts">
-    import { ref, computed, type CSSProperties, nextTick } from 'vue';
+    import { ref, reactive, watch, computed, type CSSProperties, nextTick, onMounted } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NCard, NForm, NFormItem, NInput, NButton, NButtonGroup, NIcon, type InputInst, NFlex, NEllipsis } from 'naive-ui';
+
+    import { useLoadingStore } from '../../../stores/loading';
+    import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
+    import { projectService } from '../services/project';
+    import { handleAPIError } from '../../../api/client/errorHandler';
+    import { appBus } from '../../../shared/composables/bus';
+    import type { ProjectResponse, UpdateRequest } from '../types/dto';
 
     import type { FormMode } from '../../../shared/types/form-mode';
     import { Project, MAX_KEY_LENGTH, MAX_SUMMARY_LENGTH } from "../models/project";
@@ -19,22 +26,38 @@
         mode: FormMode;
         style?: string | CSSProperties;
         disabled?: boolean;
+        projectId: string;
     }
+
+
+    const project = ref<Project>(new Project());
 
     const props = defineProps<ProjectFormProps>();
 
     const emit = defineEmits(["save"]);
 
+    const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
-    const project = defineModel<Project>("project", { required: true });
+    const serverErrors = ref<Record<string, string>>({});
 
     const { t } = useI18n();
+    const loadingStore = useLoadingStore();
     const { render, toMarkdown } = useMarkdown();
+
+    watch(state, (newValue: AjaxStateInterface) => {
+        loadingStore.set(newValue.ajaxRunning);
+    });
 
     interface ToggleInputComponent {
         setEditMode: () => void
         setViewMode: () => void
     };
+
+    const permissionCount = defineModel<number>("permissionCount", { default: 0 });
+    const noteCount = defineModel<number>("noteCount", { default: 0 });
+    const attachmentCount = defineModel<number>("attachmentCount", { default: 0 });
+    const historyOperationCount = defineModel<number>("historyOperationCount", { default: 0 });
+    const taskCount = defineModel<number>("taskCount", { default: 0 });
 
     const keyRef = ref<ToggleInputComponent | undefined>();
 
@@ -44,18 +67,116 @@
 
     const htmlMarkDownDescriptionPreview = computed(() => render(project.value.description ?? ""));
 
-    const onSave = () => {
-        emit("save");
+    const onGet = async (id: string) => {
+        serverErrors.value = {};
+        Object.assign(state, defaultAjaxStateRunning);
+        try {
+            const response: ProjectResponse = await projectService.get(id);
+            if (response.id === id) {
+                project.value = new Project(response);
+                permissionCount.value = project.value.permissionsCount;
+                noteCount.value = project.value.notesCount;
+                attachmentCount.value = project.value.attachmentsCount;
+                historyOperationCount.value = project.value.historyOperationsCount;
+                taskCount.value = project.value.tasksCount;
+            } else {
+                state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.loadError");
+            }
+        } catch (error: unknown) {
+            state.ajaxErrors = true;
+            handleAPIError(error,
+                (apiError) => {
+                    switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPage.onGet" } });
+                            break;
+                        case 404:
+                            state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.notFoundError");
+                            break;
+                        default:
+                            state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.loadError");
+                            break;
+                    }
+                },
+                (fatalError) => {
+                    state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.loadError");
+                    console.error("Unhandled API error", { file: "ProjectPage.vue", method: "onGet" }, { err: fatalError });
+                });
+        } finally {
+            state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
+
+        }
+    };
+
+    const onUpdate = async () => {
+        serverErrors.value = {};
+        Object.assign(state, defaultAjaxStateRunning);
+        try {
+            const payload: UpdateRequest = {
+                id: project.value.id ?? "",
+                key: project.value.key ?? "",
+                summary: project.value.summary ?? "",
+                description: project.value.description,
+                type: {
+                    id: project.value.type.id ?? ""
+                },
+                priority: {
+                    id: project.value.priority.id ?? ""
+                },
+                status: {
+                    id: project.value.status.id ?? ""
+                },
+                startedAt: project.value.startedAt?.msTimestamp ?? null,
+                finishedAt: project.value.finishedAt?.msTimestamp ?? null,
+                dueAt: project.value.dueAt?.msTimestamp ?? null,
+            };
+            const response: ProjectResponse = await projectService.update(payload);
+            if (response.id === project.value.id) {
+                project.value = new Project(response);
+            } else {
+                state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.updateError");
+            }
+        } catch (error: unknown) {
+            state.ajaxErrors = true;
+            handleAPIError(error,
+                (apiError) => {
+                    switch (apiError.response?.status) {
+                        case 401:
+                            state.ajaxErrors = false;
+                            appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectPage.onUpdate" } });
+                            break;
+                        case 404:
+                            state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.notFoundError");
+                            break;
+                        default:
+                            state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.updateError");
+                            break;
+                    }
+                },
+                (fatalError) => {
+                    state.ajaxErrorMessage = t("modules.project.components.ProjectPage.errors.updateError");
+                    console.error("Unhandled API error", { file: "ProjectPage.vue", method: "onUpdate" }, { err: fatalError });
+                });
+        } finally {
+            state.ajaxRunning = false;
+            if (state.ajaxErrorMessage) {
+                appBus.emit({ type: "remoteAPIError", payload: { errorMessage: state.ajaxErrorMessage } });
+            }
+
+        }
     };
 
     const descriptionRef = ref<InputInst | null>(null);
-
 
     const onConfirmNewKeyValue = (newValue: string | null) => {
         if (project.value.key != newValue) {
             project.value.key = newValue;
             // TODO: async, await, check/show errors
-            onSave();
+            onUpdate();
             keyRef.value?.setViewMode();
         } else {
             keyRef.value?.setViewMode();
@@ -113,6 +234,12 @@
 
         insertAtCursor(markdown)
     };
+
+    onMounted(() => {
+        if (props.projectId) {
+            onGet(props.projectId);
+        }
+    });
 
 </script>
 
@@ -201,7 +328,7 @@
                 </n-ellipsis>
             </n-form-item>
         </n-form>
-        <n-button @click="onSave" :disabled="props.disabled">
+        <n-button @click="onUpdate" :disabled="props.disabled">
             <template #icon>
                 <n-icon :component="IconDeviceFloppy" color="red"></n-icon>
             </template>
