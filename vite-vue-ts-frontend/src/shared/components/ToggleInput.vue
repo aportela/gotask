@@ -12,6 +12,7 @@
         disabled?: boolean;
         readOnly?: boolean;
         clearable?: boolean;
+        placeholder?: string;
         onConfirm?: (newValue: string | null) => void;
         onCancel?: () => void;
     };
@@ -86,7 +87,7 @@
     <n-input-group>
         <n-input :readonly="!editMode" v-model:value="editValue" :show-count="editMode && props.showCount"
             :maxlength="props.maxLength" :disabled="props.disabled" :clearable="props.clearable"
-            @click="() => { if (!editMode) { toggleMode(); } }" @keydown="onKeydown" />
+            :placeholder="props.placeholder" @click="() => { if (!editMode) { toggleMode(); } }" @keydown="onKeydown" />
         <n-button-group v-if="editMode">
             <n-tooltip trigger="hover">
                 <template #trigger>
