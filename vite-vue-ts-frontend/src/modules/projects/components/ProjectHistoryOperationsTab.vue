@@ -9,6 +9,9 @@
     }
 
     const props = defineProps<ProjectNotesProps>();
+
+    const itemCount = defineModel<number>("itemCount", { default: 0 });
+    itemCount.value = 0;
 </script>
 
 <template>

@@ -19,6 +19,9 @@
     const user = new UserBase({ id: '019e5b68-f701-7af7-a694-c8146e3366a1', name: 'John Doe' });
 
     const { t } = useI18n();
+
+    const itemCount = defineModel<number>("itemCount", { default: 0 });
+    itemCount.value = 0;
 </script>
 
 <template>
