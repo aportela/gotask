@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch } from 'vue';
+    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch, computed } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NModal, NCard } from 'naive-ui';
@@ -29,6 +29,18 @@
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
     const nameFilter = ref<string>("");
+
+    const nameFilterLowerCase = computed(() =>
+        nameFilter.value?.toLowerCase() ?? ''
+    );
+
+    const filteredItems = computed(() => {
+        return items.value.filter((projectPriority) => {
+            const name = projectPriority.name?.toLowerCase();
+            return ((!name || name?.includes(nameFilterLowerCase.value))
+            );
+        });
+    });
 
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
@@ -182,8 +194,8 @@
     </n-modal>
 
     <n-card :title="t('modules.projectType.components.ManageProjectTypesPage.header.title')">
-        <ProjectTypesTable :project-types="items" :loading="state.ajaxRunning" @refresh="onRefresh" @add="onShowAddForm"
-            @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh" :sort-field="sort.field"
+        <ProjectTypesTable :project-types="filteredItems" :loading="state.ajaxRunning" @refresh="onRefresh"
+            @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" :sort-field="sort.field"
             :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:project-type-name-filter="nameFilter" />
     </n-card>
 </template>
