@@ -125,10 +125,14 @@
         </n-form-item>
         <n-flex>
             <n-form-item label="Created at">
-                {{ project.createdAt.toLocaleString() }}
+                <span class="doneo-datetime-label-readonly">
+                    {{ project.createdAt.toLocaleString() }}
+                </span>
             </n-form-item>
             <n-form-item label="Updated at">
-                {{ project.updatedAt?.toLocaleString() }}
+                <span class="doneo-datetime-label-readonly">
+                    {{ project.updatedAt?.toLocaleString() }}
+                </span>
             </n-form-item>
             <n-form-item label="Started at">
                 <ToggleDateTimePicker clearable v-model:value="project.startedAt.msTimestamp"

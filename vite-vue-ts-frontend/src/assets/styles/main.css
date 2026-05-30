@@ -23,7 +23,7 @@
 }
 
 .doneo-disable-opacity {
-        opacity: 1 !important;
+    opacity: 1 !important;
 }
 
 .doneo-disable-user-select {
@@ -35,8 +35,13 @@
 }
 
 /* deny select text (clicking at element) */
-th, td, .n-menu, .n-menu-item, .n-tabs-nav, .n-notification-container {
-        user-select: none;
+th,
+td,
+.n-menu,
+.n-menu-item,
+.n-tabs-nav,
+.n-notification-container {
+    user-select: none;
 }
 
 .doneo-flex-center-align {
@@ -52,4 +57,10 @@ th, td, .n-menu, .n-menu-item, .n-tabs-nav, .n-notification-container {
 
 .doneo-table-header-click-action th:not(:last-of-type) .n-icon {
     margin-top: 4px;
+}
+
+.doneo-datetime-label-readonly {
+    border: 1px solid #e0e0e6;
+    border-radius: 3px;
+    padding:6px;
 }
