@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch } from 'vue';
+    import { onMounted, onBeforeUnmount, ref, reactive, shallowRef, watch, computed } from 'vue';
     import { useI18n } from "vue-i18n";
 
     import { NModal, NCard } from 'naive-ui';
@@ -29,6 +29,19 @@
     const sort = ref<Sort>(new Sort("name", "ASC"));
 
     const nameFilter = ref<string>("");
+
+
+    const nFilter = computed(() =>
+        nameFilter.value?.toLowerCase() ?? ''
+    );
+
+    const filteredItems = computed(() => {
+        return items.value.filter((projectPriority) => {
+            const name = projectPriority.name?.toLowerCase();
+            return ((!name || name?.includes(nFilter.value))
+            );
+        });
+    });
 
     const showForm = ref<boolean>(false);
     const formMode = ref<FormMode>("add");
@@ -83,9 +96,6 @@
                     field: sort.value.field,
                     sort: sort.value.order,
                 },
-                filter: {
-                    name: nameFilter.value,
-                }
             };
             const response = await projectPriorityService.search(payload);
             items.value = response.projectPriorities.map((projectPriority: ProjectPriorityResponse) => new ProjectPriority(projectPriority))
@@ -182,10 +192,9 @@
     </n-modal>
 
     <n-card :title="t('modules.projectPriority.components.ManageProjectPrioritiesPage.header.title')">
-        <ProjectPrioritiesTable :projectPriorities="items" :loading="state.ajaxRunning" @refresh="onRefresh"
-            @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" @textfilter-keydown-enter="onRefresh"
-            :sort-field="sort.field" :sort-order="sort.order" @toggle-sort="onToggleSort"
-            v-model:project-priority-name-filter="nameFilter" />
+        <ProjectPrioritiesTable :projectPriorities="filteredItems" :loading="state.ajaxRunning" @refresh="onRefresh"
+            @add="onShowAddForm" @update="onShowUpdateForm" @delete="onDelete" :sort-field="sort.field"
+            :sort-order="sort.order" @toggle-sort="onToggleSort" v-model:project-priority-name-filter="nameFilter" />
     </n-card>
 </template>
 

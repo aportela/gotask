@@ -25,7 +25,7 @@
 
     const { t } = useI18n();
 
-    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'toggleSort', 'textfilterKeydownEnter']);
+    const emit = defineEmits(['refresh', 'add', 'update', 'delete', 'toggleSort']);
 
     const props = defineProps<Props>();
 
@@ -78,11 +78,6 @@
             },
         });
     };
-
-    const onTextFilterKeyDownEnter = () => {
-        emit("textfilterKeydownEnter");
-    };
-
 </script>
 
 <template>
@@ -103,7 +98,7 @@
                 <th>
                     <TextFilterInput clearable size="small"
                         :placeholder="t('modules.projectPriority.components.ProjectPrioritiesTable.filters.name.placeholder')"
-                        v-model:value="projectPriorityNameFilter" @keydown-enter="onTextFilterKeyDownEnter" />
+                        v-model:value="projectPriorityNameFilter" />
                 </th>
                 <th class="doneo-text-center">
                     <RefreshAddActionsColumn @refresh="onRefresh" @add="onAdd" />
@@ -115,7 +110,7 @@
                 <td>
                     <n-tag :color="getNaiveUITagColorProperty(projectPriority.hexColor ?? '#888888')">{{
                         projectPriority.name
-                    }}</n-tag>
+                        }}</n-tag>
                 </td>
                 <td class="doneo-text-center">
                     <UpdateDeleteActionsColumn @update="onUpdate(projectPriority, index)"
