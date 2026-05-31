@@ -16,9 +16,9 @@ const md = new MarkdownIt({
 
 md.options.highlight = (code: string, lang: string): string => {
   if (lang && hljs.getLanguage(lang)) {
-    return `<pre><code class="hljs ${lang}">${hljs.highlight(code, { language: lang }).value}</code></pre>`;
+    return `<pre><code class="doneo-md-code-container hljs ${lang}">${hljs.highlight(code, { language: lang }).value}</code></pre>`;
   }
-  return `<pre><code class="hljs">${md.utils.escapeHtml(code)}</code></pre>`;
+  return `<pre><code class="doneo-md-code-container hljs">${md.utils.escapeHtml(code)}</code></pre>`;
 };
 
 const turndown = new TurndownService();
