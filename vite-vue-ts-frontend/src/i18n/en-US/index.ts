@@ -442,6 +442,13 @@ export default {
             },
           },
         },
+        ProjectNotesTab: {
+          notifications: {
+            projectNoteAdded: "Note has been added",
+            projectNoteUpdated: "Note has been updated",
+            projectNoteDeleted: "Note has been deleted",
+          },
+        },
       },
     },
     projectPriority: {

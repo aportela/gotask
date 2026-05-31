@@ -6,7 +6,7 @@
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { useLoadingStore } from '../../../stores/loading';
-    //    import { useNotify } from '../../../shared/composables/notification';
+    import { useNotify } from '../../../shared/composables/notification';
     import { appBus } from '../../../shared/composables/bus';
     import { Note } from "../../notes/models/note.ts";
     import type { AddRequest, UpdateRequest } from "../../notes/types/dto.ts";
@@ -14,6 +14,7 @@
     import { handleAPIError } from '../../../api/client/errorHandler';
     import type { SearchResponse } from "../../notes/types/dto.ts";
     import NoteItem from "../../notes/components/NoteItem.vue";
+    import { useSessionStore } from "../../../stores/session.ts";
 
     interface ProjectNotesProps {
         style?: string | CSSProperties;
@@ -23,8 +24,9 @@
     const props = defineProps<ProjectNotesProps>();
 
     const { t } = useI18n();
-    //const { notify } = useNotify();
+    const { notify } = useNotify();
     const loadingStore = useLoadingStore();
+    const sesionStore = useSessionStore();
 
     const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
 
@@ -79,8 +81,8 @@
         items.value = [new Note({
             id: "",
             user: {
-                id: "019e6db9-6f4a-702f-94cd-7dd645a4d03a",
-                name: "John doe",
+                id: sesionStore.sessionUserId ?? "",
+                name: sessionStorage.sessionUserName ?? "",
             },
             createdAt: new Date().getTime(),
             updatedAt: null,
@@ -117,6 +119,7 @@
                         body: note.body
                     };
                     await noteService.addProjectNote(props.projectId, payload);
+                    notify('success', t("modules.note.components.ProjectNotesTab.notifications.projectNoteAdded"));
                     onRefresh();
                 } else if (note.id) {
                     const payload: UpdateRequest = {
@@ -130,6 +133,7 @@
                         body: note.body
                     };
                     await noteService.updateProjectNote(props.projectId, note.id, payload);
+                    notify('success', t("modules.note.components.ProjectNotesTab.notifications.projectNoteUpdated"));
                     onRefresh();
                 }
             } catch { }
@@ -141,9 +145,8 @@
     const onDeleteNote = async (id: string) => {
         if (props.projectId) {
             try {
-                const response = await noteService.deleteProjectNote(props.projectId, id);
-                // TODO:
-                console.log(response);
+                await noteService.deleteProjectNote(props.projectId, id);
+                notify('success', t("modules.note.components.ProjectNotesTab.notifications.projectNoteDeleted"));
                 onRefresh();
             } catch { }
         } else {
@@ -154,12 +157,10 @@
 
 <template>
     <n-card bordered :style="props.style">
-
         <n-button-group style="margin-bottom: 16px;">
             <n-button @click="onAddNote">Add Note</n-button>
             <n-button @click="onRefresh">Refresh notes</n-button>
         </n-button-group>
-
         <n-space vertical size="large" style="margin-right: 12px;">
             <NoteItem v-for="note, index in items" :key="note.id ?? index" :note="note" @save="onSaveNote"
                 @delete="onDeleteNote" />
