@@ -142,6 +142,7 @@
         if (props.projectId) {
             try {
                 const response = await noteService.deleteProjectNote(props.projectId, id);
+                // TODO:
                 console.log(response);
                 onRefresh();
             } catch { }
