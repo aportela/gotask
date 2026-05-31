@@ -2,7 +2,7 @@
     import { shallowRef, reactive, onMounted, onBeforeUnmount, watch, type CSSProperties } from "vue";
     import { useI18n } from "vue-i18n";
 
-    import { NSpace, NCard, NButton } from "naive-ui";
+    import { NSpace, NCard, NButtonGroup, NButton } from "naive-ui";
 
     import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
     import { useLoadingStore } from '../../../stores/loading';
@@ -153,7 +153,11 @@
 
 <template>
     <n-card bordered :style="props.style">
-        <n-button @click="onAddNote" style="margin-bottom: 16px;">Add Note</n-button>
+
+        <n-button-group style="margin-bottom: 16px;">
+            <n-button @click="onAddNote">Add Note</n-button>
+            <n-button @click="onRefresh">Refresh notes</n-button>
+        </n-button-group>
 
         <n-space vertical size="large" style="margin-right: 12px;">
             <NoteItem v-for="note, index in items" :key="note.id ?? index" :note="note" @save="onSaveNote"
@@ -162,28 +166,4 @@
     </n-card>
 </template>
 
-<style lang="css" scoped>
-    .note-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 12px;
-    }
-
-    .note-user {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-    }
-
-    .note-date {
-        font-size: 12px;
-        color: #999;
-    }
-
-    .note-content {
-        font-size: 14px;
-        white-space: pre-line;
-    }
-</style>
+<style lang="css" scoped></style>
