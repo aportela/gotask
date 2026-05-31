@@ -11,6 +11,7 @@ import (
 
 	"github.com/aportela/doneo/internal/config"
 	"github.com/aportela/doneo/internal/database"
+	"github.com/aportela/doneo/internal/handlers/attachmenthandler"
 	"github.com/aportela/doneo/internal/handlers/authhandler"
 	"github.com/aportela/doneo/internal/handlers/notehandler"
 	"github.com/aportela/doneo/internal/handlers/projecthandler"
@@ -68,6 +69,12 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		roleHandler := rolehandler.NewRoleHandler(db)
 		r.Get("/users", userHandler.SearchBase)
 		r.Get("/roles", roleHandler.SearchBase)
+	})
+
+	apiRouter.Route("/attachments", func(r chi.Router) {
+		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
+		attachmentHandler := attachmenthandler.NewAttachmentHandler(db, cfg.Storage.AttachmentsPath)
+		r.Post("/", attachmentHandler.AddAttachment)
 	})
 
 	apiRouter.Route("/users", func(r chi.Router) {

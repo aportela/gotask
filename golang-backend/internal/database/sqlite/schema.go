@@ -127,6 +127,18 @@ var installSchemaQueries = []string{
 		CREATE INDEX IF NOT EXISTS idx_project_note_project_id ON project_notes(project_id);
 		CREATE INDEX IF NOT EXISTS idx_project_note_user_id ON project_notes(user_id);
 	`,
+	`
+		CREATE TABLE IF NOT EXISTS attachments (
+			id TEXT NOT NULL CHECK(length(id) == 36),
+			original_name TEXT NOT NULL,
+			content_type TEXT NOT NULL,
+			size INTEGER NOT NULL,
+			user_id TEXT NOT NULL CHECK(length(user_id) == 36),
+			created_at INTEGER NOT NULL,
+			PRIMARY KEY (id),
+			FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+		) STRICT;
+	`,
 	/*
 		`
 			CREATE TABLE IF NOT EXISTS project_task_status (

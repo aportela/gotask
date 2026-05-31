@@ -15,8 +15,13 @@ type AuthConfiguration struct {
 	SecretKey                  string `mapstructure:"secret_key"`
 }
 
+type StorageConfiguration struct {
+	AttachmentsPath string `mapstructure:"attachments_path"`
+}
+
 type Configuration struct {
 	Database DatabaseConfiguration `mapstructure:"database"`
 	Server   ServerConfiguration   `mapstructure:"server"`
 	Auth     AuthConfiguration     `mapstructure:"auth"`
+	Storage  StorageConfiguration  `mapstructure:"storage"`
 }

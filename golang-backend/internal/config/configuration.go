@@ -49,6 +49,8 @@ func createDefaultConfiguration() error {
 	}
 	viper.Set("auth.secret_key", secretKey)
 
+	viper.Set("storage.attachments_path", filepath.Join(data.GetDataPath(), "attachments"))
+
 	return viper.WriteConfigAs(filepath.Join(data.GetDataPath(), configurationFilename))
 }
 
