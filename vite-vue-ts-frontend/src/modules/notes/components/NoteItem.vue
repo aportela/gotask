@@ -102,6 +102,18 @@
         })
     }
 
+    const pastedWithoutFormat = ref<boolean>(false);
+    const onKeyDown = (event: KeyboardEvent) => {
+        if (
+            event.ctrlKey &&
+            event.shiftKey &&
+            event.key.toLowerCase() === 'v') {
+            pastedWithoutFormat.value = true;
+        } else {
+            pastedWithoutFormat.value = false;
+        }
+    };
+
     const onPaste = (e: ClipboardEvent) => {
         const clipboard = e.clipboardData
         if (!clipboard) return
@@ -111,9 +123,7 @@
 
         let markdown = plain
 
-        if (html) {
-
-            // TODO: if we paste code, some markdown is escaped & fail next with hljs
+        if (html && !pastedWithoutFormat.value) {
             markdown = toMarkdown(html)
         }
 
@@ -151,7 +161,7 @@
         <n-form-item>
             <div v-if="currentMode === 'view'" v-html="htmlMarkDownBodyPreview" />
             <n-input v-else placeholder="Type note body" v-model:value="body" type="textarea" rows="6" ref="bodyRef"
-                @paste="onPaste" />
+                @paste="onPaste" @keydown="onKeyDown" />
         </n-form-item>
 
         <n-flex justify="end">
