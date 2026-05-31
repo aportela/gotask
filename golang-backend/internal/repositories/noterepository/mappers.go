@@ -31,9 +31,9 @@ func DTOToDomain(note noteDTO) domain.Note {
 	}
 }
 
-func DTOArrayToDomainArray(note []noteDTO) []domain.Note {
-	results := make([]domain.Note, 0, len(note))
-	for _, note := range note {
+func DTOArrayToDomainArray(notes []noteDTO) []domain.Note {
+	results := make([]domain.Note, 0, len(notes))
+	for _, note := range notes {
 		results = append(results, DTOToDomain(note))
 	}
 	return results
