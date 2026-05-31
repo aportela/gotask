@@ -1,24 +1,24 @@
 package domain
 
 type TaskBase struct {
-	ID   string `json:"id"`
-	Slug string `json:"slug"`
+	ID   string
+	Slug string
 }
 
 type Task struct {
-	ID          string       `json:"id"`
-	Slug        string       `json:"slug"`
-	Summary     string       `json:"summary"`
-	Description string       `json:"description"`
-	Status      TaskStatus   `json:"status"`
-	Priority    TaskPriority `json:"priority"`
-	CreatedBy   UserBase     `json:"createdBy"`
-	CreatedAt   int64        `json:"createdAt"`
-	StartedAt   *int64       `json:"startedAt"`
-	FinishedAt  *int64       `json:"finishedAt"`
-	DueAt       *int64       `json:"dueAt"`
-	Tags        []string     `json:"tags"`
-	Notes       []Note       `json:"notes"`
-	Attachments []Attachment `json:"attachments"`
-	LinkedTasks []TaskBase   `json:"linkedTasks"`
+	ID          string
+	Slug        string
+	Summary     string
+	Description string
+	Status      TaskStatus
+	Priority    TaskPriority
+	CreatedBy   UserBase
+	CreatedAt   int64
+	StartedAt   *int64
+	FinishedAt  *int64
+	DueAt       *int64
+	Tags        []string
+	Notes       []Note
+	Attachments []Attachment
+	LinkedTasks []TaskBase
 }
