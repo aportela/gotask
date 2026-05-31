@@ -9,6 +9,7 @@ import (
 
 	"github.com/aportela/doneo/internal/database"
 	"github.com/aportela/doneo/internal/domain"
+	"github.com/aportela/doneo/internal/handlers"
 	"github.com/aportela/doneo/internal/middlewares"
 	"github.com/aportela/doneo/internal/repositories/attachmentrepository"
 	"github.com/aportela/doneo/internal/services/attachmentservice"
@@ -91,8 +92,5 @@ func (h *AttachmentHandler) AddAttachment(w http.ResponseWriter, r *http.Request
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(`{
-      "id":" + id + ",
-      "path":" + fullPath + "
-    }`))
+	handlers.ToHandlerJSONResponse(w, domainToResponse(attachment), nil)
 }
