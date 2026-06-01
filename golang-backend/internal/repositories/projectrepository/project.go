@@ -179,7 +179,7 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 				U.name AS creator_name,
 				IFNULL(PUR.permissions_count, 0) AS permissions_count,
 				IFNULL(PN.notes_count, 0) AS notes_count,
-				0 AS attachments_count,
+				IFNULL(PA.attachments_count, 0) AS attachments_count,
 				0 AS history_operations_count,
 				0 AS tasks_count
             FROM projects P
@@ -197,6 +197,11 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
     			FROM project_notes
     			GROUP BY project_id
 			) PN ON PN.project_id = P.id
+			 LEFT JOIN (
+    			SELECT project_id, COUNT(*) AS attachments_count
+    			FROM project_attachments
+    			GROUP BY project_id
+			) PA ON PA.project_id = P.id
             WHERE P.id = ?
 			GROUP BY P.id
         `,
