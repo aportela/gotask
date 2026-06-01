@@ -27,7 +27,7 @@ type projectRepository struct {
 	database database.Database
 }
 
-func NewProjectRepository(database database.Database) ProjectRepository {
+func NewRepository(database database.Database) ProjectRepository {
 	return &projectRepository{database: database}
 }
 

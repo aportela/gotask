@@ -20,7 +20,7 @@ type TaskStatusHandler struct {
 }
 
 func NewTaskStatusHandler(db database.Database) *TaskStatusHandler {
-	taskStatusRepository := taskstatusrepository.NewTaskStatusRepository(db)
+	taskStatusRepository := taskstatusrepository.NewRepository(db)
 	taskStatusService := taskstatusservice.NewTaskStatusService(taskStatusRepository)
 	return &TaskStatusHandler{service: taskStatusService}
 }

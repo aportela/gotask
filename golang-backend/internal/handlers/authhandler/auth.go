@@ -23,7 +23,7 @@ type AuthHandler struct {
 }
 
 func NewAuthHandler(db database.Database, secretKey string, accessTokenExpirationHours int, refreshTokenExpirationDays int) *AuthHandler {
-	userRepository := userrepository.NewUserRepository(db)
+	userRepository := userrepository.NewRepository(db)
 	authService := authservice.NewAuthService(userRepository)
 	return &AuthHandler{service: authService, secretKey: secretKey, accessTokenExpirationHours: accessTokenExpirationHours, refreshTokenExpirationDays: refreshTokenExpirationDays}
 }

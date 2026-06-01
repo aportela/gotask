@@ -23,7 +23,7 @@ type noteRepository struct {
 	database database.Database
 }
 
-func NewNoteRepository(database database.Database) NoteRepository {
+func NewRepository(database database.Database) NoteRepository {
 	return &noteRepository{database: database}
 }
 

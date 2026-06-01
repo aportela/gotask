@@ -26,7 +26,7 @@ type projectStatusRepository struct {
 	database database.Database
 }
 
-func NewProjectStatusRepository(database database.Database) ProjectStatusRepository {
+func NewRepository(database database.Database) ProjectStatusRepository {
 	return &projectStatusRepository{database: database}
 }
 

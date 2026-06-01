@@ -20,7 +20,7 @@ type TaskPriorityHandler struct {
 }
 
 func NewTaskPriorityHandler(db database.Database) *TaskPriorityHandler {
-	taskPriorityRepository := taskpriorityrepository.NewTaskPriorityRepository(db)
+	taskPriorityRepository := taskpriorityrepository.NewRepository(db)
 	taskPriorityService := taskpriorityservice.NewTaskPriorityService(taskPriorityRepository)
 	return &TaskPriorityHandler{service: taskPriorityService}
 }

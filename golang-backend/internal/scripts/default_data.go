@@ -13,7 +13,7 @@ import (
 )
 
 func CreateDefaultData(db database.Database) {
-	userRepository := userrepository.NewUserRepository(db)
+	userRepository := userrepository.NewRepository(db)
 	userService := userservice.NewUserService(userRepository)
 	permissionsBitmask := domain.PermissionsBitmask(0)
 	permissionsBitmask.AddPermission(domain.UserPermissionAdmin)

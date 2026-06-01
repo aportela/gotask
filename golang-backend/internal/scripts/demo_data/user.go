@@ -61,7 +61,7 @@ func getRandomUser() domain.User {
 
 func createUsers(database database.Database, count int) []string {
 	var newUserIds []string
-	userRepository := userrepository.NewUserRepository(database)
+	userRepository := userrepository.NewRepository(database)
 	userService := userservice.NewUserService(userRepository)
 	for i := 1; i <= count; i++ {
 		newUser := getRandomUser()

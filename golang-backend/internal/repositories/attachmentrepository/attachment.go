@@ -22,7 +22,7 @@ type attachmentRepository struct {
 	database database.Database
 }
 
-func NewAttachmentRepository(database database.Database) AttachmentRepository {
+func NewRepository(database database.Database) AttachmentRepository {
 	return &attachmentRepository{database: database}
 }
 

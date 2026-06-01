@@ -20,7 +20,7 @@ type ProjectStatusHandler struct {
 }
 
 func NewProjectStatusHandler(db database.Database) *ProjectStatusHandler {
-	projectStatusRepository := projectstatusrepository.NewProjectStatusRepository(db)
+	projectStatusRepository := projectstatusrepository.NewRepository(db)
 	projectStatusService := projectstatusservice.NewProjectStatusService(projectStatusRepository)
 	return &ProjectStatusHandler{service: projectStatusService}
 }

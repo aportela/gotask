@@ -30,7 +30,7 @@ type userRepository struct {
 	database database.Database
 }
 
-func NewUserRepository(database database.Database) UserRepository {
+func NewRepository(database database.Database) UserRepository {
 	return &userRepository{database: database}
 }
 

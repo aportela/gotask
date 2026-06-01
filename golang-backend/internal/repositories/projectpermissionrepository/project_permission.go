@@ -22,7 +22,7 @@ type projectPermissionRepository struct {
 	database database.Database
 }
 
-func NewProjectPermissionRepository(database database.Database) ProjectPermissionRepository {
+func NewRepository(database database.Database) ProjectPermissionRepository {
 	return &projectPermissionRepository{database: database}
 }
 

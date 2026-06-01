@@ -20,7 +20,7 @@ type RoleHandler struct {
 }
 
 func NewRoleHandler(db database.Database) *RoleHandler {
-	roleRepository := rolerepository.NewRoleRepository(db)
+	roleRepository := rolerepository.NewRepository(db)
 	roleService := roleservice.NewRoleService(roleRepository)
 	return &RoleHandler{role: roleService}
 }

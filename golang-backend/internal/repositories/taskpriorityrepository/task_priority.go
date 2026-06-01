@@ -26,7 +26,7 @@ type taskPriorityRepository struct {
 	database database.Database
 }
 
-func NewTaskPriorityRepository(database database.Database) TaskPriorityRepository {
+func NewRepository(database database.Database) TaskPriorityRepository {
 	return &taskPriorityRepository{database: database}
 }
 

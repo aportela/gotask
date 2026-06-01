@@ -26,7 +26,7 @@ type projectPriorityRepository struct {
 	database database.Database
 }
 
-func NewProjectPriorityRepository(database database.Database) ProjectPriorityRepository {
+func NewRepository(database database.Database) ProjectPriorityRepository {
 	return &projectPriorityRepository{database: database}
 }
 

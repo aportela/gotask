@@ -26,7 +26,7 @@ type roleRepository struct {
 	database database.Database
 }
 
-func NewRoleRepository(database database.Database) RoleRepository {
+func NewRepository(database database.Database) RoleRepository {
 	return &roleRepository{database: database}
 }
 
