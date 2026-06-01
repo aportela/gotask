@@ -40,6 +40,8 @@
 
     const itemCount = defineModel<number>("itemCount", { default: 0 });
 
+    const uploadCount = ref<number>(0);
+
     const filterByUser = ref<string>("");
 
     const filterByName = ref<string>("");
@@ -72,7 +74,16 @@
         }
     });
 
+    watch(showUploadDialog, (newValue) => {
+        if (!newValue) {
+            if (uploadCount.value > 0) {
+                onRefresh();
+            }
+        }
+    });
+
     const onShowUploadDialog = () => {
+        uploadCount.value = 0;
         showUploadDialog.value = true;
     };
 
@@ -169,7 +180,8 @@
 
 <template>
 
-    <UploadDialog v-if="props.projectId" v-model:show="showUploadDialog" :project-id="props.projectId" />
+    <UploadDialog v-if="props.projectId" v-model:show="showUploadDialog" :project-id="props.projectId"
+        v-model:upload-count="uploadCount" />
     <n-card bordered :style="props.style">
         <ProjectAttachmentsTable :project-attachments="filteredAttachments" :loading="state.ajaxRunning"
             v-model:name-filter="filterByName" v-model:user-filter="filterByUser" @refresh="onRefresh"

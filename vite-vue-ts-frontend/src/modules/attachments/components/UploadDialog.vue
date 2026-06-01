@@ -14,6 +14,8 @@
 
     const show = defineModel<boolean>("show");
 
+    const uploadCount = defineModel<number>("uploadCount", { default: 0 });
+
     const uploadFile = async ({
         file,
         headers,
@@ -57,13 +59,18 @@
 
         xhr.send(formData)
     }
+
+    const onUploadFinish = () => {
+        uploadCount.value++;
+    };
 </script>
 
 <template>
     <n-modal v-model:show="show" preset="card" style="width: 98vw;">
         <template #default>
             <div style="height: 90vh;">
-                <n-upload multiple directory-dnd :max="5" list-type="image" :custom-request="uploadFile">
+                <n-upload multiple directory-dnd :max="5" list-type="image" :custom-request="uploadFile"
+                    @finish="onUploadFinish">
                     <n-upload-dragger style="height: 40vh;">
                         <div style=" margin-bottom: 12px">
                             <n-icon size="48" :depth="3" :component="IconUpload" />
