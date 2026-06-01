@@ -39,7 +39,7 @@ func (attachmentRepository *attachmentRepository) AddProjectAttachment(ctx conte
 			_ = tx.Rollback()
 		}
 	}()
-	_, err = attachmentRepository.database.ExecContext(
+	_, err = tx.ExecContext(
 		ctx,
 		`
             INSERT INTO attachments (id, original_name, content_type, size, user_id, created_at)
@@ -67,12 +67,13 @@ func (attachmentRepository *attachmentRepository) AddProjectAttachment(ctx conte
 				return &domain.ValidationError{Field: "userId"}
 			}
 		}
+		return err
 	}
-	_, err = attachmentRepository.database.ExecContext(
+	_, err = tx.ExecContext(
 		ctx,
 		`
-            INSERT INTO project_attachments (id, project_id, attachmnet_id)
-			VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO project_attachments (id, project_id, attachment_id)
+			VALUES (?, ?, ?)
         `,
 		utils.UUID(),
 		projectId,
@@ -95,8 +96,9 @@ func (attachmentRepository *attachmentRepository) AddProjectAttachment(ctx conte
 				return &domain.ValidationError{Field: "attachmnet_id"}
 			}
 		}
+		return err
 	}
-	err = attachmentRepository.database.Commit(tx)
+	err = tx.Commit()
 	return err
 }
 
