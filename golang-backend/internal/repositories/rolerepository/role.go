@@ -30,8 +30,8 @@ func NewRoleRepository(database database.Database) RoleRepository {
 	return &roleRepository{database: database}
 }
 
-func (roleRepository *roleRepository) Add(ctx context.Context, role roleDTO) error {
-	_, err := roleRepository.database.ExecContext(
+func (repository *roleRepository) Add(ctx context.Context, role roleDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO roles (id, name, permissions_bitmask)
@@ -67,8 +67,8 @@ func (roleRepository *roleRepository) Add(ctx context.Context, role roleDTO) err
 	return err
 }
 
-func (roleRepository *roleRepository) Update(ctx context.Context, role roleDTO) error {
-	_, err := roleRepository.database.ExecContext(
+func (repository *roleRepository) Update(ctx context.Context, role roleDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE roles SET
@@ -100,8 +100,8 @@ func (roleRepository *roleRepository) Update(ctx context.Context, role roleDTO) 
 	return err
 }
 
-func (roleRepository *roleRepository) Delete(ctx context.Context, id string) error {
-	_, err := roleRepository.database.ExecContext(
+func (repository *roleRepository) Delete(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM roles
@@ -112,9 +112,9 @@ func (roleRepository *roleRepository) Delete(ctx context.Context, id string) err
 	return err
 }
 
-func (roleRepository *roleRepository) Get(ctx context.Context, id string) (roleDTO, error) {
+func (repository *roleRepository) Get(ctx context.Context, id string) (roleDTO, error) {
 	var role roleDTO
-	err := roleRepository.database.QueryRowContext(
+	err := repository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
@@ -132,7 +132,7 @@ func (roleRepository *roleRepository) Get(ctx context.Context, id string) (roleD
 	return role, err
 }
 
-func (roleRepository *roleRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]roleDTO, browser.Result, error) {
+func (repository *roleRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]roleDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `
@@ -175,7 +175,7 @@ func (roleRepository *roleRepository) Search(ctx context.Context, pager browser.
 		sqlLimit = ""
 	}
 	sqlQuery = fmt.Sprintf("%s %s %s %s ", sqlQuery, sqlWhere, sqlOrder, sqlLimit)
-	rows, err := roleRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
+	rows, err := repository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}
@@ -201,7 +201,7 @@ func (roleRepository *roleRepository) Search(ctx context.Context, pager browser.
 			FROM roles R
 		`
 		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
-		err = roleRepository.database.QueryRowContext(
+		err = repository.database.QueryRowContext(
 			ctx,
 			sqlCountQuery,
 			filterArgs...,

@@ -26,8 +26,8 @@ func NewProjectPermissionRepository(database database.Database) ProjectPermissio
 	return &projectPermissionRepository{database: database}
 }
 
-func (projectPermissionRepository *projectPermissionRepository) Add(ctx context.Context, permissionId string, projectId string, userId string, roleId string) error {
-	_, err := projectPermissionRepository.database.ExecContext(
+func (repository *projectPermissionRepository) Add(ctx context.Context, permissionId string, projectId string, userId string, roleId string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO project_user_role (id, project_id, user_id, role_id)
@@ -60,8 +60,8 @@ func (projectPermissionRepository *projectPermissionRepository) Add(ctx context.
 	return err
 }
 
-func (projectPermissionRepository *projectPermissionRepository) Delete(ctx context.Context, permissionId string) error {
-	_, err := projectPermissionRepository.database.ExecContext(
+func (repository *projectPermissionRepository) Delete(ctx context.Context, permissionId string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM project_user_role
@@ -73,8 +73,8 @@ func (projectPermissionRepository *projectPermissionRepository) Delete(ctx conte
 	return err
 }
 
-func (projectPermissionRepository *projectPermissionRepository) Search(ctx context.Context, projectId string) ([]projectPermissionDTO, error) {
-	rows, err := projectPermissionRepository.database.QueryContext(
+func (repository *projectPermissionRepository) Search(ctx context.Context, projectId string) ([]projectPermissionDTO, error) {
+	rows, err := repository.database.QueryContext(
 		ctx,
 		`
             SELECT

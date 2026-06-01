@@ -30,8 +30,8 @@ func NewProjectPriorityRepository(database database.Database) ProjectPriorityRep
 	return &projectPriorityRepository{database: database}
 }
 
-func (projectPriorityRepository *projectPriorityRepository) Add(ctx context.Context, projectPriority ProjectPriorityDTO) error {
-	_, err := projectPriorityRepository.database.ExecContext(
+func (repository *projectPriorityRepository) Add(ctx context.Context, projectPriority ProjectPriorityDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO project_priorities (id, name, item_hex_color)
@@ -67,8 +67,8 @@ func (projectPriorityRepository *projectPriorityRepository) Add(ctx context.Cont
 	return err
 }
 
-func (projectPriorityRepository *projectPriorityRepository) Update(ctx context.Context, projectPriority ProjectPriorityDTO) error {
-	_, err := projectPriorityRepository.database.ExecContext(
+func (repository *projectPriorityRepository) Update(ctx context.Context, projectPriority ProjectPriorityDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE project_priorities SET
@@ -106,8 +106,8 @@ func (projectPriorityRepository *projectPriorityRepository) Update(ctx context.C
 	return err
 }
 
-func (projectPriorityRepository *projectPriorityRepository) Delete(ctx context.Context, id string) error {
-	_, err := projectPriorityRepository.database.ExecContext(
+func (repository *projectPriorityRepository) Delete(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM project_priorities
@@ -118,9 +118,9 @@ func (projectPriorityRepository *projectPriorityRepository) Delete(ctx context.C
 	return err
 }
 
-func (projectPriorityRepository *projectPriorityRepository) Get(ctx context.Context, id string) (ProjectPriorityDTO, error) {
+func (repository *projectPriorityRepository) Get(ctx context.Context, id string) (ProjectPriorityDTO, error) {
 	var projectPriority ProjectPriorityDTO
-	err := projectPriorityRepository.database.QueryRowContext(
+	err := repository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
@@ -138,7 +138,7 @@ func (projectPriorityRepository *projectPriorityRepository) Get(ctx context.Cont
 	return projectPriority, err
 }
 
-func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]ProjectPriorityDTO, browser.Result, error) {
+func (repository *projectPriorityRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]ProjectPriorityDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `
@@ -182,7 +182,7 @@ func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.C
 		sqlLimit = ""
 	}
 	sqlQuery = fmt.Sprintf("%s %s %s %s ", sqlQuery, sqlWhere, sqlOrder, sqlLimit)
-	rows, err := projectPriorityRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
+	rows, err := repository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}
@@ -210,7 +210,7 @@ func (projectPriorityRepository *projectPriorityRepository) Search(ctx context.C
 			FROM project_priorities PP
 		`
 		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
-		err = projectPriorityRepository.database.QueryRowContext(
+		err = repository.database.QueryRowContext(
 			ctx,
 			sqlCountQuery,
 			filterArgs...,

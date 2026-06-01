@@ -34,8 +34,8 @@ func NewUserRepository(database database.Database) UserRepository {
 	return &userRepository{database: database}
 }
 
-func (userRepository *userRepository) Add(ctx context.Context, user UserDTO) error {
-	_, err := userRepository.database.ExecContext(
+func (repository *userRepository) Add(ctx context.Context, user UserDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO users (id, email, name, password_hash, created_at, updated_at, deleted_at, permissions_bitmask)
@@ -78,7 +78,7 @@ func (userRepository *userRepository) Add(ctx context.Context, user UserDTO) err
 	return err
 }
 
-func (userRepository *userRepository) Update(ctx context.Context, user UserDTO) error {
+func (repository *userRepository) Update(ctx context.Context, user UserDTO) error {
 	var query string
 	var args []any
 	if user.PasswordHash != "" {
@@ -101,7 +101,7 @@ func (userRepository *userRepository) Update(ctx context.Context, user UserDTO) 
 			WHERE id = ?`
 		args = append(args, user.Email, user.Name, user.UpdatedAt, user.PermissionsBitmask, user.ID)
 	}
-	_, err := userRepository.database.ExecContext(ctx, query, args...)
+	_, err := repository.database.ExecContext(ctx, query, args...)
 	if err != nil {
 		fmt.Println(err.Error())
 		var sqlErr *sqlite.Error
@@ -126,8 +126,8 @@ func (userRepository *userRepository) Update(ctx context.Context, user UserDTO) 
 	return err
 }
 
-func (userRepository *userRepository) Delete(ctx context.Context, id string) error {
-	_, err := userRepository.database.ExecContext(
+func (repository *userRepository) Delete(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE users SET
@@ -140,8 +140,8 @@ func (userRepository *userRepository) Delete(ctx context.Context, id string) err
 	return err
 }
 
-func (userRepository *userRepository) UnDelete(ctx context.Context, id string) error {
-	_, err := userRepository.database.ExecContext(
+func (repository *userRepository) UnDelete(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE users SET
@@ -153,8 +153,8 @@ func (userRepository *userRepository) UnDelete(ctx context.Context, id string) e
 	return err
 }
 
-func (userRepository *userRepository) Purge(ctx context.Context, id string) error {
-	_, err := userRepository.database.ExecContext(
+func (repository *userRepository) Purge(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM users
@@ -165,9 +165,9 @@ func (userRepository *userRepository) Purge(ctx context.Context, id string) erro
 	return err
 }
 
-func (userRepository *userRepository) Get(ctx context.Context, id string) (UserDTO, error) {
+func (repository *userRepository) Get(ctx context.Context, id string) (UserDTO, error) {
 	var user UserDTO
-	err := userRepository.database.QueryRowContext(
+	err := repository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
@@ -185,9 +185,9 @@ func (userRepository *userRepository) Get(ctx context.Context, id string) (UserD
 	return user, err
 }
 
-func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (UserDTO, error) {
+func (repository *userRepository) GetByEmailForVerifyCredentials(ctx context.Context, email string, password string) (UserDTO, error) {
 	var user UserDTO
-	err := userRepository.database.QueryRowContext(
+	err := repository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
@@ -205,7 +205,7 @@ func (userRepository *userRepository) GetByEmailForVerifyCredentials(ctx context
 	return user, err
 }
 
-func (userRepository *userRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]UserDTO, browser.Result, error) {
+func (repository *userRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]UserDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `
@@ -300,7 +300,7 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 		sqlLimit = ""
 	}
 	sqlQuery = fmt.Sprintf("%s %s %s %s ", sqlQuery, sqlWhere, sqlOrder, sqlLimit)
-	rows, err := userRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
+	rows, err := repository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}
@@ -326,7 +326,7 @@ func (userRepository *userRepository) Search(ctx context.Context, pager browser.
 			FROM users U
 		`
 		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
-		err = userRepository.database.QueryRowContext(
+		err = repository.database.QueryRowContext(
 			ctx,
 			sqlCountQuery,
 			filterArgs...,

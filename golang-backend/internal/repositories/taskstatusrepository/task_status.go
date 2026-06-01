@@ -30,8 +30,8 @@ func NewTaskStatusRepository(database database.Database) ProjectStatusRepository
 	return &taskStatusRepository{database: database}
 }
 
-func (taskStatusRepository *taskStatusRepository) Add(ctx context.Context, taskStatus taskStatusDTO) error {
-	_, err := taskStatusRepository.database.ExecContext(
+func (repository *taskStatusRepository) Add(ctx context.Context, taskStatus taskStatusDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO task_statuses (id, name, item_hex_color)
@@ -67,8 +67,8 @@ func (taskStatusRepository *taskStatusRepository) Add(ctx context.Context, taskS
 	return err
 }
 
-func (taskStatusRepository *taskStatusRepository) Update(ctx context.Context, taskStatus taskStatusDTO) error {
-	_, err := taskStatusRepository.database.ExecContext(
+func (repository *taskStatusRepository) Update(ctx context.Context, taskStatus taskStatusDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE task_statuses SET
@@ -106,8 +106,8 @@ func (taskStatusRepository *taskStatusRepository) Update(ctx context.Context, ta
 	return err
 }
 
-func (taskStatusRepository *taskStatusRepository) Delete(ctx context.Context, id string) error {
-	_, err := taskStatusRepository.database.ExecContext(
+func (repository *taskStatusRepository) Delete(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM task_statuses
@@ -118,9 +118,9 @@ func (taskStatusRepository *taskStatusRepository) Delete(ctx context.Context, id
 	return err
 }
 
-func (taskStatusRepository *taskStatusRepository) Get(ctx context.Context, id string) (taskStatusDTO, error) {
+func (repository *taskStatusRepository) Get(ctx context.Context, id string) (taskStatusDTO, error) {
 	var taskStatus taskStatusDTO
-	err := taskStatusRepository.database.QueryRowContext(
+	err := repository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
@@ -138,7 +138,7 @@ func (taskStatusRepository *taskStatusRepository) Get(ctx context.Context, id st
 	return taskStatus, err
 }
 
-func (taskStatusRepository *taskStatusRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]taskStatusDTO, browser.Result, error) {
+func (repository *taskStatusRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]taskStatusDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `
@@ -182,7 +182,7 @@ func (taskStatusRepository *taskStatusRepository) Search(ctx context.Context, pa
 		sqlLimit = ""
 	}
 	sqlQuery = fmt.Sprintf("%s %s %s %s ", sqlQuery, sqlWhere, sqlOrder, sqlLimit)
-	rows, err := taskStatusRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
+	rows, err := repository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}
@@ -210,7 +210,7 @@ func (taskStatusRepository *taskStatusRepository) Search(ctx context.Context, pa
 			FROM task_statuses TS
 		`
 		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
-		err = taskStatusRepository.database.QueryRowContext(
+		err = repository.database.QueryRowContext(
 			ctx,
 			sqlCountQuery,
 			filterArgs...,

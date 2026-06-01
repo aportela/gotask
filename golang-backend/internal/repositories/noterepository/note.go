@@ -27,8 +27,8 @@ func NewNoteRepository(database database.Database) NoteRepository {
 	return &noteRepository{database: database}
 }
 
-func (noteRepository *noteRepository) AddProjectNote(ctx context.Context, projectId string, note noteDTO) error {
-	_, err := noteRepository.database.ExecContext(
+func (repository *noteRepository) AddProjectNote(ctx context.Context, projectId string, note noteDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO project_notes (id, project_id, user_id, created_at, updated_at, body)
@@ -60,8 +60,8 @@ func (noteRepository *noteRepository) AddProjectNote(ctx context.Context, projec
 	return err
 }
 
-func (noteRepository *noteRepository) UpdateProjectNote(ctx context.Context, note noteDTO) error {
-	_, err := noteRepository.database.ExecContext(
+func (repository *noteRepository) UpdateProjectNote(ctx context.Context, note noteDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE project_notes SET
@@ -77,8 +77,8 @@ func (noteRepository *noteRepository) UpdateProjectNote(ctx context.Context, not
 	return err
 }
 
-func (noteRepository *noteRepository) DeleteProjectNote(ctx context.Context, id string) error {
-	_, err := noteRepository.database.ExecContext(
+func (repository *noteRepository) DeleteProjectNote(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM project_notes
@@ -90,8 +90,8 @@ func (noteRepository *noteRepository) DeleteProjectNote(ctx context.Context, id 
 	return err
 }
 
-func (noteRepository *noteRepository) GetProjectNotes(ctx context.Context, projectId string) ([]noteDTO, error) {
-	rows, err := noteRepository.database.QueryContext(
+func (repository *noteRepository) GetProjectNotes(ctx context.Context, projectId string) ([]noteDTO, error) {
+	rows, err := repository.database.QueryContext(
 		ctx,
 		`
             SELECT

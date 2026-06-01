@@ -26,8 +26,8 @@ func NewAttachmentRepository(database database.Database) AttachmentRepository {
 	return &attachmentRepository{database: database}
 }
 
-func (attachmentRepository *attachmentRepository) AddProjectAttachment(ctx context.Context, projectId string, attachment attachmentDTO) error {
-	tx, err := attachmentRepository.database.Begin()
+func (repository *attachmentRepository) AddProjectAttachment(ctx context.Context, projectId string, attachment attachmentDTO) error {
+	tx, err := repository.database.Begin()
 	if err != nil {
 		return err
 	}
@@ -101,8 +101,8 @@ func (attachmentRepository *attachmentRepository) AddProjectAttachment(ctx conte
 	return err
 }
 
-func (attachmentRepository *attachmentRepository) DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error {
-	tx, err := attachmentRepository.database.Begin()
+func (repository *attachmentRepository) DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error {
+	tx, err := repository.database.Begin()
 	if err != nil {
 		return err
 	}
@@ -143,8 +143,8 @@ func (attachmentRepository *attachmentRepository) DeleteProjectAttachment(ctx co
 	return err
 }
 
-func (attachmentRepository *attachmentRepository) GetProjectAttachments(ctx context.Context, projectId string) ([]attachmentDTO, error) {
-	rows, err := attachmentRepository.database.QueryContext(
+func (repository *attachmentRepository) GetProjectAttachments(ctx context.Context, projectId string) ([]attachmentDTO, error) {
+	rows, err := repository.database.QueryContext(
 		ctx,
 		`
             SELECT

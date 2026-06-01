@@ -30,8 +30,8 @@ func NewProjectTypeRepository(database database.Database) ProjectTypeRepository 
 	return &projectTypeRepository{database: database}
 }
 
-func (projectTypeRepository *projectTypeRepository) Add(ctx context.Context, projectType ProjectTypeDTO) error {
-	_, err := projectTypeRepository.database.ExecContext(
+func (repository *projectTypeRepository) Add(ctx context.Context, projectType ProjectTypeDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO project_types (id, name, item_hex_color)
@@ -67,8 +67,8 @@ func (projectTypeRepository *projectTypeRepository) Add(ctx context.Context, pro
 	return err
 }
 
-func (projectTypeRepository *projectTypeRepository) Update(ctx context.Context, projectType ProjectTypeDTO) error {
-	_, err := projectTypeRepository.database.ExecContext(
+func (repository *projectTypeRepository) Update(ctx context.Context, projectType ProjectTypeDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE project_types SET
@@ -106,8 +106,8 @@ func (projectTypeRepository *projectTypeRepository) Update(ctx context.Context, 
 	return err
 }
 
-func (projectTypeRepository *projectTypeRepository) Delete(ctx context.Context, id string) error {
-	_, err := projectTypeRepository.database.ExecContext(
+func (repository *projectTypeRepository) Delete(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM project_types
@@ -118,9 +118,9 @@ func (projectTypeRepository *projectTypeRepository) Delete(ctx context.Context, 
 	return err
 }
 
-func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id string) (ProjectTypeDTO, error) {
+func (repository *projectTypeRepository) Get(ctx context.Context, id string) (ProjectTypeDTO, error) {
 	var projectType ProjectTypeDTO
-	err := projectTypeRepository.database.QueryRowContext(
+	err := repository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
@@ -138,7 +138,7 @@ func (projectTypeRepository *projectTypeRepository) Get(ctx context.Context, id 
 	return projectType, err
 }
 
-func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]ProjectTypeDTO, browser.Result, error) {
+func (repository *projectTypeRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]ProjectTypeDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `
@@ -182,7 +182,7 @@ func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context, 
 		sqlLimit = ""
 	}
 	sqlQuery = fmt.Sprintf("%s %s %s %s ", sqlQuery, sqlWhere, sqlOrder, sqlLimit)
-	rows, err := projectTypeRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
+	rows, err := repository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}
@@ -210,7 +210,7 @@ func (projectTypeRepository *projectTypeRepository) Search(ctx context.Context, 
 			FROM project_types PT
 		`
 		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
-		err = projectTypeRepository.database.QueryRowContext(
+		err = repository.database.QueryRowContext(
 			ctx,
 			sqlCountQuery,
 			filterArgs...,

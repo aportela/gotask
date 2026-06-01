@@ -31,8 +31,8 @@ func NewProjectRepository(database database.Database) ProjectRepository {
 	return &projectRepository{database: database}
 }
 
-func (projectRepository *projectRepository) Add(ctx context.Context, project projectDTO) error {
-	_, err := projectRepository.database.ExecContext(
+func (repository *projectRepository) Add(ctx context.Context, project projectDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             INSERT INTO projects
@@ -81,8 +81,8 @@ func (projectRepository *projectRepository) Add(ctx context.Context, project pro
 	return err
 }
 
-func (projectRepository *projectRepository) Update(ctx context.Context, project projectDTO) error {
-	_, err := projectRepository.database.ExecContext(
+func (repository *projectRepository) Update(ctx context.Context, project projectDTO) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             UPDATE projects SET
@@ -139,8 +139,8 @@ func (projectRepository *projectRepository) Update(ctx context.Context, project 
 	return err
 }
 
-func (projectRepository *projectRepository) Delete(ctx context.Context, id string) error {
-	_, err := projectRepository.database.ExecContext(
+func (repository *projectRepository) Delete(ctx context.Context, id string) error {
+	_, err := repository.database.ExecContext(
 		ctx,
 		`
             DELETE FROM projects
@@ -151,9 +151,9 @@ func (projectRepository *projectRepository) Delete(ctx context.Context, id strin
 	return err
 }
 
-func (projectRepository *projectRepository) Get(ctx context.Context, id string) (projectDTO, error) {
+func (repository *projectRepository) Get(ctx context.Context, id string) (projectDTO, error) {
 	var project projectDTO
-	err := projectRepository.database.QueryRowContext(
+	err := repository.database.QueryRowContext(
 		ctx,
 		`
             SELECT
@@ -241,7 +241,7 @@ func (projectRepository *projectRepository) Get(ctx context.Context, id string) 
 	return project, err
 }
 
-func (projectRepository *projectRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]projectDTO, browser.Result, error) {
+func (repository *projectRepository) Search(ctx context.Context, pager browser.Params, order browser.Order, filter searchFilterDTO) ([]projectDTO, browser.Result, error) {
 	var filterArgs []any
 	var queryArgs []any
 	sqlQuery := `
@@ -351,7 +351,7 @@ func (projectRepository *projectRepository) Search(ctx context.Context, pager br
 		sqlLimit = ""
 	}
 	sqlQuery = fmt.Sprintf("%s %s %s %s %s ", sqlQuery, sqlQueryInnerJoins, sqlWhere, sqlOrder, sqlLimit)
-	rows, err := projectRepository.database.QueryContext(ctx, sqlQuery, queryArgs...)
+	rows, err := repository.database.QueryContext(ctx, sqlQuery, queryArgs...)
 	if err != nil {
 		return nil, browser.Result{}, err
 	}
@@ -394,7 +394,7 @@ func (projectRepository *projectRepository) Search(ctx context.Context, pager br
 			FROM projects P
 		`
 		sqlCountQuery = fmt.Sprintf("%s %s", sqlCountQuery, sqlWhere)
-		err = projectRepository.database.QueryRowContext(
+		err = repository.database.QueryRowContext(
 			ctx,
 			sqlCountQuery,
 			filterArgs...,
