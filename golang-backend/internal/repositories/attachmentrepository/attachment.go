@@ -14,7 +14,8 @@ import (
 
 type AttachmentRepository interface {
 	AddProjectAttachment(ctx context.Context, projectId string, attachment attachmentDTO) error
-	DeleteAttachment(ctx context.Context, id string) error
+	DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error
+	GetProjectAttachments(ctx context.Context, projectId string) ([]attachmentDTO, error)
 }
 
 type attachmentRepository struct {
@@ -100,15 +101,77 @@ func (attachmentRepository *attachmentRepository) AddProjectAttachment(ctx conte
 	return err
 }
 
-func (attachmentRepository *attachmentRepository) DeleteAttachment(ctx context.Context, id string) error {
-	_, err := attachmentRepository.database.ExecContext(
+func (attachmentRepository *attachmentRepository) DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error {
+	tx, err := attachmentRepository.database.Begin()
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if p := recover(); p != nil {
+			_ = tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+	_, err = tx.ExecContext(
+		ctx,
+		`
+            DELETE FROM project_attachments
+			WHERE
+				project_id = ?
+			AND
+				attachment_id = ?
+        `,
+		projectId,
+		attachmentId,
+	)
+	if err != nil {
+		// TODO: remove ?
+		fmt.Println(err.Error())
+		return err
+	}
+	_, err = tx.ExecContext(
 		ctx,
 		`
             DELETE FROM attachments
 			WHERE
 				id = ?
         `,
-		id,
+		attachmentId,
 	)
 	return err
+}
+
+func (attachmentRepository *attachmentRepository) GetProjectAttachments(ctx context.Context, projectId string) ([]attachmentDTO, error) {
+	rows, err := attachmentRepository.database.QueryContext(
+		ctx,
+		`
+            SELECT
+				A.id, A.user_id, U.name, A.created_at, A.original_name, A.content_type, A.size
+            FROM project_attachments PA
+			INNER JOIN attachments A ON A.id = PA.attachment_id
+			INNER JOIN users U ON U.id = A.user_id
+            WHERE PA.project_id = ?
+			ORDER BY A.created_at DESC
+        `,
+		projectId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	attachments := make([]attachmentDTO, 0)
+	for rows.Next() {
+		var attachment attachmentDTO
+		if err := rows.Scan(
+			&attachment.ID, &attachment.UserId, &attachment.UserName, &attachment.CreatedAt, &attachment.OriginalName, &attachment.ContentType, &attachment.Size,
+		); err != nil {
+			return nil, err
+		}
+		attachments = append(attachments, attachment)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return attachments, nil
 }

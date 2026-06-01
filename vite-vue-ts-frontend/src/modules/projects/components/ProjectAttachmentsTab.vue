@@ -1,14 +1,24 @@
 <script setup lang="ts">
-    import { ref, type CSSProperties } from "vue";
+    import { ref, shallowRef, reactive, computed, onMounted, onBeforeUnmount, watch, type CSSProperties } from "vue";
     import { useI18n } from "vue-i18n";
 
-    import { NCard, NButton } from "naive-ui";
+    import { NCard } from "naive-ui";
 
-    import { UserBase } from "../../users/models/user.ts";
-    import ManageTable from '../../../shared/components/tables/ManageTable.vue';
-    import ManageTableActionButtons from '../../../shared/components/tables/ManageTableActionButtons.vue';
-    import AvatarUserName from "../../../shared/components/AvatarUserName.vue";
+    import { type AjaxStateInterface, defaultAjaxState, defaultAjaxStateRunning } from '../../../shared/types/ajaxState';
+    import { useLoadingStore } from '../../../stores/loading';
+    import { useNotify } from '../../../shared/composables/notification';
+
+    import { appBus } from '../../../shared/composables/bus';
+
+    import { projectAttachmentService } from "../../attachments/services/project-attachment.ts";
+    import { handleAPIError } from '../../../api/client/errorHandler';
+
+    import type { SearchResponse } from "../../attachments/types/dto.ts";
+
+    import { ProjectAttachment } from "../../attachments/models/project-attachment.ts";
+
     import UploadDialog from "../../attachments/components/UploadDialog.vue";
+    import ProjectAttachmentsTable from "../../attachments/components/ProjectAttachmentsTable.vue";
 
     interface ProjectAttachmentsProps {
         style?: string | CSSProperties;
@@ -16,51 +26,150 @@
     }
 
     const props = defineProps<ProjectAttachmentsProps>();
+    const emit = defineEmits(['delete']);
 
-    const user = new UserBase({ id: '019e5b68-f701-7af7-a694-c8146e3366a1', name: 'John Doe' });
 
     const { t } = useI18n();
+    const { notify } = useNotify();
+
+    const loadingStore = useLoadingStore();
+
+    const state: AjaxStateInterface = reactive({ ...defaultAjaxState });
+
+    const items = shallowRef<ProjectAttachment[]>([]);
 
     const itemCount = defineModel<number>("itemCount", { default: 0 });
-    itemCount.value = 0;
+
+    const filterByUser = ref<string>("");
+
+    const userFilter = computed(() =>
+        filterByUser.value?.toLowerCase() ?? ''
+    );
+
+    const filteredAttachments = computed(() => {
+        return items.value.filter((permission) => {
+            const userName = permission.createdBy?.name?.toLowerCase();
+            return (
+                (!userFilter.value || userName?.includes(userFilter.value))
+            );
+        });
+    });
 
     const showUploadDialog = ref<boolean>(false);
+
+    const selectedItem = ref<ProjectAttachment>(new ProjectAttachment());
+
+    watch(state, (newValue: AjaxStateInterface) => {
+        loadingStore.set(newValue.ajaxRunning);
+    });
+
+    watch(() => props.projectId, (newValue, oldValue) => {
+        if (!oldValue && newValue) {
+            onRefresh();
+        }
+    });
+
+    const onShowUploadDialog = () => {
+        showUploadDialog.value = true;
+    };
+
+    const onRefresh = async () => {
+        if (props.projectId) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                const results: SearchResponse = await projectAttachmentService.getProjectAttachments(props.projectId);
+                items.value = results.attachments.map((attachment) => new ProjectAttachment(attachment));
+                itemCount.value = items.value?.length ?? 0;
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectAttachmentsTab.onRefresh" } });
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.refreshError");
+                        console.error("Unhandled API error", { file: "ProjectAttachmentsTab.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("project id not set", { file: "ProjectAttachmentsTab.vue", method: "onRefresh" });
+        }
+    };
+
+    const onDelete = async (projectAttachment: ProjectAttachment, _index?: number) => {
+        if (props.projectId && projectAttachment.id) {
+            Object.assign(state, defaultAjaxStateRunning);
+            try {
+                await projectAttachmentService.deleteProjectAttachment(props.projectId, projectAttachment.id);
+                notify('success', t("modules.projectPermission.components.projectPermissions.notifications.projectPermissionDeleted", {}));
+                onRefresh();
+                // TODO: not refreshing permission count on parent component
+            } catch (error: unknown) {
+                state.ajaxErrors = true;
+                handleAPIError(error,
+                    (apiError) => {
+                        switch (apiError.response?.status) {
+                            case 401:
+                                state.ajaxErrors = false;
+                                selectedItem.value = projectAttachment;
+                                appBus.emit({ type: "reauthRequired", payload: { emitter: "ProjectAttachmentsTab.onDelete" } });
+                                break;
+                            case 404:
+                                state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.notFoundError");
+                                break;
+                            default:
+                                state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.deleteError");
+                                break;
+                        }
+                    },
+                    (fatalError) => {
+                        state.ajaxErrorMessage = t("modules.projectPermission.components.projectPermissions.errors.deleteError");
+                        console.error("Unhandled API error", { file: "ProjectAttachmentsTab.vue", method: "onRefresh" }, { err: fatalError });
+                    });
+            } finally {
+                state.ajaxRunning = false;
+            }
+        } else {
+            console.error("(project permission id || project id) not set", { file: "ProjectAttachmentsTab.vue", method: "onDelete" });
+        }
+    };
+
+    let stopBusReauthListener: () => void;
+
+    onMounted(() => {
+        if (props.projectId) {
+            onRefresh();
+        }
+        stopBusReauthListener = appBus.on("reauthValidNotify", async (payload) => {
+            if (payload.to.includes("ProjectAttachmentsTab.onRefresh")) {
+                onRefresh();
+            } else if (payload.to.includes("ProjectAttachmentsTab.onDelete")) {
+                onDelete(selectedItem.value);
+            }
+        });
+    });
+
+    onBeforeUnmount(() => {
+        stopBusReauthListener();
+    });
 </script>
 
 <template>
 
     <UploadDialog v-if="props.projectId" v-model:show="showUploadDialog" :project-id="props.projectId" />
-    <n-button v-if="props.projectId" @click="showUploadDialog = true">add attachment</n-button>
     <n-card bordered :style="props.style">
-        <ManageTable size="small">
-            <template #thead>
-                <tr>
-                    <th>Filename</th>
-                    <th>Size</th>
-                    <th>Mime</th>
-                    <th>Uploaded at</th>
-                    <th>Uploaded by</th>
-                    <th class="doneo-table-actions-column">{{
-                        t("shared.components.table.header.columns.actions") }}</th>
-                </tr>
-            </template>
-            <template #tbody>
-                <tr v-for="index in [1, 2, 3, 4, 5]" :key="index">
-                    <td>
-                        test.pdf
-                    </td>
-                    <td>8230Kb</td>
-                    <td>application/pdf</td>
-                    <td>23/02/2026</td>
-                    <td>
-                        <AvatarUserName :user-id="user.id" :user-name="user.name" />
-                    </td>
-                    <td class="doneo-text-center">
-                        <ManageTableActionButtons show-delete show-download />
-                    </td>
-                </tr>
-            </template>
-        </ManageTable>
+        <ProjectAttachmentsTable :project-attachments="filteredAttachments" :loading="state.ajaxRunning"
+            @refresh="onRefresh" @add="onShowUploadDialog" @delete="onDelete" v-model:user-filter="filterByUser" />
     </n-card>
 </template>
 

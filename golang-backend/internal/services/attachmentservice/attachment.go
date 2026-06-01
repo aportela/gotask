@@ -2,6 +2,7 @@ package attachmentservice
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aportela/doneo/internal/domain"
 	"github.com/aportela/doneo/internal/repositories/attachmentrepository"
@@ -9,7 +10,8 @@ import (
 
 type AttachmentService interface {
 	AddProjectAttachment(ctx context.Context, projectId string, attachment domain.Attachment) error
-	DeleteAttachment(ctx context.Context, attachmentId string) error
+	DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error
+	GetProjectAttachments(ctx context.Context, projectId string) ([]domain.Attachment, error)
 }
 
 type attachmentService struct {
@@ -24,6 +26,14 @@ func (s *attachmentService) AddProjectAttachment(ctx context.Context, projectId 
 	return s.repository.AddProjectAttachment(ctx, projectId, attachmentrepository.DomainToDTO(attachment))
 }
 
-func (s *attachmentService) DeleteAttachment(ctx context.Context, attachmentId string) error {
-	return s.repository.DeleteAttachment(ctx, attachmentId)
+func (s *attachmentService) DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error {
+	return s.repository.DeleteProjectAttachment(ctx, projectId, attachmentId)
+}
+
+func (s *attachmentService) GetProjectAttachments(ctx context.Context, projectId string) ([]domain.Attachment, error) {
+	attachments, err := s.repository.GetProjectAttachments(ctx, projectId)
+	if err != nil {
+		return nil, fmt.Errorf("[ProjectTypeService] failed to get project attachments: %w", err)
+	}
+	return attachmentrepository.DTOArrayToDomainArray(attachments), nil
 }

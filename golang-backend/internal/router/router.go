@@ -170,7 +170,9 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Put("/{id:"+uuidPattern+"}/notes/{note_id:"+uuidPattern+"}", projectNoteHandler.UpdateProjectNote)
 		r.Delete("/{id:"+uuidPattern+"}/notes/{note_id:"+uuidPattern+"}", projectNoteHandler.DeleteProjectNote)
 
+		r.Get("/{id:"+uuidPattern+"}/attachments", projectAttachmentHandler.GetProjectAttachments)
 		r.Post("/{id:"+uuidPattern+"}/attachments/", projectAttachmentHandler.AddProjectAttachment)
+		r.Delete("/{id:"+uuidPattern+"}/attachments/{attachment_id:"+uuidPattern+"}", projectAttachmentHandler.DeleteProjectAttachment)
 	})
 
 	// TODO: 404 route ?

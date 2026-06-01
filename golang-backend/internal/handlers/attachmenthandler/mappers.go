@@ -15,3 +15,17 @@ func domainToResponse(attachment domain.Attachment) AttachmentResponse {
 		ContentType: attachment.ContentType,
 	}
 }
+
+func domainArrayToResponseArray(attachments []domain.Attachment) []AttachmentResponse {
+	attachmentssResponse := []AttachmentResponse{}
+	for _, attachment := range attachments {
+		attachmentssResponse = append(attachmentssResponse, domainToResponse(attachment))
+	}
+	return attachmentssResponse
+}
+
+func toSearchResponse(attachments []domain.Attachment) searchResponse {
+	return searchResponse{
+		ProjectAttachments: domainArrayToResponseArray(attachments),
+	}
+}

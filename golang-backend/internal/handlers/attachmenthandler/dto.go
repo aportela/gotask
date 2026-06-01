@@ -10,3 +10,7 @@ type AttachmentResponse struct {
 	ContentType string                       `json:"contentType"`
 	Size        uint32                       `json:"size"`
 }
+
+type searchResponse struct {
+	ProjectAttachments []AttachmentResponse `json:"attachments"`
+}

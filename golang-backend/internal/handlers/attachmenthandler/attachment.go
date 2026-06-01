@@ -1,6 +1,7 @@
 package attachmenthandler
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -94,4 +95,23 @@ func (h *AttachmentHandler) AddProjectAttachment(w http.ResponseWriter, r *http.
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	handlers.ToHandlerJSONResponse(w, domainToResponse(attachment), nil)
+}
+
+func (h *AttachmentHandler) DeleteProjectAttachment(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	projectId := chi.URLParam(r, "id")
+	attachmentId := chi.URLParam(r, "attachment_id")
+	err := h.service.DeleteProjectAttachment(r.Context(), projectId, attachmentId)
+	if err != nil {
+		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AttachmentHandler] failed to delete project attachment: %w", err))
+		return
+	}
+	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
+}
+
+func (h *AttachmentHandler) GetProjectAttachments(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	projectId := chi.URLParam(r, "id")
+	projectAttachments, err := h.service.GetProjectAttachments(r.Context(), projectId)
+	handlers.ToHandlerJSONResponse(w, toSearchResponse(projectAttachments), err)
 }

@@ -13,5 +13,5 @@ export type ProjectPermissionResponse = {
 };
 
 export type SearchResponse = {
-  projectPermissions: ProjectPermissionResponse[];
+  projectAttachments: ProjectPermissionResponse[];
 };

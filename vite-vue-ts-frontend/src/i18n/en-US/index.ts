@@ -773,6 +773,39 @@ export default {
         },
       },
     },
+    projectAttachment: {
+      components: {
+        projectAttachmentsTable: {
+          header: {
+            columns: {
+              name: "Name",
+              size: "Size",
+              contentType: "Content type",
+              createdAt: "Created at",
+              createdBy: "Created by",
+            },
+          },
+          filters: {
+            name: {
+              placeholder: "search by name",
+            },
+            user: {
+              placeholder: "search by user",
+            },
+          },
+          dialogs: {
+            deleteConfirmation: {
+              title: "Delete project attachment",
+              message:
+                "You are about to delete the project attachment {name} ({size}) from the system.",
+            },
+          },
+          warnings: {
+            noItemsFound: "No project attachments found",
+          },
+        },
+      },
+    },
     project: {
       components: {
         NewProjectForm: {
