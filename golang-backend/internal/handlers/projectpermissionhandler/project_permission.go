@@ -17,14 +17,14 @@ type ProjectPermissionHandler struct {
 	service projectpermissionservice.ProjectPermissionService
 }
 
-func NewProjectPermissionHandler(db database.Database) *ProjectPermissionHandler {
+func NewHandler(db database.Database) *ProjectPermissionHandler {
 	// TODO: rename to repository/service
 	projectPermissionRepository := projectpermissionrepository.NewRepository(db)
 	projectPermissionService := projectpermissionservice.NewService(projectPermissionRepository)
 	return &ProjectPermissionHandler{service: projectPermissionService}
 }
 
-func (h *ProjectPermissionHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPermissionHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -35,7 +35,7 @@ func (h *ProjectPermissionHandler) Add(w http.ResponseWriter, r *http.Request) {
 	projectPermission.ID = utils.UUID()
 	projectId := chi.URLParam(r, "id")
 
-	err := h.service.Add(r.Context(), projectPermission.ID, projectId, projectPermission.User.ID, projectPermission.Role.ID)
+	err := handler.service.Add(r.Context(), projectPermission.ID, projectId, projectPermission.User.ID, projectPermission.Role.ID)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPermissionHandler] failed to add project permission: %w", err))
 		return
@@ -43,10 +43,10 @@ func (h *ProjectPermissionHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(projectPermission), nil, http.StatusCreated)
 }
 
-func (h *ProjectPermissionHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPermissionHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	permissionId := chi.URLParam(r, "permission_id")
-	err := h.service.Delete(r.Context(), permissionId)
+	err := handler.service.Delete(r.Context(), permissionId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPermissionHandler] failed to delete project permission: %w", err))
 		return
@@ -54,9 +54,9 @@ func (h *ProjectPermissionHandler) Delete(w http.ResponseWriter, r *http.Request
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *ProjectPermissionHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPermissionHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectId := chi.URLParam(r, "id")
-	projectPermissions, err := h.service.Search(r.Context(), projectId)
+	projectPermissions, err := handler.service.Search(r.Context(), projectId)
 	handlers.ToHandlerJSONResponse(w, toSearchResponse(projectPermissions), err)
 }

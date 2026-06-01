@@ -19,13 +19,13 @@ type RoleHandler struct {
 	role roleservice.RoleService
 }
 
-func NewRoleHandler(db database.Database) *RoleHandler {
+func NewHandler(db database.Database) *RoleHandler {
 	roleRepository := rolerepository.NewRepository(db)
 	roleService := roleservice.NewService(roleRepository)
 	return &RoleHandler{role: roleService}
 }
 
-func (h *RoleHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *RoleHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -34,7 +34,7 @@ func (h *RoleHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	role := addRequestToDomain(request)
 	role.ID = utils.UUID()
-	err := h.role.Add(r.Context(), role)
+	err := handler.role.Add(r.Context(), role)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[RoleHandler] failed to add role: %w", err))
 		return
@@ -42,7 +42,7 @@ func (h *RoleHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(role), nil, http.StatusCreated)
 }
 
-func (h *RoleHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (handler *RoleHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *RoleHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	role := updateRequestToDomain(request)
 	role.ID = chi.URLParam(r, "id")
-	err := h.role.Update(r.Context(), role)
+	err := handler.role.Update(r.Context(), role)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[RoleHandler] failed to update role: %w", err))
 		return
@@ -59,10 +59,10 @@ func (h *RoleHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(role), nil)
 }
 
-func (h *RoleHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *RoleHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	roleId := chi.URLParam(r, "id")
-	err := h.role.Delete(r.Context(), roleId)
+	err := handler.role.Delete(r.Context(), roleId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[RoleHandler] failed to delete role: %w", err))
 		return
@@ -70,10 +70,10 @@ func (h *RoleHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *RoleHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (handler *RoleHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	roleId := chi.URLParam(r, "id")
-	user, err := h.role.Get(r.Context(), roleId)
+	user, err := handler.role.Get(r.Context(), roleId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[RoleHandler] failed to get non existent role: %w", err))
@@ -86,10 +86,10 @@ func (h *RoleHandler) Get(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(user), nil)
 }
 
-func (h *RoleHandler) SearchBase(w http.ResponseWriter, r *http.Request) {
+func (handler *RoleHandler) SearchBase(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	roles, _, err := h.role.Search(r.Context(),
+	roles, _, err := handler.role.Search(r.Context(),
 		browser.Params{
 			CurrentPage: 1,
 			ResultsPage: 0,
@@ -103,7 +103,7 @@ func (h *RoleHandler) SearchBase(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, toSearchBaseResponse(roles), err)
 }
 
-func (h *RoleHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *RoleHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -120,7 +120,7 @@ func (h *RoleHandler) Search(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	roles, pagerResult, err := h.role.Search(r.Context(),
+	roles, pagerResult, err := handler.role.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,

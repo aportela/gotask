@@ -19,14 +19,14 @@ type NoteHandler struct {
 	service noteservice.NoteService
 }
 
-func NewNoteHandler(db database.Database) *NoteHandler {
+func NewHandler(db database.Database) *NoteHandler {
 	// TODO: rename to repository/service
 	noteRepository := noterepository.NewRepository(db)
 	noteService := noteservice.NewService(noteRepository)
 	return &NoteHandler{service: noteService}
 }
 
-func (h *NoteHandler) AddProjectNote(w http.ResponseWriter, r *http.Request) {
+func (handler *NoteHandler) AddProjectNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -41,7 +41,7 @@ func (h *NoteHandler) AddProjectNote(w http.ResponseWriter, r *http.Request) {
 	note.User.Name = ""
 	note.CreatedAt = time.Now()
 
-	err := h.service.AddProjectNote(r.Context(), projectId, note)
+	err := handler.service.AddProjectNote(r.Context(), projectId, note)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[NoteHandler] failed to add note: %w", err))
 		return
@@ -49,7 +49,7 @@ func (h *NoteHandler) AddProjectNote(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(note), nil, http.StatusCreated)
 }
 
-func (h *NoteHandler) UpdateProjectNote(w http.ResponseWriter, r *http.Request) {
+func (handler *NoteHandler) UpdateProjectNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -62,7 +62,7 @@ func (h *NoteHandler) UpdateProjectNote(w http.ResponseWriter, r *http.Request) 
 	// TODO: move to service ????
 	note.UpdatedAt = utils.NowToTimePtr()
 
-	err := h.service.UpdateProjectNote(r.Context(), note)
+	err := handler.service.UpdateProjectNote(r.Context(), note)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[NoteHandler] failed to add note: %w", err))
 		return
@@ -70,10 +70,10 @@ func (h *NoteHandler) UpdateProjectNote(w http.ResponseWriter, r *http.Request) 
 	handlers.ToHandlerJSONResponse(w, domainToResponse(note), nil)
 }
 
-func (h *NoteHandler) DeleteProjectNote(w http.ResponseWriter, r *http.Request) {
+func (handler *NoteHandler) DeleteProjectNote(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	noteId := chi.URLParam(r, "note_id")
-	err := h.service.DeleteProjectNote(r.Context(), noteId)
+	err := handler.service.DeleteProjectNote(r.Context(), noteId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[NoteHandler] failed to delete note: %w", err))
 		return
@@ -81,9 +81,9 @@ func (h *NoteHandler) DeleteProjectNote(w http.ResponseWriter, r *http.Request) 
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *NoteHandler) GetProjectNotes(w http.ResponseWriter, r *http.Request) {
+func (handler *NoteHandler) GetProjectNotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectId := chi.URLParam(r, "id")
-	projectPermissions, err := h.service.GetProjectNotes(r.Context(), projectId)
+	projectPermissions, err := handler.service.GetProjectNotes(r.Context(), projectId)
 	handlers.ToHandlerJSONResponse(w, toSearchResponse(projectPermissions), err)
 }

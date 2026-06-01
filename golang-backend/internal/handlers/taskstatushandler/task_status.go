@@ -19,13 +19,13 @@ type TaskStatusHandler struct {
 	service taskstatusservice.TaskStatusService
 }
 
-func NewTaskStatusHandler(db database.Database) *TaskStatusHandler {
+func NewHandler(db database.Database) *TaskStatusHandler {
 	taskStatusRepository := taskstatusrepository.NewRepository(db)
 	taskStatusService := taskstatusservice.NewService(taskStatusRepository)
 	return &TaskStatusHandler{service: taskStatusService}
 }
 
-func (h *TaskStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -34,7 +34,7 @@ func (h *TaskStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	taskStatus := addRequestToDomain(request)
 	taskStatus.ID = utils.UUID()
-	err := h.service.Add(r.Context(), taskStatus)
+	err := handler.service.Add(r.Context(), taskStatus)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskStatusHandler] failed to add project status: %w", err))
 		return
@@ -42,7 +42,7 @@ func (h *TaskStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(taskStatus), nil, http.StatusCreated)
 }
 
-func (h *TaskStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *TaskStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	taskStatus := updateRequestToDomain(request)
 	taskStatus.ID = chi.URLParam(r, "id")
-	err := h.service.Update(r.Context(), taskStatus)
+	err := handler.service.Update(r.Context(), taskStatus)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskStatusHandler] failed to update project status: %w", err))
 		return
@@ -59,10 +59,10 @@ func (h *TaskStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(taskStatus), nil)
 }
 
-func (h *TaskStatusHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskStatusHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	taskStatusId := chi.URLParam(r, "id")
-	err := h.service.Delete(r.Context(), taskStatusId)
+	err := handler.service.Delete(r.Context(), taskStatusId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskStatusHandler] failed to delete project status: %w", err))
 		return
@@ -70,10 +70,10 @@ func (h *TaskStatusHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *TaskStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	taskStatusId := chi.URLParam(r, "id")
-	taskStatus, err := h.service.Get(r.Context(), taskStatusId)
+	taskStatus, err := handler.service.Get(r.Context(), taskStatusId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskStatusHandler] failed to get non existent project status: %w", err))
@@ -86,7 +86,7 @@ func (h *TaskStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(taskStatus), nil)
 }
 
-func (h *TaskStatusHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskStatusHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -101,7 +101,7 @@ func (h *TaskStatusHandler) Search(w http.ResponseWriter, r *http.Request) {
 			filter.Name = request.Filter.Name
 		}
 	}
-	taskStatuses, pagerResult, err := h.service.Search(r.Context(),
+	taskStatuses, pagerResult, err := handler.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,

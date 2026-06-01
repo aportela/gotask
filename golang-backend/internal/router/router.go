@@ -44,7 +44,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter := chi.NewRouter()
 
 	apiRouter.Route("/auth", func(r chi.Router) {
-		userHandler := authhandler.NewAuthHandler(db, cfg.Auth.SecretKey, cfg.Auth.AccessTokenExpirationHours, cfg.Auth.RefreshTokenExpirationDays)
+		userHandler := authhandler.NewHandler(db, cfg.Auth.SecretKey, cfg.Auth.AccessTokenExpirationHours, cfg.Auth.RefreshTokenExpirationDays)
 		r.Post("/signin", userHandler.SignIn)
 		r.Post("/signout", userHandler.SignOut)
 		r.Post("/renew-access-token", userHandler.RenewAccessToken)
@@ -65,8 +65,8 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 
 	apiRouter.Route("/entities", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
-		userHandler := userhandler.NewUserHandler(db)
-		roleHandler := rolehandler.NewRoleHandler(db)
+		userHandler := userhandler.NewHandler(db)
+		roleHandler := rolehandler.NewHandler(db)
 		r.Get("/users", userHandler.SearchBase)
 		r.Get("/roles", roleHandler.SearchBase)
 	})
@@ -74,7 +74,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/users", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
-		userHandler := userhandler.NewUserHandler(db)
+		userHandler := userhandler.NewHandler(db)
 		r.Post("/", userHandler.Add)
 		r.Post("/search", userHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", userHandler.Get)
@@ -86,7 +86,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/roles", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
-		roleHandler := rolehandler.NewRoleHandler(db)
+		roleHandler := rolehandler.NewHandler(db)
 		r.Post("/", roleHandler.Add)
 		r.Post("/search", roleHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", roleHandler.Get)
@@ -97,7 +97,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/project-types", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
-		projectTypeHandler := projecttypehandler.NewProjectTypeHandler(db)
+		projectTypeHandler := projecttypehandler.NewHandler(db)
 		r.Post("/", projectTypeHandler.Add)
 		r.Post("/search", projectTypeHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", projectTypeHandler.Get)
@@ -108,7 +108,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/project-statuses", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
-		projectStatusHandler := projectstatushandler.NewProjectStatusHandler(db)
+		projectStatusHandler := projectstatushandler.NewHandler(db)
 		r.Post("/", projectStatusHandler.Add)
 		r.Post("/search", projectStatusHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", projectStatusHandler.Get)
@@ -119,7 +119,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/project-priorities", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
-		projectTypeHandler := projectpriorityhandler.NewProjectPriorityHandler(db)
+		projectTypeHandler := projectpriorityhandler.NewHandler(db)
 		r.Post("/", projectTypeHandler.Add)
 		r.Post("/search", projectTypeHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", projectTypeHandler.Get)
@@ -130,7 +130,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/task-statuses", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
-		taskStatusHandler := taskstatushandler.NewTaskStatusHandler(db)
+		taskStatusHandler := taskstatushandler.NewHandler(db)
 		r.Post("/", taskStatusHandler.Add)
 		r.Post("/search", taskStatusHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", taskStatusHandler.Get)
@@ -141,7 +141,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 	apiRouter.Route("/task-priorities", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
 		r.Use(middlewares.RequireSuperUser)
-		taskPriorityHandler := taskpriorityhandler.NewTaskPriorityHandler(db)
+		taskPriorityHandler := taskpriorityhandler.NewHandler(db)
 		r.Post("/", taskPriorityHandler.Add)
 		r.Post("/search", taskPriorityHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", taskPriorityHandler.Get)
@@ -151,10 +151,10 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 
 	apiRouter.Route("/projects", func(r chi.Router) {
 		r.Use(middlewares.RequireJWTAuthentication(cfg.Auth.SecretKey))
-		projectHandler := projecthandler.NewProjectHandler(db)
-		projectPermissionHandler := projectpermissionhandler.NewProjectPermissionHandler(db)
-		projectNoteHandler := notehandler.NewNoteHandler(db)
-		projectAttachmentHandler := attachmenthandler.NewAttachmentHandler(db, cfg.Storage.AttachmentsPath)
+		projectHandler := projecthandler.NewHandler(db)
+		projectPermissionHandler := projectpermissionhandler.NewHandler(db)
+		projectNoteHandler := notehandler.NewHandler(db)
+		projectAttachmentHandler := attachmenthandler.NewHandler(db, cfg.Storage.AttachmentsPath)
 		r.Post("/", projectHandler.Add)
 		r.Post("/search", projectHandler.Search)
 		r.Get("/{id:"+uuidPattern+"}", projectHandler.Get)

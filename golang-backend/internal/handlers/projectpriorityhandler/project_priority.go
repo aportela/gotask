@@ -19,13 +19,13 @@ type ProjectPriorityHandler struct {
 	service projectpriorityservice.ProjectPriorityService
 }
 
-func NewProjectPriorityHandler(db database.Database) *ProjectPriorityHandler {
+func NewHandler(db database.Database) *ProjectPriorityHandler {
 	projectPriorityRepository := projectpriorityrepository.NewRepository(db)
 	projectPriorityService := projectpriorityservice.NewService(projectPriorityRepository)
 	return &ProjectPriorityHandler{service: projectPriorityService}
 }
 
-func (h *ProjectPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -34,7 +34,7 @@ func (h *ProjectPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	projectPriority := addRequestToDomain(request)
 	projectPriority.ID = utils.UUID()
-	err := h.service.Add(r.Context(), projectPriority)
+	err := handler.service.Add(r.Context(), projectPriority)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] failed to add project priority: %w", err))
 		return
@@ -42,7 +42,7 @@ func (h *ProjectPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectPriority), nil, http.StatusCreated)
 }
 
-func (h *ProjectPriorityHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPriorityHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *ProjectPriorityHandler) Update(w http.ResponseWriter, r *http.Request) 
 	}
 	projectPriority := updateRequestToDomain(request)
 	projectPriority.ID = chi.URLParam(r, "id")
-	err := h.service.Update(r.Context(), projectPriority)
+	err := handler.service.Update(r.Context(), projectPriority)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] failed to update project priority: %w", err))
 		return
@@ -59,10 +59,10 @@ func (h *ProjectPriorityHandler) Update(w http.ResponseWriter, r *http.Request) 
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectPriority), nil)
 }
 
-func (h *ProjectPriorityHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPriorityHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectPriorityId := chi.URLParam(r, "id")
-	err := h.service.Delete(r.Context(), projectPriorityId)
+	err := handler.service.Delete(r.Context(), projectPriorityId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] failed to delete project priority: %w", err))
 		return
@@ -70,10 +70,10 @@ func (h *ProjectPriorityHandler) Delete(w http.ResponseWriter, r *http.Request) 
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *ProjectPriorityHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPriorityHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectPriorityId := chi.URLParam(r, "id")
-	projectPriority, err := h.service.Get(r.Context(), projectPriorityId)
+	projectPriority, err := handler.service.Get(r.Context(), projectPriorityId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectPriorityHandler] failed to get non existent project priority: %w", err))
@@ -86,7 +86,7 @@ func (h *ProjectPriorityHandler) Get(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectPriority), nil)
 }
 
-func (h *ProjectPriorityHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectPriorityHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -101,7 +101,7 @@ func (h *ProjectPriorityHandler) Search(w http.ResponseWriter, r *http.Request) 
 			filter.Name = request.Filter.Name
 		}
 	}
-	projectPriorities, pagerResult, err := h.service.Search(r.Context(),
+	projectPriorities, pagerResult, err := handler.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,

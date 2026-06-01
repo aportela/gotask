@@ -19,13 +19,13 @@ type ProjectStatusHandler struct {
 	service projectstatusservice.ProjectStatusService
 }
 
-func NewProjectStatusHandler(db database.Database) *ProjectStatusHandler {
+func NewHandler(db database.Database) *ProjectStatusHandler {
 	projectStatusRepository := projectstatusrepository.NewRepository(db)
 	projectStatusService := projectstatusservice.NewService(projectStatusRepository)
 	return &ProjectStatusHandler{service: projectStatusService}
 }
 
-func (h *ProjectStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -34,7 +34,7 @@ func (h *ProjectStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	projectStatus := addRequestToDomain(request)
 	projectStatus.ID = utils.UUID()
-	err := h.service.Add(r.Context(), projectStatus)
+	err := handler.service.Add(r.Context(), projectStatus)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to add project status: %w", err))
 		return
@@ -42,7 +42,7 @@ func (h *ProjectStatusHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectStatus), nil, http.StatusCreated)
 }
 
-func (h *ProjectStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *ProjectStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	projectStatus := updateRequestToDomain(request)
 	projectStatus.ID = chi.URLParam(r, "id")
-	err := h.service.Update(r.Context(), projectStatus)
+	err := handler.service.Update(r.Context(), projectStatus)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to update project status: %w", err))
 		return
@@ -59,10 +59,10 @@ func (h *ProjectStatusHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectStatus), nil)
 }
 
-func (h *ProjectStatusHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectStatusHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectStatusId := chi.URLParam(r, "id")
-	err := h.service.Delete(r.Context(), projectStatusId)
+	err := handler.service.Delete(r.Context(), projectStatusId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to delete project status: %w", err))
 		return
@@ -70,10 +70,10 @@ func (h *ProjectStatusHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *ProjectStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectStatusId := chi.URLParam(r, "id")
-	projectStatus, err := h.service.Get(r.Context(), projectStatusId)
+	projectStatus, err := handler.service.Get(r.Context(), projectStatusId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectStatusHandler] failed to get non existent project status: %w", err))
@@ -86,7 +86,7 @@ func (h *ProjectStatusHandler) Get(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectStatus), nil)
 }
 
-func (h *ProjectStatusHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectStatusHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -101,7 +101,7 @@ func (h *ProjectStatusHandler) Search(w http.ResponseWriter, r *http.Request) {
 			filter.Name = request.Filter.Name
 		}
 	}
-	projectStatuses, pagerResult, err := h.service.Search(r.Context(),
+	projectStatuses, pagerResult, err := handler.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,

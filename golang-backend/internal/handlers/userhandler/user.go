@@ -19,13 +19,13 @@ type UserHandler struct {
 	service userservice.UserService
 }
 
-func NewUserHandler(db database.Database) *UserHandler {
+func NewHandler(db database.Database) *UserHandler {
 	userRepository := userrepository.NewRepository(db)
 	userService := userservice.NewService(userRepository)
 	return &UserHandler{service: userService}
 }
 
-func (h *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -34,7 +34,7 @@ func (h *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	user := addRequestToDomain(request)
 	user.ID = utils.UUID()
-	err := h.service.Add(r.Context(), user)
+	err := handler.service.Add(r.Context(), user)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to add user: %w", err))
 		return
@@ -42,7 +42,7 @@ func (h *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(user), nil, http.StatusCreated)
 }
 
-func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	user := updateRequestToDomain(request)
 	user.ID = chi.URLParam(r, "id")
-	err := h.service.Update(r.Context(), user)
+	err := handler.service.Update(r.Context(), user)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to update user: %w", err))
 		return
@@ -59,7 +59,7 @@ func (h *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(user), nil)
 }
 
-func (h *UserHandler) Patch(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) Patch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request patchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -68,7 +68,7 @@ func (h *UserHandler) Patch(w http.ResponseWriter, r *http.Request) {
 	}
 	userId := chi.URLParam(r, "id")
 
-	user, err := h.service.Get(r.Context(), userId)
+	user, err := handler.service.Get(r.Context(), userId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to get non existent user: %w", err))
@@ -81,7 +81,7 @@ func (h *UserHandler) Patch(w http.ResponseWriter, r *http.Request) {
 	if request.DeletedAt == nil {
 		user.DeletedAt = nil
 	}
-	err = h.service.Patch(r.Context(), user)
+	err = handler.service.Patch(r.Context(), user)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserHandler] failed to patch user: %w", err))
 		return
@@ -90,11 +90,11 @@ func (h *UserHandler) Patch(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	userId := chi.URLParam(r, "id")
 	// TODO: deny delete current session user ?
-	err := h.service.Delete(r.Context(), userId)
+	err := handler.service.Delete(r.Context(), userId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to delete user: %w", err))
 		return
@@ -102,10 +102,10 @@ func (h *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *UserHandler) Purge(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) Purge(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	userId := chi.URLParam(r, "id")
-	err := h.service.Purge(r.Context(), userId)
+	err := handler.service.Purge(r.Context(), userId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to purge user: %w", err))
 		return
@@ -113,10 +113,10 @@ func (h *UserHandler) Purge(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	userId := chi.URLParam(r, "id")
-	user, err := h.service.Get(r.Context(), userId)
+	user, err := handler.service.Get(r.Context(), userId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[UserService] failed to get non existent user: %w", err))
@@ -129,9 +129,9 @@ func (h *UserHandler) Get(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(user), nil)
 }
 
-func (h *UserHandler) SearchBase(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) SearchBase(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	users, _, err := h.service.Search(r.Context(),
+	users, _, err := handler.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: 1,
 			ResultsPage: 0,
@@ -145,7 +145,7 @@ func (h *UserHandler) SearchBase(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, toSearchBaseResponse(users), err)
 }
 
-func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -206,7 +206,7 @@ func (h *UserHandler) Search(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-	users, pagerResult, err := h.service.Search(r.Context(),
+	users, pagerResult, err := handler.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,

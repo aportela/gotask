@@ -19,13 +19,13 @@ type ProjectTypeHandler struct {
 	service projecttypeservice.ProjectTypeService
 }
 
-func NewProjectTypeHandler(db database.Database) *ProjectTypeHandler {
+func NewHandler(db database.Database) *ProjectTypeHandler {
 	projectTypeRepository := projecttyperepository.NewRepository(db)
 	projectTypeService := projecttypeservice.NewService(projectTypeRepository)
 	return &ProjectTypeHandler{service: projectTypeService}
 }
 
-func (h *ProjectTypeHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectTypeHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -34,7 +34,7 @@ func (h *ProjectTypeHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	projectType := addRequestToDomain(request)
 	projectType.ID = utils.UUID()
-	err := h.service.Add(r.Context(), projectType)
+	err := handler.service.Add(r.Context(), projectType)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to add project type: %w", err))
 		return
@@ -42,7 +42,7 @@ func (h *ProjectTypeHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectType), nil, http.StatusCreated)
 }
 
-func (h *ProjectTypeHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectTypeHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *ProjectTypeHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	projectType := updateRequestToDomain(request)
 	projectType.ID = chi.URLParam(r, "id")
-	err := h.service.Update(r.Context(), projectType)
+	err := handler.service.Update(r.Context(), projectType)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to update project type: %w", err))
 		return
@@ -59,10 +59,10 @@ func (h *ProjectTypeHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectType), nil)
 }
 
-func (h *ProjectTypeHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectTypeHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectTypeId := chi.URLParam(r, "id")
-	err := h.service.Delete(r.Context(), projectTypeId)
+	err := handler.service.Delete(r.Context(), projectTypeId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to delete project type: %w", err))
 		return
@@ -70,10 +70,10 @@ func (h *ProjectTypeHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *ProjectTypeHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectTypeHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectTypeId := chi.URLParam(r, "id")
-	projectType, err := h.service.Get(r.Context(), projectTypeId)
+	projectType, err := handler.service.Get(r.Context(), projectTypeId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[ProjectTypeHandler] failed to get non existent project type: %w", err))
@@ -86,7 +86,7 @@ func (h *ProjectTypeHandler) Get(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, DomainToResponse(projectType), nil)
 }
 
-func (h *ProjectTypeHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *ProjectTypeHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -101,7 +101,7 @@ func (h *ProjectTypeHandler) Search(w http.ResponseWriter, r *http.Request) {
 			filter.Name = request.Filter.Name
 		}
 	}
-	projectTypes, pagerResult, err := h.service.Search(r.Context(),
+	projectTypes, pagerResult, err := handler.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,

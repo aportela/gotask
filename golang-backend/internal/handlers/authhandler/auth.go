@@ -22,30 +22,30 @@ type AuthHandler struct {
 	refreshTokenExpirationDays int
 }
 
-func NewAuthHandler(db database.Database, secretKey string, accessTokenExpirationHours int, refreshTokenExpirationDays int) *AuthHandler {
+func NewHandler(db database.Database, secretKey string, accessTokenExpirationHours int, refreshTokenExpirationDays int) *AuthHandler {
 	userRepository := userrepository.NewRepository(db)
 	authService := authservice.NewService(userRepository)
 	return &AuthHandler{service: authService, secretKey: secretKey, accessTokenExpirationHours: accessTokenExpirationHours, refreshTokenExpirationDays: refreshTokenExpirationDays}
 }
 
-func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
+func (handler *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	var request signInRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] invalid request payload: %w", err))
 		return
 	}
-	user, err := h.service.SignIn(r.Context(), signinRequestToUserDomain(request))
+	user, err := handler.service.SignIn(r.Context(), signinRequestToUserDomain(request))
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to signin with email %s: %w", request.Email, err))
 		return
 	}
-	accessToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(h.accessTokenExpirationHours)*time.Hour), h.secretKey)
+	accessToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(handler.accessTokenExpirationHours)*time.Hour), handler.secretKey)
 	//accessToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(10)*time.Second), h.secretKey)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to generate access token: %w", err))
 		return
 	}
-	refreshToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(h.refreshTokenExpirationDays)*24*time.Hour), h.secretKey)
+	refreshToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(handler.refreshTokenExpirationDays)*24*time.Hour), handler.secretKey)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to generate refresh token: %w", err))
 		return
@@ -76,7 +76,7 @@ func (h *AuthHandler) SignIn(w http.ResponseWriter, r *http.Request) {
 	)
 }
 
-func (h *AuthHandler) SignOut(w http.ResponseWriter, r *http.Request) {
+func (handler *AuthHandler) SignOut(w http.ResponseWriter, r *http.Request) {
 	cookie := http.Cookie{
 		Name:     "refresh_token",
 		Value:    "",
@@ -90,7 +90,7 @@ func (h *AuthHandler) SignOut(w http.ResponseWriter, r *http.Request) {
 	utils.ToJSONResponse(w, http.StatusOK, handlers.ToEmptyResponse())
 }
 
-func (h *AuthHandler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
+func (handler *AuthHandler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("refresh_token")
 	// TODO: refresh token in request ?
 	if err != nil {
@@ -100,19 +100,19 @@ func (h *AuthHandler) RenewAccessToken(w http.ResponseWriter, r *http.Request) {
 	}
 	var refreshToken jwt.Token
 	refreshToken.Token = cookie.Value
-	userId, err := jwt.VerifyToken(refreshToken.Token, h.secretKey)
+	userId, err := jwt.VerifyToken(refreshToken.Token, handler.secretKey)
 	if err != nil {
 		// TODO: return APIError JSON HERE !
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
 		return
 	}
-	user, err := h.service.GetUserInfo(r.Context(), userId)
+	user, err := handler.service.GetUserInfo(r.Context(), userId)
 	if err != nil {
 		// TODO: return APIError JSON HERE !
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AuthHandler] failed to get user info: %w", err))
 		return
 	}
-	accessToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(h.accessTokenExpirationHours)*time.Hour), h.secretKey)
+	accessToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(handler.accessTokenExpirationHours)*time.Hour), handler.secretKey)
 	//accessToken, err := jwt.GenerateToken(user, time.Now().Add(time.Duration(10)*time.Second), h.secretKey)
 	if err != nil {
 		// TODO: return APIError JSON HERE !

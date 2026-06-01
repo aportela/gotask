@@ -19,13 +19,13 @@ type TaskPriorityHandler struct {
 	service taskpriorityservice.TaskPriorityService
 }
 
-func NewTaskPriorityHandler(db database.Database) *TaskPriorityHandler {
+func NewHandler(db database.Database) *TaskPriorityHandler {
 	taskPriorityRepository := taskpriorityrepository.NewRepository(db)
 	taskPriorityService := taskpriorityservice.NewService(taskPriorityRepository)
 	return &TaskPriorityHandler{service: taskPriorityService}
 }
 
-func (h *TaskPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request addRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -34,7 +34,7 @@ func (h *TaskPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 	taskPriority := addRequestToDomain(request)
 	taskPriority.ID = utils.UUID()
-	err := h.service.Add(r.Context(), taskPriority)
+	err := handler.service.Add(r.Context(), taskPriority)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskPriorityHandler] failed to add task priority: %w", err))
 		return
@@ -42,7 +42,7 @@ func (h *TaskPriorityHandler) Add(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(taskPriority), nil, http.StatusCreated)
 }
 
-func (h *TaskPriorityHandler) Update(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskPriorityHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request updateRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -51,7 +51,7 @@ func (h *TaskPriorityHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	taskPriority := updateRequestToDomain(request)
 	taskPriority.ID = chi.URLParam(r, "id")
-	err := h.service.Update(r.Context(), taskPriority)
+	err := handler.service.Update(r.Context(), taskPriority)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskPriorityHandler] failed to update task priority: %w", err))
 		return
@@ -59,10 +59,10 @@ func (h *TaskPriorityHandler) Update(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(taskPriority), nil)
 }
 
-func (h *TaskPriorityHandler) Delete(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskPriorityHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	taskPriorityId := chi.URLParam(r, "id")
-	err := h.service.Delete(r.Context(), taskPriorityId)
+	err := handler.service.Delete(r.Context(), taskPriorityId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskPriorityHandler] failed to delete task priority: %w", err))
 		return
@@ -70,10 +70,10 @@ func (h *TaskPriorityHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *TaskPriorityHandler) Get(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskPriorityHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	taskPriorityId := chi.URLParam(r, "id")
-	taskPriority, err := h.service.Get(r.Context(), taskPriorityId)
+	taskPriority, err := handler.service.Get(r.Context(), taskPriorityId)
 	if err != nil {
 		if err == domain.NotFoundError {
 			handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[TaskPriorityHandler] failed to get non existent task priority: %w", err))
@@ -86,7 +86,7 @@ func (h *TaskPriorityHandler) Get(w http.ResponseWriter, r *http.Request) {
 	handlers.ToHandlerJSONResponse(w, domainToResponse(taskPriority), nil)
 }
 
-func (h *TaskPriorityHandler) Search(w http.ResponseWriter, r *http.Request) {
+func (handler *TaskPriorityHandler) Search(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var request searchRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
@@ -101,7 +101,7 @@ func (h *TaskPriorityHandler) Search(w http.ResponseWriter, r *http.Request) {
 			filter.Name = request.Filter.Name
 		}
 	}
-	taskPriorities, pagerResult, err := h.service.Search(r.Context(),
+	taskPriorities, pagerResult, err := handler.service.Search(r.Context(),
 		browser.Params{
 			CurrentPage: request.Pager.CurrentPage,
 			ResultsPage: request.Pager.ResultsPage,

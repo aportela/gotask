@@ -23,13 +23,13 @@ type AttachmentHandler struct {
 	basePath string
 }
 
-func NewAttachmentHandler(db database.Database, basePath string) *AttachmentHandler {
+func NewHandler(db database.Database, basePath string) *AttachmentHandler {
 	repository := attachmentrepository.NewRepository(db)
 	service := attachmentservice.NewService(repository)
 	return &AttachmentHandler{service: service, basePath: basePath}
 }
 
-func (h *AttachmentHandler) AddProjectAttachment(w http.ResponseWriter, r *http.Request) {
+func (handler *AttachmentHandler) AddProjectAttachment(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(32 << 20) // 32 MB
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -57,7 +57,7 @@ func (h *AttachmentHandler) AddProjectAttachment(w http.ResponseWriter, r *http.
 
 	filename := attachment.ID + ext
 	dir := filepath.Join(
-		h.basePath,
+		handler.basePath,
 		string(attachment.ID[len(attachment.ID)-2]),
 		string(attachment.ID[len(attachment.ID)-1]),
 	)
@@ -85,7 +85,7 @@ func (h *AttachmentHandler) AddProjectAttachment(w http.ResponseWriter, r *http.
 
 	projectId := chi.URLParam(r, "id")
 
-	err = h.service.AddProjectAttachment(r.Context(), projectId, attachment)
+	err = handler.service.AddProjectAttachment(r.Context(), projectId, attachment)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -97,11 +97,11 @@ func (h *AttachmentHandler) AddProjectAttachment(w http.ResponseWriter, r *http.
 	handlers.ToHandlerJSONResponse(w, domainToResponse(attachment), nil)
 }
 
-func (h *AttachmentHandler) DeleteProjectAttachment(w http.ResponseWriter, r *http.Request) {
+func (handler *AttachmentHandler) DeleteProjectAttachment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectId := chi.URLParam(r, "id")
 	attachmentId := chi.URLParam(r, "attachment_id")
-	err := h.service.DeleteProjectAttachment(r.Context(), projectId, attachmentId)
+	err := handler.service.DeleteProjectAttachment(r.Context(), projectId, attachmentId)
 	if err != nil {
 		handlers.ToHandlerJSONResponse(w, nil, fmt.Errorf("[AttachmentHandler] failed to delete project attachment: %w", err))
 		return
@@ -109,9 +109,9 @@ func (h *AttachmentHandler) DeleteProjectAttachment(w http.ResponseWriter, r *ht
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *AttachmentHandler) GetProjectAttachments(w http.ResponseWriter, r *http.Request) {
+func (handler *AttachmentHandler) GetProjectAttachments(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectId := chi.URLParam(r, "id")
-	projectAttachments, err := h.service.GetProjectAttachments(r.Context(), projectId)
+	projectAttachments, err := handler.service.GetProjectAttachments(r.Context(), projectId)
 	handlers.ToHandlerJSONResponse(w, toSearchResponse(projectAttachments), err)
 }
