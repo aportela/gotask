@@ -16,7 +16,7 @@ type NoteRepository interface {
 	AddProjectNote(ctx context.Context, projectId string, note noteDTO) error
 	UpdateProjectNote(ctx context.Context, note noteDTO) error
 	DeleteProjectNote(ctx context.Context, id string) error
-	SearchProjectNotes(ctx context.Context, projectId string) ([]noteDTO, error)
+	GetProjectNotes(ctx context.Context, projectId string) ([]noteDTO, error)
 }
 
 type noteRepository struct {
@@ -90,7 +90,7 @@ func (noteRepository *noteRepository) DeleteProjectNote(ctx context.Context, id 
 	return err
 }
 
-func (noteRepository *noteRepository) SearchProjectNotes(ctx context.Context, projectId string) ([]noteDTO, error) {
+func (noteRepository *noteRepository) GetProjectNotes(ctx context.Context, projectId string) ([]noteDTO, error) {
 	rows, err := noteRepository.database.QueryContext(
 		ctx,
 		`

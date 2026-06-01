@@ -81,9 +81,9 @@ func (h *NoteHandler) DeleteProjectNote(w http.ResponseWriter, r *http.Request) 
 	handlers.ToHandlerJSONResponse(w, handlers.ToEmptyResponse(), nil)
 }
 
-func (h *NoteHandler) SearchProjectNotes(w http.ResponseWriter, r *http.Request) {
+func (h *NoteHandler) GetProjectNotes(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	projectId := chi.URLParam(r, "id")
-	projectPermissions, err := h.service.SearchProjectNotes(r.Context(), projectId)
+	projectPermissions, err := h.service.GetProjectNotes(r.Context(), projectId)
 	handlers.ToHandlerJSONResponse(w, toSearchResponse(projectPermissions), err)
 }

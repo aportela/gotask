@@ -165,7 +165,7 @@ func NewRouter(db database.Database, cfg config.Configuration) http.Handler {
 		r.Post("/{id:"+uuidPattern+"}/permissions/", projectPermissionHandler.Add)
 		r.Delete("/{id:"+uuidPattern+"}/permissions/{permission_id:"+uuidPattern+"}", projectPermissionHandler.Delete)
 
-		r.Get("/{id:"+uuidPattern+"}/notes", projectNoteHandler.SearchProjectNotes)
+		r.Get("/{id:"+uuidPattern+"}/notes", projectNoteHandler.GetProjectNotes)
 		r.Post("/{id:"+uuidPattern+"}/notes/", projectNoteHandler.AddProjectNote)
 		r.Put("/{id:"+uuidPattern+"}/notes/{note_id:"+uuidPattern+"}", projectNoteHandler.UpdateProjectNote)
 		r.Delete("/{id:"+uuidPattern+"}/notes/{note_id:"+uuidPattern+"}", projectNoteHandler.DeleteProjectNote)

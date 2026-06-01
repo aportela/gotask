@@ -12,7 +12,7 @@ type NoteService interface {
 	AddProjectNote(ctx context.Context, projectId string, note domain.Note) error
 	UpdateProjectNote(ctx context.Context, note domain.Note) error
 	DeleteProjectNote(ctx context.Context, projectId string) error
-	SearchProjectNotes(ctx context.Context, projectId string) ([]domain.Note, error)
+	GetProjectNotes(ctx context.Context, projectId string) ([]domain.Note, error)
 }
 
 type noteService struct {
@@ -35,8 +35,8 @@ func (s *noteService) DeleteProjectNote(ctx context.Context, projectId string) e
 	return s.repository.DeleteProjectNote(ctx, projectId)
 }
 
-func (s *noteService) SearchProjectNotes(ctx context.Context, projectId string) ([]domain.Note, error) {
-	notes, err := s.repository.SearchProjectNotes(ctx, projectId)
+func (s *noteService) GetProjectNotes(ctx context.Context, projectId string) ([]domain.Note, error) {
+	notes, err := s.repository.GetProjectNotes(ctx, projectId)
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectTypeService] failed to get project permissions: %w", err)
 	}
