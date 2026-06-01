@@ -18,7 +18,7 @@ type attachmentService struct {
 	repository attachmentrepository.AttachmentRepository
 }
 
-func NewAttachmentService(repository attachmentrepository.AttachmentRepository) AttachmentService {
+func NewService(repository attachmentrepository.AttachmentRepository) AttachmentService {
 	return &attachmentService{repository: repository}
 }
 

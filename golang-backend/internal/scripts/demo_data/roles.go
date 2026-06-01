@@ -14,7 +14,7 @@ import (
 func createRoles(database database.Database) []string {
 	var newRoleIds []string
 	roleRepository := rolerepository.NewRepository(database)
-	roleService := roleservice.NewRoleService(roleRepository)
+	roleService := roleservice.NewService(roleRepository)
 	roleID := utils.UUID()
 	permissionBitMask := domain.PermissionsBitmask(0)
 	permissionBitMask.AddPermission(domain.PermissionCreate | domain.PermissionUpdate | domain.PermissionDelete | domain.PermissionView | domain.PermissionList | domain.PermissionExecute)

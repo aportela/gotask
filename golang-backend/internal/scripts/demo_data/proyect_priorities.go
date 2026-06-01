@@ -16,7 +16,7 @@ func createProjectPriorities(database database.Database) []string {
 	projectPriorityNames := []string{"Low", "Medium", "High"}
 	var newProjectPriorityIds []string
 	projectPriorityRepository := projectpriorityrepository.NewRepository(database)
-	projectPriorityService := projectpriorityservice.NewProjectPriorityService(projectPriorityRepository)
+	projectPriorityService := projectpriorityservice.NewService(projectPriorityRepository)
 	for _, projectPriorityName := range projectPriorityNames {
 		projectPriorityID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 		err := projectPriorityService.Add(context.Background(), domain.ProjectPriority{

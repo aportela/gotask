@@ -21,7 +21,7 @@ type UserHandler struct {
 
 func NewUserHandler(db database.Database) *UserHandler {
 	userRepository := userrepository.NewRepository(db)
-	userService := userservice.NewUserService(userRepository)
+	userService := userservice.NewService(userRepository)
 	return &UserHandler{service: userService}
 }
 

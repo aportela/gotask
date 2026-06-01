@@ -18,7 +18,7 @@ func createTaskStatuses(database database.Database) []string {
 	}
 	var newTaskStatusIds []string
 	taskStatusRepository := taskstatusrepository.NewRepository(database)
-	projectStatusService := taskstatusservice.NewTaskStatusService(taskStatusRepository)
+	projectStatusService := taskstatusservice.NewService(taskStatusRepository)
 	for _, taskStatusName := range taskStatusNames {
 		taskStatusID := func() string { u, _ := uuid.NewV7(); return u.String() }()
 		err := projectStatusService.Add(context.Background(), domain.TaskStatus{

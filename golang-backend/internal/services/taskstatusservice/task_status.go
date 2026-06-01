@@ -21,7 +21,7 @@ type taskStatusService struct {
 	repository taskstatusrepository.ProjectStatusRepository
 }
 
-func NewTaskStatusService(repository taskstatusrepository.ProjectStatusRepository) TaskStatusService {
+func NewService(repository taskstatusrepository.ProjectStatusRepository) TaskStatusService {
 	return &taskStatusService{repository: repository}
 }
 

@@ -21,7 +21,7 @@ type taskPriorityService struct {
 	repository taskpriorityrepository.TaskPriorityRepository
 }
 
-func NewTaskPriorityService(repository taskpriorityrepository.TaskPriorityRepository) TaskPriorityService {
+func NewService(repository taskpriorityrepository.TaskPriorityRepository) TaskPriorityService {
 	return &taskPriorityService{repository: repository}
 }
 

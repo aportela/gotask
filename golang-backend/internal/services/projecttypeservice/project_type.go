@@ -21,7 +21,7 @@ type projectTypeService struct {
 	repository projecttyperepository.ProjectTypeRepository
 }
 
-func NewProjectTypeService(repository projecttyperepository.ProjectTypeRepository) ProjectTypeService {
+func NewService(repository projecttyperepository.ProjectTypeRepository) ProjectTypeService {
 	return &projectTypeService{repository: repository}
 }
 

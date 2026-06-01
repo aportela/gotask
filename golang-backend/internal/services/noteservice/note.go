@@ -19,7 +19,7 @@ type noteService struct {
 	repository noterepository.NoteRepository
 }
 
-func NewNoteService(repository noterepository.NoteRepository) NoteService {
+func NewService(repository noterepository.NoteRepository) NoteService {
 	return &noteService{repository: repository}
 }
 

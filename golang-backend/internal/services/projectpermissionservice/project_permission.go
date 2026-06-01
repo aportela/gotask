@@ -18,7 +18,7 @@ type projectPermissionService struct {
 	repository projectpermissionrepository.ProjectPermissionRepository
 }
 
-func NewProjectPermissionService(repository projectpermissionrepository.ProjectPermissionRepository) ProjectPermissionService {
+func NewService(repository projectpermissionrepository.ProjectPermissionRepository) ProjectPermissionService {
 	return &projectPermissionService{repository: repository}
 }
 

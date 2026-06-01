@@ -21,7 +21,7 @@ type ProjectPriorityHandler struct {
 
 func NewProjectPriorityHandler(db database.Database) *ProjectPriorityHandler {
 	projectPriorityRepository := projectpriorityrepository.NewRepository(db)
-	projectPriorityService := projectpriorityservice.NewProjectPriorityService(projectPriorityRepository)
+	projectPriorityService := projectpriorityservice.NewService(projectPriorityRepository)
 	return &ProjectPriorityHandler{service: projectPriorityService}
 }
 

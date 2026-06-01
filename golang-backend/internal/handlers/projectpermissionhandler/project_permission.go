@@ -20,7 +20,7 @@ type ProjectPermissionHandler struct {
 func NewProjectPermissionHandler(db database.Database) *ProjectPermissionHandler {
 	// TODO: rename to repository/service
 	projectPermissionRepository := projectpermissionrepository.NewRepository(db)
-	projectPermissionService := projectpermissionservice.NewProjectPermissionService(projectPermissionRepository)
+	projectPermissionService := projectpermissionservice.NewService(projectPermissionRepository)
 	return &ProjectPermissionHandler{service: projectPermissionService}
 }
 

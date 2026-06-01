@@ -23,7 +23,7 @@ type ProjectHandler struct {
 
 func NewProjectHandler(db database.Database) *ProjectHandler {
 	projectRepository := projectrepository.NewRepository(db)
-	projectService := projectservice.NewProjectService(projectRepository)
+	projectService := projectservice.NewService(projectRepository)
 	return &ProjectHandler{service: projectService}
 }
 

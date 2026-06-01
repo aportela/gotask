@@ -22,7 +22,7 @@ type NoteHandler struct {
 func NewNoteHandler(db database.Database) *NoteHandler {
 	// TODO: rename to repository/service
 	noteRepository := noterepository.NewRepository(db)
-	noteService := noteservice.NewNoteService(noteRepository)
+	noteService := noteservice.NewService(noteRepository)
 	return &NoteHandler{service: noteService}
 }
 

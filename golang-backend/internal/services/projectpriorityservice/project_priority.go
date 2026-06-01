@@ -21,7 +21,7 @@ type projectPriorityService struct {
 	repository projectpriorityrepository.ProjectPriorityRepository
 }
 
-func NewProjectPriorityService(repository projectpriorityrepository.ProjectPriorityRepository) ProjectPriorityService {
+func NewService(repository projectpriorityrepository.ProjectPriorityRepository) ProjectPriorityService {
 	return &projectPriorityService{repository: repository}
 }
 
