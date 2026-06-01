@@ -23,20 +23,20 @@ func NewNoteService(repository noterepository.NoteRepository) NoteService {
 	return &noteService{repository: repository}
 }
 
-func (s *noteService) AddProjectNote(ctx context.Context, projectId string, note domain.Note) error {
-	return s.repository.AddProjectNote(ctx, projectId, noterepository.DomainToDTO(note))
+func (service *noteService) AddProjectNote(ctx context.Context, projectId string, note domain.Note) error {
+	return service.repository.AddProjectNote(ctx, projectId, noterepository.DomainToDTO(note))
 }
 
-func (s *noteService) UpdateProjectNote(ctx context.Context, note domain.Note) error {
-	return s.repository.UpdateProjectNote(ctx, noterepository.DomainToDTO(note))
+func (service *noteService) UpdateProjectNote(ctx context.Context, note domain.Note) error {
+	return service.repository.UpdateProjectNote(ctx, noterepository.DomainToDTO(note))
 }
 
-func (s *noteService) DeleteProjectNote(ctx context.Context, projectId string) error {
-	return s.repository.DeleteProjectNote(ctx, projectId)
+func (service *noteService) DeleteProjectNote(ctx context.Context, projectId string) error {
+	return service.repository.DeleteProjectNote(ctx, projectId)
 }
 
-func (s *noteService) GetProjectNotes(ctx context.Context, projectId string) ([]domain.Note, error) {
-	notes, err := s.repository.GetProjectNotes(ctx, projectId)
+func (service *noteService) GetProjectNotes(ctx context.Context, projectId string) ([]domain.Note, error) {
+	notes, err := service.repository.GetProjectNotes(ctx, projectId)
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectTypeService] failed to get project permissions: %w", err)
 	}

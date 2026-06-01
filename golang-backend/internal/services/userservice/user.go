@@ -31,20 +31,20 @@ func NewUserService(repository userrepository.UserRepository) UserService {
 	return &userService{repository: repository}
 }
 
-func (s *userService) Add(ctx context.Context, user domain.User) error {
+func (service *userService) Add(ctx context.Context, user domain.User) error {
 	hashedPasswordBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if hashErr != nil {
 		return hashErr
 	}
 	user.PasswordHash = string(hashedPasswordBytes)
 	user.CreatedAt = time.Now()
-	if err := s.repository.Add(ctx, userrepository.DomainToDTO(user)); err != nil {
+	if err := service.repository.Add(ctx, userrepository.DomainToDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to add user with ID %s: %w", user.ID, err)
 	}
 	return nil
 }
 
-func (s *userService) Update(ctx context.Context, user domain.User) error {
+func (service *userService) Update(ctx context.Context, user domain.User) error {
 	if user.Password != "" {
 		hashedPasswordBytes, hashErr := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if hashErr != nil {
@@ -53,56 +53,56 @@ func (s *userService) Update(ctx context.Context, user domain.User) error {
 		user.PasswordHash = string(hashedPasswordBytes)
 	}
 	user.UpdatedAt = utils.NowToTimePtr()
-	if err := s.repository.Update(ctx, userrepository.DomainToDTO(user)); err != nil {
+	if err := service.repository.Update(ctx, userrepository.DomainToDTO(user)); err != nil {
 		return fmt.Errorf("[UserService] failed to update user with ID %s: %w", user.ID, err)
 	}
 	return nil
 }
 
-func (s *userService) Patch(ctx context.Context, user domain.User) error {
+func (service *userService) Patch(ctx context.Context, user domain.User) error {
 	if user.DeletedAt == nil {
-		if err := s.repository.UnDelete(ctx, user.ID); err != nil {
+		if err := service.repository.UnDelete(ctx, user.ID); err != nil {
 			return fmt.Errorf("[UserService] failed to patch user with ID %s: %w", user.ID, err)
 		}
 	} else {
-		if err := s.repository.Delete(ctx, user.ID); err != nil {
+		if err := service.repository.Delete(ctx, user.ID); err != nil {
 			return fmt.Errorf("[UserService] failed to patch user with ID %s: %w", user.ID, err)
 		}
 	}
 	return nil
 }
 
-func (s *userService) Delete(ctx context.Context, id string) error {
-	if err := s.repository.Delete(ctx, id); err != nil {
+func (service *userService) Delete(ctx context.Context, id string) error {
+	if err := service.repository.Delete(ctx, id); err != nil {
 		return fmt.Errorf("[UserService] failed to delete user with ID %s: %w", id, err)
 	}
 	return nil
 }
 
-func (s *userService) UnDelete(ctx context.Context, id string) error {
-	if err := s.repository.Delete(ctx, id); err != nil {
+func (service *userService) UnDelete(ctx context.Context, id string) error {
+	if err := service.repository.Delete(ctx, id); err != nil {
 		return fmt.Errorf("[UserService] failed to undelete user with ID %s: %w", id, err)
 	}
 	return nil
 }
 
-func (s *userService) Purge(ctx context.Context, id string) error {
-	if err := s.repository.Purge(ctx, id); err != nil {
+func (service *userService) Purge(ctx context.Context, id string) error {
+	if err := service.repository.Purge(ctx, id); err != nil {
 		return fmt.Errorf("[UserService] failed to purge user with ID %s: %w", id, err)
 	}
 	return nil
 }
 
-func (s *userService) Get(ctx context.Context, id string) (domain.User, error) {
-	user, err := s.repository.Get(ctx, id)
+func (service *userService) Get(ctx context.Context, id string) (domain.User, error) {
+	user, err := service.repository.Get(ctx, id)
 	if err != nil {
 		return domain.User{}, fmt.Errorf("[UserService] failed to get user with ID %s: %w", id, err)
 	}
 	return userrepository.DTOToDomain(user), nil
 }
 
-func (s *userService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchUsersFilter) ([]domain.User, browser.Result, error) {
-	users, pagerResult, err := s.repository.Search(ctx, pager, order, userrepository.DomainFilterToDTO(filter))
+func (service *userService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchUsersFilter) ([]domain.User, browser.Result, error) {
+	users, pagerResult, err := service.repository.Search(ctx, pager, order, userrepository.DomainFilterToDTO(filter))
 	if err != nil {
 		return nil, browser.Result{}, fmt.Errorf("[UserService] failed to search users: %w", err)
 	}

@@ -22,16 +22,16 @@ func NewAttachmentService(repository attachmentrepository.AttachmentRepository) 
 	return &attachmentService{repository: repository}
 }
 
-func (s *attachmentService) AddProjectAttachment(ctx context.Context, projectId string, attachment domain.Attachment) error {
-	return s.repository.AddProjectAttachment(ctx, projectId, attachmentrepository.DomainToDTO(attachment))
+func (service *attachmentService) AddProjectAttachment(ctx context.Context, projectId string, attachment domain.Attachment) error {
+	return service.repository.AddProjectAttachment(ctx, projectId, attachmentrepository.DomainToDTO(attachment))
 }
 
-func (s *attachmentService) DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error {
-	return s.repository.DeleteProjectAttachment(ctx, projectId, attachmentId)
+func (service *attachmentService) DeleteProjectAttachment(ctx context.Context, projectId string, attachmentId string) error {
+	return service.repository.DeleteProjectAttachment(ctx, projectId, attachmentId)
 }
 
-func (s *attachmentService) GetProjectAttachments(ctx context.Context, projectId string) ([]domain.Attachment, error) {
-	attachments, err := s.repository.GetProjectAttachments(ctx, projectId)
+func (service *attachmentService) GetProjectAttachments(ctx context.Context, projectId string) ([]domain.Attachment, error) {
+	attachments, err := service.repository.GetProjectAttachments(ctx, projectId)
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectTypeService] failed to get project attachments: %w", err)
 	}

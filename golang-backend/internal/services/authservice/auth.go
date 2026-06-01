@@ -23,8 +23,8 @@ func NewAuthService(repository userrepository.UserRepository) AuthService {
 	}
 }
 
-func (s *authService) SignIn(ctx context.Context, user domain.User) (domain.User, error) {
-	credentialUser, err := s.repository.GetByEmailForVerifyCredentials(ctx, user.Email, user.Password)
+func (service *authService) SignIn(ctx context.Context, user domain.User) (domain.User, error) {
+	credentialUser, err := service.repository.GetByEmailForVerifyCredentials(ctx, user.Email, user.Password)
 	if err != nil {
 		return domain.User{}, err
 	}
@@ -38,8 +38,8 @@ func (s *authService) SignIn(ctx context.Context, user domain.User) (domain.User
 	return userrepository.DTOToDomain(credentialUser), nil
 }
 
-func (s *authService) GetUserInfo(ctx context.Context, userId string) (domain.User, error) {
-	user, err := s.repository.Get(ctx, userId)
+func (service *authService) GetUserInfo(ctx context.Context, userId string) (domain.User, error) {
+	user, err := service.repository.Get(ctx, userId)
 	if err != nil {
 		return domain.User{}, err
 	}

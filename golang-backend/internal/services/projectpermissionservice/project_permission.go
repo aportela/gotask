@@ -22,16 +22,16 @@ func NewProjectPermissionService(repository projectpermissionrepository.ProjectP
 	return &projectPermissionService{repository: repository}
 }
 
-func (s *projectPermissionService) Add(ctx context.Context, permissionId string, projectId string, userId string, roleId string) error {
-	return s.repository.Add(ctx, permissionId, projectId, userId, roleId)
+func (service *projectPermissionService) Add(ctx context.Context, permissionId string, projectId string, userId string, roleId string) error {
+	return service.repository.Add(ctx, permissionId, projectId, userId, roleId)
 }
 
-func (s *projectPermissionService) Delete(ctx context.Context, permissionId string) error {
-	return s.repository.Delete(ctx, permissionId)
+func (service *projectPermissionService) Delete(ctx context.Context, permissionId string) error {
+	return service.repository.Delete(ctx, permissionId)
 }
 
-func (s *projectPermissionService) Search(ctx context.Context, projectId string) ([]domain.ProjectPermission, error) {
-	projectPermissions, err := s.repository.Search(ctx, projectId)
+func (service *projectPermissionService) Search(ctx context.Context, projectId string) ([]domain.ProjectPermission, error) {
+	projectPermissions, err := service.repository.Search(ctx, projectId)
 	if err != nil {
 		return nil, fmt.Errorf("[ProjectTypeService] failed to get project permissions: %w", err)
 	}

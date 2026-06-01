@@ -25,28 +25,28 @@ func NewTaskPriorityService(repository taskpriorityrepository.TaskPriorityReposi
 	return &taskPriorityService{repository: repository}
 }
 
-func (s *taskPriorityService) Add(ctx context.Context, taskPriority domain.TaskPriority) error {
-	return s.repository.Add(ctx, taskpriorityrepository.DomainToDTO(taskPriority))
+func (service *taskPriorityService) Add(ctx context.Context, taskPriority domain.TaskPriority) error {
+	return service.repository.Add(ctx, taskpriorityrepository.DomainToDTO(taskPriority))
 }
 
-func (s *taskPriorityService) Update(ctx context.Context, taskPriority domain.TaskPriority) error {
-	return s.repository.Update(ctx, taskpriorityrepository.DomainToDTO(taskPriority))
+func (service *taskPriorityService) Update(ctx context.Context, taskPriority domain.TaskPriority) error {
+	return service.repository.Update(ctx, taskpriorityrepository.DomainToDTO(taskPriority))
 }
 
-func (s *taskPriorityService) Delete(ctx context.Context, id string) error {
-	return s.repository.Delete(ctx, id)
+func (service *taskPriorityService) Delete(ctx context.Context, id string) error {
+	return service.repository.Delete(ctx, id)
 }
 
-func (s *taskPriorityService) Get(ctx context.Context, id string) (domain.TaskPriority, error) {
-	taskPriority, err := s.repository.Get(ctx, id)
+func (service *taskPriorityService) Get(ctx context.Context, id string) (domain.TaskPriority, error) {
+	taskPriority, err := service.repository.Get(ctx, id)
 	if err != nil {
 		return taskpriorityrepository.DTOToDomain(taskPriority), fmt.Errorf("[TaskPriorityService] failed to get task priority with ID %s: %w", id, err)
 	}
 	return taskpriorityrepository.DTOToDomain(taskPriority), nil
 }
 
-func (s *taskPriorityService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchProjectPrioritiesFilter) ([]domain.TaskPriority, browser.Result, error) {
-	taskPriorities, pagerResult, err := s.repository.Search(ctx, pager, order, taskpriorityrepository.DomainFilterToDTO(filter))
+func (service *taskPriorityService) Search(ctx context.Context, pager browser.Params, order browser.Order, filter domain.SearchProjectPrioritiesFilter) ([]domain.TaskPriority, browser.Result, error) {
+	taskPriorities, pagerResult, err := service.repository.Search(ctx, pager, order, taskpriorityrepository.DomainFilterToDTO(filter))
 	if err != nil {
 		return nil, browser.Result{}, fmt.Errorf("[TaskPriorityService] failed to search task priorities: %w", err)
 	}
